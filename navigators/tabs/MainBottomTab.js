@@ -6,6 +6,7 @@ import SearchScreen from '../../views/SearchScreen';
 import CustomNavigationBar from '../../components/Navbar';
 import MIcon from 'react-native-vector-icons/MaterialIcons'
 import { light_colors } from '../../globals/colors';
+import ProfileStack from '../stacks/ProfileStack';
 
 
 const Tab = createBottomTabNavigator();
@@ -52,7 +53,7 @@ export default function MainBottomTab() {
       />
       <Tab.Screen
         name="Account"
-        component={AccountScreen}
+        component={ProfileStack}
         activeColor="#fff"
         inactiveColor="#000"
 
