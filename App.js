@@ -22,7 +22,6 @@ const App = () => {
 
   const theme = {
     ...DefaultTheme,
-    dark: isDarkMode,
     colors: {
       ...DefaultTheme.colors,
       primary: isDarkMode ? dark_colors.primary : light_colors.primary,

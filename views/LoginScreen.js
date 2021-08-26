@@ -46,7 +46,7 @@ export default function LoginScreen() {
                 </View>
 
                 <View style={styles.skipForNowContainer}>
-                    <Pressable style={styles.skipForNowButton} android_ripple={{ color: '#ddd' }} onPress={()=>navigation.navigate('Home')} ><Text style={styles.skipForNowText}>Skip For Now</Text></Pressable>
+                    <Pressable style={styles.skipForNowButton} android_ripple={{ color: '#ddd' }} onPress={()=>navigation.navigate('MainBottomTab')} ><Text style={styles.skipForNowText}>Skip For Now</Text></Pressable>
                 </View>
             </ScrollView>
         </View >
@@ -66,12 +66,12 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         fontSize: 24,
         textAlign: 'center',
-        fontWeight: 'bold',
         color: Appearance.getColorScheme() == 'dark' ? dark_colors.textColor : light_colors.textColor,
-
+        fontFamily:'OpenSans-Bold',
     },
     textInput: {
-        marginTop: 10
+        marginTop: 10,
+        fontFamily:'OpenSans-Regular',
     },
     buttonStyles: {
 
@@ -86,6 +86,7 @@ const styles = StyleSheet.create({
         color: Appearance.getColorScheme() == 'dark' ? dark_colors.buttonText : light_colors.buttonText,
         textAlign: 'center',
         fontSize: 16,
+        fontFamily:'OpenSans-Regular',
     },
     img: {
         width: '100%',
@@ -109,7 +110,8 @@ const styles = StyleSheet.create({
     },
     showPasswordText: {
         color: Appearance.getColorScheme() == 'dark' ? dark_colors.textColor : light_colors.textColor,
-        marginLeft: 5
+        marginLeft: 5,
+        fontFamily:'OpenSans-Regular',
     },
     registerContainer: {
         display: 'flex',
@@ -119,12 +121,14 @@ const styles = StyleSheet.create({
     },
     registerText: {
         color: Appearance.getColorScheme() == 'dark' ? dark_colors.textColor : light_colors.textColor,
+        fontFamily:'OpenSans-Regular',
     },
     registerButton: {
 
     },
     registerButtonText: {
         color: Appearance.getColorScheme() == 'dark' ? dark_colors.primary : light_colors.primary,
+        fontFamily:'OpenSans-Regular',
     },
     skipForNowContainer:{
         marginTop:15,
@@ -137,6 +141,7 @@ const styles = StyleSheet.create({
     },
     skipForNowText:{
         color: Appearance.getColorScheme() == 'dark' ? dark_colors.primaryDark : light_colors.primaryDark,
-        textAlign:'center'
+        textAlign:'center',
+        fontFamily:'OpenSans-Regular',
     }
 })
