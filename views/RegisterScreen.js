@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { View, StyleSheet, Appearance, Pressable, Image, ScrollView } from 'react-native'
+import { View, StyleSheet, Appearance, Pressable, Image, ScrollView, TextInput } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
 
-import { TextInput, Headline, Button, Text, Subheading, Checkbox } from 'react-native-paper'
+import { Headline, Button, Text, Subheading, Checkbox } from 'react-native-paper'
 import { dark_colors, light_colors } from '../globals/colors'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/core';
@@ -23,10 +23,22 @@ export default function RegisterScreen() {
                     <Image source={require('../assets/Logo.png')} style={styles.img} resizeMode="contain" />
                 </View>
                 <Text style={styles.headerText} >Create An Account</Text>
-                <TextInput label="Name" mode="outlined" style={styles.textInput} />
-                <TextInput label="Phone" mode="outlined" style={styles.textInput} />
-                <TextInput label="Password" mode="outlined" style={styles.textInput} secureTextEntry={!showPassword} />
-                <TextInput label="Confirm Password" mode="outlined" style={styles.textInput} secureTextEntry={!showPassword} />
+                <Text style={styles.label}>
+                    Name
+                </Text>
+                <TextInput placeholder="Name" style={styles.textInput} />
+                <Text style={styles.label}>
+                    Phone Number
+                </Text>
+                <TextInput placeholder="Phone" style={styles.textInput} />
+                <Text style={styles.label}>
+                    Password
+                </Text>
+                <TextInput placeholder="Password" style={styles.textInput} secureTextEntry={!showPassword} />
+                <Text style={styles.label}>
+                    Confirm Password
+                </Text>
+                <TextInput placeholder="Confirm Password" style={styles.textInput} secureTextEntry={!showPassword} />
                 <Pressable style={styles.showPassword} onPress={() => { setShowPassword(!showPassword); }} android_ripple={{ color: '#ddd' }} >
                     <Checkbox
                         status={showPassword ? 'checked' : 'unchecked'}
@@ -48,11 +60,11 @@ export default function RegisterScreen() {
                 </Pressable>
 
                 <View style={styles.registerContainer}>
-                    <Text style={styles.registerText} >Already have an Account? </Text><Pressable style={styles.registerButton} android_ripple={{ color: '#ddd' }}  onPress={()=>navigation.navigate('Login')}  ><Text style={styles.registerButtonText}>Login.</Text></Pressable>
+                    <Text style={styles.registerText} >Already have an Account? </Text><Pressable style={styles.registerButton} android_ripple={{ color: '#ddd' }} onPress={() => navigation.navigate('Login')}  ><Text style={styles.registerButtonText}>Login.</Text></Pressable>
                 </View>
 
                 <View style={styles.skipForNowContainer}>
-                    <Pressable style={styles.skipForNowButton} android_ripple={{ color: '#ddd' }}  onPress={()=>navigation.navigate('MainBottomTab')} ><Text style={styles.skipForNowText}>Skip For Now</Text></Pressable>
+                    <Pressable style={styles.skipForNowButton} android_ripple={{ color: '#ddd' }} onPress={() => navigation.navigate('MainBottomTab')} ><Text style={styles.skipForNowText}>Skip For Now</Text></Pressable>
                 </View>
             </ScrollView>
         </View >
@@ -76,11 +88,23 @@ const styles = StyleSheet.create({
         fontFamily: 'OpenSans-Bold',
     },
     textInput: {
-        marginTop: 10,
-        fontFamily: 'OpenSans-Regular',
+        borderColor: "rgba(0,0,0,0.1)",
+        borderWidth: 2,
+        borderRadius: 7,
+        paddingLeft: 20,
+        backgroundColor: "#F1F3FD",
+        marginVertical: 8
     },
-    buttonStyles: {
-
+    label: {
+        fontFamily: 'OpenSans-SemiBold',
+        color: "black",
+        fontSize: 14,
+        marginBottom: 8,
+        color: "grey",
+        paddingLeft: 5,
+        marginTop: 15,
+        // paddingTop: 15,
+        textTransform: "capitalize",
     },
     button: {
         borderRadius: 5,

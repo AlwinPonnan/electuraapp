@@ -1,76 +1,146 @@
-import React, { useState } from 'react'
-import { View, Text, StyleSheet, Image, TouchableOpacity, Pressable, Appearance, TextInput, ScrollView } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { View, Text, StyleSheet, Image, TouchableOpacity, Pressable, Appearance, TextInput, ScrollView, Keyboard, FlatList } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from "react-native-vector-icons/Ionicons"
 import { dark_colors, light_colors } from '../globals/colors';
 export default function AccountEdit() {
-    const [QualificationArr, setQualificationArr] = useState([]);
+    const [QualificationArr, setQualificationArr] = useState([{ qualificationName: "asd" }]);
+
 
     const [name, setName] = useState("John Emanuel");
     const [email, setEmail] = useState("electura@electura.com");
     const [mobile, setMobile] = useState("9919291919");
 
+    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+    const addQualification = () => {
+        setQualificationArr(previousState => {
+            return [...previousState, { qualificationName: "" }]
+        })
+    }
+
+    const removeQualification = (index) => {
+        setQualificationArr(previousState => {
+
+            previousState.splice(index, 1)
+
+            return [...previousState]
+        })
+    }
+
+
+    const handleQualificationInput = (index, val) => {
+        let tempArr = QualificationArr.map((el, i) => {
+            if (i == index) {
+                el.qualificationName = val
+            }
+            return el
+        })
+        setQualificationArr(tempArr)
+    }
+
+
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+            'keyboardDidShow',
+            () => {
+                setKeyboardVisible(true); // or some other action
+            }
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+            'keyboardDidHide',
+            () => {
+                setKeyboardVisible(false); // or some other action
+            }
+        );
+
+        return () => {
+            keyboardDidHideListener.remove();
+            keyboardDidShowListener.remove();
+        };
+    }, []);
+
+
+
+
+    const renderQualification = ({ item, index }) => {
+        return (
+            <>
+                <View style={[styles.flexRow, { alignItems: "center", marginVertical: 7 }]}>
+                    <TextInput onChangeText={(val) => handleQualificationInput(index, val)} value={item.qualificationName} style={[styles.txtInput, { flex: 1 }]} placeholder="name" />
+                    <TouchableOpacity style={[styles.AddBtn, { padding: 5, marginLeft: 10 }]} onPress={() => removeQualification(index)}>
+                        <Icon name="ios-trash-outline" size={20} color={"#798FF8"} />
+                    </TouchableOpacity>
+                </View>
+            </>
+        )
+    }
 
     return (
         <View style={styles.container}>
-            <ScrollView contentContainerStyle={styles.innerContainer}>
 
+            <FlatList
+                contentContainerStyle={[styles.innerContainer, { paddingBottom: isKeyboardVisible ? 250 : 50 }]}
+                data={QualificationArr}
+                keyExtractor={(item, index) => index}
+                renderItem={renderQualification}
+                ListHeaderComponent={
+                    <>
+                        <View style={styles.profileImageContainer}>
+                            <Image style={styles.profileImage} source={require("../assets/images/user.jpg")} />
+                            <TouchableOpacity style={styles.PickImageBtn}>
+                                <Icon name="camera-outline" size={30} color={"#798FF8"} />
+                            </TouchableOpacity>
+                        </View>
 
-                <View style={styles.profileImageContainer}>
-                    <Image style={styles.profileImage} source={require("../assets/images/user.jpg")} />
-                    <TouchableOpacity style={styles.PickImageBtn}>
-                        <Icon name="camera-outline" size={30} color={"#798FF8"} />
-                    </TouchableOpacity>
-                </View>
+                        <Text style={styles.label}>
+                            Name
+                        </Text>
+                        <TextInput value={name} style={styles.txtInput} placeholder="Name" />
+                        <Text style={styles.label}>
+                            Email
+                        </Text>
+                        <TextInput value={email} style={styles.txtInput} placeholder="Email" />
+                        <Text style={styles.label}>
+                            Phone
+                        </Text>
+                        <TextInput value={mobile} style={styles.txtInput} placeholder="Phone" />
 
-                <Text style={styles.label}>
-                    Name
-                </Text>
-                <TextInput value={name} style={styles.txtInput} placeholder="Name" />
-                <Text style={styles.label}>
-                    Email
-                </Text>
-                <TextInput value={email} style={styles.txtInput} placeholder="Email" />
-                <Text style={styles.label}>
-                    Phone
-                </Text>
-                <TextInput value={mobile} style={styles.txtInput} placeholder="Phone" />
+                        <Text style={styles.label}>
+                            Id Proof
+                        </Text>
+                        <View style={[styles.txtInput, { justifyContent: "space-between", display: "flex", flexDirection: "row", alignItems: "center", paddingHorizontal: 15, height: 45, }]} placeholder="Phone">
+                            <Text>Please upload an Id proof</Text>
+                            <Icon name="camera-outline" size={30} color={"#798FF8"} />
+                        </View>
+                        <View style={[styles.flexRow, { justifyContent: "space-between", alignItems: "center", marginTop: 20 }]}>
+                            <Text style={styles.label}>
+                                Qualifications
+                            </Text>
+                            <TouchableOpacity style={styles.AddBtn} onPress={() => addQualification()}>
+                                <Icon name="ios-add-outline" size={30} color={"#798FF8"} />
+                            </TouchableOpacity>
+                        </View>
+                    </>
+                }
+                ListFooterComponent={
+                    <Pressable style={styles.btn}>
+                        <Text style={styles.btnTxt}>Update Profile</Text>
+                    </Pressable>
+                }
+            />
 
-                <Text style={styles.label}>
-                    Id Proof
-                </Text>
-                <View style={[styles.txtInput, { justifyContent: "space-between", display: "flex", flexDirection: "row", alignItems: "center", paddingHorizontal: 15, height: 45, }]} placeholder="Phone">
-                    <Text>Please upload an Id proof</Text>
-                    <Icon name="camera-outline" size={30} color={"#798FF8"} />
-                </View>
-                <View style={[styles.flexRow, { justifyContent: "space-between", alignItems: "center", marginTop: 20 }]}>
-                    <Text style={styles.label}>
-                        Qualifications
-                    </Text>
-                    <TouchableOpacity style={styles.AddBtn}>
-                        <Icon name="ios-add-outline" size={30} color={"#798FF8"} />
-                    </TouchableOpacity>
-                </View>
-                <TextInput style={styles.txtInput} placeholder="name" />
-
-
-                <Pressable style={styles.btn}>
-                    <Text style={styles.btnTxt}>Update Profile</Text>
-                </Pressable>
-
-
-            </ScrollView>
         </View>
     )
 }
 const styles = StyleSheet.create({
     container: {
         display: "flex",
-        height: hp(85),
+        height: hp(87),
         backgroundColor: "white"
     },
     innerContainer: {
-        width: wp(80),
+        width: wp(82),
         display: "flex",
         justifyContent: "center",
         paddingTop: 30,

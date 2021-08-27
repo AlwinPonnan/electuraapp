@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { View, StyleSheet, Appearance, Pressable, Image, ScrollView } from 'react-native'
+import { View, StyleSheet, Appearance, Pressable, Image, ScrollView, TextInput } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
 
-import { TextInput, Headline, Button, Text, Subheading, Checkbox } from 'react-native-paper'
+import { Headline, Button, Text, Subheading, Checkbox } from 'react-native-paper'
 import { dark_colors, light_colors } from '../globals/colors'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/core';
@@ -19,8 +19,14 @@ export default function LoginScreen() {
                     <Image source={require('../assets/Logo.png')} style={styles.img} resizeMode="contain" />
                 </View>
                 <Text style={styles.headerText} >Log In</Text>
-                <TextInput label="Email" mode="outlined" style={styles.textInput} />
-                <TextInput label="Password" mode="outlined" style={styles.textInput} secureTextEntry={!showPassword} />
+                <Text style={styles.label}>
+                    Email
+                </Text>
+                <TextInput placeholder="Email" style={styles.txtInput} />
+                <Text style={styles.label}>
+                    Password
+                </Text>
+                <TextInput placeholder="Password" style={styles.txtInput} secureTextEntry={!showPassword} />
                 <Pressable style={styles.showPassword} onPress={() => { setShowPassword(!showPassword); }} android_ripple={{ color: '#ddd' }} >
                     <Checkbox
                         status={showPassword ? 'checked' : 'unchecked'}
@@ -42,11 +48,11 @@ export default function LoginScreen() {
                 </Pressable>
 
                 <View style={styles.registerContainer}>
-                    <Text style={styles.registerText} >Don't have an Account? </Text><Pressable style={styles.registerButton} android_ripple={{ color: '#ddd' }} onPress={()=>navigation.navigate('Register')}  ><Text style={styles.registerButtonText}>Register.</Text></Pressable>
+                    <Text style={styles.registerText} >Don't have an Account? </Text><Pressable style={styles.registerButton} android_ripple={{ color: '#ddd' }} onPress={() => navigation.navigate('Register')}  ><Text style={styles.registerButtonText}>Register.</Text></Pressable>
                 </View>
 
                 <View style={styles.skipForNowContainer}>
-                    <Pressable style={styles.skipForNowButton} android_ripple={{ color: '#ddd' }} onPress={()=>navigation.navigate('MainBottomTab')} ><Text style={styles.skipForNowText}>Skip For Now</Text></Pressable>
+                    <Pressable style={styles.skipForNowButton} android_ripple={{ color: '#ddd' }} onPress={() => navigation.navigate('MainBottomTab')} ><Text style={styles.skipForNowText}>Skip For Now</Text></Pressable>
                 </View>
             </ScrollView>
         </View >
@@ -67,12 +73,32 @@ const styles = StyleSheet.create({
         fontSize: 24,
         textAlign: 'center',
         color: Appearance.getColorScheme() == 'dark' ? dark_colors.textColor : light_colors.textColor,
-        fontFamily:'OpenSans-Bold',
+        fontFamily: 'OpenSans-Bold',
     },
-    textInput: {
-        marginTop: 10,
-        fontFamily:'OpenSans-Regular',
+
+    label: {
+        fontFamily: 'OpenSans-SemiBold',
+        color: "black",
+        fontSize: 14,
+        marginBottom: 8,
+        color: "grey",
+        paddingLeft: 5,
+        marginTop: 30,
+        // paddingTop: 15,
+        textTransform: "capitalize",
     },
+
+
+    //////txtinput
+    txtInput: {
+        borderColor: "rgba(0,0,0,0.1)",
+        borderWidth: 2,
+        borderRadius: 7,
+        paddingLeft: 20,
+        backgroundColor: "#F1F3FD",
+        marginVertical: 8
+    },
+
     buttonStyles: {
 
     },
@@ -86,7 +112,7 @@ const styles = StyleSheet.create({
         color: Appearance.getColorScheme() == 'dark' ? dark_colors.buttonText : light_colors.buttonText,
         textAlign: 'center',
         fontSize: 16,
-        fontFamily:'OpenSans-Regular',
+        fontFamily: 'OpenSans-Regular',
     },
     img: {
         width: '100%',
@@ -111,7 +137,7 @@ const styles = StyleSheet.create({
     showPasswordText: {
         color: Appearance.getColorScheme() == 'dark' ? dark_colors.textColor : light_colors.textColor,
         marginLeft: 5,
-        fontFamily:'OpenSans-Regular',
+        fontFamily: 'OpenSans-Regular',
     },
     registerContainer: {
         display: 'flex',
@@ -121,27 +147,27 @@ const styles = StyleSheet.create({
     },
     registerText: {
         color: Appearance.getColorScheme() == 'dark' ? dark_colors.textColor : light_colors.textColor,
-        fontFamily:'OpenSans-Regular',
+        fontFamily: 'OpenSans-Regular',
     },
     registerButton: {
 
     },
     registerButtonText: {
         color: Appearance.getColorScheme() == 'dark' ? dark_colors.primary : light_colors.primary,
-        fontFamily:'OpenSans-Regular',
+        fontFamily: 'OpenSans-Regular',
     },
-    skipForNowContainer:{
-        marginTop:15,
-        display:'flex',
-        alignItems:'center',
-        justifyContent:'center'
+    skipForNowContainer: {
+        marginTop: 15,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
     },
-    skipForNowButton:{
-        
+    skipForNowButton: {
+
     },
-    skipForNowText:{
+    skipForNowText: {
         color: Appearance.getColorScheme() == 'dark' ? dark_colors.primaryDark : light_colors.primaryDark,
-        textAlign:'center',
-        fontFamily:'OpenSans-Regular',
+        textAlign: 'center',
+        fontFamily: 'OpenSans-Regular',
     }
 })
