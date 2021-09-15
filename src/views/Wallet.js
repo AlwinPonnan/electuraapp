@@ -72,11 +72,13 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         display: "flex",
         flexDirection: "column",
-        paddingHorizontal: 20,
+        paddingHorizontal: 15,
+        borderBottomColor: "#ccc",
+        borderBottomWidth: 1,
         width: wp(90),
         paddingVertical: 10,
         borderRadius: 10,
-        marginVertical: 8,
+        marginVertical: 3,
         alignSelf: "center",
     },
 
@@ -110,7 +112,7 @@ const styles = StyleSheet.create({
     transactionHeading: {
         fontFamily: "OpenSans-Bold",
         fontSize: 16,
-        marginVertical: 10,
+        marginVertical: 0,
     },
     notificationDescription: {
         fontFamily: "OpenSans-SemiBold",
@@ -127,12 +129,12 @@ const styles = StyleSheet.create({
     transactionAmount: {
         fontFamily: "OpenSans-Bold",
         fontSize: 16,
-        marginVertical: 10,
+        marginVertical: 0,
     },
     balanceHeading: {
         fontFamily: "OpenSans-SemiBold",
         fontSize: 20,
-        marginVertical: 10,
+        marginVertical: 0,
         color: "#748A9D",
     },
 
@@ -148,7 +150,7 @@ const styles = StyleSheet.create({
         marginTop: 15,
         width: "100%",
         borderTopWidth: 1,
-        borderTopColor: "rgba(0,0,0,0.5)",
+        borderTopColor: "rgba(0,0,0,0.1)",
         // backgroundColor: "red"
     },
 

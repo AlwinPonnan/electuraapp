@@ -78,47 +78,26 @@ export default function RegisterScreen(props) {
             >
                 <View style={styles.imgContainer}>
                     <Image source={require('../../assets/Logo.png')} style={styles.img} resizeMode="contain" />
-                    <Text style={styles.headerText} >Join us now !</Text>
+                    <Image source={require("../../assets/20943501.jpg")} style={{ width: wp(80), height: hp(30), }} />
+                    <Text style={styles.headerText}>Join us now !</Text>
                 </View>
+
                 <Text style={styles.label}>
-                    Name
+                    Mobile Number
                 </Text>
-                <TextInput onChangeText={setName} placeholder="Name" style={styles.textInput} />
-                <Text style={styles.label}>
-                    Email
-                </Text>
-                <TextInput onChangeText={setEmail} keyboardType={"email-address"} placeholder="Email" style={styles.textInput} />
-                <Text style={styles.label}>
-                    Phone Number
-                </Text>
-                <TextInput onChangeText={setphone} keyboardType={"number-pad"} maxLength={10} placeholder="Phone" style={styles.textInput} />
-                <Text style={styles.label}>
-                    Password
-                </Text>
-                <TextInput onChangeText={setPassword} placeholder="Password" style={styles.textInput} secureTextEntry={!showPassword} />
-                <Text style={styles.label}>
-                    Confirm Password
-                </Text>
-                <TextInput placeholder="Confirm Password" onChangeText={setConfirmPassword} style={styles.textInput} secureTextEntry={!showPassword} />
-                <Pressable style={styles.showPassword} onPress={() => { setShowPassword(!showPassword); }} android_ripple={{ color: '#ddd' }} >
-                    <Checkbox
-                        status={showPassword ? 'checked' : 'unchecked'}
-                        onPress={() => {
-                            setShowPassword(!showPassword);
-                        }}
-                        color={
-                            Appearance.getColorScheme() == 'dark' ? dark_colors.primary : light_colors.primary
-                        }
-                    />
-                    <Text style={styles.showPasswordText} >Show Password</Text>
+                <TextInput onChangeText={setphone} keyboardType={"number-pad"} maxLength={10} placeholder="Mobile Number" style={styles.textInput} />
+
+
+                <Pressable style={styles.btn} onPress={() => props.navigation.navigate("OtpScreen")}>
+                    <Text style={styles.btnTxt}>Register</Text>
                 </Pressable>
-                <Pressable style={styles.button} onPress={() => handleRegister()}>
+                {/* <Pressable style={styles.button} onPress={() => handleRegister()}>
                     <LinearGradient colors={[light_colors.primary, light_colors.primary2,]} start={{ x: 0.0, y: 0.25 }} end={{ x: 0.5, y: 1.0 }} useAngle={true} angle={45} style={{ padding: 12 }} >
                         <Text style={styles.buttonText}>
                             Submit
                         </Text>
                     </LinearGradient>
-                </Pressable>
+                </Pressable> */}
 
                 <View style={styles.registerContainer}>
                     <Text style={styles.registerText} >Already have an Account? </Text><Pressable style={styles.registerButton} android_ripple={{ color: '#ddd' }} onPress={() => navigation.navigate('Login')}  ><Text style={styles.registerButtonText}>Login.</Text></Pressable>
@@ -149,7 +128,7 @@ const styles = StyleSheet.create({
         fontFamily: 'OpenSans-Bold',
     },
     textInput: {
-        borderColor: "rgba(0,0,0,0.1)",
+        borderColor: "rgba(0,0,0,0.02)",
         borderWidth: 2,
         borderRadius: 7,
         paddingLeft: 20,
@@ -167,6 +146,26 @@ const styles = StyleSheet.create({
         // paddingTop: 15,
         textTransform: "capitalize",
     },
+    btn: {
+        backgroundColor: "#363D4D",
+        borderRadius: 8,
+        width: wp(92),
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 30,
+        paddingVertical: 10,
+    },
+
+    btnTxt: {
+        fontFamily: 'OpenSans-SemiBold',
+        fontSize: 14,
+        color: "grey",
+        paddingLeft: 5,
+        // paddingTop: 15,
+        textTransform: "capitalize",
+        color: "white"
+    },
     button: {
         borderRadius: 5,
         marginVertical: 10,
@@ -181,11 +180,11 @@ const styles = StyleSheet.create({
     },
     img: {
         width: '80%',
-        height: '80%'
+        height: 120
     },
     imgContainer: {
         width: '100%',
-        maxHeight: 150,
+        // maxHeight: 150,
         marginBottom: 20,
         display: 'flex',
         alignItems: 'center',

@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { View, StyleSheet, Appearance, Pressable, Image, ScrollView, TextInput } from 'react-native'
+import { View, StyleSheet, Appearance, Pressable, Image, ScrollView, TextInput, ImageBackground } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
 
 
 
 ///////context
 import { isAuthorisedContext } from '../navigators/stacks/RootStack';
-
+import Icon from 'react-native-vector-icons/Ionicons'
 
 import { Headline, Button, Text, Subheading, Checkbox } from 'react-native-paper'
 import { dark_colors, light_colors } from '../globals/colors'
@@ -82,38 +82,28 @@ export default function LoginScreen(props) {
 
     return (
         <View style={styles.container}>
-            <ScrollView>
+            <ScrollView contentContainerStyle={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <View style={styles.imgContainer}>
                     <Image source={require('../../assets/Logo.png')} style={styles.img} resizeMode="contain" />
                 </View>
-                <Text style={styles.headerText} >Log In</Text>
+                {/* <Image source={require("../../assets/2137.jpg")} style={{ width: wp(80), height: hp(30), }} /> */}
+                <Image source={require("../../assets/20943501.jpg")} style={{ width: wp(80), height: hp(30), }} />
+                <Text style={styles.headerText} >Let's log you in !</Text>
                 <Text style={styles.label}>
-                    Email
+                    Your Mobile Number
                 </Text>
-                <TextInput placeholder="Email" onChangeText={setEmail} style={styles.txtInput} />
-                <Text style={styles.label}>
-                    Password
-                </Text>
-                <TextInput placeholder="Password" onChangeText={setPassword} style={styles.txtInput} secureTextEntry={!showPassword} />
-                <Pressable style={styles.showPassword} onPress={() => { setShowPassword(!showPassword); }} android_ripple={{ color: '#ddd' }} >
-                    <Checkbox
-                        status={showPassword ? 'checked' : 'unchecked'}
-                        onPress={() => {
-                            setShowPassword(!showPassword);
-                        }}
-                        color={
-                            Appearance.getColorScheme() == 'dark' ? dark_colors.primary : light_colors.primary
-                        }
-                    />
-                    <Text style={styles.showPasswordText} >Show Password</Text>
+                <TextInput placeholder="Mobile Number" onChangeText={setEmail} keyboardType="number-pad" maxLength={10} style={styles.txtInput} />
+
+                <Pressable style={styles.btn} onPress={() => props.navigation.navigate("OtpScreen")}>
+                    <Text style={styles.btnTxt}>Login</Text>
                 </Pressable>
-                <Pressable style={styles.button} onPress={() => handleLogin()}>
+                {/* <Pressable style={styles.button} onPress={() => handleLogin()}>
                     <LinearGradient colors={[light_colors.primary, light_colors.primary2,]} start={{ x: 0.0, y: 0.25 }} end={{ x: 0.5, y: 1.0 }} useAngle={true} angle={45} style={{ padding: 12 }} >
                         <Text style={styles.buttonText}>
                             Submit
                         </Text>
                     </LinearGradient>
-                </Pressable>
+                </Pressable> */}
 
                 <View style={styles.registerContainer}>
                     <Text style={styles.registerText} >Don't have an Account? </Text><Pressable style={styles.registerButton} android_ripple={{ color: '#ddd' }} onPress={() => navigation.navigate('Register')}  ><Text style={styles.registerButtonText}>Register.</Text></Pressable>
@@ -131,7 +121,7 @@ const styles = StyleSheet.create({
     container: {
         minHeight: '100%',
         backgroundColor: Appearance.getColorScheme() == 'dark' ? dark_colors.backgroundColor : light_colors.backgroundColor,
-        padding: 15,
+        // padding: 15,
         display: 'flex',
         // justifyContent: 'center'
     },
@@ -148,6 +138,7 @@ const styles = StyleSheet.create({
         fontFamily: 'OpenSans-SemiBold',
         color: "black",
         fontSize: 14,
+        width: wp(85),
         marginBottom: 8,
         color: "grey",
         paddingLeft: 5,
@@ -155,13 +146,33 @@ const styles = StyleSheet.create({
         // paddingTop: 15,
         textTransform: "capitalize",
     },
+    btn: {
+        backgroundColor: "#363D4D",
+        borderRadius: 8,
+        width: wp(85),
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 30,
+        paddingVertical: 10,
+    },
 
+    btnTxt: {
+        fontFamily: 'OpenSans-SemiBold',
+        fontSize: 14,
+        color: "grey",
+        paddingLeft: 5,
+        // paddingTop: 15,
+        textTransform: "capitalize",
+        color: "white"
+    },
 
     //////txtinput
     txtInput: {
-        borderColor: "rgba(0,0,0,0.1)",
+        borderColor: "rgba(0,0,0,0.02)",
+        width: wp(85),
         borderWidth: 2,
-        borderRadius: 7,
+        borderRadius: 10,
         paddingLeft: 20,
         backgroundColor: "#F1F3FD",
         marginVertical: 8

@@ -7,6 +7,7 @@ import LoginScreen from '../../views/LoginScreen';
 import HomeScreen from '../../views/HomeScreen';
 import RegisterScreen from '../../views/RegisterScreen';
 import MainBottomTab from '../tabs/MainBottomTab';
+import OtpScreen from '../../views/OtpScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,6 +27,7 @@ export default function RootStack() {
                             :
                             <>
                                 <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false, cardStyles: { backgroundColor: '#ffffff' } }} />
+                                <Stack.Screen name="OtpScreen" component={OtpScreen} options={{ headerShown: false }} />
                                 <Stack.Screen name="MainBottomTab" component={MainBottomTab} options={{ headerShown: false }} />
                                 <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
                             </>
