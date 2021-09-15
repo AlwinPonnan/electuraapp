@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, FlatList, Image, Pressable } from 'react-native'
+import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { light_colors } from '../globals/colors';
 import MIcon from 'react-native-vector-icons/MaterialIcons'
@@ -7,6 +7,7 @@ import MIcon from 'react-native-vector-icons/MaterialIcons'
 export default function HomeScreen() {
     const [productsArr, setProductsArr] = useState([
         {
+
             name: "Lorem Course",
             categoryName: 'Science',
             teacher: "Mr. Teacher",
@@ -14,7 +15,11 @@ export default function HomeScreen() {
             imgUrl: "https://images.unsplash.com/photo-1475778057357-d35f37fa89dd?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
             description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
             courseEstimatedTime: '1hr 30min'
+
+
         },
+
+
         {
             name: "Lorem Course2",
             categoryName: 'Physics',
@@ -24,6 +29,8 @@ export default function HomeScreen() {
             description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
             courseEstimatedTime: '1hr 30min'
         },
+
+
         {
             name: "Lorem Course3",
             categoryName: 'A.I.',
@@ -31,6 +38,7 @@ export default function HomeScreen() {
             teacherImg: "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80",
             imgUrl: "https://images.unsplash.com/photo-1475778057357-d35f37fa89dd?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
             description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
+
         },
         {
             name: "Lorem Course",
@@ -40,6 +48,7 @@ export default function HomeScreen() {
             imgUrl: "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
             description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
             courseEstimatedTime: '1hr 30min'
+
         },
     ])
     const renderItem = ({ item, index }) => {
@@ -58,9 +67,7 @@ export default function HomeScreen() {
                     <Text style={styles.newTag}>New</Text>
                     <Text style={styles.titleText}>{item.name}</Text>
                 </View>
-                <View style={styles.descriptionContainer}>
-                    <Text style={styles.descriptionText}>{item.description}</Text>
-                </View>
+
                 <View style={styles.bottomCardContainer}>
                     <Pressable style={styles.teacherContainer} android_ripple={{ color: '#ddd' }}>
                         <View style={styles.teacherImgContainer}>
@@ -70,7 +77,7 @@ export default function HomeScreen() {
                             <Text style={styles.teacherName}>{item.teacher}</Text>
                         </View>
                     </Pressable>
-                    <Pressable android_ripple={{color:"#ddd"}} style={styles.addToLibrary}>
+                    <Pressable android_ripple={{ color: "#ddd" }} style={styles.addToLibrary}>
                         <MIcon name="library-add" size={21} />
                     </Pressable>
                 </View>
@@ -81,8 +88,12 @@ export default function HomeScreen() {
     return (
         <View style={styles.container}>
             <FlatList
+                style={{ height: 300 }}
+                contentContainerStyle={{ height: 250 }}
+                horizontal
                 data={productsArr}
                 renderItem={renderItem}
+                // renderSectionHeader={({ section }) => <Text style={styles.sectionHeader}>{section.title}</Text>}
                 keyExtractor={(item, index) => `${index}`}
             />
 
@@ -96,9 +107,11 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     cardContainer: {
-        paddingHorizontal: 20,
-        paddingVertical: 20,
+        paddingHorizontal: 15,
+        overflow: "hidden",
+        paddingVertical: 15,
         display: 'flex',
+        width: wp(45),
         flexDirection: 'column',
         borderBottomColor: light_colors.lightGrey,
         borderBottomWidth: 1
@@ -159,14 +172,14 @@ const styles = StyleSheet.create({
         fontFamily: 'OpenSans-Regular',
 
     },
-    bottomCardContainer:{
-        display:'flex',
-        flexDirection:'row',
-        justifyContent:'space-between',
-        alignItems:'center'
+    bottomCardContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
     },
-    addToLibrary:{
-        padding:10,
+    addToLibrary: {
+        padding: 10,
     },
 
     teacherContainer: {
