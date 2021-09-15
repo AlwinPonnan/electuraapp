@@ -1,32 +1,105 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { View, StyleSheet, Appearance, Pressable, Image, ScrollView, TextInput } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
+
+
 
 import { Headline, Button, Text, Subheading, Checkbox } from 'react-native-paper'
 import { dark_colors, light_colors } from '../globals/colors'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/core';
+import { registerUser } from '../Services/User';
 
-export default function LoginScreen() {
+export default function RegisterScreen(props) {
+
+
+
+
     const navigation = useNavigation()
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [name, setName] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [phone, setphone] = useState("");
     const [showPassword, setShowPassword] = useState(false)
+
+    const handleRegister = async () => {
+        try {
+            if (email == "") {
+                alert("Please Enter Email")
+            }
+            else if (name == "") {
+                alert("Please Enter Name")
+            }
+            else if (phone == "") {
+                alert("Please Enter Mobile Number")
+            }
+            else if (confirmPassword.toLowerCase() != password.toLowerCase() && confirmPassword != "" && password != "") {
+                alert("Password and confirm password does not match")
+            }
+            else if (password == "") {
+                alert("Please Enter Password")
+            }
+            else {
+                let obj = {
+                    email,
+                    name,
+                    email,
+                    password,
+                    phone,
+                }
+                const res = await registerUser(obj)
+                console.log(res)
+                if (res?.data?.message) {
+                    alert(res.data.message)
+                    props.navigation.navigate("Login")
+                }
+            }
+        }
+        catch (err) {
+            if (err?.response?.data?.message) {
+                console.log(err?.response?.data?.message)
+                alert(err?.response?.data?.message)
+            }
+            else {
+                alert(err)
+                console.log(err)
+            }
+        }
+    }
+
+
+
+
     return (
         <View style={styles.container}>
-            <ScrollView>
+            <ScrollView
+                contentContainerStyle={{ padding: 15 }}
+            >
                 <View style={styles.imgContainer}>
-                    <Image source={require('../assets/Logo.png')} style={styles.img} resizeMode="contain" />
+                    <Image source={require('../../assets/Logo.png')} style={styles.img} resizeMode="contain" />
+                    <Text style={styles.headerText} >Join us now !</Text>
                 </View>
-                <Text style={styles.headerText} >Log In</Text>
+                <Text style={styles.label}>
+                    Name
+                </Text>
+                <TextInput onChangeText={setName} placeholder="Name" style={styles.textInput} />
                 <Text style={styles.label}>
                     Email
                 </Text>
-                <TextInput placeholder="Email" style={styles.txtInput} />
+                <TextInput onChangeText={setEmail} keyboardType={"email-address"} placeholder="Email" style={styles.textInput} />
+                <Text style={styles.label}>
+                    Phone Number
+                </Text>
+                <TextInput onChangeText={setphone} keyboardType={"number-pad"} maxLength={10} placeholder="Phone" style={styles.textInput} />
                 <Text style={styles.label}>
                     Password
                 </Text>
-                <TextInput placeholder="Password" style={styles.txtInput} secureTextEntry={!showPassword} />
+                <TextInput onChangeText={setPassword} placeholder="Password" style={styles.textInput} secureTextEntry={!showPassword} />
+                <Text style={styles.label}>
+                    Confirm Password
+                </Text>
+                <TextInput placeholder="Confirm Password" onChangeText={setConfirmPassword} style={styles.textInput} secureTextEntry={!showPassword} />
                 <Pressable style={styles.showPassword} onPress={() => { setShowPassword(!showPassword); }} android_ripple={{ color: '#ddd' }} >
                     <Checkbox
                         status={showPassword ? 'checked' : 'unchecked'}
@@ -39,7 +112,7 @@ export default function LoginScreen() {
                     />
                     <Text style={styles.showPasswordText} >Show Password</Text>
                 </Pressable>
-                <Pressable style={styles.button} >
+                <Pressable style={styles.button} onPress={() => handleRegister()}>
                     <LinearGradient colors={[light_colors.primary, light_colors.primary2,]} start={{ x: 0.0, y: 0.25 }} end={{ x: 0.5, y: 1.0 }} useAngle={true} angle={45} style={{ padding: 12 }} >
                         <Text style={styles.buttonText}>
                             Submit
@@ -48,7 +121,7 @@ export default function LoginScreen() {
                 </Pressable>
 
                 <View style={styles.registerContainer}>
-                    <Text style={styles.registerText} >Don't have an Account? </Text><Pressable style={styles.registerButton} android_ripple={{ color: '#ddd' }} onPress={() => navigation.navigate('Register')}  ><Text style={styles.registerButtonText}>Register.</Text></Pressable>
+                    <Text style={styles.registerText} >Already have an Account? </Text><Pressable style={styles.registerButton} android_ripple={{ color: '#ddd' }} onPress={() => navigation.navigate('Login')}  ><Text style={styles.registerButtonText}>Login.</Text></Pressable>
                 </View>
 
                 <View style={styles.skipForNowContainer}>
@@ -63,7 +136,7 @@ const styles = StyleSheet.create({
     container: {
         minHeight: '100%',
         backgroundColor: Appearance.getColorScheme() == 'dark' ? dark_colors.backgroundColor : light_colors.backgroundColor,
-        padding: 15,
+        // padding: 15,
         display: 'flex',
         // justifyContent: 'center'
     },
@@ -75,22 +148,7 @@ const styles = StyleSheet.create({
         color: Appearance.getColorScheme() == 'dark' ? dark_colors.textColor : light_colors.textColor,
         fontFamily: 'OpenSans-Bold',
     },
-
-    label: {
-        fontFamily: 'OpenSans-SemiBold',
-        color: "black",
-        fontSize: 14,
-        marginBottom: 8,
-        color: "grey",
-        paddingLeft: 5,
-        marginTop: 30,
-        // paddingTop: 15,
-        textTransform: "capitalize",
-    },
-
-
-    //////txtinput
-    txtInput: {
+    textInput: {
         borderColor: "rgba(0,0,0,0.1)",
         borderWidth: 2,
         borderRadius: 7,
@@ -98,9 +156,16 @@ const styles = StyleSheet.create({
         backgroundColor: "#F1F3FD",
         marginVertical: 8
     },
-
-    buttonStyles: {
-
+    label: {
+        fontFamily: 'OpenSans-SemiBold',
+        color: "black",
+        fontSize: 14,
+        marginBottom: 8,
+        color: "grey",
+        paddingLeft: 5,
+        marginTop: 15,
+        // paddingTop: 15,
+        textTransform: "capitalize",
     },
     button: {
         borderRadius: 5,
@@ -115,8 +180,8 @@ const styles = StyleSheet.create({
         fontFamily: 'OpenSans-Regular',
     },
     img: {
-        width: '100%',
-        height: '100%'
+        width: '80%',
+        height: '80%'
     },
     imgContainer: {
         width: '100%',

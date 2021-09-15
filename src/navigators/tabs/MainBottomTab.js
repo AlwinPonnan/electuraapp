@@ -7,6 +7,9 @@ import CustomNavigationBar from '../../components/Navbar';
 import MIcon from 'react-native-vector-icons/MaterialIcons'
 import { light_colors } from '../../globals/colors';
 import ProfileStack from '../stacks/ProfileStack';
+import Settings from '../../views/Settings';
+import Icon from 'react-native-vector-icons/Ionicons';
+import SettingStack from '../stacks/SettingStack';
 
 
 const Tab = createBottomTabNavigator();
@@ -37,7 +40,7 @@ export default function MainBottomTab() {
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ color, size }) => (
-            <MIcon name="home" color={color} size={size} />
+            <Icon name="home-outline" color={color} size={size} />
           ),
         }}
       />
@@ -47,7 +50,7 @@ export default function MainBottomTab() {
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ color, size }) => (
-            <MIcon name="search" color={color} size={size} />
+            <Icon name="search-outline" color={color} size={size} />
           ),
         }}
       />
@@ -60,7 +63,20 @@ export default function MainBottomTab() {
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ color, size }) => (
-            <MIcon name="account-circle" color={color} size={size} />
+            <Icon name="person-outline" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="SettingStack"
+        component={SettingStack}
+        activeColor="#fff"
+        inactiveColor="#000"
+
+        options={{
+          tabBarShowLabel: false,
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="cog-outline" color={color} size={size} />
           ),
         }}
       />

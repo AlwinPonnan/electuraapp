@@ -4,10 +4,10 @@ import {
   useColorScheme,
 } from 'react-native';
 
-import RootStack from './navigators/stacks/RootStack'
+import RootStack from './src/navigators/stacks/RootStack'
 
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
-import { light_colors, dark_colors } from './globals/colors';
+import { light_colors, dark_colors } from './src/globals/colors';
 
 
 

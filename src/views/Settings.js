@@ -1,69 +1,105 @@
-import React from 'react'
+import { useIsFocused } from '@react-navigation/native';
+import React, { useState, useEffect, useContext } from 'react'
 import { View, Text, StyleSheet, Image, TouchableOpacity, Pressable, Appearance } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from "react-native-vector-icons/Ionicons"
+
+
+
+
+///////context
+import { isAuthorisedContext } from '../navigators/stacks/RootStack';
+
+
+
 import { dark_colors, light_colors } from '../globals/colors';
-export default function AccountScreen(props) {
+import { removeToken } from '../Services/User';
+export default function Settings(props) {
+
+    const [isAuth, setIsAuth] = useContext(isAuthorisedContext);
+
+    const focused = useIsFocused();
+
+
+
+
+    const logout = async () => {
+        try {
+            await removeToken()
+            setIsAuth(false)
+        }
+        catch (err) {
+
+        }
+    }
+
+
+
+    useEffect(() => {
+        if (focused) {
+        }
+    }, [focused])
+
     return (
         <View style={styles.container}>
             <View style={styles.innerContainer}>
 
-                <View style={[styles.flexRow, { justifyContent: "space-between" }]}>
-                    <View style={styles.profileImageContainer}>
-                        <Image style={styles.profileImage} source={require("../assets/images/user.jpg")} />
-                    </View>
-
-                    <View style={styles.joinedContainer}>
-                        <View style={styles.flexColumn}>
-                            <Text style={styles.greyTxt}>Joined</Text>
-                            <View style={[styles.flexRow, { alignItems: "center" }]}>
-                                <Text style={styles.largetxt}>6</Text>
-                                <Text style={styles.smallTxt}>Months Ago</Text>
-                            </View>
-                        </View>
-                    </View>
-                </View>
-
-                <Text style={styles.userFirstName}>John</Text>
-                <Text style={styles.userSecondName}>Emanuel</Text>
+                <Text style={styles.userFirstName}>General Settings</Text>
 
 
                 <View style={[styles.itemContainer, { marginTop: hp(5) }]}>
                     <View style={[styles.itemIconContainer, { backgroundColor: "rgba(74, 152, 255,0.2)" }]}>
-                        <Icon name="mail-outline" size={20} color="rgba(74, 152, 255,1)" />
+                        <Icon name="ios-notifications-outline" size={20} color="rgba(74, 152, 255,1)" />
                     </View>
-                    <View style={styles.flexColumn}>
-                        <Text style={styles.ItemName}>Email</Text>
-                        <Text style={styles.ItemValue}>electura@electura.com</Text>
+                    <View style={styles.flexRowBetween}>
+                        <Text style={styles.ItemName}>Notification</Text>
+                        <Icon name="chevron-forward-outline" size={20} color="rgba(0, 0, 0,0.5)" />
                     </View>
-
                 </View>
-                <View style={styles.itemContainer}>
+
+                <Pressable onPress={() => props.navigation.navigate("Wallet")} style={styles.itemContainer}>
                     <View style={[styles.itemIconContainer, { backgroundColor: "rgba(255, 158, 74,0.2)" }]}>
-                        <Icon name="call-outline" size={20} color="rgba(255, 158, 74,1)" />
+                        <Icon name="wallet-outline" size={20} color="rgba(255, 158, 74,1)" />
                     </View>
-                    <View style={styles.flexColumn}>
-                        <Text style={styles.ItemName}>Mobile Number</Text>
-                        <Text style={styles.ItemValue}>9919291919</Text>
+                    <View style={styles.flexRowBetween}>
+                        <Text style={styles.ItemName}>Your Wallet</Text>
+                        <Icon name="chevron-forward-outline" size={20} color="rgba(0, 0, 0,0.5)" />
                     </View>
+                </Pressable>
 
-                </View>
                 <View style={styles.itemContainer}>
                     <View style={[styles.itemIconContainer, { backgroundColor: "rgba(38, 131, 181,0.2)" }]}>
                         <Icon name="call-outline" size={20} color="rgba(38, 131, 181,1)" />
                     </View>
-                    <View style={styles.flexColumn}>
+                    <View style={styles.flexRowBetween}>
                         <Text style={styles.ItemName}>Your Courses</Text>
-                        <Text style={styles.ItemValue}>20</Text>
+                        <Icon name="chevron-forward-outline" size={20} color="rgba(0, 0, 0,0.5)" />
                     </View>
+                </View>
 
+                <View style={styles.itemContainer}>
+                    <View style={[styles.itemIconContainer, { backgroundColor: "rgba(237, 64, 133,0.2)" }]}>
+                        <Icon name="md-list-outline" size={20} color="rgba(237, 64, 133,1)" />
+                    </View>
+                    <View style={styles.flexRowBetween}>
+                        <Text style={styles.ItemName}>Your Queries</Text>
+                        <Icon name="chevron-forward-outline" size={20} color="rgba(0, 0, 0,0.5)" />
+                    </View>
                 </View>
 
 
-                <TouchableOpacity style={styles.becomeATeacherBtn} onPress={() => props.navigation.navigate("AccountEdit")}>
-                    <Icon name="person-outline" size={25} color={light_colors.primary} />
-                    <Text style={styles.btnTxt}>become a teacher</Text>
-                </TouchableOpacity>
+
+                <Text style={styles.userFirstName}>Account Settings</Text>
+
+                <Pressable onPress={() => logout()} style={styles.itemContainer}>
+                    <View style={[styles.itemIconContainer, { backgroundColor: "rgba(180, 46, 217,0.2)" }]}>
+                        <Icon name="ios-trail-sign-outline" size={20} color="rgba(180, 46, 217,1)" />
+                    </View>
+                    <View style={styles.flexRowBetween}>
+                        <Text style={styles.ItemName}>Logout</Text>
+                        <Icon name="chevron-forward-outline" size={20} color="rgba(0, 0, 0,0.5)" />
+                    </View>
+                </Pressable>
 
             </View>
 
@@ -103,8 +139,11 @@ const styles = StyleSheet.create({
     itemContainer: {
         display: "flex",
         flexDirection: "row",
-        marginVertical: 20,
-        alignItems: "center"
+        // marginVertical: 20,
+        paddingVertical: 10,
+        alignItems: "center",
+        borderTopColor: "rgba(0,0,0,0.05)",
+        borderTopWidth: 1,
     },
     itemIconContainer: {
         height: 35,
@@ -143,9 +182,9 @@ const styles = StyleSheet.create({
         textTransform: "capitalize",
     },
     userFirstName: {
-        fontFamily: 'OpenSans-Bold',
+        fontFamily: 'OpenSans-SemiBold',
         color: "black",
-        fontSize: 35,
+        fontSize: 20,
         paddingLeft: 5,
         paddingTop: 15,
         textTransform: "capitalize",
@@ -160,8 +199,8 @@ const styles = StyleSheet.create({
     },
     ItemName: {
         fontFamily: 'OpenSans-SemiBold',
-        color: "black",
-        fontSize: 20,
+        color: "rgba(0,0,0,0.5)",
+        fontSize: 17,
         paddingLeft: 5,
         textTransform: "capitalize",
     },
@@ -211,6 +250,12 @@ const styles = StyleSheet.create({
     flexRow: {
         display: "flex",
         flexDirection: "row",
+    },
+    flexRowBetween: {
+        display: "flex",
+        flexDirection: "row",
+        width: "90%",
+        justifyContent: "space-between"
     },
     flexColumn: {
         display: "flex",

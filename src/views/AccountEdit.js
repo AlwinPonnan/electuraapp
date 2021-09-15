@@ -87,7 +87,7 @@ export default function AccountEdit() {
                 ListHeaderComponent={
                     <>
                         <View style={styles.profileImageContainer}>
-                            <Image style={styles.profileImage} source={require("../assets/images/user.jpg")} />
+                            <Image style={styles.profileImage} source={require("../../assets/images/user.jpg")} />
                             <TouchableOpacity style={styles.PickImageBtn}>
                                 <Icon name="camera-outline" size={30} color={"#798FF8"} />
                             </TouchableOpacity>

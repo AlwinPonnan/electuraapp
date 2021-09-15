@@ -58,9 +58,9 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    height:'100%',
+    height: '100%',
     // backgroundColor:'red',
-    paddingHorizontal:15
+    paddingHorizontal: 15
   },
   icon: {
   }
