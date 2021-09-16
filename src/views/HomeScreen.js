@@ -87,7 +87,7 @@ export default function HomeScreen() {
 
     return (
         <View style={styles.container}>
-            <FlatList
+            {/* <FlatList
                 style={{ height: 300 }}
                 contentContainerStyle={{ height: 250 }}
                 horizontal
@@ -95,7 +95,7 @@ export default function HomeScreen() {
                 renderItem={renderItem}
                 // renderSectionHeader={({ section }) => <Text style={styles.sectionHeader}>{section.title}</Text>}
                 keyExtractor={(item, index) => `${index}`}
-            />
+            /> */}
 
         </View>
     )

@@ -8,6 +8,7 @@ import HomeScreen from '../../views/HomeScreen';
 import RegisterScreen from '../../views/RegisterScreen';
 import MainBottomTab from '../tabs/MainBottomTab';
 import OtpScreen from '../../views/OtpScreen';
+import MainDrawer from '../drawers/MainDrawer';
 
 const Stack = createNativeStackNavigator();
 
@@ -23,12 +24,12 @@ export default function RootStack() {
                     {
                         isAuth
                             ?
-                            <Stack.Screen name="MainBottomTab" component={MainBottomTab} options={{ headerShown: false }} />
+                            <Stack.Screen name="MainDrawer" component={MainDrawer} options={{ headerShown: false }} />
                             :
                             <>
                                 <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false, cardStyles: { backgroundColor: '#ffffff' } }} />
                                 <Stack.Screen name="OtpScreen" component={OtpScreen} options={{ headerShown: false }} />
-                                <Stack.Screen name="MainBottomTab" component={MainBottomTab} options={{ headerShown: false }} />
+                                <Stack.Screen name="MainDrawer" component={MainBottomTab} options={{ headerShown: false }} />
                                 <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
                             </>
                     }
