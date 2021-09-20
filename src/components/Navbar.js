@@ -3,7 +3,7 @@ import { Image, Pressable, StyleSheet, View } from 'react-native';
 
 import { Appbar } from 'react-native-paper';
 import { light_colors } from '../globals/colors';
-import MIcon from 'react-native-vector-icons/MaterialIcons'
+import Icon from 'react-native-vector-icons/Ionicons'
 import ImageUrls from '../globals/images';
 
 export default function NavBar({ navigation, previous }) {
@@ -14,10 +14,17 @@ export default function NavBar({ navigation, previous }) {
         <Image source={ImageUrls.Logo} style={styles.logo} resizeMethod="resize" resizeMode="contain" />
       </View>
 
-      <View style={styles.iconContainer} >
+      <View style={styles.iconContainer}>
+
 
         <Pressable android_ripple={{ color: '#ddd' }} style={styles.iconButton}>
-          <MIcon name="notifications" size={22} style={styles.icon} />
+          <Icon name="ios-grid-outline" size={20} style={styles.icon} />
+        </Pressable>
+        <Pressable android_ripple={{ color: '#ddd' }} style={styles.iconButton}>
+          <Icon name="notifications-outline" size={20} style={styles.icon} />
+        </Pressable>
+        <Pressable android_ripple={{ color: '#ddd' }} style={styles.iconButton}>
+          <Icon name="person-outline" size={22} style={styles.icon} />
         </Pressable>
       </View>
 
@@ -45,7 +52,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     height: 50,
-    width: 100,
+    width: 80,
   },
 
   iconsContainer: {
@@ -58,11 +65,13 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    height: '100%',
+    // height: '100%',
     // backgroundColor:'red',
-    paddingHorizontal: 15
+    paddingHorizontal: 10
   },
-  icon: {
+  iconContainer: {
+    display: "flex",
+    flexDirection: "row",
   }
 
 })

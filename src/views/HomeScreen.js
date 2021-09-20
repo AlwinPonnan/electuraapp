@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList } from 'react-native'
+import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { light_colors } from '../globals/colors';
 import MIcon from 'react-native-vector-icons/MaterialIcons'
@@ -7,7 +7,6 @@ import MIcon from 'react-native-vector-icons/MaterialIcons'
 export default function HomeScreen() {
     const [productsArr, setProductsArr] = useState([
         {
-
             name: "Lorem Course",
             categoryName: 'Science',
             teacher: "Mr. Teacher",
@@ -15,11 +14,7 @@ export default function HomeScreen() {
             imgUrl: "https://images.unsplash.com/photo-1475778057357-d35f37fa89dd?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
             description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
             courseEstimatedTime: '1hr 30min'
-
-
         },
-
-
         {
             name: "Lorem Course2",
             categoryName: 'Physics',
@@ -29,8 +24,6 @@ export default function HomeScreen() {
             description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
             courseEstimatedTime: '1hr 30min'
         },
-
-
         {
             name: "Lorem Course3",
             categoryName: 'A.I.',
@@ -38,7 +31,6 @@ export default function HomeScreen() {
             teacherImg: "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80",
             imgUrl: "https://images.unsplash.com/photo-1475778057357-d35f37fa89dd?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
             description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
-
         },
         {
             name: "Lorem Course",
@@ -48,7 +40,6 @@ export default function HomeScreen() {
             imgUrl: "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
             description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
             courseEstimatedTime: '1hr 30min'
-
         },
     ])
     const renderItem = ({ item, index }) => {
@@ -87,16 +78,37 @@ export default function HomeScreen() {
 
     return (
         <View style={styles.container}>
-            <FlatList
-                style={{ height: 300 }}
-                contentContainerStyle={{ height: 250 }}
-                horizontal
-                data={productsArr}
-                renderItem={renderItem}
-                // renderSectionHeader={({ section }) => <Text style={styles.sectionHeader}>{section.title}</Text>}
-                keyExtractor={(item, index) => `${index}`}
-            />
+            <ScrollView>
 
+                <Text style={{ fontSize: 25, fontWeight: "600", paddingLeft: 13 }}>Categories</Text>
+                <FlatList
+                    style={{ height: 300 }}
+                    horizontal
+                    data={productsArr}
+                    renderItem={renderItem}
+                    keyExtractor={(item, index) => `${index}`}
+                />
+
+
+                <Text style={{ fontSize: 25, fontWeight: "600", paddingLeft: 13 }}>Courses</Text>
+                <FlatList
+                    style={{ height: 300 }}
+                    horizontal
+                    data={productsArr}
+                    renderItem={renderItem}
+                    keyExtractor={(item, index) => `${index}`}
+                />
+
+                <Text style={{ fontSize: 25, fontWeight: "600", paddingLeft: 13 }}>Tutors</Text>
+                <FlatList
+                    style={{ height: 300 }}
+                    horizontal
+                    data={productsArr}
+                    renderItem={renderItem}
+                    keyExtractor={(item, index) => `${index}`}
+                />
+
+            </ScrollView>
         </View>
     )
 }
@@ -111,7 +123,7 @@ const styles = StyleSheet.create({
         overflow: "hidden",
         paddingVertical: 15,
         display: 'flex',
-        width: wp(45),
+        width: wp(55),
         flexDirection: 'column',
         borderBottomColor: light_colors.lightGrey,
         borderBottomWidth: 1

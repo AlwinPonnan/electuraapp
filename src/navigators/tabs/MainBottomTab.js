@@ -63,7 +63,7 @@ export default function MainBottomTab() {
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ color, size }) => (
-            <Icon name="person-outline" color={color} size={size} />
+            <Icon name="ios-heart-outline" color={color} size={size} />
           ),
         }}
       />

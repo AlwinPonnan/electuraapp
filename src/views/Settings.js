@@ -47,7 +47,16 @@ export default function Settings(props) {
                 <Text style={styles.userFirstName}>General Settings</Text>
 
 
-                <View style={[styles.itemContainer, { marginTop: hp(5) }]}>
+                <Pressable style={[styles.itemContainer, { marginTop: hp(3) }]} onPress={() => props.navigation.navigate("AccountScreen")}>
+                    <View style={[styles.itemIconContainer, { backgroundColor: "rgba(82, 204, 115,0.2)" }]}>
+                        <Icon name="ios-person-outline" size={20} color="rgba(82, 204, 115,1)" />
+                    </View>
+                    <View style={styles.flexRowBetween}>
+                        <Text style={styles.ItemName}>Profile</Text>
+                        <Icon name="chevron-forward-outline" size={20} color="rgba(0, 0, 0,0.5)" />
+                    </View>
+                </Pressable>
+                <View style={[styles.itemContainer]}>
                     <View style={[styles.itemIconContainer, { backgroundColor: "rgba(74, 152, 255,0.2)" }]}>
                         <Icon name="ios-notifications-outline" size={20} color="rgba(74, 152, 255,1)" />
                     </View>
