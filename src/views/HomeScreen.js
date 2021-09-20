@@ -78,7 +78,6 @@ export default function HomeScreen() {
 
     return (
         <View style={styles.container}>
-<<<<<<< HEAD
             <ScrollView>
 
                 <Text style={{ fontSize: 25, fontWeight: "600", paddingLeft: 13 }}>Categories</Text>
@@ -110,18 +109,6 @@ export default function HomeScreen() {
                 />
 
             </ScrollView>
-=======
-            {/* <FlatList
-                style={{ height: 300 }}
-                contentContainerStyle={{ height: 250 }}
-                horizontal
-                data={productsArr}
-                renderItem={renderItem}
-                // renderSectionHeader={({ section }) => <Text style={styles.sectionHeader}>{section.title}</Text>}
-                keyExtractor={(item, index) => `${index}`}
-            /> */}
-
->>>>>>> bf3506408d6f83d4a20d520fcc9b8b75dba1e689
         </View>
     )
 }

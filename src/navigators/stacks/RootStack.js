@@ -24,13 +24,9 @@ export default function RootStack() {
                     {
                         isAuth
                             ?
-<<<<<<< HEAD
                             <>
                                 <Stack.Screen name="MainBottomTab" component={MainBottomTab} options={{ headerShown: false }} />
                             </>
-=======
-                            <Stack.Screen name="MainDrawer" component={MainDrawer} options={{ headerShown: false }} />
->>>>>>> bf3506408d6f83d4a20d520fcc9b8b75dba1e689
                             :
                             <>
                                 <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false, cardStyles: { backgroundColor: '#ffffff' } }} />

@@ -3,11 +3,7 @@ import { Image, Pressable, StyleSheet, View } from 'react-native';
 
 import { Appbar } from 'react-native-paper';
 import { light_colors } from '../globals/colors';
-<<<<<<< HEAD
 import Icon from 'react-native-vector-icons/Ionicons'
-=======
-import MIcon from 'react-native-vector-icons/Ionicons'
->>>>>>> bf3506408d6f83d4a20d520fcc9b8b75dba1e689
 import ImageUrls from '../globals/images';
 
 export default function NavBar({ navigation }) {
@@ -34,15 +30,7 @@ export default function NavBar({ navigation }) {
           <Icon name="notifications-outline" size={20} style={styles.icon} />
         </Pressable>
         <Pressable android_ripple={{ color: '#ddd' }} style={styles.iconButton}>
-<<<<<<< HEAD
           <Icon name="person-outline" size={22} style={styles.icon} />
-=======
-          <MIcon name="notifications-outline" size={18} style={styles.icon} />
-        </Pressable>
-        <Pressable onPress={() => toggle()}
-          android_ripple={{ color: '#ddd' }} style={styles.iconButton}>
-          <MIcon name="menu-outline" size={22} style={styles.icon} />
->>>>>>> bf3506408d6f83d4a20d520fcc9b8b75dba1e689
         </Pressable>
       </View>
 
