@@ -27,7 +27,7 @@ export default function OtpScreen(props) {
 
                 </View>
 
-                <Pressable style={styles.btn} onPress={() => props.navigation.navigate('MainBottomTab')}>
+                <Pressable style={styles.btn} onPress={() => props.navigation.navigate('MainDrawer')}>
                     <Text style={styles.btnTxt}>Submit OTP</Text>
                 </Pressable>
 
