@@ -1,103 +1,125 @@
-import React, { useState, useEffect, useContext } from 'react'
-import { View, StyleSheet, Appearance, Pressable, Image, ScrollView, TextInput } from 'react-native'
-import LinearGradient from 'react-native-linear-gradient';
-import { Headline, Button, Text, Subheading, Checkbox } from 'react-native-paper'
-import { dark_colors, light_colors } from '../globals/colors'
+import React from 'react'
+import { View, Text, StyleSheet, Image,TextInput,Pressable } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { useNavigation } from '@react-navigation/core';
-export default function OtpScreen(props) {
-    const [phone, setphone] = useState("");
+import { colorObj } from '../globals/colors';
+import { imageObj } from '../globals/images';
 
+import Icon from 'react-native-vector-icons/Ionicons'
+export default function VerifyOtp(props) {
     return (
         <View style={styles.container}>
-            <ScrollView
-                contentContainerStyle={{ padding: 15 }}
-            >
-                <View style={styles.imgContainer}>
-                    <Image source={require('../../assets/Logo.png')} style={styles.img} resizeMode="contain" />
-                    <Image source={require("../../assets/20944201.jpg")} style={{ width: wp(80), height: hp(30), }} />
+            <View style={styles.topContainer}>
+                <Image source={imageObj.verifyOtpImage} />
+            </View>
+            <View style={styles.bottomContainer}>
+            <View style={styles.textContainer}>
+                    <Text style={styles.labelHeading}>Verify your number</Text>
+                    <Text style={styles.labelSubHeading}>OTP will be sent on this number</Text>
                 </View>
+                <View style={styles.inputContainer}>
+                    <TextInput style={styles.inputStyles} maxLength={1} keyboardType="numeric"  />
+                    <TextInput style={styles.inputStyles} maxLength={1} keyboardType="numeric"  />
+                    <TextInput style={styles.inputStyles} maxLength={1} keyboardType="numeric"   />
+                    <TextInput style={styles.inputStyles} maxLength={1} keyboardType="numeric"   />
+                    <TextInput style={styles.inputStyles} maxLength={1} keyboardType="numeric"   />
+                    <TextInput style={styles.inputStyles} maxLength={1} keyboardType="numeric"   />
 
-                <Text style={styles.label}>
-                    Your OTP
-                </Text>
-                <View style={styles.flexRow}>
 
-                    <TextInput onChangeText={setphone} keyboardType={"number-pad"} maxLength={6} placeholder="Enter OTP" style={styles.textInput} />
 
                 </View>
-
-                <Pressable style={styles.btn} onPress={() => props.navigation.navigate('MainDrawer')}>
-                    <Text style={styles.btnTxt}>Submit OTP</Text>
-                </Pressable>
-
-            </ScrollView>
-        </View >
+                <View >
+                    <Pressable style={styles.btn} onPress={()=>props.navigation.navigate('MainDrawer')}>
+                        <Text style={styles.btnText}>Verify</Text>
+                    </Pressable>
+                </View>
+                <View style={styles.btnContainer}>
+                    <Text style={styles.termsText}>Already have an account ?<Text style={{color:colorObj.primarColor}}> LogIn</Text></Text>
+                    
+                </View>
+            </View>
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        minHeight: '100%',
-        backgroundColor: Appearance.getColorScheme() == 'dark' ? dark_colors.backgroundColor : light_colors.backgroundColor,
         display: 'flex',
+        flexDirection: 'column',
+        backgroundColor:colorObj.whiteColor
     },
-    headerText: {
-        marginTop: 20,
-        marginBottom: 20,
-        fontSize: 24,
-        textAlign: 'center',
-        color: Appearance.getColorScheme() == 'dark' ? dark_colors.textColor : light_colors.textColor,
-        fontFamily: 'OpenSans-Bold',
+    topContainer: {
+        width: wp(100),
+        alignItems:'center',
+        // marginTop:hp(8),
+        height:hp(40),
+        justifyContent:'center'
     },
-    textInput: {
-        borderColor: "rgba(0,0,0,0.02)",
-        borderWidth: 2,
-        borderRadius: 7,
-        paddingLeft: 20,
-        backgroundColor: "#F1F3FD",
-        marginVertical: 8
+    bottomContainer: {
+        width: wp(100),
+        height:hp(60)
     },
-    label: {
-        fontFamily: 'OpenSans-SemiBold',
-        color: "black",
-        fontSize: 14,
-        marginBottom: 8,
-        color: "grey",
-        paddingLeft: 5,
-        marginTop: 15,
+    textContainer: {
+        padding: 20,
     },
-    btn: {
-        backgroundColor: "#363D4D",
-        borderRadius: 8,
-        width: wp(92),
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 30,
-        paddingVertical: 10,
+    labelHeading: {
+        fontFamily: 'Montserrat-SemiBold',
+        marginVertical: 5,
+        fontSize: 32,
+        color: '#333333',
+        textAlign:'center',
     },
-
-    btnTxt: {
-        fontFamily: 'OpenSans-SemiBold',
-        fontSize: 14,
-        color: "grey",
-        paddingLeft: 5,
-        color: "white"
+    labelSubHeading: {
+        fontFamily: 'Montserrat-Regular',
+        fontSize: 15,
+        color: '#828282',
+        marginTop: 2,
+        textAlign:'center',
     },
-    img: {
-        width: '80%',
-        height: 120
+    inputContainer:{
+        width:wp(90),
+        alignSelf:'center',
+        display:'flex',
+        flexDirection:'row',
+        alignItems:'center',
+        justifyContent:'center',
+        borderColor:'transparent',
+        marginVertical:10
     },
-    imgContainer: {
-        width: '100%',
-        // maxHeight: 150,
-        marginBottom: 20,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: 10,
-        marginTop: 33
+    inputStyles:{
+        borderBottomWidth:1,
+        borderBottomColor:'black',
+        marginVertical:10,
+        marginHorizontal:10
     },
-
+    btn:{
+        backgroundColor:colorObj.primarColor,
+        borderRadius:61,
+        width:wp(80),
+        paddingVertical:15,
+        alignSelf:'center',
+        
+    },
+    btnText:{
+        fontFamily:'Montserrat-SemiBold',
+        color:colorObj.whiteColor,
+        alignItems:'center',
+        textAlign:'center',
+        fontSize:20
+    },
+    termsText:{
+        fontSize:17,
+        color:'#828282',
+        fontFamily:'Montserrat-Regular',
+        marginVertical:10,
+        textAlign:'center'
+    },
+    btnContainer:{
+        width:wp(90),
+        paddingHorizontal:20,
+        position:'absolute',
+        bottom:50,
+        // backgroundColor:'red',
+        left:20
+    }
 })
+

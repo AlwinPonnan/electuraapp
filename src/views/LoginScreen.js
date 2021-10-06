@@ -1,252 +1,114 @@
-import React, { useState, useEffect, useContext } from 'react'
-import { View, StyleSheet, Appearance, Pressable, Image, ScrollView, TextInput, ImageBackground } from 'react-native'
-import LinearGradient from 'react-native-linear-gradient';
-
-
-
-///////context
-import { isAuthorisedContext } from '../navigators/stacks/RootStack';
-import Icon from 'react-native-vector-icons/Ionicons'
-
-import { Headline, Button, Text, Subheading, Checkbox } from 'react-native-paper'
-import { dark_colors, light_colors } from '../globals/colors'
+import React from 'react'
+import { View, Text, StyleSheet, Image,TextInput,Pressable } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { useNavigation } from '@react-navigation/core';
-import { getToken, loginUser, setToken } from '../Services/User';
-import { useIsFocused } from '@react-navigation/native';
+import { colorObj } from '../globals/colors';
+import { imageObj } from '../globals/images';
 
-export default function LoginScreen(props) {
-    const navigation = useNavigation()
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const [isAuth, setIsAuth] = useContext(isAuthorisedContext);
-
-    const focused = useIsFocused();
-
-
-
-
-    const handleLogin = async () => {
-        try {
-            if (email == "") {
-                alert("Please Enter Email")
-            }
-            if (password == "") {
-                alert("Please Enter Password")
-            }
-            else {
-                let obj = {
-                    email,
-                    password,
-                }
-                const res = await loginUser(obj)
-                console.log(res)
-                if (res?.data?.message) {
-                    alert(res.data.message);
-                    await setToken(res.data.token);
-                    setIsAuth(true)
-                }
-            }
-        }
-        catch (err) {
-            if (err?.response?.data?.message) {
-                console.log(err?.response?.data?.message)
-                alert(err?.response?.data?.message)
-            }
-            else {
-                alert(err)
-                console.log(err)
-            }
-        }
-    }
-
-
-
-    const checkLogin = async () => {
-        let tokken = await getToken()
-        if (tokken) {
-            setIsAuth(true)
-        }
-        console.log(tokken)
-    }
-
-
-    useEffect(() => {
-        if (focused) {
-            checkLogin()
-        }
-    }, [focused])
-
-
-
+import Icon from 'react-native-vector-icons/Ionicons'
+export default function login(props) {
     return (
         <View style={styles.container}>
-            <ScrollView contentContainerStyle={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <View style={styles.imgContainer}>
-                    <Image source={require('../../assets/Logo.png')} style={styles.img} resizeMode="contain" />
+            <View style={styles.topContainer}>
+                <Image source={imageObj.loginEllipse} />
+            </View>
+            <View style={styles.bottomContainer}>
+                <View style={styles.textContainer}>
+                    <Text style={styles.labelHeading}>Enter Phone Number</Text>
+                    <Text style={styles.labelSubHeading}>OTP will be sent on this number</Text>
                 </View>
-                {/* <Image source={require("../../assets/2137.jpg")} style={{ width: wp(80), height: hp(30), }} /> */}
-                <Image source={require("../../assets/20943501.jpg")} style={{ width: wp(80), height: hp(30), }} />
-                <Text style={styles.headerText} >Let's log you in !</Text>
-                <Text style={styles.label}>
-                    Your Mobile Number
-                </Text>
-                <TextInput placeholder="Mobile Number" onChangeText={setEmail} keyboardType="number-pad" maxLength={10} style={styles.txtInput} />
-
-                <Pressable style={styles.btn} onPress={() => props.navigation.navigate("OtpScreen")}>
-                    <Text style={styles.btnTxt}>Login</Text>
-                </Pressable>
-                {/* <Pressable style={styles.button} onPress={() => handleLogin()}>
-                    <LinearGradient colors={[light_colors.primary, light_colors.primary2,]} start={{ x: 0.0, y: 0.25 }} end={{ x: 0.5, y: 1.0 }} useAngle={true} angle={45} style={{ padding: 12 }} >
-                        <Text style={styles.buttonText}>
-                            Submit
-                        </Text>
-                    </LinearGradient>
-                </Pressable> */}
-
-                <View style={styles.registerContainer}>
-                    <Text style={styles.registerText} >Don't have an Account? </Text><Pressable style={styles.registerButton} android_ripple={{ color: '#ddd' }} onPress={() => navigation.navigate('Register')}  ><Text style={styles.registerButtonText}>Register.</Text></Pressable>
+                <View style={styles.inputContainer}>
+                    <Icon name="call-outline" size={14} color="black" />
+                    <TextInput style={styles.inputStyles} keyboardType="numeric" placeholder="+91 Enter Number"  />
                 </View>
-
-                <View style={styles.skipForNowContainer}>
-                    <Pressable style={styles.skipForNowButton} android_ripple={{ color: '#ddd' }} onPress={() => navigation.navigate('MainBottomTab')} ><Text style={styles.skipForNowText}>Skip For Now</Text></Pressable>
+                <View style={styles.btnContainer}>
+                    <Text style={styles.termsText}>By Continuing you accept the <Text style={{color:colorObj.primarColor}}>terms and conditions</Text></Text>
+                    <Pressable style={styles.btn} onPress={()=>props.navigation.navigate('OtpScreen')}>
+                        <Text style={styles.btnText}>Send Otp</Text>
+                    </Pressable>
                 </View>
-            </ScrollView>
-        </View >
+            </View>
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        minHeight: '100%',
-        backgroundColor: Appearance.getColorScheme() == 'dark' ? dark_colors.backgroundColor : light_colors.backgroundColor,
-        // padding: 15,
         display: 'flex',
-        // justifyContent: 'center'
+        flexDirection: 'column',
     },
-    headerText: {
-        marginTop: 20,
-        marginBottom: 20,
-        fontSize: 24,
-        textAlign: 'center',
-        color: Appearance.getColorScheme() == 'dark' ? dark_colors.textColor : light_colors.textColor,
-        fontFamily: 'OpenSans-Bold',
+    topContainer: {
+        height: hp(25),
+        width: wp(100),
+        backgroundColor: colorObj.orangeColor
     },
-
-    label: {
-        fontFamily: 'OpenSans-SemiBold',
-        color: "black",
-        fontSize: 14,
-        width: wp(85),
-        marginBottom: 8,
-        color: "grey",
-        paddingLeft: 5,
-        marginTop: 30,
-        // paddingTop: 15,
-        textTransform: "capitalize",
+    bottomContainer: {
+        height: hp(75),
+        width: wp(100),
+        backgroundColor: colorObj.whiteColor
     },
-    btn: {
-        backgroundColor: "#363D4D",
-        borderRadius: 8,
-        width: wp(85),
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 30,
-        paddingVertical: 10,
+    textContainer: {
+        padding: 20,
     },
-
-    btnTxt: {
-        fontFamily: 'OpenSans-SemiBold',
-        fontSize: 14,
-        color: "grey",
-        paddingLeft: 5,
-        // paddingTop: 15,
-        textTransform: "capitalize",
-        color: "white"
-    },
-
-    //////txtinput
-    txtInput: {
-        borderColor: "rgba(0,0,0,0.02)",
-        width: wp(85),
-        borderWidth: 2,
-        borderRadius: 10,
-        paddingLeft: 20,
-        backgroundColor: "#F1F3FD",
-        marginVertical: 8
-    },
-
-    buttonStyles: {
-
-    },
-    button: {
-        borderRadius: 5,
-        marginVertical: 10,
-        display: 'flex',
-        overflow: 'hidden'
-    },
-    buttonText: {
-        color: Appearance.getColorScheme() == 'dark' ? dark_colors.buttonText : light_colors.buttonText,
-        textAlign: 'center',
+    labelHeading: {
+        fontFamily: 'RedHatText-SemiBold',
+        lineHeight: 21,
+        marginVertical: 5,
         fontSize: 16,
-        fontFamily: 'OpenSans-Regular',
+        color: 'black'
     },
-    img: {
-        width: '80%',
-        height: '80%'
+    labelSubHeading: {
+        fontFamily: 'RedHatText-Regular',
+        fontSize: 12,
+        color: '#828282',
+        lineHeight: 15,
+        marginTop: 2
     },
-    imgContainer: {
-        width: '100%',
-        maxHeight: 150,
-        marginBottom: 20,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: 10,
-        marginTop: 33
-    },
-    showPassword: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 10
-    },
-    showPasswordText: {
-        color: Appearance.getColorScheme() == 'dark' ? dark_colors.textColor : light_colors.textColor,
-        marginLeft: 5,
-        fontFamily: 'OpenSans-Regular',
-    },
-    registerContainer: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        marginTop: 10
-    },
-    registerText: {
-        color: Appearance.getColorScheme() == 'dark' ? dark_colors.textColor : light_colors.textColor,
-        fontFamily: 'OpenSans-Regular',
-    },
-    registerButton: {
+    inputContainer:{
+        width:wp(90),
+        alignSelf:'center',
+        display:'flex',
+        flexDirection:'row',
+        alignItems:'center',
+        borderRadius:50,
 
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.22,
+        shadowRadius: 2.22,
+        paddingHorizontal:20,
+        elevation: 3,
+        borderColor:'transparent',
+        backgroundColor:colorObj.whiteColor
     },
-    registerButtonText: {
-        color: Appearance.getColorScheme() == 'dark' ? dark_colors.primary : light_colors.primary,
-        fontFamily: 'OpenSans-Regular',
+    btn:{
+        backgroundColor:colorObj.primarColor,
+        borderRadius:61,
+        width:wp(80),
+        paddingVertical:15
     },
-    skipForNowContainer: {
-        marginTop: 15,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
+    btnText:{
+        fontFamily:'Montserrat-SemiBold',
+        color:colorObj.whiteColor,
+        alignItems:'center',
+        textAlign:'center',
+        fontSize:20
     },
-    skipForNowButton: {
-
+    termsText:{
+        fontSize:12,
+        color:'#828282',
+        fontFamily:'Montserrat-Regular',
+        marginVertical:10,
+        textAlign:'center'
     },
-    skipForNowText: {
-        color: Appearance.getColorScheme() == 'dark' ? dark_colors.primaryDark : light_colors.primaryDark,
-        textAlign: 'center',
-        fontFamily: 'OpenSans-Regular',
+    btnContainer:{
+        width:wp(90),
+        paddingHorizontal:20,
+        position:'absolute',
+        bottom:50,
+        // backgroundColor:'red',
+        left:20
     }
 })
