@@ -60,7 +60,7 @@ export default function MainBottomTab() {
       />
       <Tab.Screen
         name="Account"
-        component={ProfileStack}
+        component={Courses}
         activeColor="#fff"
         inactiveColor="#000"
 
@@ -89,7 +89,7 @@ export default function MainBottomTab() {
       />
       <Tab.Screen
         name="ProfileStack"
-        component={SettingStack}
+        component={Learnings}
         activeColor="#fff"
         inactiveColor="#000"
 
