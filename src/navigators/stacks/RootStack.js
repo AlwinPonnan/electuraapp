@@ -31,7 +31,7 @@ export default function RootStack() {
                             <>
                                 <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false, cardStyles: { backgroundColor: '#ffffff' } }} />
                                 <Stack.Screen name="OtpScreen" component={OtpScreen} options={{ headerShown: false }} />
-                                <Stack.Screen name="MainDrawer" component={MainBottomTab} options={{ headerShown: false }} />
+                                <Stack.Screen name="MainDrawer" component={MainDrawer} options={{ headerShown: false }} />
                                 <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
                             </>
                     }
