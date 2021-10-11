@@ -31,3 +31,10 @@ export const dark_colors = {
     // primary2:'#47d7e1',
     // primaryDark :'#08517A',
 }
+export const colorObj={
+    primarColor:'#085A4E',
+    orangeColor:'#FFA949',
+    darkBlueColor:'#27303E',
+    greyColor:'#E7E7EF',
+    whiteColor:'#FFFFFF'
+}

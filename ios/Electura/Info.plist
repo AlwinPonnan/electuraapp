@@ -79,6 +79,36 @@
 		<string>OpenSans-Regular.ttf</string>
 		<string>OpenSans-SemiBold.ttf</string>
 		<string>OpenSans-SemiBoldItalic.ttf</string>
+		<string>Montserrat-Black.ttf</string>
+		<string>Montserrat-BlackItalic.ttf</string>
+		<string>Montserrat-Bold.ttf</string>
+		<string>Montserrat-BoldItalic.ttf</string>
+		<string>Montserrat-ExtraBold.ttf</string>
+		<string>Montserrat-ExtraBoldItalic.ttf</string>
+		<string>Montserrat-ExtraLight.ttf</string>
+		<string>Montserrat-ExtraLightItalic.ttf</string>
+		<string>Montserrat-Italic.ttf</string>
+		<string>Montserrat-Light.ttf</string>
+		<string>Montserrat-LightItalic.ttf</string>
+		<string>Montserrat-Medium.ttf</string>
+		<string>Montserrat-MediumItalic.ttf</string>
+		<string>Montserrat-Regular.ttf</string>
+		<string>Montserrat-SemiBold.ttf</string>
+		<string>Montserrat-SemiBoldItalic.ttf</string>
+		<string>Montserrat-Thin.ttf</string>
+		<string>Montserrat-ThinItalic.ttf</string>
+		<string>RedHatText-Bold.ttf</string>
+		<string>RedHatText-BoldItalic.ttf</string>
+		<string>RedHatText-Italic-VariableFont_wght.ttf</string>
+		<string>RedHatText-Italic.ttf</string>
+		<string>RedHatText-Light.ttf</string>
+		<string>RedHatText-LightItalic.ttf</string>
+		<string>RedHatText-Medium.ttf</string>
+		<string>RedHatText-MediumItalic.ttf</string>
+		<string>RedHatText-Regular.ttf</string>
+		<string>RedHatText-SemiBold.ttf</string>
+		<string>RedHatText-SemiBoldItalic.ttf</string>
+		<string>RedHatText-VariableFont_wght.ttf</string>
 	</array>
 </dict>
 </plist>

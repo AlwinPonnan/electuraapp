@@ -5,32 +5,34 @@ import { Appbar } from 'react-native-paper';
 import { light_colors } from '../globals/colors';
 import Icon from 'react-native-vector-icons/Ionicons'
 import ImageUrls from '../globals/images';
+import { DrawerActions } from '@react-navigation/native';
 
-export default function NavBar({ navigation }) {
-  console.log(navigation.toggleDrawer)
+export default function NavBar(props) {
 
 
   const toggle = () => {
-    navigation.toggleDrawer()
+    props.rootProps.navigation.dispatch(DrawerActions.toggleDrawer())
   }
 
   return (
     <View style={styles.headerContainer}>
-      <View style={styles.logoContainer}>
-        <Image source={ImageUrls.Logo} style={styles.logo} resizeMethod="resize" resizeMode="contain" />
-      </View>
+      <Pressable style={styles.logoContainer} onPress={() => toggle()}>
+        <Icon name="menu-outline" size={20} style={styles.icon} />
+
+        {/* <Image source={require('../../assets/images/Icon/Hamburger.png')} style={styles.logo} resizeMethod="resize" resizeMode="contain" /> */}
+      </Pressable>
 
       <View style={styles.iconContainer}>
 
 
         <Pressable android_ripple={{ color: '#ddd' }} style={styles.iconButton}>
-          <Icon name="ios-grid-outline" size={20} style={styles.icon} />
+          <Icon name="search-outline" size={20} style={styles.icon} />
+        </Pressable>
+        <Pressable onPress={() => props.rootProps.navigation.navigate("MainTopTab")} android_ripple={{ color: '#ddd' }} style={styles.iconButton}>
+          <Icon name="chatbubble-ellipses-outline" size={20} style={styles.icon} />
         </Pressable>
         <Pressable android_ripple={{ color: '#ddd' }} style={styles.iconButton}>
-          <Icon name="notifications-outline" size={20} style={styles.icon} />
-        </Pressable>
-        <Pressable android_ripple={{ color: '#ddd' }} style={styles.iconButton}>
-          <Icon name="person-outline" size={22} style={styles.icon} />
+          <Icon name="notifications-outline" size={22} style={styles.icon} />
         </Pressable>
       </View>
 
@@ -47,8 +49,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     height: 59,
     overflow: 'hidden',
-    borderBottomColor: light_colors.lightGrey,
-    borderBottomWidth: 1,
+    // borderBottomColor: light_colors.lightGrey,
+    // borderBottomWidth: 1,
   },
   logoContainer: {
     display: 'flex',
@@ -61,8 +63,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   logo: {
-    height: 50,
-    width: 80,
+    height: 20,
+    width: 20,
   },
 
   iconsContainer: {

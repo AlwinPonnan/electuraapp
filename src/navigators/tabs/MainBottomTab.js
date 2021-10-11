@@ -5,11 +5,15 @@ import AccountScreen from '../../views/AccountScreen';
 import SearchScreen from '../../views/SearchScreen';
 import CustomNavigationBar from '../../components/Navbar';
 import MIcon from 'react-native-vector-icons/MaterialIcons'
-import { light_colors } from '../../globals/colors';
+import { colorObj, light_colors } from '../../globals/colors';
 import ProfileStack from '../stacks/ProfileStack';
 import Settings from '../../views/Settings';
 import Icon from 'react-native-vector-icons/Ionicons';
 import SettingStack from '../stacks/SettingStack';
+import Courses from '../../views/Courses';
+import Learnings from '../../views/Learnings';
+import CourseStack from '../stacks/CourseStack';
+import HomeStack from '../stacks/HomeStack';
 
 
 const Tab = createBottomTabNavigator();
@@ -18,65 +22,84 @@ export default function MainBottomTab() {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: light_colors.primary,
-        // tabBarInactiveTintColor: light_colors.primary2,
+
+        tabBarActiveTintColor: colorObj.primarColor,
+        headerShown: false,
         tabBarHideOnKeyboard: true,
-        header: (props) => <CustomNavigationBar {...props} />,
         tabBarStyle: {
           elevation: 0,
           borderTopColor: light_colors.lightGrey,
           borderTopWidth: 1,
         },
         tabBarLabelStyle: {
-          fontFamily: 'OpenSans-Regular',
+          fontFamily: 'Montserrat-Regular',
         }
+
       }}
 
     >
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
+
+        component={HomeStack}
 
         options={{
-          tabBarShowLabel: false,
+          title: "Teachers",
           tabBarIcon: ({ color, size }) => (
-            <Icon name="home-outline" color={color} size={size} />
+            <Icon name="people-outline" color={color} size={size} />
           ),
         }}
       />
       <Tab.Screen
-        name="Search"
-        component={SearchScreen}
+        name="Courses"
+        component={CourseStack}
         options={{
-          tabBarShowLabel: false,
+          title: 'Courses',
           tabBarIcon: ({ color, size }) => (
-            <Icon name="search-outline" color={color} size={size} />
+            <Icon name="play-circle-outline" color={color} size={size} />
           ),
         }}
       />
       <Tab.Screen
         name="Account"
-        component={ProfileStack}
+        component={Courses}
         activeColor="#fff"
         inactiveColor="#000"
 
         options={{
-          tabBarShowLabel: false,
+          title: 'Enquiry',
+
           tabBarIcon: ({ color, size }) => (
-            <Icon name="ios-heart-outline" color={color} size={size} />
+
+            <Icon name="clipboard-outline" color={color} size={size} />
           ),
         }}
       />
       <Tab.Screen
-        name="SettingStack"
-        component={SettingStack}
+        name="Learnings"
+        component={Learnings}
         activeColor="#fff"
         inactiveColor="#000"
 
         options={{
-          tabBarShowLabel: false,
+          title: 'Learning',
+
           tabBarIcon: ({ color, size }) => (
-            <Icon name="cog-outline" color={color} size={size} />
+            <Icon name="newspaper-outline" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="ProfileStack"
+        component={Learnings}
+        activeColor="#fff"
+        inactiveColor="#000"
+
+        options={{
+          title: 'Profile',
+
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="newspaper-outline" color={color} size={size} />
           ),
         }}
       />

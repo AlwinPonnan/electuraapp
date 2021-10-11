@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { light_colors } from '../globals/colors';
-import MIcon from 'react-native-vector-icons/MaterialIcons'
+import { colorObj, light_colors } from '../globals/colors';
+import Icon from 'react-native-vector-icons/Ionicons'
+import NavBar from '../components/Navbar';
 
-export default function HomeScreen() {
+export default function HomeScreen(props) {
     const [productsArr, setProductsArr] = useState([
         {
             name: "Lorem Course",
@@ -13,7 +14,9 @@ export default function HomeScreen() {
             teacherImg: "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80",
             imgUrl: "https://images.unsplash.com/photo-1475778057357-d35f37fa89dd?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
             description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
-            courseEstimatedTime: '1hr 30min'
+            courseEstimatedTime: '1hr 30min',
+            active: false
+
         },
         {
             name: "Lorem Course2",
@@ -22,7 +25,8 @@ export default function HomeScreen() {
             teacherImg: "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80",
             imgUrl: "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
             description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
-            courseEstimatedTime: '1hr 30min'
+            courseEstimatedTime: '1hr 30min',
+            active: false
         },
         {
             name: "Lorem Course3",
@@ -31,6 +35,7 @@ export default function HomeScreen() {
             teacherImg: "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80",
             imgUrl: "https://images.unsplash.com/photo-1475778057357-d35f37fa89dd?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
             description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
+            active: false
         },
         {
             name: "Lorem Course",
@@ -39,38 +44,38 @@ export default function HomeScreen() {
             teacherImg: "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80",
             imgUrl: "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
             description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
-            courseEstimatedTime: '1hr 30min'
+            courseEstimatedTime: '1hr 30min',
+            active: false
         },
     ])
+
+    const [categoryArr, setCategoryArr] = useState([
+        { name: 'All' },
+        {
+            name: 'Animation'
+        },
+        {
+            name: 'Film Maker'
+        },
+        {
+            name: 'Design'
+        }
+    ]);
+
     const renderItem = ({ item, index }) => {
         return (
-            <Pressable style={styles.cardContainer} android_ripple={{ color: '#ddd' }}>
-                <View style={styles.imgContainer}>
-                    <Image style={styles.img} source={{ uri: item.imgUrl }} />
-                    {
-                        item.courseEstimatedTime &&
-                        <View style={styles.courseEstimatedTimeContainer}>
-                            <Text style={styles.courseEstimatedTime} >{item.courseEstimatedTime}</Text>
-                        </View>
-                    }
-                </View>
-                <View style={styles.titleContainer}>
-                    <Text style={styles.newTag}>New</Text>
-                    <Text style={styles.titleText}>{item.name}</Text>
-                </View>
+            <Pressable style={styles.cardContainer} >
+                <Image style={styles.teacherImg} source={{ uri: item.teacherImg }} />
+                <View style={styles.textCardContainer}>
+                    <View>
 
-                <View style={styles.bottomCardContainer}>
-                    <Pressable style={styles.teacherContainer} android_ripple={{ color: '#ddd' }}>
-                        <View style={styles.teacherImgContainer}>
-                            <Image style={styles.teacherImg} source={{ uri: item.teacherImg }} />
-                        </View>
-                        <View style={styles.teacherNameContainer}>
-                            <Text style={styles.teacherName}>{item.teacher}</Text>
-                        </View>
-                    </Pressable>
-                    <Pressable android_ripple={{ color: "#ddd" }} style={styles.addToLibrary}>
-                        <MIcon name="library-add" size={21} />
-                    </Pressable>
+                        <Text style={styles.textCardMainHeading}>{item.teacher}</Text>
+                        <Text style={styles.textCardMainSubHeading1}>{item.categoryName}</Text>
+                        <Text style={styles.textCardMainSubHeading2}>10 Year Experience</Text>
+                    </View>
+                    <View style={{ position: 'absolute', top: 5, right: 10 }} >
+                        <Icon name="bookmark-outline" size={16} color="black" />
+                    </View>
                 </View>
             </Pressable>
         )
@@ -78,35 +83,55 @@ export default function HomeScreen() {
 
     return (
         <View style={styles.container}>
+            <NavBar rootProps={props} />
             <ScrollView>
-
-                <Text style={{ fontSize: 25, fontWeight: "600", paddingLeft: 13 }}>Categories</Text>
+                <View style={styles.bannerContainer}>
+                    <Image source={require('../../assets/images/Banner.png')} />
+                </View>
                 <FlatList
-                    style={{ height: 300 }}
+                    
+                    horizontal
+                    data={categoryArr}
+                    renderItem={({ item, index }) => {
+                        return (
+                            <View style={[styles.categoryContainer,index>0 && {backgroundColor:'#F7FFFE'}]}>
+                                {/* <Icon name="film-outline" size={14} /> */}
+                                <Text style={[styles.categoryName,index>0 && {color:'#828282'}]}>{item.name}</Text>
+                            </View>
+                        )
+                    }}
+                    showsHorizontalScrollIndicator={false}
+                    keyExtractor={(item, index) => `${index}`}
+                />
+                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                    <Text style={styles.headingAboveCard}>Top Instructors</Text>
+                    <Text style={styles.viewAllText}>View All</Text>
+                </View>
+
+                <FlatList
+                    style={{ height: 150 }}
                     horizontal
                     data={productsArr}
                     renderItem={renderItem}
+                    showsHorizontalScrollIndicator={false}
                     keyExtractor={(item, index) => `${index}`}
                 />
 
 
-                <Text style={{ fontSize: 25, fontWeight: "600", paddingLeft: 13 }}>Courses</Text>
+                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                    <Text style={styles.headingAboveCard}>Maths Instructors</Text>
+                    <Text style={styles.viewAllText}>View All</Text>
+                </View>
                 <FlatList
-                    style={{ height: 300 }}
+                    style={{ height: 150 }}
                     horizontal
                     data={productsArr}
                     renderItem={renderItem}
+                    showsHorizontalScrollIndicator={false}
                     keyExtractor={(item, index) => `${index}`}
                 />
 
-                <Text style={{ fontSize: 25, fontWeight: "600", paddingLeft: 13 }}>Tutors</Text>
-                <FlatList
-                    style={{ height: 300 }}
-                    horizontal
-                    data={productsArr}
-                    renderItem={renderItem}
-                    keyExtractor={(item, index) => `${index}`}
-                />
+
 
             </ScrollView>
         </View>
@@ -115,106 +140,105 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#fff',
+        backgroundColor: '#FEFEFE',
         flex: 1,
     },
     cardContainer: {
-        paddingHorizontal: 15,
-        overflow: "hidden",
+        display: 'flex',
+        width: wp(65),
+        flexDirection: 'row',
+        backgroundColor: 'white',
+        paddingHorizontal: 20,
         paddingVertical: 15,
-        display: 'flex',
-        width: wp(55),
-        flexDirection: 'column',
-        borderBottomColor: light_colors.lightGrey,
-        borderBottomWidth: 1
-    },
-    imgContainer: {
+        height: 100,
         position: 'relative',
-        display: 'flex',
-        flex: 1,
+        marginHorizontal: 20
+
     },
+    textCardContainer: {
+        paddingLeft: 90,
+        paddingVertical: 10,
+        minHeight: 90,
+        marginTop: 5,
+        borderTopRightRadius: 10,
+        borderBottomRightRadius: 10,
+        shadowColor: "rgba(0,0,0,0.3)",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.22,
+        shadowRadius: 2.22,
+
+        elevation: 2,
+        width: '100%',
+        position: 'relative',
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    textCardMainHeading: {
+        fontFamily: 'Montserrat-SemiBold', fontSize: 14, color: '#232323'
+    },
+    textCardMainSubHeading1: {
+        fontFamily: 'Montserrat-Regular', fontSize: 12, color: '#7E7E7E', marginTop: 2
+    },
+    textCardMainSubHeading2: {
+        fontFamily: 'Montserrat-Regular', fontSize: 12, color: '#000000', marginTop: 15
+    },
+    headingAboveCard: {
+        fontSize: 16, fontFamily: 'RedHatText-SemiBold', color: '#303030', paddingLeft: 13, marginTop: 10
+    },
+    viewAllText: {
+        fontSize: 14, fontFamily: 'RedHatText-Regular', color: '#828282', paddingRight: 13, marginTop: 10
+    },
+    categoryContainer:{
+        backgroundColor:colorObj.primarColor,
+        borderRadius:26,
+        paddingVertical:10,
+        marginVertical:10,
+        marginHorizontal:10,
+        display:'flex',
+        flexDirection:'row',
+        alignItems:'center',
+        justifyContent:'space-evenly'
+    },
+    categoryName:{
+        color:colorObj.whiteColor,
+        textAlign:'center',
+        fontFamily:'Montserrat-Regular',
+    },
+    categoryName:{
+        color:colorObj.whiteColor,
+        textAlign:'center',
+        fontFamily:'Montserrat-Regular',
+        paddingHorizontal:20
+    },
+    teacherImg: {
+        height: 100,
+        width: 100,
+        left: -10,
+        top: 15,
+        position: "absolute",
+        borderRadius: 100
+    },
+
     img: {
         height: hp(27),
         flex: 1,
         borderRadius: 3
     },
-    courseEstimatedTimeContainer: {
-        position: 'absolute',
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        paddingHorizontal: 10,
-        paddingVertical: 5,
-        borderRadius: 3,
-        bottom: 5,
-        right: 5
 
-    },
-    courseEstimatedTime: {
-        color: light_colors.lightGrey
-    },
-    titleContainer: {
-        paddingTop: 10,
-        paddingBottom: 10,
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
-    titleText: {
-        color: 'black',
-        fontFamily: 'OpenSans-Bold',
-        fontSize: 18,
-        paddingBottom: 7
-    },
-    newTag: {
-        backgroundColor: light_colors.primary,
-        color: light_colors.white,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlignVertical: 'center',
-        paddingVertical: 2,
-        paddingHorizontal: 5,
-        marginRight: 5,
-        borderRadius: 3
-    },
-    descriptionContainer: {
 
-    },
-    descriptionText: {
-        color: 'black',
-        fontFamily: 'OpenSans-Regular',
-
-    },
     bottomCardContainer: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center'
     },
-    addToLibrary: {
-        padding: 10,
-    },
 
-    teacherContainer: {
-        display: 'flex',
+    flexRow: {
         flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 7,
-    },
-    teacherImgContainer: {
-
-    },
-    teacherImg: {
-        height: 20,
-        width: 20,
-        borderRadius: 100
-    },
-    teacherNameContainer: {
-        paddingLeft: 10
-    },
-    teacherName: {
-        color: 'black',
-        fontFamily: 'OpenSans-Regular',
-
+        display: 'flex'
     }
 
 })
