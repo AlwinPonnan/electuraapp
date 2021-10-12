@@ -29,11 +29,10 @@ function CustomDrawerContent(props) {
         <DrawerContentScrollView {...props}>
             <View style={styles.profilePicContainer}>
                 <Image source={require('../../../assets/images/user.png')} style={styles.profilePic} />
+                <Text style={styles.userName}>Bhaskar Pandey</Text>
             </View>
-            <Text style={styles.userName}>Bhaskar Pandey</Text>
 
 
-            <Text style={{ textAlign: "center", fontFamily: "OpenSans-Regular" }}>9999999999</Text>
 
 
             <View style={{ marginBottom: 20, display: "flex", flexDirection: "column" }}>
@@ -80,7 +79,7 @@ const styles = StyleSheet.create({
     drawerItemTxt: {
         color: colorObj.primarColor,
         fontFamily: "OpenSans-Regular",
-        textTransform: "capitalize",
+        // textTransform: "capitalize",
         fontSize: 16,
         marginVertical: 5
     },
@@ -96,22 +95,25 @@ const styles = StyleSheet.create({
     profilePicContainer: {
         // backgroundColor: "#f2f2f2",
         height: 140,
-        width: 140,
+        // width: 140,
         marginTop: hp(2),
         display: "flex",
-        alignSelf: "center",
+        flexDirection: 'row',
         alignItems: "center",
-        justifyContent: "center",
-        borderRadius: 150
+        borderRadius: 150,
+        // backgroundColor: 'red',
+        paddingHorizontal:20
     },
     profilePic: {
-        borderRadius: 100,
-        width: 120,
-        height: 120
+        borderRadius: 8,
+        width: 50,
+        height: 50,
     },
     userName: {
-        fontSize: 18,
-        marginTop: 18,
+        fontSize: 16,
+        // marginTop: 16,
+        paddingHorizontal:10,
+        color:'#27303E',
         textAlign: "center",
         textTransform: 'capitalize',
         fontFamily: "OpenSans-Bold",

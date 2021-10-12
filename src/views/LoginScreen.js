@@ -8,17 +8,17 @@ import Icon from 'react-native-vector-icons/Ionicons'
 export default function login(props) {
     return (
         <View style={styles.container}>
-            <View style={styles.topContainer}>
-                <Image source={imageObj.loginEllipse} />
-            </View>
-            <View style={styles.bottomContainer}>
+            
+            <View style={styles.innerContainer}>
+                <Image source={imageObj.loginImage} style={{alignSelf:'center',marginTop:10}} />
                 <View style={styles.textContainer}>
-                    <Text style={styles.labelHeading}>Enter Phone Number</Text>
-                    <Text style={styles.labelSubHeading}>OTP will be sent on this number</Text>
+                    <Text style={styles.mainHeading}>Find The Best In Education</Text>
+                    <Text style={styles.labelSubHeading}>Learn new profession from the comfort of your home or anywhere</Text>
                 </View>
+                
                 <View style={styles.inputContainer}>
                     <Icon name="call-outline" size={14} color="black" />
-                    <TextInput style={styles.inputStyles} keyboardType="numeric" placeholder="+91 Enter Number"  />
+                    <TextInput style={styles.inputStyles}  keyboardType="numeric" placeholder="+91     Enter Number"  />
                 </View>
                 <View style={styles.btnContainer}>
                     <Text style={styles.termsText}>By Continuing you accept the <Text style={{color:colorObj.primarColor}}>terms and conditions</Text></Text>
@@ -36,28 +36,25 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'column',
     },
-    topContainer: {
-        height: hp(25),
-        width: wp(100),
-        backgroundColor: colorObj.orangeColor
-    },
-    bottomContainer: {
-        height: hp(75),
+    
+    innerContainer: {
+        height: hp(100),
         width: wp(100),
         backgroundColor: colorObj.whiteColor
     },
     textContainer: {
         padding: 20,
     },
-    labelHeading: {
-        fontFamily: 'RedHatText-SemiBold',
-        lineHeight: 21,
+    
+    mainHeading:{
+        fontFamily: 'Montserrat-Bold',
+        // lineHeight: 21,
         marginVertical: 5,
-        fontSize: 16,
-        color: 'black'
+        fontSize: 30,
+        color: colorObj.primarColor
     },
     labelSubHeading: {
-        fontFamily: 'RedHatText-Regular',
+        fontFamily: 'Montserrat-Regular',
         fontSize: 12,
         color: '#828282',
         lineHeight: 15,
@@ -80,9 +77,14 @@ const styles = StyleSheet.create({
         shadowRadius: 2.22,
         paddingHorizontal:20,
         elevation: 3,
+        marginTop:10,
         borderColor:'transparent',
         backgroundColor:colorObj.whiteColor
     },
+    inputStyles:{
+        fontFamily:'Montserrat-Regular',
+        width:'100%'
+    },  
     btn:{
         backgroundColor:colorObj.primarColor,
         borderRadius:61,
