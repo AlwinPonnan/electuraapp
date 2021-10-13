@@ -32,7 +32,7 @@ export default function login(props) {
             }
         } catch (error) {
             console.error(error)
-            props.navigation.navigate('OtpScreen')
+            props.navigation.navigate('OtpScreen',{phone})
             console.log(JSON.stringify(error.response), null, 2)
             alert("Unable to send otp")
         }

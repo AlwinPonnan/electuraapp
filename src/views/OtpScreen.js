@@ -1,11 +1,32 @@
-import React from 'react'
+import React,{useEffect,useContext} from 'react'
 import { View, Text, StyleSheet, Image,TextInput,Pressable } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj } from '../globals/colors';
 import { imageObj } from '../globals/images';
 
 import Icon from 'react-native-vector-icons/Ionicons'
+import { loginUser } from '../Services/User';
+import EncryptedStorage from 'react-native-encrypted-storage';
+
+import { AuthContext } from '../navigators/stacks/RootStack';
 export default function VerifyOtp(props) {
+    const [isAuthorized, setIsAuthorized] = useContext(AuthContext);
+    
+    const handleOtpSubmit=async()=>{
+        try {
+            let obj={
+                phone:props.route.params.phone
+            }
+            const {data:res}=await loginUser(obj);
+            if(res.success){
+                await EncryptedStorage.setItem('AUTH_TOKEN')
+                setIsAuthorized(true)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.topContainer}>
@@ -28,7 +49,7 @@ export default function VerifyOtp(props) {
 
                 </View>
                 <View >
-                    <Pressable style={styles.btn} onPress={()=>props.navigation.navigate('MainDrawer')}>
+                    <Pressable style={styles.btn} onPress={()=>handleOtpSubmit()}>
                         <Text style={styles.btnText}>Verify</Text>
                     </Pressable>
                 </View>
