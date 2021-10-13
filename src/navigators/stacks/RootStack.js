@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useMemo,useEffect } from 'react';
+import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -11,7 +11,10 @@ import OtpScreen from '../../views/OtpScreen';
 import MainDrawer from '../drawers/MainDrawer';
 // import MainTopTab from '../tabs/MainTopTab';
 import EncryptedStorage from 'react-native-encrypted-storage';
+
 import axios from 'axios'
+
+import CreateCourse from '../../views/CreateCourse'
 
 const Stack = createNativeStackNavigator();
 
@@ -21,6 +24,7 @@ export default function RootStack() {
     const [isAuthorized, setIsAuthorized] = useState(false);
     const CheckAuthorized = async () => {
         let isLoggedIn = await EncryptedStorage.getItem("AUTH_TOKEN");
+        console.log(isLoggedIn)
         if (isLoggedIn) {
             setIsAuthorized(true)
         }
@@ -66,26 +70,30 @@ export default function RootStack() {
     }, [])
 
     return (
-        <AuthContext.Provider value={[isAuthorized,setIsAuthorized]}>
+        <AuthContext.Provider value={[isAuthorized, setIsAuthorized]}>
 
-        <NavigationContainer>
-            <Stack.Navigator initialRouteName="Login">
-                {isAuthorized ?
-                    <Stack.Screen name="MainDrawer" component={MainDrawer} options={{ headerShown: false }} />
-                    
-                    :
-                    <>
-                        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false, cardStyles: { backgroundColor: '#ffffff' } }} />
-                        <Stack.Screen name="OtpScreen" component={OtpScreen} options={{ headerShown: false }} />
-                    </>
-                }
+            <NavigationContainer>
+                <Stack.Navigator initialRouteName="Login">
+                    {isAuthorized ?
+                        <>
+                        <Stack.Screen name="MainDrawer" component={MainDrawer} options={{ headerShown: false }} />
+                        <Stack.Screen name="CreateCourse" component={CreateCourse} options={{ headerShown: false }} />
+                            
+                        </>
 
-                {/* <Stack.Screen name="MainTopTab" component={MainTopTab} options={{ headerShown: true }} /> */}
+                        :
+                        <>
+                            <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false, cardStyles: { backgroundColor: '#ffffff' } }} />
+                            <Stack.Screen name="OtpScreen" component={OtpScreen} options={{ headerShown: false }} />
+                        </>
+                    }
+
+                    {/* <Stack.Screen name="MainTopTab" component={MainTopTab} options={{ headerShown: true }} /> */}
 
 
 
-            </Stack.Navigator>
-        </NavigationContainer>
-                </AuthContext.Provider>
+                </Stack.Navigator>
+            </NavigationContainer>
+        </AuthContext.Provider>
     )
 }

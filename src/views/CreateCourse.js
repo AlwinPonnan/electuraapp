@@ -10,61 +10,71 @@ import { getDecodedToken, getToken, SendOtp } from '../Services/User';
 import { checkValidPhone } from '../globals/utils';
 import NavBar from '../components/Navbar'
 import { newEnquiry } from '../Services/TeacherEnquiry';
+import { getAllCategory } from '../Services/Category';
+
+import { Picker } from '@react-native-picker/picker';
+import { courseAdd } from '../Services/Course';
 
 
-
-export default function RegisterTeacher(props) {
-    const [qualificationArr, setQualificationArr] = useState([]);
-    const [phone, setPhone] = useState();
+export default function CreateCourse(props) {
 
 
     const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [address, setAddress] = useState('');
     const [experience, setExperience] = useState('');
-    const [subject, setSubject] = useState('');
-    const [teacherClass, setTeacherClass] = useState('');
     const [description, setDescription] = useState('');
-    const [degree, setDegree] = useState('');
+    const [hours, setHours] = useState('');
 
-    const [university, setUniversity] = useState('');
-    const [minFees, setMinFees] = useState('');
-    const [maxFees, setMaxFees] = useState('');
-    const handleSubmit=async()=>{
+    const [assignments, setAssignments] = useState('');
+    const [price, setPrice] = useState('');
+    const [selectedCategoryId, setSelectedCategoryId] = useState('');
+    const [youtubeLink, setYoutubeLink] = useState('');
+    const handleSubmit = async () => {
         try {
-            let userToken=await getDecodedToken()
-            let obj={
+            let userToken = await getDecodedToken()
+            console.log(userToken)
+            let obj = {
                 name,
-                email,
-                address,
-                class:teacherClass,
-                subject,
+                hours,
+                assignments,
+                youtubeLink,
                 description,
-                userId:userToken.userId,
-                educationObj:{
-                    degree,
-                    university
-                },
-                experience,
-                feesObj:{
-                    minFees,
-                    maxFees
-                }
+                userId: userToken.userId,
+                categoryId:selectedCategoryId,
+                categoryArr:[{categoryId:selectedCategoryId}],
             }
-            const {data:res}=await newEnquiry(obj);
-            if(res.success){
+            console.log(obj)
+            const { data: res } = await courseAdd(obj);
+            if (res.success) {
                 alert(res.message)
             }
         } catch (error) {
             console.error(error)
-            if(error.response.data.message){
+            if (error.response.data.message) {
                 alert(error.response.data.message)
             }
-            else{
+            else {
                 alert(error.message)
             }
         }
     }
+
+
+    const [categoryArr, setCategoryArr] = useState([]);
+
+    const getCategories = async () => {
+        try {
+            const { data: res } = await getAllCategory();
+            if (res.success) {
+                setCategoryArr(res.data)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    useEffect(() => {
+        getCategories()
+    }, [])
 
 
     return (
@@ -77,66 +87,57 @@ export default function RegisterTeacher(props) {
                     style={styles.container}
                 >
                     <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-                        <Image source={imageObj.loginImage} style={{ alignSelf: 'center', marginTop: 10, height: hp(30), width: wp(80) }} />
+                        <Image source={require('../../assets/images/Banner.png')} style={{ alignSelf: 'center', marginTop: 10 }} />
                         <View style={styles.textContainer}>
-                            <Text style={styles.mainHeading}>Become a Teacher</Text>
+                            <Text style={styles.mainHeading}>Create Your Course</Text>
                         </View>
-
                         <View style={styles.inputContainer}>
                             <Icon name="person-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val)=>setName(val)}   placeholder="Enter your Name" />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <Icon name="mail-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setEmail(val)} keyboardType="email-address" placeholder="Enter your Email" />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <Icon name="call-outline" size={14} color="black" />
-                            <TextInput maxLength={10} style={styles.inputStyles} onChangeText={(val) => setPhone(val)} keyboardType="numeric" placeholder="+91     Enter Number" />
+                            <TextInput style={styles.inputStyles} onChangeText={(val) => setName(val)} placeholder="Enter Name" />
                         </View>
                         <View style={styles.inputContainer}>
                             <Icon name="home-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setAddress(val)} placeholder="Enter Address" multiline={true} />
+                            <TextInput style={styles.inputStyles} onChangeText={(val) => setPrice(val)} placeholder="Enter Price" keyboardType="numeric" />
                         </View>
-                        <View style={styles.inputContainer}>
-                            <Icon name="home-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setMinFees(val)} placeholder="Enter Min Fees" keyboardType="numeric" />
-                        </View><View style={styles.inputContainer}>
-                            <Icon name="home-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setMaxFees(val)} placeholder="Enter Max Fees" keyboardType="numeric" />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <Icon name="library-outline" size={14} color="black" />
-                            <TextInput multiline={true} style={styles.inputStyles} onChangeText={(val) => setDegree(val)} placeholder="Enter your Degree" />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <Icon name="library-outline" size={14} color="black" />
-                            <TextInput multiline={true} style={styles.inputStyles} onChangeText={(val) => setUniversity(val)} placeholder="Enter your university" />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <Icon name="library-outline" size={14} color="black" />
-                            <TextInput multiline={true} style={styles.inputStyles} onChangeText={(val) => setExperience(val)} placeholder="Enter your Qualification" />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <Icon name="file-tray-full-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setSubject(val)} placeholder="Enter Subject" />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <Icon name="desktop-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setTeacherClass(val)} keyboardType="numeric" placeholder="Enter Class" />
-                        </View>
+                        <Picker
+                            style={styles.inputContainer}
+                            selectedValue={selectedCategoryId}
+                            onValueChange={(itemValue, itemIndex) =>
+                                setSelectedCategoryId(itemValue)
+                            }>
+                            <Picker.Item label="Please Select Category" value="" />
 
+                            {categoryArr.map((el, i) => {
+                                return (
+
+                                    <Picker.Item key={el._id} label={el.name} value={el._id} />
+                                )
+                            })}
+
+                        </Picker>
+                        <View style={styles.inputContainer}>
+                            <Icon name="library-outline" size={14} color="black" />
+                            <TextInput multiline={true} style={styles.inputStyles} onChangeText={(val) => setHours(val)} placeholder="No of Hours" />
+                        </View>
+                        <View style={styles.inputContainer}>
+                            <Icon name="library-outline" size={14} color="black" />
+                            <TextInput multiline={true} style={styles.inputStyles} onChangeText={(val) => setAssignments(val)} placeholder="No Of assignments" />
+                        </View>
                         <View style={[styles.inputContainer, { minHeight: 80 }]}>
                             <Icon name="chatbox-ellipses-outline" size={14} color="black" />
                             <TextInput style={styles.inputStyles} onChangeText={(val) => setDescription(val)} placeholder="Enter Description" multiline={true} />
                         </View>
 
+                        <View style={[styles.inputContainer, { minHeight: 80 }]}>
+                            <Icon name="chatbox-ellipses-outline" size={14} color="black" />
+                            <TextInput style={styles.inputStyles} onChangeText={(val) => setYoutubeLink(val)} placeholder="Youtube video link" multiline={true} />
+                        </View>
 
 
                         <View style={styles.btnContainer}>
-                            <Text style={styles.termsText}>By Continuing you accept the <Text style={{ color: colorObj.primarColor }}>terms and conditions</Text></Text>
+                            <Text style={styles.termsText}></Text>
                             <Pressable style={styles.btn} onPress={() => handleSubmit()}>
-                                <Text style={styles.btnText}>Become A Teacher</Text>
+                                <Text style={styles.btnText}>Create</Text>
                             </Pressable>
                         </View>
                     </ScrollView>

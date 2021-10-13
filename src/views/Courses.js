@@ -1,11 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj, light_colors } from '../globals/colors';
 import Icon from 'react-native-vector-icons/Ionicons'
 import NavBar from '../components/Navbar';
+import { getAllCategory } from '../Services/Category';
+import { getAllForUsersHomePage } from '../Services/Course';
 
 export default function Courses(props) {
+    const [course, setCourseArr] = useState([
+
+    ])
+
     const [productsArr, setProductsArr] = useState([
         {
             name: "Lorem Course",
@@ -48,24 +54,43 @@ export default function Courses(props) {
             active: false
         },
     ])
+    const [categoryArr, setCategoryArr] = useState([]);
 
-    const [categoryArr, setCategoryArr] = useState([
-        { name: 'All' },
-        {
-            name: 'Animation'
-        },
-        {
-            name: 'Film Maker'
-        },
-        {
-            name: 'Design'
+    const getCategories = async () => {
+        try {
+            const { data: res } = await getAllCategory();
+            if (res.success) {
+                setCategoryArr(res.data)
+            }
+        } catch (error) {
+            console.error(error)
         }
-    ]);
+    }
+    
+    
+    const getCourses = async () => {
+        try {
+            console.log("ASd")
+            const { data: res } = await getAllForUsersHomePage();
+            if (res.success) {
+                console.log(JSON.stringify(res.data,null,2))
+                // setProductsArr(res.data.filter(el=>el.courses.length>1))
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+    
+    
+        useEffect(() => {
+            getCategories()
+            getCourses()
+        }, [])
 
     const renderItem = ({ item, index }) => {
         return (
             <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("CourseDetail")} >
-                <Image style={styles.courseImg} source={{ uri: item.teacherImg }} />
+                <Image style={styles.courseImg} source={{uri:item.teacherImg}} />
                 <View style={styles.textCardContainer}>
                     <View>
 
@@ -110,6 +135,8 @@ export default function Courses(props) {
                     showsHorizontalScrollIndicator={false}
                     keyExtractor={(item, index) => `${index}`}
                 />
+
+                
                 <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                     <Text style={styles.headingAboveCard}>Recommended Courses</Text>
                     <Text style={styles.viewAllText}>View All</Text>
@@ -123,6 +150,7 @@ export default function Courses(props) {
                     keyExtractor={(item, index) => `${index}`}
                 />
 
+                
 
                 <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                     <Text style={styles.headingAboveCard}>Best in Finance</Text>

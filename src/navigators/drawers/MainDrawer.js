@@ -40,6 +40,8 @@ function CustomDrawerContent(props) {
                 <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate("MainBottomTab")}><Icon name="home-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Home</Text></TouchableOpacity>
 
                 <TouchableOpacity style={styles.DrawerItem}><Icon name="settings-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Account Settings</Text></TouchableOpacity>
+                <TouchableOpacity style={styles.DrawerItem} onPress={()=>props.navigation.navigate('CreateCourse')}><Icon name="settings-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Create Your Course</Text></TouchableOpacity>
+                
                 <TouchableOpacity style={styles.DrawerItem}><Icon name="pencil-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Blogs</Text></TouchableOpacity>
                 <TouchableOpacity style={styles.DrawerItem}><Icon name="information-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> About Us</Text></TouchableOpacity>
 

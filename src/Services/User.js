@@ -11,7 +11,7 @@ export const setToken = async (token) => {
     return await EncryptedStorage.setItem('AuthToken', token)
 }
 export const getToken = async () => {
-    return await EncryptedStorage.getItem('AuthToken')
+    return await EncryptedStorage.getItem('AUTH_TOKEN')
 }
 export const removeToken = async () => {
     return await EncryptedStorage.removeItem('AuthToken')

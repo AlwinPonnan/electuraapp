@@ -1,11 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj, light_colors } from '../globals/colors';
 import Icon from 'react-native-vector-icons/Ionicons'
 import NavBar from '../components/Navbar';
+import { getAllCategory } from '../Services/Category';
+import { useIsFocused } from '@react-navigation/core';
 
 export default function HomeScreen(props) {
+
+    const isFocused=useIsFocused()
+    const [selectedCategoryId, setSelectedCategoryId] = useState('');
     const [productsArr, setProductsArr] = useState([
         {
             name: "Lorem Course",
@@ -49,18 +54,31 @@ export default function HomeScreen(props) {
         },
     ])
 
-    const [categoryArr, setCategoryArr] = useState([
-        { name: 'All' },
-        {
-            name: 'Animation'
-        },
-        {
-            name: 'Film Maker'
-        },
-        {
-            name: 'Design'
+    const [categoryArr, setCategoryArr] = useState([]);
+
+    const getCategories=async()=>{
+        try {
+            const {data:res}=await getAllCategory();
+            if(res.success){
+                let tempArr=res.data;
+                tempArr=tempArr.map(el=>{
+                    let obj={
+                        ...el,
+                        selected:false
+                    }
+                    return obj
+                })
+                setCategoryArr([...tempArr])
+            }
+        } catch (error) {
+            console.error(error)
         }
-    ]);
+    }
+
+    useEffect(()=>{
+        getCategories()
+    },[isFocused])
+
 
     const renderItem = ({ item, index }) => {
         return (
@@ -94,10 +112,10 @@ export default function HomeScreen(props) {
                     data={categoryArr}
                     renderItem={({ item, index }) => {
                         return (
-                            <View style={[styles.categoryContainer, index > 0 && { backgroundColor: '#F7FFFE' }]}>
+                            <Pressable onPress={()=>setSelectedCategoryId(item._id)} style={[styles.categoryContainer, selectedCategoryId!=item._id && { backgroundColor: '#F7FFFE' }]}>
                                 {/* <Icon name="film-outline" size={14} /> */}
-                                <Text style={[styles.categoryName, index > 0 && { color: '#828282' }]}>{item.name}</Text>
-                            </View>
+                                <Text style={[styles.categoryName, selectedCategoryId!=item._id && { color: '#828282' }]}>{item.name}</Text>
+                            </Pressable>
                         )
                     }}
                     showsHorizontalScrollIndicator={false}

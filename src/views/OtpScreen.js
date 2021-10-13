@@ -19,7 +19,7 @@ export default function VerifyOtp(props) {
             }
             const {data:res}=await loginUser(obj);
             if(res.success){
-                await EncryptedStorage.setItem('AUTH_TOKEN')
+                await EncryptedStorage.setItem('AUTH_TOKEN',res.data)
                 setIsAuthorized(true)
             }
         } catch (error) {
