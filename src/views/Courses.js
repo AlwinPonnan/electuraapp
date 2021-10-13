@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     cardContainer: {
-        width: wp(45),
+        width: wp(40),
         backgroundColor: 'white',
         shadowColor: "#000",
         shadowOffset: {

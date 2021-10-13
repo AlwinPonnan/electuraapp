@@ -101,7 +101,7 @@ export default function MainBottomTab() {
           title: 'Profile',
 
           tabBarIcon: ({ color, size }) => (
-            <Icon name="newspaper-outline" color={color} size={size} />
+            <Icon name="person-outline" color={color} size={size} />
           ),
         }}
       />

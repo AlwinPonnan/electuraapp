@@ -14,12 +14,12 @@ export default function Profile(props) {
                 <Text style={styles.subHeading}>My Courses</Text>
                 <Text style={styles.subHeading}>My Teachers</Text>
                 <Text style={styles.subHeading}>Feedbacks</Text>
-                <Text style={[styles.subHeading,{fontFamily:'RedHatText-SemiBold'}]}>Become a Teacher</Text>
+                <Text style={[styles.subHeading, { fontFamily: 'RedHatText-SemiBold', color: "#085A4E" }]}>Become a Teacher</Text>
 
-                <Text style={[styles.subHeading,{fontFamily:'RedHatText-SemiBold'}]}>Create Your Course</Text>
+                <Text style={[styles.subHeading, { fontFamily: 'RedHatText-SemiBold', color: "#085A4E" }]}>Create Your Course</Text>
                 <View style={styles.flexRow}>
 
-                    <Text style={[styles.subHeading,{fontFamily:'RedHatText-SemiBold',borderBottomWidth:0}]}>Logout</Text>
+                    <Text style={[styles.subHeading, { fontFamily: 'RedHatText-SemiBold', borderBottomWidth: 0, color: "#085A4E" }]}>Logout</Text>
                     <Icon name="log-out-outline" size={16} color={colorObj.primarColor} />
                 </View>
 
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     flexRow: {
         display: 'flex',
         flexDirection: 'row',
-        alignItems:'center',
-        justifyContent:'space-between'
+        alignItems: 'center',
+        justifyContent: 'space-between'
     }
 })

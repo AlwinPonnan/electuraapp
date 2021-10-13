@@ -36,16 +36,18 @@ function CustomDrawerContent(props) {
 
 
             <View style={{ marginBottom: 20, display: "flex", flexDirection: "column" }}>
-                <TouchableOpacity style={styles.DrawerItem}><Text style={styles.drawerItemTxt}><Icon name="home-outline" size={16} color={colorObj.primarColor} /> Home</Text></TouchableOpacity>
 
-                <TouchableOpacity style={styles.DrawerItem}><Text style={styles.drawerItemTxt}><Icon name="cog-outline" size={16} color={colorObj.primarColor} /> Account Settings</Text></TouchableOpacity>
-                <TouchableOpacity style={styles.DrawerItem}><Text style={styles.drawerItemTxt}><Icon name="home-outline" size={16} color={colorObj.primarColor} /> Blogs</Text></TouchableOpacity>
-                <TouchableOpacity style={styles.DrawerItem}><Text style={styles.drawerItemTxt}><Icon name="information-circle-outline" size={16} color={colorObj.primarColor} /> About Us</Text></TouchableOpacity>
 
-                <TouchableOpacity style={styles.DrawerItem}><Text style={styles.drawerItemTxt}><Icon name="help-outline" size={16} color={colorObj.primarColor} /> Support</Text></TouchableOpacity>
-                <TouchableOpacity style={styles.DrawerItem}><Text style={styles.drawerItemTxt}><Icon name="help-circle-outline" size={16} color={colorObj.primarColor} /> FAQs</Text></TouchableOpacity>
-                <TouchableOpacity style={styles.DrawerItem}><Text style={styles.drawerItemTxt}><Icon name="document-text-outline" size={16} color={colorObj.primarColor} /> Policies</Text></TouchableOpacity>
-                <TouchableOpacity style={styles.DrawerItem}><Text style={styles.drawerItemTxt}><Icon name="log-out-outline" size={16} color={colorObj.primarColor} /> Logout</Text></TouchableOpacity>
+                <TouchableOpacity style={styles.DrawerItem}><Icon name="home-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Home</Text></TouchableOpacity>
+
+                <TouchableOpacity style={styles.DrawerItem}><Icon name="settings-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Account Settings</Text></TouchableOpacity>
+                <TouchableOpacity style={styles.DrawerItem}><Icon name="pencil-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Blogs</Text></TouchableOpacity>
+                <TouchableOpacity style={styles.DrawerItem}><Icon name="information-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> About Us</Text></TouchableOpacity>
+
+                <TouchableOpacity style={styles.DrawerItem}><Icon name="help-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Support</Text></TouchableOpacity>
+                <TouchableOpacity style={styles.DrawerItem}><Icon name="help-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> FAQs</Text></TouchableOpacity>
+                <TouchableOpacity style={styles.DrawerItem}><Icon name="document-text-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Policies</Text></TouchableOpacity>
+                <TouchableOpacity style={styles.DrawerItem}><Icon name="log-out-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Logout</Text></TouchableOpacity>
 
             </View>
             <View style={styles.teacherContainer} >
@@ -73,7 +75,10 @@ export default function MainDrawer() {
 const styles = StyleSheet.create({
     DrawerItem: {
         marginLeft: 22,
-        marginTop: 10
+        marginTop: 10,
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
     },
 
     drawerItemTxt: {
@@ -81,7 +86,8 @@ const styles = StyleSheet.create({
         fontFamily: "OpenSans-Regular",
         // textTransform: "capitalize",
         fontSize: 16,
-        marginVertical: 5
+        marginVertical: 5,
+        marginLeft: 10
     },
     Name: {
         fontWeight: '900',
@@ -102,7 +108,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderRadius: 150,
         // backgroundColor: 'red',
-        paddingHorizontal:20
+        paddingHorizontal: 20
     },
     profilePic: {
         borderRadius: 8,
@@ -112,8 +118,8 @@ const styles = StyleSheet.create({
     userName: {
         fontSize: 16,
         // marginTop: 16,
-        paddingHorizontal:10,
-        color:'#27303E',
+        paddingHorizontal: 10,
+        color: '#27303E',
         textAlign: "center",
         textTransform: 'capitalize',
         fontFamily: "OpenSans-Bold",

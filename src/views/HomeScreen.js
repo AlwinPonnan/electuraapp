@@ -89,14 +89,14 @@ export default function HomeScreen(props) {
                     <Image source={require('../../assets/images/Banner.png')} />
                 </View>
                 <FlatList
-                    
+
                     horizontal
                     data={categoryArr}
                     renderItem={({ item, index }) => {
                         return (
-                            <View style={[styles.categoryContainer,index>0 && {backgroundColor:'#F7FFFE'}]}>
+                            <View style={[styles.categoryContainer, index > 0 && { backgroundColor: '#F7FFFE' }]}>
                                 {/* <Icon name="film-outline" size={14} /> */}
-                                <Text style={[styles.categoryName,index>0 && {color:'#828282'}]}>{item.name}</Text>
+                                <Text style={[styles.categoryName, index > 0 && { color: '#828282' }]}>{item.name}</Text>
                             </View>
                         )
                     }}
@@ -177,13 +177,13 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     textCardMainHeading: {
-        fontFamily: 'Montserrat-SemiBold', fontSize: 14, color: '#232323'
+        fontFamily: 'Montserrat-SemiBold', fontSize: 12, color: '#232323'
     },
     textCardMainSubHeading1: {
-        fontFamily: 'Montserrat-Regular', fontSize: 12, color: '#7E7E7E', marginTop: 2
+        fontFamily: 'Montserrat-Regular', fontSize: 10, color: '#7E7E7E', marginTop: 2
     },
     textCardMainSubHeading2: {
-        fontFamily: 'Montserrat-Regular', fontSize: 12, color: '#000000', marginTop: 15
+        fontFamily: 'Montserrat-Regular', fontSize: 10, color: '#000000', marginTop: 15
     },
     headingAboveCard: {
         fontSize: 16, fontFamily: 'RedHatText-SemiBold', color: '#303030', paddingLeft: 13, marginTop: 10
@@ -191,27 +191,27 @@ const styles = StyleSheet.create({
     viewAllText: {
         fontSize: 14, fontFamily: 'RedHatText-Regular', color: '#828282', paddingRight: 13, marginTop: 10
     },
-    categoryContainer:{
-        backgroundColor:colorObj.primarColor,
-        borderRadius:26,
-        paddingVertical:10,
-        marginVertical:10,
-        marginHorizontal:10,
-        display:'flex',
-        flexDirection:'row',
-        alignItems:'center',
-        justifyContent:'space-evenly'
+    categoryContainer: {
+        backgroundColor: colorObj.primarColor,
+        borderRadius: 26,
+        paddingVertical: 10,
+        marginVertical: 10,
+        marginHorizontal: 10,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-evenly'
     },
-    categoryName:{
-        color:colorObj.whiteColor,
-        textAlign:'center',
-        fontFamily:'Montserrat-Regular',
+    categoryName: {
+        color: colorObj.whiteColor,
+        textAlign: 'center',
+        fontFamily: 'Montserrat-Regular',
     },
-    categoryName:{
-        color:colorObj.whiteColor,
-        textAlign:'center',
-        fontFamily:'Montserrat-Regular',
-        paddingHorizontal:20
+    categoryName: {
+        color: colorObj.whiteColor,
+        textAlign: 'center',
+        fontFamily: 'Montserrat-Regular',
+        paddingHorizontal: 20
     },
     teacherImg: {
         height: 100,

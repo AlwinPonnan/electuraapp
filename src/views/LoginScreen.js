@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, Image, TextInput, Pressable,KeyboardAvoidingView,ScrollView } from 'react-native'
+import { View, Text, StyleSheet, Image, TextInput, Pressable, KeyboardAvoidingView, ScrollView } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj } from '../globals/colors';
 import { imageObj } from '../globals/images';
@@ -13,7 +13,7 @@ import { checkValidPhone } from '../globals/utils';
 
 
 export default function login(props) {
-    
+
     const [phone, setPhone] = useState('');
 
     const handleOtpSend = async () => {
@@ -49,7 +49,7 @@ export default function login(props) {
 
                 <KeyboardAvoidingView style={styles.inputContainer}>
                     <Icon name="call-outline" size={14} color="black" />
-                    <TextInput style={styles.inputStyles} onChangeText={(val) => setPhone(val)} keyboardType="numeric" placeholder="+91     Enter Number" />
+                    <TextInput maxLength={10} style={styles.inputStyles} onChangeText={(val) => setPhone(val)} keyboardType="numeric" placeholder="+91     Enter Number" />
                 </KeyboardAvoidingView>
                 <View style={styles.btnContainer}>
                     <Text style={styles.termsText}>By Continuing you accept the <Text style={{ color: colorObj.primarColor }}>terms and conditions</Text></Text>
@@ -114,7 +114,8 @@ const styles = StyleSheet.create({
     },
     inputStyles: {
         fontFamily: 'Montserrat-Regular',
-        width: '100%'
+        width: '100%',
+        paddingLeft: 10,
     },
     btn: {
         backgroundColor: colorObj.primarColor,
