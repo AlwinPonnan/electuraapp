@@ -14,6 +14,8 @@ import Courses from '../../views/Courses';
 import Learnings from '../../views/Learnings';
 import CourseStack from '../stacks/CourseStack';
 import HomeStack from '../stacks/HomeStack';
+import Enquiry from '../../views/Enquiry';
+import Profile from '../../views/Profile';
 
 
 const Tab = createBottomTabNavigator();
@@ -61,8 +63,8 @@ export default function MainBottomTab() {
         }}
       />
       <Tab.Screen
-        name="Account"
-        component={Courses}
+        name="Enquiry"
+        component={Enquiry}
         activeColor="#fff"
         inactiveColor="#000"
 
@@ -90,8 +92,8 @@ export default function MainBottomTab() {
         }}
       />
       <Tab.Screen
-        name="ProfileStack"
-        component={Learnings}
+        name="Profile"
+        component={Profile}
         activeColor="#fff"
         inactiveColor="#000"
 

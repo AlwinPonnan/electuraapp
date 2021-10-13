@@ -25,7 +25,7 @@ export default function NavBar(props) {
       <View style={styles.iconContainer}>
 
 
-        <Pressable android_ripple={{ color: '#ddd' }} style={styles.iconButton}>
+        <Pressable onPress={() => props.rootProps.navigation.navigate("SearchScreen")} android_ripple={{ color: '#ddd' }} style={styles.iconButton}>
           <Icon name="search-outline" size={20} style={styles.icon} />
         </Pressable>
         <Pressable onPress={() => props.rootProps.navigation.navigate("MainTopTab")} android_ripple={{ color: '#ddd' }} style={styles.iconButton}>

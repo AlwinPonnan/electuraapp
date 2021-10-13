@@ -14,9 +14,10 @@ export default function MainTopTab() {
                 activeTintColor: "#085A4E",
                 inactiveTintColor: "#000",
                 tabBarLabelStyle: {
-                    fontSize: 12,
-                    color: "#085A4E"
-
+                    fontSize: 16,
+                    color: "#085A4E",
+                    fontFamily:'Montserrat-SemiBold',
+                    textTransform:'none'
                 },
                 tabBarItemStyle: { width: widthPercentageToDP(50) },
                 tabBarStyle: { backgroundColor: 'white' },
@@ -25,7 +26,7 @@ export default function MainTopTab() {
                 },
             }}>
             <Tab.Screen name="Chat" component={Chat} />
-            <Tab.Screen name="RequestScreen" component={Requestscreen} />
+            <Tab.Screen name="RequestScreen" options={{title:'Requests'}} component={Requestscreen} />
         </Tab.Navigator>
     )
 }
