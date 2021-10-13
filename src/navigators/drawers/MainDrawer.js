@@ -16,13 +16,12 @@ import AccountEdit from '../../views/AccountEdit';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { colorObj } from '../../globals/colors';
 import MainTopTab from '../tabs/MainTopTab';
+import RegisterTeacher from '../../views/RegisterTeacher';
 
 const Drawer = createDrawerNavigator();
 
 ////////////////////custom user drawer 
 function CustomDrawerContent(props) {
-
-
 
 
     return (
@@ -38,7 +37,7 @@ function CustomDrawerContent(props) {
             <View style={{ marginBottom: 20, display: "flex", flexDirection: "column" }}>
 
 
-                <TouchableOpacity style={styles.DrawerItem}><Icon name="home-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Home</Text></TouchableOpacity>
+                <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate("MainBottomTab")}><Icon name="home-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Home</Text></TouchableOpacity>
 
                 <TouchableOpacity style={styles.DrawerItem}><Icon name="settings-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Account Settings</Text></TouchableOpacity>
                 <TouchableOpacity style={styles.DrawerItem}><Icon name="pencil-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Blogs</Text></TouchableOpacity>
@@ -54,9 +53,9 @@ function CustomDrawerContent(props) {
                 <Text style={styles.teacherHeading}>Become Teacher</Text>
                 <Image source={require('../../../assets/images/teacherVector.png')} />
                 <Text style={[styles.teacherHeading, { fontSize: 12, fontFamily: 'OpenSans-Regular' }]}>List your profile on Electura and spread your word</Text>
-                <View style={styles.teachButton}>
+                <TouchableOpacity onPress={() => props.navigation.navigate("RegisterTeacher")} style={styles.teachButton}>
                     <Text style={styles.teachText}>Teach</Text>
-                </View>
+                </TouchableOpacity>
             </View>
         </DrawerContentScrollView>
     );
@@ -68,6 +67,7 @@ export default function MainDrawer() {
         <Drawer.Navigator screenOptions={{ headerShown: false }} drawerContent={props => <CustomDrawerContent {...props} />}>
             <Drawer.Screen name="MainBottomTab" component={MainBottomTab} />
             <Drawer.Screen name="AccountEdit" component={AccountEdit} />
+            <Drawer.Screen name="RegisterTeacher" component={RegisterTeacher} />
         </Drawer.Navigator>
     )
 }
