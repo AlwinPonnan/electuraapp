@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react'
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import { AuthContext } from '../stacks/RootStack';
+import { AuthContext, roleContext } from '../stacks/RootStack';
 
 import {
     StyleSheet,
@@ -22,16 +22,20 @@ import RegisterTeacher from '../../views/RegisterTeacher';
 import { getUser } from '../../Services/User';
 import { generateImageUrl } from '../../globals/utils';
 import CreateCourse from '../../views/CreateCourse';
-
 const Drawer = createDrawerNavigator();
+
+
 ////////////////////custom user drawer 
 function CustomDrawerContent(props) {
     const [isAuthorized, setIsAuthorized] = useContext(AuthContext);
     const [name, setName] = useState("");
     const [profilePhoto, setProfilePhoto] = useState("");
+    const [roleName, setRoleName] = useContext(roleContext);
+
 
     const handleLogout = async () => {
         await EncryptedStorage.removeItem('AUTH_TOKEN')
+        setRoleName('USER')
         setIsAuthorized(false)
     }
 
@@ -59,7 +63,7 @@ function CustomDrawerContent(props) {
         <DrawerContentScrollView {...props}>
             <View style={styles.profilePicContainer}>
                 <Image source={profilePhoto ? { uri: generateImageUrl(profilePhoto) } : require('../../../assets/images/user.png')} style={styles.profilePic} />
-                <Text style={styles.userName}>{name != "" ? name : "User"}</Text>
+                <Text style={styles.userName}>{name != "" ? name : "User"} {roleName}</Text>
             </View>
 
 
@@ -71,7 +75,11 @@ function CustomDrawerContent(props) {
                 <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate("MainBottomTab")}><Icon name="home-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Home</Text></TouchableOpacity>
 
                 <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate('AccountEdit')}><Icon name="settings-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Account Settings</Text></TouchableOpacity>
-                <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate('CreateCourse')}><Icon name="desktop-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Create Your Course</Text></TouchableOpacity>
+                {
+                    roleName == "TEACHER" &&
+
+                    <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate('CreateCourse')}><Icon name="desktop-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Create Your Course</Text></TouchableOpacity>
+                }
 
                 <TouchableOpacity style={styles.DrawerItem}><Icon name="pencil-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Blogs</Text></TouchableOpacity>
                 <TouchableOpacity style={styles.DrawerItem}><Icon name="information-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> About Us</Text></TouchableOpacity>
@@ -84,14 +92,17 @@ function CustomDrawerContent(props) {
                 <TouchableOpacity onPress={() => { handleLogout() }} style={styles.DrawerItem}><Icon name="log-out-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Logout</Text></TouchableOpacity>
 
             </View>
-            <View style={styles.teacherContainer} >
-                <Text style={styles.teacherHeading}>Become Teacher</Text>
-                <Image source={require('../../../assets/images/teacherVector.png')} />
-                <Text style={[styles.teacherHeading, { fontSize: 12, fontFamily: 'OpenSans-Regular' }]}>List your profile on Electura and spread your word</Text>
-                <TouchableOpacity onPress={() => props.navigation.navigate("RegisterTeacher")} style={styles.teachButton}>
-                    <Text style={styles.teachText}>Teach</Text>
-                </TouchableOpacity>
-            </View>
+            {
+                roleName == "USER" &&
+                <View style={styles.teacherContainer} >
+                    <Text style={styles.teacherHeading}>Become Teacher</Text>
+                    <Image source={require('../../../assets/images/teacherVector.png')} />
+                    <Text style={[styles.teacherHeading, { fontSize: 12, fontFamily: 'OpenSans-Regular' }]}>List your profile on Electura and spread your word</Text>
+                    <TouchableOpacity onPress={() => props.navigation.navigate("RegisterTeacher")} style={styles.teachButton}>
+                        <Text style={styles.teachText}>Teach</Text>
+                    </TouchableOpacity>
+                </View>
+            }
         </DrawerContentScrollView>
     );
 }

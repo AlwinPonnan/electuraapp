@@ -125,7 +125,7 @@ export default function AccountEdit(props) {
                 phone: mobile,
             }
             console.log(obj)
-            let { data: res, status: statusCode } = await updateProfile()
+            let { data: res, status: statusCode } = await updateProfile(obj)
             if (statusCode == 200 || statusCode == 304) {
                 console.log(res.message)
                 alert(res.message)

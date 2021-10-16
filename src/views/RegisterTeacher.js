@@ -12,6 +12,7 @@ import NavBar from '../components/Navbar'
 import { newEnquiry } from '../Services/TeacherEnquiry';
 import { Picker } from '@react-native-picker/picker';
 import { getAllCategory } from '../Services/Category';
+import { useIsFocused } from '@react-navigation/core';
 
 
 export default function RegisterTeacher(props) {
@@ -32,6 +33,7 @@ export default function RegisterTeacher(props) {
     const [university, setUniversity] = useState('');
     const [minFees, setMinFees] = useState('');
     const [maxFees, setMaxFees] = useState('');
+    const focused=useIsFocused()
     const handleSubmit = async () => {
         try {
             let userToken = await getDecodedToken()
@@ -101,10 +103,12 @@ export default function RegisterTeacher(props) {
     }
 
 
+    
+
     useEffect(() => {
         getCategories()
         getUserData()
-    }, [])
+    }, [focused])
 
 
 

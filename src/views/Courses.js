@@ -6,11 +6,13 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import NavBar from '../components/Navbar';
 import { getAllCategory } from '../Services/Category';
 import { getAllForUsersHomePage } from '../Services/Course';
+import { useIsFocused } from '@react-navigation/core';
 
 export default function Courses(props) {
-    const [course, setCourseArr] = useState([
+    const [courseArr, setCourseArr] = useState([
 
     ])
+    const focused = useIsFocused()
 
     const [productsArr, setProductsArr] = useState([
         {
@@ -66,44 +68,61 @@ export default function Courses(props) {
             console.error(error)
         }
     }
-    
-    
+
+
     const getCourses = async () => {
         try {
             console.log("ASd")
             const { data: res } = await getAllForUsersHomePage();
             if (res.success) {
-                console.log(JSON.stringify(res.data,null,2))
-                // setProductsArr(res.data.filter(el=>el.courses.length>1))
+                console.log(JSON.stringify(res.data[0].courses, null, 2))
+                let tempArr = res.data[0];
+                // console.log(JSON.stringify(tempArr.courses.map(el => {
+                //     let obj = {
+                //         ...el,
+                //         imgUrl: "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
+
+                //     }
+                //     return obj
+                // }), null, 2))
+                // setCourseArr(tempArr)
+                let temp = tempArr.courses.map(el => {
+                    let obj = {
+                        ...el,
+                        imgUrl: "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
+
+                    }
+                    return obj
+                })
+                console.log(temp)
+                setCourseArr(temp)
             }
         } catch (error) {
             console.error(error)
         }
     }
-    
-    
-        useEffect(() => {
-            getCategories()
-            getCourses()
-        }, [])
+
+
+    useEffect(() => {
+        getCategories()
+        getCourses()
+    }, [focused])
 
     const renderItem = ({ item, index }) => {
         return (
-            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("CourseDetail")} >
-                <Image style={styles.courseImg} source={{uri:item.teacherImg}} />
+            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("CourseDetail",{data:item._id})} >
+                <Image style={styles.courseImg} source={{ uri: item?.imgUrl }} />
                 <View style={styles.textCardContainer}>
                     <View>
 
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                            <Text style={styles.textCardMainHeading}>{item.teacher}</Text>
+                            <Text style={styles.textCardMainHeading}>{item?.name}</Text>
                             <Icon name="heart" size={14} color={colorObj.primarColor} />
-
                         </View>
-                        <Text style={styles.textCardMainSubHeading1}>{item.categoryName}</Text>
+                        <Text style={styles.textCardMainSubHeading1}>{item?.teacherName}</Text>
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                            <Text style={styles.textCardMainSubHeading2}>₹699</Text>
+                            <Text style={styles.textCardMainSubHeading2}>₹{item?.price}</Text>
                             <Text style={styles.textCardMainSubHeading2}><Icon name="star" size={14} color={colorObj.primarColor} />4.2</Text>
-
                         </View>
                     </View>
 
@@ -136,7 +155,7 @@ export default function Courses(props) {
                     keyExtractor={(item, index) => `${index}`}
                 />
 
-                
+
                 <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                     <Text style={styles.headingAboveCard}>Recommended Courses</Text>
                     <Text style={styles.viewAllText}>View All</Text>
@@ -144,13 +163,13 @@ export default function Courses(props) {
 
                 <FlatList
                     horizontal
-                    data={productsArr}
+                    data={courseArr}
                     renderItem={renderItem}
                     showsHorizontalScrollIndicator={false}
                     keyExtractor={(item, index) => `${index}`}
                 />
 
-                
+
 
                 <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                     <Text style={styles.headingAboveCard}>Best in Finance</Text>

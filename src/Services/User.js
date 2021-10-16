@@ -8,13 +8,13 @@ const url = `${serverUrl}/users`
 
 
 export const setToken = async (token) => {
-    return await EncryptedStorage.setItem('AuthToken', token)
+    return await EncryptedStorage.setItem('AUTH_TOKEN', token)
 }
 export const getToken = async () => {
     return await EncryptedStorage.getItem('AUTH_TOKEN')
 }
 export const removeToken = async () => {
-    return await EncryptedStorage.removeItem('AuthToken')
+    return await EncryptedStorage.removeItem('AUTH_TOKEN')
 }
 
 export const getDecodedToken = async () => {
@@ -24,6 +24,7 @@ export const getDecodedToken = async () => {
     let val = jwt_decode(token)
     return val
 }
+
 
 export const registerUser = (obj) => {
     try {
