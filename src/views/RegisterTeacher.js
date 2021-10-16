@@ -6,17 +6,19 @@ import { imageObj } from '../globals/images';
 
 import Icon from 'react-native-vector-icons/Ionicons'
 
-import { getDecodedToken, getToken, SendOtp } from '../Services/User';
+import { getDecodedToken, getToken, getUser, SendOtp } from '../Services/User';
 import { checkValidPhone } from '../globals/utils';
 import NavBar from '../components/Navbar'
 import { newEnquiry } from '../Services/TeacherEnquiry';
-
+import { Picker } from '@react-native-picker/picker';
+import { getAllCategory } from '../Services/Category';
 
 
 export default function RegisterTeacher(props) {
     const [qualificationArr, setQualificationArr] = useState([]);
     const [phone, setPhone] = useState();
 
+    const [selectedCategoryId, setSelectedCategoryId] = useState('');
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -30,41 +32,80 @@ export default function RegisterTeacher(props) {
     const [university, setUniversity] = useState('');
     const [minFees, setMinFees] = useState('');
     const [maxFees, setMaxFees] = useState('');
-    const handleSubmit=async()=>{
+    const handleSubmit = async () => {
         try {
-            let userToken=await getDecodedToken()
-            let obj={
+            let userToken = await getDecodedToken()
+            let obj = {
                 name,
                 email,
                 address,
-                class:teacherClass,
+                class: teacherClass,
                 subject,
                 description,
-                userId:userToken.userId,
-                educationObj:{
+                userId: userToken.userId,
+                educationObj: {
                     degree,
                     university
                 },
+                categoryArr: [{ categoryId: selectedCategoryId }],
                 experience,
-                feesObj:{
+                feesObj: {
                     minFees,
                     maxFees
                 }
             }
-            const {data:res}=await newEnquiry(obj);
-            if(res.success){
+            const { data: res } = await newEnquiry(obj);
+            if (res.success) {
                 alert(res.message)
             }
         } catch (error) {
             console.error(error)
-            if(error.response.data.message){
+            if (error.response.data.message) {
                 alert(error.response.data.message)
             }
-            else{
+            else {
                 alert(error.message)
             }
         }
     }
+
+    const [categoryArr, setCategoryArr] = useState([]);
+
+    const getCategories = async () => {
+        try {
+            const { data: res } = await getAllCategory();
+            if (res.success) {
+                setCategoryArr(res.data)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+
+    const getUserData = async () => {
+        try {
+            let { data: res, status: statusCode } = await getUser();
+            console.log(statusCode)
+            if (statusCode == 200 || statusCode == 304) {
+                console.log(JSON.stringify(res.data, null, 2))
+                setName(res.data.name)
+                setEmail(res.data.email)
+                setPhone(res.data.phone)
+                // console.log(JSON.stringify(res.data, null, 2))
+            }
+        }
+        catch (err) {
+            console.error(err)
+        }
+    }
+
+
+    useEffect(() => {
+        getCategories()
+        getUserData()
+    }, [])
+
 
 
     return (
@@ -84,51 +125,67 @@ export default function RegisterTeacher(props) {
 
                         <View style={styles.inputContainer}>
                             <Icon name="person-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val)=>setName(val)}   placeholder="Enter your Name" />
+                            <TextInput style={styles.inputStyles} value={name} editable={false} onChangeText={(val) => setName(val)} placeholder="Enter your Name" />
                         </View>
                         <View style={styles.inputContainer}>
                             <Icon name="mail-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setEmail(val)} keyboardType="email-address" placeholder="Enter your Email" />
+                            <TextInput style={styles.inputStyles} value={email} editable={false} onChangeText={(val) => setEmail(val)} keyboardType="email-address" placeholder="Enter your Email" />
                         </View>
                         <View style={styles.inputContainer}>
                             <Icon name="call-outline" size={14} color="black" />
-                            <TextInput maxLength={10} style={styles.inputStyles} onChangeText={(val) => setPhone(val)} keyboardType="numeric" placeholder="+91     Enter Number" />
+                            <TextInput maxLength={10} style={styles.inputStyles} editable={false} value={phone} onChangeText={(val) => setPhone(val)} keyboardType="numeric" placeholder="+91     Enter Number" />
                         </View>
                         <View style={styles.inputContainer}>
                             <Icon name="home-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setAddress(val)} placeholder="Enter Address" multiline={true} />
+                            <TextInput style={styles.inputStyles} onChangeText={(val) => setAddress(val)} value={address} placeholder="Enter Address" multiline={true} />
                         </View>
                         <View style={styles.inputContainer}>
                             <Icon name="home-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setMinFees(val)} placeholder="Enter Min Fees" keyboardType="numeric" />
+                            <TextInput keyboardType="number-pad" style={styles.inputStyles} onChangeText={(val) => setMinFees(val)} value={minFees} placeholder="Enter Min Fees" keyboardType="numeric" />
                         </View><View style={styles.inputContainer}>
                             <Icon name="home-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setMaxFees(val)} placeholder="Enter Max Fees" keyboardType="numeric" />
+                            <TextInput keyboardType="number-pad" style={styles.inputStyles} onChangeText={(val) => setMaxFees(val)} value={maxFees} placeholder="Enter Max Fees" keyboardType="numeric" />
+                        </View>
+                        <Picker
+                            style={[styles.inputContainer, { borderRadius: 20 }]}
+                            selectedValue={selectedCategoryId}
+                            onValueChange={(itemValue, itemIndex) =>
+                                setSelectedCategoryId(itemValue)
+                            }>
+                            <Picker.Item label="Please Select Category" value="" />
+
+                            {categoryArr.map((el, i) => {
+                                return (
+
+                                    <Picker.Item key={el._id} label={el.name} value={el._id} />
+                                )
+                            })}
+
+                        </Picker>
+                        <View style={styles.inputContainer}>
+                            <Icon name="library-outline" size={14} color="black" />
+                            <TextInput multiline={true} style={styles.inputStyles} value={degree} onChangeText={(val) => setDegree(val)} placeholder="Enter your Degree" />
                         </View>
                         <View style={styles.inputContainer}>
                             <Icon name="library-outline" size={14} color="black" />
-                            <TextInput multiline={true} style={styles.inputStyles} onChangeText={(val) => setDegree(val)} placeholder="Enter your Degree" />
+                            <TextInput multiline={true} style={styles.inputStyles} value={university} onChangeText={(val) => setUniversity(val)} placeholder="Enter your university" />
                         </View>
                         <View style={styles.inputContainer}>
                             <Icon name="library-outline" size={14} color="black" />
-                            <TextInput multiline={true} style={styles.inputStyles} onChangeText={(val) => setUniversity(val)} placeholder="Enter your university" />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <Icon name="library-outline" size={14} color="black" />
-                            <TextInput multiline={true} style={styles.inputStyles} onChangeText={(val) => setExperience(val)} placeholder="Enter your Qualification" />
+                            <TextInput style={styles.inputStyles} keyboardType="number-pad" value={experience} onChangeText={(val) => setExperience(val)} placeholder="Enter your Experience in Yrs" />
                         </View>
                         <View style={styles.inputContainer}>
                             <Icon name="file-tray-full-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setSubject(val)} placeholder="Enter Subject" />
+                            <TextInput style={styles.inputStyles} onChangeText={(val) => setSubject(val)} value={subject} placeholder="Enter Subject" />
                         </View>
                         <View style={styles.inputContainer}>
                             <Icon name="desktop-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setTeacherClass(val)} keyboardType="numeric" placeholder="Enter Class" />
+                            <TextInput style={styles.inputStyles} onChangeText={(val) => setTeacherClass(val)} value={teacherClass} keyboardType="numeric" placeholder="Enter Class" />
                         </View>
 
                         <View style={[styles.inputContainer, { minHeight: 80 }]}>
                             <Icon name="chatbox-ellipses-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setDescription(val)} placeholder="Enter Description" multiline={true} />
+                            <TextInput style={styles.inputStyles} onChangeText={(val) => setDescription(val)} value={description} placeholder="Enter Description" multiline={true} />
                         </View>
 
 
@@ -201,6 +258,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Montserrat-Regular',
         width: '100%',
         paddingLeft: 10,
+        color: "black"
     },
     btn: {
         backgroundColor: colorObj.primarColor,

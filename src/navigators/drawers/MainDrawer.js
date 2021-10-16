@@ -1,6 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import { AuthContext } from '../stacks/RootStack';
 
 import {
     StyleSheet,
@@ -19,10 +21,15 @@ import MainTopTab from '../tabs/MainTopTab';
 import RegisterTeacher from '../../views/RegisterTeacher';
 
 const Drawer = createDrawerNavigator();
-
 ////////////////////custom user drawer 
 function CustomDrawerContent(props) {
+    const [isAuthorized, setIsAuthorized] = useContext(AuthContext);
 
+
+    const handleLogout = async () => {
+        await EncryptedStorage.removeItem('AUTH_TOKEN')
+        setIsAuthorized(false)
+    }
 
     return (
         <DrawerContentScrollView {...props}>
@@ -39,16 +46,18 @@ function CustomDrawerContent(props) {
 
                 <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate("MainBottomTab")}><Icon name="home-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Home</Text></TouchableOpacity>
 
-                <TouchableOpacity style={styles.DrawerItem}><Icon name="settings-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Account Settings</Text></TouchableOpacity>
-                <TouchableOpacity style={styles.DrawerItem} onPress={()=>props.navigation.navigate('CreateCourse')}><Icon name="settings-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Create Your Course</Text></TouchableOpacity>
-                
+                <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate('AccountEdit')}><Icon name="settings-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Account Settings</Text></TouchableOpacity>
+                <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate('CreateCourse')}><Icon name="settings-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Create Your Course</Text></TouchableOpacity>
+
                 <TouchableOpacity style={styles.DrawerItem}><Icon name="pencil-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Blogs</Text></TouchableOpacity>
                 <TouchableOpacity style={styles.DrawerItem}><Icon name="information-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> About Us</Text></TouchableOpacity>
+
+                <TouchableOpacity style={styles.DrawerItem}><Icon name="person-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Update Profile</Text></TouchableOpacity>
 
                 <TouchableOpacity style={styles.DrawerItem}><Icon name="help-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Support</Text></TouchableOpacity>
                 <TouchableOpacity style={styles.DrawerItem}><Icon name="help-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> FAQs</Text></TouchableOpacity>
                 <TouchableOpacity style={styles.DrawerItem}><Icon name="document-text-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Policies</Text></TouchableOpacity>
-                <TouchableOpacity style={styles.DrawerItem}><Icon name="log-out-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Logout</Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => { handleLogout() }} style={styles.DrawerItem}><Icon name="log-out-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Logout</Text></TouchableOpacity>
 
             </View>
             <View style={styles.teacherContainer} >

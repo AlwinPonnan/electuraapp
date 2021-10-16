@@ -39,8 +39,8 @@ export default function CreateCourse(props) {
                 youtubeLink,
                 description,
                 userId: userToken.userId,
-                categoryId:selectedCategoryId,
-                categoryArr:[{categoryId:selectedCategoryId}],
+                categoryId: selectedCategoryId,
+                categoryArr: [{ categoryId: selectedCategoryId }],
             }
             console.log(obj)
             const { data: res } = await courseAdd(obj);

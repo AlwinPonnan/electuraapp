@@ -59,6 +59,28 @@ export const getUser = async () => {
     }
 }
 
+export const updateProfile = async (obj) => {
+    try {
+        let token = await getDecodedToken()
+        let res = axios.patch(`${url}/updateById/${token.userId}`, obj)
+        return res
+    }
+    catch (err) {
+        throw (err)
+    }
+}
+
+export const updateProfileImage = async (obj) => {
+    try {
+        let token = await getDecodedToken()
+        let res = axios.patch(`${url}/updateImage/${token.userId}`, obj)
+        return res
+    }
+    catch (err) {
+        throw (err)
+    }
+}
+
 
 
 
@@ -73,13 +95,13 @@ export const SendOtp = (phone) => {
 }
 
 
-export const CheckValidOtp=(sessionId,otp)=>{
+export const CheckValidOtp = (sessionId, otp) => {
     try {
         return axios.get(`https://2factor.in/API/V1/${otpApiKey}/SMS/VERIFY/${sessionId}/${otp}`)
-        
+
     } catch (error) {
         console.error(error)
-        throw(error)
+        throw (error)
     }
 }
 
