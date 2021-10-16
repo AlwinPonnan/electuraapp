@@ -19,23 +19,46 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import { colorObj } from '../../globals/colors';
 import MainTopTab from '../tabs/MainTopTab';
 import RegisterTeacher from '../../views/RegisterTeacher';
+import { getUser } from '../../Services/User';
+import { generateImageUrl } from '../../globals/utils';
 
 const Drawer = createDrawerNavigator();
 ////////////////////custom user drawer 
 function CustomDrawerContent(props) {
     const [isAuthorized, setIsAuthorized] = useContext(AuthContext);
-
+    const [name, setName] = useState("");
+    const [profilePhoto, setProfilePhoto] = useState("");
 
     const handleLogout = async () => {
         await EncryptedStorage.removeItem('AUTH_TOKEN')
         setIsAuthorized(false)
     }
 
+    const getUserData = async () => {
+        try {
+            let { data: res, status: statusCode } = await getUser();
+            console.log(statusCode)
+            if (statusCode == 200 || statusCode == 304) {
+                console.log(JSON.stringify(res.data, null, 2))
+                setName(res.data.name)
+                setProfilePhoto(res.data.profileImage)
+                // console.log(JSON.stringify(res.data, null, 2))
+            }
+        }
+        catch (err) {
+            console.error(err)
+        }
+    }
+
+    useEffect(() => {
+        getUserData()
+    }, [])
+
     return (
         <DrawerContentScrollView {...props}>
             <View style={styles.profilePicContainer}>
-                <Image source={require('../../../assets/images/user.png')} style={styles.profilePic} />
-                <Text style={styles.userName}>Bhaskar Pandey</Text>
+                <Image source={profilePhoto ? { uri: generateImageUrl(profilePhoto) } : require('../../../assets/images/user.png')} style={styles.profilePic} />
+                <Text style={styles.userName}>{name != "" ? name : "User"}</Text>
             </View>
 
 
