@@ -1,14 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj, light_colors } from '../globals/colors';
 import Icon from 'react-native-vector-icons/Ionicons'
 import NavBar from '../components/Navbar';
-
+import { getAllCategory } from "../Services/Category"
 import { Searchbar } from 'react-native-paper';
 
 export default function SearchScreen(props) {
-
+    const [categoryArr, setCategoryArr] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
 
     const onChangeSearch = query => setSearchQuery(query);
@@ -54,6 +54,33 @@ export default function SearchScreen(props) {
             active: false
         },
     ])
+
+
+
+
+
+
+
+
+
+    const getCategories = async () => {
+        try {
+            const { data: res } = await getAllCategory();
+            if (res.success) {
+                setCategoryArr(res.data)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    useEffect(() => {
+        getCategories()
+    }, [])
+
+
+
+
     const renderItem = ({ item, index }) => {
         return (
             <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("CourseDetail")} >
@@ -99,12 +126,12 @@ export default function SearchScreen(props) {
     const renderCategoryItem = ({ item, index }) => {
         return (
             <Pressable style={styles.categoryCard} >
-                <View style={[styles.flexRow,{alignItems:'center',marginTop:10}]}>
-                    <Image style={styles.categoryImage} source={{ uri: item.teacherImg }} />
-                    <Text style={[styles.cardCategoryName]}>{item.teacher}</Text>
+                <View style={[styles.flexRow, { alignItems: 'center', marginVertical: 10 }]}>
+                    {/* <Image style={styles.categoryImage} source={{ uri: item.teacherImg }} /> */}
+                    {/* <Text style={[styles.cardCategoryName]}>{item.teacher}</Text> */}
+                    <Text style={[styles.textCardMainSubHeading1, { paddingHorizontal: 10, paddingVertical: 5 }]}>{item.name}</Text>
 
                 </View>
-                <Text style={[styles.textCardMainSubHeading1,{paddingHorizontal:10,paddingVertical:5}]}>{item.categoryName}</Text>
 
             </Pressable>
         )
@@ -123,10 +150,11 @@ export default function SearchScreen(props) {
             <ScrollView>
 
                 <FlatList
-
-                    data={productsArr}
+                    contentContainerStyle={{ paddingHorizontal: 10 }}
+                    data={categoryArr}
                     renderItem={renderCategoryItem}
-                    numColumns={2}
+                    numColumns={3}
+                    columnWrapperStyle={{ justifyContent: 'space-between' }}
                     keyExtractor={(item, index) => `${index}`}
                 />
                 <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
@@ -329,8 +357,8 @@ const styles = StyleSheet.create({
 
     ///category
     categoryCard: {
-        width: wp(45),
-        height: 80,
+        width: wp(30),
+        // height: 80,
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
@@ -338,22 +366,22 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
-        paddingHorizontal:20,
-        marginHorizontal:10,
-        marginVertical:10,    
+        paddingHorizontal: 20,
+        // marginHorizontal: 10,
+        marginVertical: 10,
         elevation: 5,
-        backgroundColor:colorObj.whiteColor,
-        borderRadius:10
+        backgroundColor: colorObj.whiteColor,
+        borderRadius: 10
     },
-    categoryImage:{
-        height:40,
-        width:40,
-        borderRadius:100,
+    categoryImage: {
+        height: 40,
+        width: 40,
+        borderRadius: 100,
     },
-    cardCategoryName:{
+    cardCategoryName: {
         textAlign: 'center',
         fontFamily: 'Montserrat-SemiBold',
-        paddingHorizontal: 10,   
-        color:'#232323'
+        paddingHorizontal: 10,
+        color: '#232323'
     }
 })

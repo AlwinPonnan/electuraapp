@@ -21,6 +21,7 @@ import MainTopTab from '../tabs/MainTopTab';
 import RegisterTeacher from '../../views/RegisterTeacher';
 import { getUser } from '../../Services/User';
 import { generateImageUrl } from '../../globals/utils';
+import CreateCourse from '../../views/CreateCourse';
 
 const Drawer = createDrawerNavigator();
 ////////////////////custom user drawer 
@@ -70,12 +71,12 @@ function CustomDrawerContent(props) {
                 <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate("MainBottomTab")}><Icon name="home-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Home</Text></TouchableOpacity>
 
                 <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate('AccountEdit')}><Icon name="settings-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Account Settings</Text></TouchableOpacity>
-                <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate('CreateCourse')}><Icon name="settings-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Create Your Course</Text></TouchableOpacity>
+                <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate('CreateCourse')}><Icon name="desktop-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Create Your Course</Text></TouchableOpacity>
 
                 <TouchableOpacity style={styles.DrawerItem}><Icon name="pencil-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Blogs</Text></TouchableOpacity>
                 <TouchableOpacity style={styles.DrawerItem}><Icon name="information-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> About Us</Text></TouchableOpacity>
 
-                <TouchableOpacity style={styles.DrawerItem}><Icon name="person-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Update Profile</Text></TouchableOpacity>
+                {/* <TouchableOpacity style={styles.DrawerItem}><Icon name="person-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Update Profile</Text></TouchableOpacity> */}
 
                 <TouchableOpacity style={styles.DrawerItem}><Icon name="help-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Support</Text></TouchableOpacity>
                 <TouchableOpacity style={styles.DrawerItem}><Icon name="help-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> FAQs</Text></TouchableOpacity>
@@ -101,6 +102,7 @@ export default function MainDrawer() {
         <Drawer.Navigator screenOptions={{ headerShown: false }} drawerContent={props => <CustomDrawerContent {...props} />}>
             <Drawer.Screen name="MainBottomTab" component={MainBottomTab} />
             <Drawer.Screen name="AccountEdit" component={AccountEdit} />
+            <Drawer.Screen name="CreateCourse" component={CreateCourse} />
             <Drawer.Screen name="RegisterTeacher" component={RegisterTeacher} />
         </Drawer.Navigator>
     )

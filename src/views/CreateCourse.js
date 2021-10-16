@@ -35,6 +35,7 @@ export default function CreateCourse(props) {
             let obj = {
                 name,
                 hours,
+                price,
                 assignments,
                 youtubeLink,
                 description,
