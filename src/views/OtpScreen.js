@@ -25,7 +25,7 @@ export default function VerifyOtp(props) {
                 setIsAuthorized(true)
             }
         } catch (error) {
-            console.error(error, "error")
+            console.error(JSON.stringify(error.response,null,2), "error")
         }
     }
 

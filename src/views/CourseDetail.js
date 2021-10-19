@@ -1,10 +1,44 @@
-import React, { useState } from 'react'
-import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView,Linking } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj, light_colors } from '../globals/colors';
 import Icon from 'react-native-vector-icons/Ionicons'
 import NavBar from '../components/Navbar';
+import { getById } from '../Services/Course';
+import { useIsFocused } from '@react-navigation/core';
+
+
 export default function CourseDetail(props) {
+    const [courseObj, setCourseObj] = useState({});
+
+    const isFocused = useIsFocused();
+    const getCourseById = async () => {
+        try {
+            const { data: res } = await getById(props.route.params.data)
+            if (res.success) {
+                console.log(res.data)
+                setCourseObj(res.data)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const handleLinkingOpen=()=>{
+        Linking.openURL(courseObj?.youtubeLink)
+    }
+
+
+
+    const handleOnint = () => {
+
+        getCourseById()
+    }
+
+    useEffect(() => {
+        handleOnint()
+    }, [isFocused])
+
     return (
         <View style={styles.container}>
             <NavBar rootProps={props} />
@@ -12,7 +46,7 @@ export default function CourseDetail(props) {
 
                 <View style={[styles.flexRow, { alignItems: "center", justifyContent: "space-between", }]}>
                     <View style={[styles.flexRow]} >
-                        <Text style={styles.pageHeading}>The Art of Film Making</Text>
+                        <Text style={styles.pageHeading}>{courseObj?.name}</Text>
                         <View style={[styles.flexRow, { alignItems: "center" }]}>
                             <Text style={styles.ratingTxt}>4.2</Text>
                             <Icon name="star" size={10} color="rgba(8, 90, 78, 1)" />
@@ -22,22 +56,22 @@ export default function CourseDetail(props) {
                 </View>
                 <View style={[styles.flexRow, { alignItems: "center", marginTop: 5 }]}>
                     <Image source={require("../../assets//images/user.jpg")} style={styles.img} />
-                    <Text style={styles.userName}>Dave O’sean</Text>
+                    <Text style={styles.userName}>{courseObj?.teacherName}</Text>
                 </View>
 
                 <Image source={require("../../assets//images/Banner1.png")} resizeMode="cover" style={styles.bannerimg} />
 
 
                 <View style={[styles.flexRow, { marginVertical: 15 }]}>
-                    <Text style={styles.dataItem}>16 Enrollments</Text>
-                    <Text style={styles.dataItem}>8 Hours</Text>
-                    <Text style={styles.dataItem}>4 Assignments</Text>
+                    <Text style={styles.dataItem}>4 Enrollments</Text>
+                    <Text style={styles.dataItem}>{courseObj?.hours} Hours</Text>
+                    <Text style={styles.dataItem}>{courseObj?.assignments} Assignments</Text>
                 </View>
                 <Text style={styles.description}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla netus molestie cras malesuada malesuada nisi, mauris. Nibh pulvinar elit enim varius donec.
+                    {courseObj?.description}
                 </Text>
             </View>
-            <Pressable style={styles.btn} onPress={() => props.navigation.navigate('OtpScreen')}>
+            <Pressable style={styles.btn} onPress={() =>handleLinkingOpen()}>
                 <Text style={styles.btnText}>Buy Now</Text>
             </Pressable>
         </View>

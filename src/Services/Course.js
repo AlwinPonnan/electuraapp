@@ -18,3 +18,6 @@ export const getAllForUsersHomePage=async()=>{
 }
 
 
+export const getById=async(id)=>{
+    return axios.get(`${url}/getById/${id}`)
+}

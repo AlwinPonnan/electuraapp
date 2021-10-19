@@ -65,7 +65,7 @@ export default function RootStack() {
             },
             async (err) => {
                 console.log("INterceptor error")
-                console.log(err.config)
+                // console.log(err.config)
                 // if (err?.response?.status === 401) {
                 //   // console.log("ONLY IN ERROR")
                 //   // toast.error('401 Unauthorized')
@@ -82,7 +82,7 @@ export default function RootStack() {
 
 
                 // Access Token was expired
-                if (err.response.status === 401) {
+                if (err?.response?.status === 401) {
                     let authToken = await EncryptedStorage.getItem('AUTH_TOKEN')
                     await EncryptedStorage.removeItem('AUTH_TOKEN')
                     if (authToken) {

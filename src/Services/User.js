@@ -38,13 +38,9 @@ export const registerUser = (obj) => {
 
 
 export const loginUser = (obj) => {
-    try {
-        let res = axios.post(`${url}/login`, obj)
-        return res
-    }
-    catch (err) {
-        throw (err)
-    }
+    let res = axios.post(`${url}/login`, obj)
+    return res
+
 }
 
 
