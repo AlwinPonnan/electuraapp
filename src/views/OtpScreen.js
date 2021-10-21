@@ -14,7 +14,7 @@ export default function VerifyOtp(props) {
 
     const handleOtpSubmit = async () => {
         try {
-            console.log("hello")
+            // console.log("hello")
             let obj = {
                 phone: props.route.params.phone
             }
@@ -25,7 +25,7 @@ export default function VerifyOtp(props) {
                 setIsAuthorized(true)
             }
         } catch (error) {
-            console.error(JSON.stringify(error.response,null,2), "error")
+            console.error(JSON.stringify(error.response, null, 2), "error")
         }
     }
 

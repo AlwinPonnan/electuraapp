@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { View, Text, StyleSheet, Image, TouchableOpacity, Pressable, Appearance, TextInput, ScrollView, Keyboard, FlatList, KeyboardAvoidingView } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from "react-native-vector-icons/Ionicons"
@@ -7,9 +7,10 @@ import { dark_colors, light_colors } from '../globals/colors';
 import DocumentPicker from 'react-native-document-picker'
 import { getUser, updateProfile, updateProfileImage } from '../Services/User';
 import { generateImageUrl } from '../globals/utils';
+import { profileContext } from '../navigators/stacks/RootStack';
 export default function AccountEdit(props) {
     const [QualificationArr, setQualificationArr] = useState([{ qualificationName: "asd" }]);
-
+    const [profileData, setProfileData] = useContext(profileContext);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [mobile, setMobile] = useState("");
@@ -187,6 +188,7 @@ export default function AccountEdit(props) {
                 setEmail(res.data.email)
                 setMobile(res.data.phone)
                 setProfilePhoto(res.data.profileImage)
+                setProfileData(res.data)
                 // console.log(JSON.stringify(res.data, null, 2))
             }
         }
