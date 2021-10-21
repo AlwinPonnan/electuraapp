@@ -8,9 +8,10 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import { loginUser } from '../Services/User';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
-import { AuthContext } from '../navigators/stacks/RootStack';
+import { AuthContext, roleContext } from '../navigators/stacks/RootStack';
 export default function VerifyOtp(props) {
     const [isAuthorized, setIsAuthorized] = useContext(AuthContext);
+    const [roleName, setRoleName] = useContext(roleContext);
 
     const handleOtpSubmit = async () => {
         try {
@@ -23,6 +24,8 @@ export default function VerifyOtp(props) {
                 await EncryptedStorage.setItem('AUTH_TOKEN', res.data)
                 await EncryptedStorage.setItem('AUTH_REFRESH_TOKEN', res.refreshToken)
                 setIsAuthorized(true)
+                setRoleName(res.data.role)
+                console.log(res.data, "asdaad")
             }
         } catch (error) {
             console.error(JSON.stringify(error.response, null, 2), "error")

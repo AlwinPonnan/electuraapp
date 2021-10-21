@@ -29,11 +29,11 @@ export default function MainDrawer() {
     const [profilePhoto, setProfilePhoto] = useState("");
     const focused = useIsFocused()
     const [profileData, setProfileData] = useContext(profileContext);
+    const [isAuthorized, setIsAuthorized] = useContext(AuthContext);
+    const [roleName, setRoleName] = useContext(roleContext);
 
     ////////////////////custom user drawer 
     function CustomDrawerContent(props) {
-        // const [isAuthorized, setIsAuthorized] = useContext(AuthContext);
-        const [roleName, setRoleName] = useContext(roleContext);
 
 
         const handleLogout = async () => {
@@ -76,11 +76,11 @@ export default function MainDrawer() {
 
                 </View>
                 {
-                    roleName == "USER" &&
+                    roleName === "USER" &&
                     <View style={styles.teacherContainer} >
                         <Text style={styles.teacherHeading}>Become Teacher</Text>
                         <Image source={require('../../../assets/images/teacherVector.png')} />
-                        <Text style={[styles.teacherHeading, { fontSize: 12, fontFamily: 'OpenSans-Regular' }]}>List your profile on Electura and spread your word</Text>
+                        <Text style={[styles.teacherHeading, { fontSize: 12, fontFamily: 'OpenSans-Regular' }]}>List your profile {roleName} on Electura and spread your word</Text>
                         <TouchableOpacity onPress={() => props.navigation.navigate("RegisterTeacher")} style={styles.teachButton}>
                             <Text style={styles.teachText}>Teach</Text>
                         </TouchableOpacity>

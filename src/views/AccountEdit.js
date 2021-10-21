@@ -3,20 +3,25 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, Pressable, Appearance,
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from "react-native-vector-icons/Ionicons"
 import NavBar from '../components/Navbar';
-import { dark_colors, light_colors } from '../globals/colors';
+import { colorObj, dark_colors, light_colors } from '../globals/colors';
 import DocumentPicker from 'react-native-document-picker'
 import { getUser, updateProfile, updateProfileImage } from '../Services/User';
 import { generateImageUrl } from '../globals/utils';
-import { profileContext } from '../navigators/stacks/RootStack';
+import { Checkbox } from 'react-native-paper';
+import { profileContext, roleContext } from '../navigators/stacks/RootStack';
 export default function AccountEdit(props) {
-    const [QualificationArr, setQualificationArr] = useState([{ qualificationName: "asd" }]);
     const [profileData, setProfileData] = useContext(profileContext);
+    const [roleName, setRoleName] = useContext(roleContext);
+
+
+    const [QualificationArr, setQualificationArr] = useState([{ qualificationName: "" }]);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [mobile, setMobile] = useState("");
     const [profilePhoto, setProfilePhoto] = useState("");
     const [documentVal, setDocumentVal] = useState("");
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+    const [genderIsSelected, setGenderIsMale] = useState(false);
 
     const addQualification = () => {
         setQualificationArr(previousState => {
@@ -189,6 +194,7 @@ export default function AccountEdit(props) {
                 setMobile(res.data.phone)
                 setProfilePhoto(res.data.profileImage)
                 setProfileData(res.data)
+                setRoleName(res.data.role)
                 // console.log(JSON.stringify(res.data, null, 2))
             }
         }
@@ -209,48 +215,91 @@ export default function AccountEdit(props) {
             <NavBar rootProps={props} />
             <View style={styles.container}>
                 <KeyboardAvoidingView>
-                    {/* 
-                <FlatList
-                    contentContainerStyle={[styles.innerContainer, { paddingBottom: isKeyboardVisible ? 250 : 80 }]}
-                    data={QualificationArr}
-                    keyExtractor={(item, index) => index}
-                    renderItem={renderQualification}
-                    ListHeaderComponent={ */}
-                    <>
-                        <View style={styles.profileImageContainer}>
-                            {
-                                profilePhoto != "" && profilePhoto ?
-                                    <Image style={styles.profileImage} source={{ uri: generateImageUrl(profilePhoto) }} />
-                                    :
-                                    <Image style={styles.profileImage} source={require("../../assets/images/user.jpg")} />
-                            }
 
-                            <TouchableOpacity style={styles.PickImageBtn} onPress={() => pickImageProfilePhoto()}>
-                                <Icon name="camera-outline" size={30} color={"#085A4E"} />
-                            </TouchableOpacity>
-                        </View>
+                    <FlatList
+                        contentContainerStyle={[styles.innerContainer, { paddingBottom: isKeyboardVisible ? 250 : 80 }]}
+                        data={QualificationArr}
+                        keyExtractor={(item, index) => index}
+                        renderItem={renderQualification}
+                        ListHeaderComponent={
+                            <>
+                                <View style={styles.profileImageContainer}>
+                                    {
+                                        profilePhoto != "" && profilePhoto ?
+                                            <Image style={styles.profileImage} source={{ uri: generateImageUrl(profilePhoto) }} />
+                                            :
+                                            <Image style={styles.profileImage} source={require("../../assets/images/user.jpg")} />
+                                    }
 
-                        <TextInput value={name} onChangeText={(e) => setName(e)} style={styles.txtInput} placeholder="Name" />
-                        <TextInput value={email} onChangeText={(e) => setEmail(e)} style={styles.txtInput} placeholder="Email" />
-                        <TextInput value={mobile} onChangeText={(e) => setMobile(e)} maxLength={10} style={styles.txtInput} keyboardType="number-pad" placeholder="Phone" />
+                                    <TouchableOpacity style={styles.PickImageBtn} onPress={() => pickImageProfilePhoto()}>
+                                        <Icon name="camera-outline" size={30} color={"#085A4E"} />
+                                    </TouchableOpacity>
+                                </View>
 
-                        {/* <TouchableOpacity onPress={() => pickImageDocument()} style={[styles.txtInput, { justifyContent: "space-between", display: "flex", flexDirection: "row", alignItems: "center", ddingHorizontal: 15, height: 45, }]} placeholder="Phone">
-                        <Text style={{ color: "black" }}>{documentVal != "" ? documentVal.name : "Please upload an Id proof"}</Text>
-                        <Icon name="camera-outline" size={30} color={"#085A4E"} />
-                    </TouchableOpacity> */}
-                        {/* <View style={[styles.flexRow, { justifyContent: "space-between", alignItems: "center", marginTop: 20 }]}>
-                        <Text style={styles.label}>
-                            Qualifications
-                        </Text>
-                        <TouchableOpacity style={styles.AddBtn} onPress={() => addQualification()}>
-                            <Icon name="ios-add-outline" size={30} color={"#085A4E"} />
-                        </TouchableOpacity>
-                    </View> */}
-                        <Pressable style={styles.btn} onPress={() => handleProfileUpdate()}>
-                            <Text style={styles.btnTxt}>Update Profile</Text>
-                        </Pressable>
-                    </>
+                                <TextInput value={name} onChangeText={(e) => setName(e)} style={styles.txtInput} placeholder="Name" />
+                                <TextInput value={email} onChangeText={(e) => setEmail(e)} style={styles.txtInput} placeholder="Email" />
+                                <TextInput value={mobile} onChangeText={(e) => setMobile(e)} maxLength={10} style={styles.txtInput} keyboardType="number-pad" placeholder="Phone" />
 
+
+
+                                <TouchableOpacity onPress={() => pickImageDocument()} style={[styles.txtInput, { justifyContent: "space-between", display: "flex", flexDirection: "row", alignItems: "center", ddingHorizontal: 15, height: 45, }]} placeholder="Phone">
+                                    <Text style={{ color: "black" }}>{documentVal != "" ? documentVal.name : "Please upload an Id proof"}</Text>
+                                    <Icon name="camera-outline" size={30} color={"#085A4E"} />
+                                </TouchableOpacity>
+
+                                <Text style={styles.label}>
+                                    Optional Data
+                                </Text>
+
+                                <View style={[styles.flexRow, { justifyContent: "space-between", alignItems: "center", marginTop: 20 }]}>
+                                    <Text style={styles.label}>
+                                        Proficient topics
+                                    </Text>
+                                    <TouchableOpacity style={styles.AddBtn} onPress={() => addQualification()}>
+                                        <Icon name="ios-add-outline" size={30} color={"#085A4E"} />
+                                    </TouchableOpacity>
+                                </View>
+
+                                <Text style={styles.label}>Select your Gender</Text>
+                                <View style={{ display: "flex", flexDirection: "column", }}>
+
+                                    <View style={{ width: wp(81), marginTop: 10, alignItems: "center", alignSelf: "center", display: "flex", flexDirection: "row" }}>
+                                        <Checkbox
+                                            color={colorObj.primarColor}
+                                            status={genderIsSelected ? "checked" : "unchecked"}
+                                            onPress={() => {
+                                                setGenderIsMale(true);
+                                            }}
+                                        />
+                                        <TouchableOpacity style={{ width: wp(70), paddingVertical: 5, }} onPress={() => {
+                                            setGenderIsMale(true);
+                                        }}>
+                                            <Text>Male</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View style={{ width: wp(81), marginTop: 10, alignItems: "center", alignSelf: "center", display: "flex", flexDirection: "row" }}>
+                                        <Checkbox
+                                            color={colorObj.primarColor}
+                                            status={genderIsSelected ? "unchecked" : "checked"}
+                                            onPress={() => {
+                                                setGenderIsMale(false);
+                                            }}
+                                        />
+                                        <TouchableOpacity style={{ width: wp(50), paddingVertical: 5, }} onPress={() => {
+                                            setGenderIsMale(false);
+                                        }}>
+                                            <Text>Female</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </>
+                        }
+                        ListFooterComponent={
+                            <Pressable style={styles.btn} onPress={() => handleProfileUpdate()}>
+                                <Text style={styles.btnTxt}>Update Profile</Text>
+                            </Pressable>
+                        }
+                    />
                 </KeyboardAvoidingView>
 
             </View>

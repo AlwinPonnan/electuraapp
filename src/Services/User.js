@@ -48,7 +48,7 @@ export const loginUser = (obj) => {
 export const getUser = async () => {
     try {
         let token = await getDecodedToken()
-        let res = axios.get(`${url}/getById/${token.userId}`)
+        let res = axios.get(`${url}/getById/${token?.userId}`)
         return res
     }
     catch (err) {
@@ -59,7 +59,7 @@ export const getUser = async () => {
 export const updateProfile = async (obj) => {
     try {
         let token = await getDecodedToken()
-        let res = axios.patch(`${url}/updateById/${token.userId}`, obj)
+        let res = axios.patch(`${url}/updateById/${token?.userId}`, obj)
         return res
     }
     catch (err) {
