@@ -280,7 +280,8 @@ export default function AccountEdit(props) {
                                     <View style={{ width: wp(81), marginTop: 10, alignItems: "center", alignSelf: "center", display: "flex", flexDirection: "row" }}>
                                         <Checkbox
                                             color={colorObj.primarColor}
-                                            status={genderIsSelected ? "unchecked" : "checked"}
+                                            status={genderIsSelected ? "unchecked" : "checked"
+                                            }
                                             onPress={() => {
                                                 setGenderIsMale(false);
                                             }}

@@ -10,7 +10,7 @@ import { SendOtp } from '../Services/User';
 import { checkValidPhone } from '../globals/utils';
 import { loadingContext } from '../navigators/stacks/RootStack';
 import LoadingContainer from './LoadingContainer';
-
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 
 
@@ -23,11 +23,12 @@ export default function login(props) {
             if (checkValidPhone(phone)) {
                 setLoading(true)
                 const { data: res } = await SendOtp(phone)
-                console.log(res)
-                if (res.success) {
-                    alert(res.message)
+                if (res.Status) {
+                    alert(`OTP sent successfully on ${phone} , Do not share Otp with anyone.`)
                     setLoading(false)
-                    props.navigation.navigate('OtpScreen')
+                    console.log(res.Details, "detailss")
+                    await EncryptedStorage.setItem("sessionIdOtp", res.Details)
+                    props.navigation.navigate('OtpScreen', { data: phone })
                 }
             }
             else {
@@ -57,7 +58,7 @@ export default function login(props) {
 
                         <KeyboardAvoidingView style={styles.inputContainer}>
                             <Icon name="call-outline" size={14} color="black" />
-                            <TextInput maxLength={10} style={styles.inputStyles} onChangeText={(val) => setPhone(val)} keyboardType="numeric" placeholder="+91     Enter Number" />
+                            <TextInput placeholderTextColor="black" maxLength={10} style={styles.inputStyles} onChangeText={(val) => setPhone(val)} keyboardType="numeric" placeholder="+91     Enter Number" />
                         </KeyboardAvoidingView>
                         <View style={styles.btnContainer}>
                             <Text style={styles.termsText}>By Continuing you accept the <Text style={{ color: colorObj.primarColor }}>terms and conditions</Text></Text>
@@ -124,6 +125,7 @@ const styles = StyleSheet.create({
     inputStyles: {
         fontFamily: 'Montserrat-Regular',
         width: '100%',
+        color: "black",
         paddingLeft: 10,
     },
     btn: {

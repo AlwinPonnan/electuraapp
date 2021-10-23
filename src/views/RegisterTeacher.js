@@ -21,40 +21,44 @@ export default function RegisterTeacher(props) {
     const [qualificationArr, setQualificationArr] = useState([]);
     const [phone, setPhone] = useState();
     const [checked, setChecked] = React.useState('first');
-
+    const [pincode, setPincode] = useState("");
+    const [onlineIsSelected, setOnlineIsSelected] = useState(false);
+    const [offlineIsSelected, setOfflineIsSelected] = useState(false);
 
     const [classesArr, setClassesArr] = useState([]);
-
-    const [selectedCategoryId, setSelectedCategoryId] = useState('');
+    const [certificate, setCertificate] = useState("");
+    // const [selectedCategoryId, setSelectedCategoryId] = useState('');
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [address, setAddress] = useState('');
+    // const [address, setAddress] = useState('');
+    // const [description, setDescription] = useState('');
     const [experience, setExperience] = useState('');
     const [subject, setSubject] = useState('');
     const [teacherClass, setTeacherClass] = useState('');
-    const [description, setDescription] = useState('');
     const [degree, setDegree] = useState('');
-    const [profilePhoto, setProfilePhoto] = useState("");
+    const [validId, setvalidId] = useState("");
+    const [genderIsSelected, setGenderIsMale] = useState(false);
+
 
     const [university, setUniversity] = useState('');
     const [minFees, setMinFees] = useState('');
     const [maxFees, setMaxFees] = useState('');
-    const focused = useIsFocused()
+
+    const focused = useIsFocused();
     const handleSubmit = async () => {
         try {
 
             let classesFilteredArr = classesArr.filter(el => el.checked == true).map(el => { return { classId: el._id } })
             let categoryFilteredArr = categoryArr.filter(el => el.checked == true).map(el => { return { categoryId: el._id } })
 
-            if (name != "" && email != "" && address != "" && description != "" && minFees != "", classesFilteredArr.length > 0) {
-
+            if (name != "" && email != "" && phone != "" && classesFilteredArr.length > 0) {
                 let userToken = await getDecodedToken()
                 let obj = {
                     name,
                     email,
-                    address,
-                    description,
+                    // address,
+                    pincode: pincode,
                     userId: userToken.userId,
                     educationObj: {
                         degree,
@@ -63,10 +67,10 @@ export default function RegisterTeacher(props) {
                     classesArr: classesFilteredArr,
                     categoryArr: categoryFilteredArr,
                     experience,
-                    feesObj: {
-                        minFees,
-                        maxFees
-                    }
+                    // feesObj: {
+                    //     minFees,
+                    //     maxFees
+                    // }
                 }
                 const { data: res } = await newEnquiry(obj);
                 if (res.success) {
@@ -165,7 +169,7 @@ export default function RegisterTeacher(props) {
     }
 
 
-    const pickImageProfilePhoto = async () => {
+    const pickImageValidId = async () => {
         try {
             const res = await DocumentPicker.pickSingle({
                 type: [DocumentPicker.types.images],
@@ -176,9 +180,33 @@ export default function RegisterTeacher(props) {
                 res.name,
                 res.size,
             )
-            setProfilePhoto(res)
+            setvalidId(res)
 
-            handleProfileImageUpdate(res)
+
+
+        } catch (err) {
+            if (DocumentPicker.isCancel(err)) {
+                // User cancelled the picker, exit any dialogs or menus and move on
+            } else {
+                throw err
+            }
+        }
+    }
+
+    const pickCertificate = async () => {
+        try {
+            const res = await DocumentPicker.pickSingle({
+                type: [DocumentPicker.types.images],
+            })
+            console.log(
+                res.uri,
+                res.type, // mime type
+                res.name,
+                res.size,
+            )
+            setCertificate(res)
+
+
 
         } catch (err) {
             if (DocumentPicker.isCancel(err)) {
@@ -235,103 +263,6 @@ export default function RegisterTeacher(props) {
                             <Text style={styles.mainHeading}>Become a Teacher</Text>
                         </View>
 
-                        <View style={styles.inputContainer}>
-                            <Icon name="person-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} value={name} editable={false} onChangeText={(val) => setName(val)} placeholder="Enter your Name" />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <Icon name="mail-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} value={email} editable={false} onChangeText={(val) => setEmail(val)} keyboardType="email-address" placeholder="Enter your Email" />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <Icon name="call-outline" size={14} color="black" />
-                            <TextInput maxLength={10} style={styles.inputStyles} editable={false} value={phone} onChangeText={(val) => setPhone(val)} keyboardType="numeric" placeholder="+91     Enter Number" />
-                        </View>
-
-                        <Text style={styles.label}>Select Classes taught by you</Text>
-                        {
-                            classesArr && classesArr.map((el, index) => {
-                                return (
-                                    <View key={el._id} style={{ width: wp(91), marginTop: 10, alignItems: "center", alignSelf: "center", display: "flex", flexDirection: "row" }}>
-                                        <Checkbox
-                                            color={colorObj.primarColor}
-                                            status={el.checked ? "checked" : "unchecked"}
-                                            onPress={() => {
-                                                setClassSelected(el._id);
-                                            }}
-                                        />
-                                        <TouchableOpacity style={{ width: wp(82), paddingVertical: 5, }} onPress={() => {
-                                            setClassSelected(el._id);
-                                        }}>
-                                            <Text>{el.name}</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                )
-                            })
-                        }
-                        <View style={styles.inputContainer}>
-                            <Icon name="home-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setAddress(val)} value={address} placeholder="Enter Address" multiline={true} />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <Icon name="home-outline" size={14} color="black" />
-                            <TextInput keyboardType="number-pad" style={styles.inputStyles} onChangeText={(val) => setMinFees(val)} value={minFees} placeholder="Enter Min Fees" keyboardType="numeric" />
-                        </View><View style={styles.inputContainer}>
-                            <Icon name="home-outline" size={14} color="black" />
-                            <TextInput keyboardType="number-pad" style={styles.inputStyles} onChangeText={(val) => setMaxFees(val)} value={maxFees} placeholder="Enter Max Fees" keyboardType="numeric" />
-                        </View>
-
-                        <Text style={styles.label}>Select Subjects taught by you</Text>
-                        {
-                            categoryArr && categoryArr.map((el, index) => {
-                                return (
-                                    <View key={el._id} style={{ width: wp(91), marginTop: 10, alignItems: "center", alignSelf: "center", display: "flex", flexDirection: "row" }}>
-                                        <Checkbox
-                                            color={colorObj.primarColor}
-                                            status={el.checked ? "checked" : "unchecked"}
-                                            onPress={() => {
-                                                setCategorySelected(el._id);
-                                            }}
-                                        />
-                                        <TouchableOpacity style={{ width: wp(82), paddingVertical: 5, }} onPress={() => {
-                                            setCategorySelected(el._id);
-                                        }}>
-                                            <Text>{el.name}</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                )
-                            })
-                        }
-                        <View style={styles.inputContainer}>
-                            <Icon name="library-outline" size={14} color="black" />
-                            <TextInput multiline={true} style={styles.inputStyles} value={degree} onChangeText={(val) => setDegree(val)} placeholder="Enter your Degree" />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <Icon name="library-outline" size={14} color="black" />
-                            <TextInput multiline={true} style={styles.inputStyles} value={university} onChangeText={(val) => setUniversity(val)} placeholder="Enter your university" />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <Icon name="library-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} keyboardType="number-pad" value={experience} onChangeText={(val) => setExperience(val)} placeholder="Enter your Experience in Yrs" />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <Icon name="file-tray-full-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setSubject(val)} value={subject} placeholder="Enter Subject" />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <Icon name="desktop-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setTeacherClass(val)} value={teacherClass} keyboardType="numeric" placeholder="Enter Class" />
-                        </View>
-
-                        <View style={[styles.inputContainer, { minHeight: 80 }]}>
-                            <Icon name="chatbox-ellipses-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setDescription(val)} value={description} placeholder="Enter Description" multiline={true} />
-                        </View>
-                        <TouchableOpacity style={[styles.inputContainer, { minHeight: 80 }]} onPress={() => pickImageProfilePhoto()}>
-                            <Icon name="camera-outline" size={14} color={"#085A4E"} />
-                            <Text style={{ fontFamily: "Montserrat-Thin", fontSize: 14, marginLeft: 10 }}>{profilePhoto.name ? profilePhoto.name : "Upload An Id Image"}</Text>
-                        </TouchableOpacity>
-
 
 
                         <View style={{ display: "flex", flexDirection: "column", width: wp(92), alignSelf: "center" }}>
@@ -362,6 +293,226 @@ export default function RegisterTeacher(props) {
                             </View>
 
                         </View>
+                        <Text style={styles.label}>Enter your name</Text>
+
+                        <View style={styles.inputContainer}>
+                            <Icon name="person-outline" size={14} color="black" />
+                            <TextInput style={styles.inputStyles} value={name} editable={false} onChangeText={(val) => setName(val)} placeholder="Enter your Name *" />
+                        </View>
+                        <Text style={styles.label}>Enter your email</Text>
+
+                        <View style={styles.inputContainer}>
+                            <Icon name="mail-outline" size={14} color="black" />
+                            <TextInput style={styles.inputStyles} value={email} editable={false} onChangeText={(val) => setEmail(val)} keyboardType="email-address" placeholder="Enter your Email *" />
+                        </View>
+                        <Text style={styles.label}>Enter your phone</Text>
+
+                        <View style={styles.inputContainer}>
+                            <Icon name="call-outline" size={14} color="black" />
+                            <TextInput maxLength={10} style={styles.inputStyles} editable={false} value={phone} onChangeText={(val) => setPhone(val)} keyboardType="numeric" placeholder="+91     Enter Number  *" />
+                        </View>
+
+                        <Text style={styles.label}>Select Classes taught by you *</Text>
+                        {
+                            classesArr && classesArr.map((el, index) => {
+                                return (
+                                    <View key={el._id} style={{ width: wp(91), marginTop: 10, alignItems: "center", alignSelf: "center", display: "flex", flexDirection: "row" }}>
+                                        <Checkbox
+                                            color={colorObj.primarColor}
+                                            status={el.checked ? "checked" : "unchecked"}
+                                            onPress={() => {
+                                                setClassSelected(el._id);
+                                            }}
+                                        />
+                                        <TouchableOpacity style={{ width: wp(82), paddingVertical: 5, }} onPress={() => {
+                                            setClassSelected(el._id);
+                                        }}>
+                                            <Text>{el.name}</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                )
+                            })
+                        }
+                        <Text style={styles.label}>Select Subjects taught by you *</Text>
+                        {
+                            categoryArr && categoryArr.map((el, index) => {
+                                return (
+                                    <View key={el._id} style={{ width: wp(91), marginTop: 10, alignItems: "center", alignSelf: "center", display: "flex", flexDirection: "row" }}>
+                                        <Checkbox
+                                            color={colorObj.primarColor}
+                                            status={el.checked ? "checked" : "unchecked"}
+                                            onPress={() => {
+                                                setCategorySelected(el._id);
+                                            }}
+                                        />
+                                        <TouchableOpacity style={{ width: wp(82), paddingVertical: 5, }} onPress={() => {
+                                            setCategorySelected(el._id);
+                                        }}>
+                                            <Text>{el.name}</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                )
+                            })
+                        }
+                        <Text style={styles.label}>Upload your Id</Text>
+
+                        <TouchableOpacity style={[styles.inputContainer, { minHeight: 80 }]} onPress={() => pickImageValidId()}>
+                            <Icon name="camera-outline" size={14} color={"#085A4E"} />
+                            <Text style={{ fontFamily: "Montserrat-Thin", fontSize: 14, marginLeft: 10 }}>{validId.name ? validId.name : "Upload An Id Image *"}</Text>
+                        </TouchableOpacity>
+                        <Text style={styles.label}>Select your Gender</Text>
+
+                        <View style={[styles.flexRowAlignCenter, { justifyContent: "flex-start", marginLeft: wp(5) }]}>
+
+                            <View style={{ marginTop: 10, alignItems: "center", alignSelf: "center", display: "flex", flexDirection: "row" }}>
+                                <Checkbox
+                                    color={colorObj.primarColor}
+                                    status={genderIsSelected ? "checked" : "unchecked"}
+                                    onPress={() => {
+                                        setGenderIsMale(true);
+                                    }}
+                                />
+                                <TouchableOpacity style={{ paddingVertical: 5, }} onPress={() => {
+                                    setGenderIsMale(true);
+                                }}>
+                                    <Text>Male</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{ marginTop: 10, alignItems: "center", alignSelf: "center", display: "flex", flexDirection: "row" }}>
+                                <Checkbox
+                                    color={colorObj.primarColor}
+                                    status={!genderIsSelected ? "checked" : "unchecked"}
+                                    onPress={() => {
+                                        setGenderIsMale(false);
+                                    }}
+                                />
+                                <TouchableOpacity style={{ paddingVertical: 5, }} onPress={() => {
+                                    setGenderIsMale(false);
+                                }}>
+                                    <Text>Female</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                        </View>
+
+
+                        <Text style={styles.label}>Enter your Proficient topics</Text>
+
+                        <View style={styles.inputContainer}>
+                            <Icon name="book-outline" size={14} color="black" />
+                            <TextInput style={styles.inputStyles} onChangeText={(val) => setPincode(val)} value={pincode} placeholder="Enter Topic 1" />
+                        </View>
+                        <View style={styles.inputContainer}>
+                            <Icon name="book-outline" size={14} color="black" />
+                            <TextInput style={styles.inputStyles} onChangeText={(val) => setPincode(val)} value={pincode} placeholder="Enter Topic 2" />
+                        </View>
+                        <View style={styles.inputContainer}>
+                            <Icon name="book-outline" size={14} color="black" />
+                            <TextInput style={styles.inputStyles} onChangeText={(val) => setPincode(val)} value={pincode} placeholder="Enter Topic 3" />
+                        </View>
+
+                        <Text style={styles.label}>Select Mode of Teaching</Text>
+
+                        <View style={[styles.flexRowAlignCenter, { justifyContent: "flex-start", marginLeft: wp(5) }]}>
+
+                            <View style={{ marginTop: 10, alignItems: "center", alignSelf: "center", display: "flex", flexDirection: "row" }}>
+                                <Checkbox
+                                    color={colorObj.primarColor}
+                                    status={onlineIsSelected ? "checked" : "unchecked"}
+                                    onPress={() => {
+                                        setOnlineIsSelected(!onlineIsSelected);
+                                    }}
+                                />
+                                <TouchableOpacity style={{ paddingVertical: 5, }} onPress={() => {
+                                    setOnlineIsSelected(!onlineIsSelected);
+                                }}>
+                                    <Text>Online</Text>
+                                </TouchableOpacity>
+                            </View>
+
+
+
+                            <View style={{ marginTop: 10, alignItems: "center", alignSelf: "center", display: "flex", flexDirection: "row" }}>
+                                <Checkbox
+                                    color={colorObj.primarColor}
+                                    status={offlineIsSelected ? "checked" : "unchecked"}
+                                    onPress={() => {
+                                        setOfflineIsSelected(!offlineIsSelected);
+                                    }}
+                                />
+                                <TouchableOpacity style={{ paddingVertical: 5, }} onPress={() => {
+                                    setOfflineIsSelected(!offlineIsSelected);
+                                }}>
+                                    <Text>Offline</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                        </View>
+
+                        {/* <View style={styles.inputContainer}>
+                            <Icon name="home-outline" size={14} color="black" />
+                            <TextInput style={styles.inputStyles} onChangeText={(val) => setAddress(val)} value={address} placeholder="Enter Address" multiline={true} />
+                        </View>
+                        <View style={styles.inputContainer}>
+                            <Icon name="home-outline" size={14} color="black" />
+                            <TextInput keyboardType="number-pad" style={styles.inputStyles} onChangeText={(val) => setMinFees(val)} value={minFees} placeholder="Enter Min Fees" keyboardType="numeric" />
+                        </View><View style={styles.inputContainer}>
+                            <Icon name="home-outline" size={14} color="black" />
+                            <TextInput keyboardType="number-pad" style={styles.inputStyles} onChangeText={(val) => setMaxFees(val)} value={maxFees} placeholder="Enter Max Fees" keyboardType="numeric" />
+                        </View> */}
+                        <Text style={styles.label}>Enter your pincode</Text>
+
+                        <View style={styles.inputContainer}>
+                            <Icon name="location-outline" size={14} color="black" />
+                            <TextInput style={styles.inputStyles} maxLength={6} onChangeText={(val) => setPincode(val)} value={pincode} placeholder="Enter Pincode" keyboardType="number-pad" />
+                        </View>
+                        <Text style={styles.label}>Enter your Highest Education</Text>
+
+                        <View style={styles.inputContainer}>
+                            <Icon name="library-outline" size={14} color="black" />
+                            <TextInput multiline={true} style={styles.inputStyles} value={degree} onChangeText={(val) => setDegree(val)} placeholder="Enter your Highest Education" />
+                        </View>
+                        {/* <View style={styles.inputContainer}>
+                            <Icon name="library-outline" size={14} color="black" />
+                            <TextInput multiline={true} style={styles.inputStyles} value={university} onChangeText={(val) => setUniversity(val)} placeholder="Enter your university" />
+                        </View> */}
+                        <Text style={styles.label}>Enter your Experience</Text>
+
+                        <View style={styles.inputContainer}>
+                            <Icon name="library-outline" size={14} color="black" />
+                            <TextInput style={styles.inputStyles} keyboardType="number-pad" value={experience} onChangeText={(val) => setExperience(val)} placeholder="Enter your Experience in Yrs" />
+                        </View>
+                        <Text style={styles.label}>Enter your Certificate</Text>
+                        <TouchableOpacity style={[styles.inputContainer, { minHeight: 80 }]} onPress={() => pickCertificate()}>
+                            <Icon name="camera-outline" size={14} color={"#085A4E"} />
+                            <Text style={{ fontFamily: "Montserrat-Thin", fontSize: 14, marginLeft: 10 }}>{validId.name ? validId.name : "Upload An Id Image *"}</Text>
+                        </TouchableOpacity>
+
+                        <Text style={styles.label}>Enter your Facebook Link</Text>
+                        <View style={styles.inputContainer}>
+                            <Icon name="logo-facebook" size={14} color="black" />
+                            <TextInput style={styles.inputStyles} onChangeText={(val) => setSubject(val)} value={subject} placeholder="Enter Facebook Link" />
+                        </View>
+                        <Text style={styles.label}>Enter your Youtube Link</Text>
+                        <View style={styles.inputContainer}>
+                            <Icon name="logo-youtube" size={14} color="black" />
+                            <TextInput style={styles.inputStyles} onChangeText={(val) => setSubject(val)} value={subject} placeholder="Enter Youtube Link" />
+                        </View>
+                        <Text style={styles.label}>Enter your Instagram Link</Text>
+                        <View style={styles.inputContainer}>
+                            <Icon name="logo-instagram" size={14} color="black" />
+                            <TextInput style={styles.inputStyles} onChangeText={(val) => setTeacherClass(val)} value={teacherClass} placeholder="Enter Instagram Link" />
+                        </View>
+
+                        <Text style={styles.label}>Enter your Telegram Link</Text>
+                        <View style={styles.inputContainer}>
+                            <Icon name="paper-plane" size={14} color="black" />
+                            <TextInput style={styles.inputStyles} onChangeText={(val) => setTeacherClass(val)} value={teacherClass} placeholder="Enter Telegram Link" />
+                        </View>
+
+
+
+
 
 
                         <View style={styles.btnContainer}>
@@ -373,7 +524,7 @@ export default function RegisterTeacher(props) {
                     </ScrollView>
                 </KeyboardAvoidingView>
             </View>
-        </View>
+        </View >
     )
 }
 
