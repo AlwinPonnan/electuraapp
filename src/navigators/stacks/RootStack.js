@@ -24,9 +24,13 @@ const Stack = createNativeStackNavigator();
 
 export const AuthContext = createContext()
 export const roleContext = createContext()
+export const profileContext = createContext()
+export const loadingContext = createContext()
 export default function RootStack() {
     const [roleName, setRoleName] = useState('USER');
     const [isAuthorized, setIsAuthorized] = useState(false);
+    const [profileData, setProfileData] = useState({});
+    const [loading, setLoading] = useState(false);
     const CheckAuthorized = async () => {
         let isLoggedIn = await EncryptedStorage.getItem("AUTH_TOKEN");
         console.log(isLoggedIn)
@@ -121,29 +125,33 @@ export default function RootStack() {
     return (
         <AuthContext.Provider value={[isAuthorized, setIsAuthorized]}>
             <roleContext.Provider value={[roleName, setRoleName]}>
+                <profileContext.Provider value={[profileData, setProfileData]}>
+                    <loadingContext.Provider value={[loading, setLoading]}>
 
-                <NavigationContainer>
-                    <Stack.Navigator initialRouteName="Login">
-                        {isAuthorized ?
-                            <>
-                                <Stack.Screen name="MainDrawer" component={MainDrawer} options={{ headerShown: false }} />
-                                <Stack.Screen name="CreateCourse" component={CreateCourse} options={{ headerShown: false }} />
+                        <NavigationContainer>
+                            <Stack.Navigator initialRouteName="Login">
+                                {isAuthorized ?
+                                    <>
+                                        <Stack.Screen name="MainDrawer" component={MainDrawer} options={{ headerShown: false }} />
+                                        <Stack.Screen name="CreateCourse" component={CreateCourse} options={{ headerShown: false }} />
 
-                            </>
+                                    </>
 
-                            :
-                            <>
-                                <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false, cardStyles: { backgroundColor: '#ffffff' } }} />
-                                <Stack.Screen name="OtpScreen" component={OtpScreen} options={{ headerShown: false }} />
-                            </>
-                        }
+                                    :
+                                    <>
+                                        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false, cardStyles: { backgroundColor: '#ffffff' } }} />
+                                        <Stack.Screen name="OtpScreen" component={OtpScreen} options={{ headerShown: false }} />
+                                    </>
+                                }
 
-                        {/* <Stack.Screen name="MainTopTab" component={MainTopTab} options={{ headerShown: true }} /> */}
+                                {/* <Stack.Screen name="MainTopTab" component={MainTopTab} options={{ headerShown: true }} /> */}
 
 
 
-                    </Stack.Navigator>
-                </NavigationContainer>
+                            </Stack.Navigator>
+                        </NavigationContainer>
+                    </loadingContext.Provider>
+                </profileContext.Provider>
             </roleContext.Provider>
         </AuthContext.Provider>
     )

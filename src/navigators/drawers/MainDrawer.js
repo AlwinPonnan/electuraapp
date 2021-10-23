@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react'
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import { AuthContext, roleContext } from '../stacks/RootStack';
+import { AuthContext, profileContext, roleContext } from '../stacks/RootStack';
 
 import {
     StyleSheet,
@@ -22,21 +22,72 @@ import RegisterTeacher from '../../views/RegisterTeacher';
 import { getUser } from '../../Services/User';
 import { generateImageUrl } from '../../globals/utils';
 import CreateCourse from '../../views/CreateCourse';
+import { useIsFocused } from '@react-navigation/core';
 const Drawer = createDrawerNavigator();
-
-
-////////////////////custom user drawer 
-function CustomDrawerContent(props) {
-    const [isAuthorized, setIsAuthorized] = useContext(AuthContext);
+export default function MainDrawer() {
     const [name, setName] = useState("");
     const [profilePhoto, setProfilePhoto] = useState("");
+    const focused = useIsFocused()
+    const [profileData, setProfileData] = useContext(profileContext);
+    const [isAuthorized, setIsAuthorized] = useContext(AuthContext);
     const [roleName, setRoleName] = useContext(roleContext);
 
+    ////////////////////custom user drawer 
+    function CustomDrawerContent(props) {
 
-    const handleLogout = async () => {
-        await EncryptedStorage.removeItem('AUTH_TOKEN')
-        setRoleName('USER')
-        setIsAuthorized(false)
+
+        const handleLogout = async () => {
+            await EncryptedStorage.removeItem('AUTH_TOKEN')
+            setRoleName('USER')
+            setIsAuthorized(false)
+        }
+
+        return (
+            <DrawerContentScrollView {...props}>
+                <View style={styles.profilePicContainer}>
+                    <Image source={profileData.profileImage ? { uri: generateImageUrl(profileData.profileImage) } : require('../../../assets/images/user.png')} style={styles.profilePic} />
+                    <Text style={styles.userName}>{profileData.name != "" && profileData.name ? profileData.name : "User"} </Text>
+                </View>
+
+
+
+
+                <View style={{ marginBottom: 20, display: "flex", flexDirection: "column" }}>
+
+
+                    <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate("MainBottomTab")}><Icon name="home-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Home</Text></TouchableOpacity>
+
+                    <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate('AccountEdit')}><Icon name="settings-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Account Settings</Text></TouchableOpacity>
+                    {
+                        roleName == "TEACHER" &&
+
+                        <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate('CreateCourse')}><Icon name="desktop-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Create Your Course</Text></TouchableOpacity>
+                    }
+
+                    <TouchableOpacity style={styles.DrawerItem}><Icon name="pencil-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Blogs</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.DrawerItem}><Icon name="information-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> About Us</Text></TouchableOpacity>
+
+                    {/* <TouchableOpacity style={styles.DrawerItem}><Icon name="person-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Update Profile</Text></TouchableOpacity> */}
+
+                    <TouchableOpacity style={styles.DrawerItem}><Icon name="help-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Support</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.DrawerItem}><Icon name="help-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> FAQs</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.DrawerItem}><Icon name="document-text-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Policies</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => { handleLogout() }} style={styles.DrawerItem}><Icon name="log-out-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Logout</Text></TouchableOpacity>
+
+                </View>
+                {
+                    roleName === "USER" &&
+                    <View style={styles.teacherContainer} >
+                        <Text style={styles.teacherHeading}>Become Teacher</Text>
+                        <Image source={require('../../../assets/images/teacherVector.png')} />
+                        <Text style={[styles.teacherHeading, { fontSize: 12, fontFamily: 'OpenSans-Regular' }]}>List your profile {roleName} on Electura and spread your word</Text>
+                        <TouchableOpacity onPress={() => props.navigation.navigate("RegisterTeacher")} style={styles.teachButton}>
+                            <Text style={styles.teachText}>Teach</Text>
+                        </TouchableOpacity>
+                    </View>
+                }
+            </DrawerContentScrollView>
+        );
     }
 
     const getUserData = async () => {
@@ -45,70 +96,19 @@ function CustomDrawerContent(props) {
             console.log(statusCode)
             if (statusCode == 200 || statusCode == 304) {
                 console.log(JSON.stringify(res.data, null, 2))
-                setName(res.data.name)
-                setProfilePhoto(res.data.profileImage)
-                // console.log(JSON.stringify(res.data, null, 2))
+                setProfileData(res.data)
             }
         }
         catch (err) {
             console.error(err)
         }
     }
-
     useEffect(() => {
-        getUserData()
-    }, [])
-
-    return (
-        <DrawerContentScrollView {...props}>
-            <View style={styles.profilePicContainer}>
-                <Image source={profilePhoto ? { uri: generateImageUrl(profilePhoto) } : require('../../../assets/images/user.png')} style={styles.profilePic} />
-                <Text style={styles.userName}>{name != "" ? name : "User"} {roleName}</Text>
-            </View>
+        if (focused)
+            getUserData()
+    }, [focused])
 
 
-
-
-            <View style={{ marginBottom: 20, display: "flex", flexDirection: "column" }}>
-
-
-                <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate("MainBottomTab")}><Icon name="home-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Home</Text></TouchableOpacity>
-
-                <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate('AccountEdit')}><Icon name="settings-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Account Settings</Text></TouchableOpacity>
-                {
-                    roleName == "TEACHER" &&
-
-                    <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate('CreateCourse')}><Icon name="desktop-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Create Your Course</Text></TouchableOpacity>
-                }
-
-                <TouchableOpacity style={styles.DrawerItem}><Icon name="pencil-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Blogs</Text></TouchableOpacity>
-                <TouchableOpacity style={styles.DrawerItem}><Icon name="information-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> About Us</Text></TouchableOpacity>
-
-                {/* <TouchableOpacity style={styles.DrawerItem}><Icon name="person-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Update Profile</Text></TouchableOpacity> */}
-
-                <TouchableOpacity style={styles.DrawerItem}><Icon name="help-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Support</Text></TouchableOpacity>
-                <TouchableOpacity style={styles.DrawerItem}><Icon name="help-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> FAQs</Text></TouchableOpacity>
-                <TouchableOpacity style={styles.DrawerItem}><Icon name="document-text-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Policies</Text></TouchableOpacity>
-                <TouchableOpacity onPress={() => { handleLogout() }} style={styles.DrawerItem}><Icon name="log-out-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Logout</Text></TouchableOpacity>
-
-            </View>
-            {
-                roleName == "USER" &&
-                <View style={styles.teacherContainer} >
-                    <Text style={styles.teacherHeading}>Become Teacher</Text>
-                    <Image source={require('../../../assets/images/teacherVector.png')} />
-                    <Text style={[styles.teacherHeading, { fontSize: 12, fontFamily: 'OpenSans-Regular' }]}>List your profile on Electura and spread your word</Text>
-                    <TouchableOpacity onPress={() => props.navigation.navigate("RegisterTeacher")} style={styles.teachButton}>
-                        <Text style={styles.teachText}>Teach</Text>
-                    </TouchableOpacity>
-                </View>
-            }
-        </DrawerContentScrollView>
-    );
-}
-
-
-export default function MainDrawer() {
     return (
         <Drawer.Navigator screenOptions={{ headerShown: false }} drawerContent={props => <CustomDrawerContent {...props} />}>
             <Drawer.Screen name="MainBottomTab" component={MainBottomTab} />

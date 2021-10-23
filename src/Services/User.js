@@ -3,7 +3,7 @@ import { serverUrl } from './Url';
 import jwt_decode from "jwt-decode";
 import EncryptedStorage from 'react-native-encrypted-storage';
 
-const otpApiKey = "25b77411-d03e-11eb-8089-0200cd936042"
+const otpApiKey = "c563ebaa-c079-11eb-8089-0200cd936042"
 const url = `${serverUrl}/users`
 
 
@@ -48,7 +48,7 @@ export const loginUser = (obj) => {
 export const getUser = async () => {
     try {
         let token = await getDecodedToken()
-        let res = axios.get(`${url}/getById/${token.userId}`)
+        let res = axios.get(`${url}/getById/${token?.userId}`)
         return res
     }
     catch (err) {
@@ -59,7 +59,7 @@ export const getUser = async () => {
 export const updateProfile = async (obj) => {
     try {
         let token = await getDecodedToken()
-        let res = axios.patch(`${url}/updateById/${token.userId}`, obj)
+        let res = axios.patch(`${url}/updateById/${token?.userId}`, obj)
         return res
     }
     catch (err) {
@@ -92,12 +92,12 @@ export const SendOtp = (phone) => {
 }
 
 
-export const CheckValidOtp = (sessionId, otp) => {
+export const CheckValidOtp = async (sessionId, otp) => {
     try {
         return axios.get(`https://2factor.in/API/V1/${otpApiKey}/SMS/VERIFY/${sessionId}/${otp}`)
 
     } catch (error) {
-        console.error(error)
+        console.error(error, "error")
         throw (error)
     }
 }

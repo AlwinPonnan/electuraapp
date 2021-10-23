@@ -39,7 +39,7 @@ export default function CreateCourse(props) {
                 assignments,
                 youtubeLink,
                 description,
-                userId: userToken.userId,
+                userId: userToken?.userId,
                 categoryId: selectedCategoryId,
                 categoryArr: [{ categoryId: selectedCategoryId }],
             }
