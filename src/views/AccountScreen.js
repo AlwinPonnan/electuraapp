@@ -79,7 +79,7 @@
 
 //                 <View style={[styles.flexRow, { justifyContent: "space-between" }]}>
 //                     <View style={styles.profileImageContainer}>
-//                         <Image style={styles.profileImage} source={require("../../assets/images/user.jpg")} />
+//                         <Image style={styles.profileImage} source={require("../../assets/images/user.png")} />
 //                     </View>
 
 //                     <View style={styles.joinedContainer}>

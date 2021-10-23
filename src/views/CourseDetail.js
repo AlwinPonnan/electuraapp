@@ -55,7 +55,7 @@ export default function CourseDetail(props) {
                     <Icon name="heart-outline" size={20} color="rgba(8, 90, 78, 1)" />
                 </View>
                 <View style={[styles.flexRow, { alignItems: "center", marginTop: 5 }]}>
-                    <Image source={require("../../assets//images/user.jpg")} style={styles.img} />
+                    <Image source={require("../../assets//images/user.png")} style={styles.img} />
                     <Text style={styles.userName}>{courseObj?.teacherName}</Text>
                 </View>
 
