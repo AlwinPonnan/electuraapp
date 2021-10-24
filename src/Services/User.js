@@ -103,3 +103,12 @@ export const CheckValidOtp = async (sessionId, otp) => {
 }
 
 
+export const getAllTeachers = async () => {
+    try {
+        return axios.get(`${url}/getAllTeachers`)
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+
