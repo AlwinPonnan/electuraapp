@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { View, Text, StyleSheet, Image, TouchableOpacity, Pressable, Appearance, TextInput, ScrollView, Keyboard, FlatList, KeyboardAvoidingView } from 'react-native'
+import { View, Text, StyleSheet, Image, TouchableOpacity, Pressable, Appearance, Modal, TextInput, ScrollView, Keyboard, FlatList, KeyboardAvoidingView } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from "react-native-vector-icons/Ionicons"
 import NavBar from '../components/Navbar';
@@ -10,9 +10,10 @@ import { generateImageUrl } from '../globals/utils';
 import { Checkbox } from 'react-native-paper';
 import { profileContext, roleContext } from '../navigators/stacks/RootStack';
 export default function AccountEdit(props) {
+    const [modalVisible, setModalVisible] = useState(false);
     const [profileData, setProfileData] = useContext(profileContext);
     const [roleName, setRoleName] = useContext(roleContext);
-
+    const [weekScheduleIsVisible, setWeekScheduleIsVisible] = useState(false);
 
     const [QualificationArr, setQualificationArr] = useState([{ qualificationName: "" }]);
     const [name, setName] = useState("");
@@ -172,7 +173,7 @@ export default function AccountEdit(props) {
         return (
             <>
                 <View style={[styles.flexRow, { alignItems: "center", marginVertical: 7 }]}>
-                    <TextInput onChangeText={(val) => handleQualificationInput(index, val)} value={item.qualificationName} style={[styles.txtInput, { flex: 1 }]} placeholder="name" />
+                    <TextInput onChangeText={(val) => handleQualificationInput(index, val)} value={item.qualificationName} style={[styles.txtInput, { flex: 1 }]} placeholder="Topic Name" />
                     <TouchableOpacity style={[styles.AddBtn, { padding: 5, marginLeft: 10 }]} onPress={() => removeQualification(index)}>
                         <Icon name="ios-trash-outline" size={20} color={"#085A4E"} />
                     </TouchableOpacity>
@@ -251,14 +252,7 @@ export default function AccountEdit(props) {
                                     Optional Data
                                 </Text>
 
-                                <View style={[styles.flexRow, { justifyContent: "space-between", alignItems: "center", marginTop: 20 }]}>
-                                    <Text style={styles.label}>
-                                        Proficient topics
-                                    </Text>
-                                    <TouchableOpacity style={styles.AddBtn} onPress={() => addQualification()}>
-                                        <Icon name="ios-add-outline" size={30} color={"#085A4E"} />
-                                    </TouchableOpacity>
-                                </View>
+
 
                                 <Text style={styles.label}>Select your Gender</Text>
                                 <View style={{ display: "flex", flexDirection: "column", }}>
@@ -293,15 +287,151 @@ export default function AccountEdit(props) {
                                         </TouchableOpacity>
                                     </View>
                                 </View>
+                                <View style={[styles.flexRow, { justifyContent: "space-between", alignItems: "center", marginTop: 20 }]}>
+                                    <Text style={styles.label}>
+                                        Proficient topics
+                                    </Text>
+                                    <TouchableOpacity style={styles.AddBtn} onPress={() => addQualification()}>
+                                        <Icon name="ios-add-outline" size={30} color={"#085A4E"} />
+                                    </TouchableOpacity>
+                                </View>
                             </>
                         }
                         ListFooterComponent={
-                            <Pressable style={styles.btn} onPress={() => handleProfileUpdate()}>
-                                <Text style={styles.btnTxt}>Update Profile</Text>
-                            </Pressable>
+
+
+                            <>
+
+                                <Pressable style={styles.btn} onPress={() => setModalVisible(true)}>
+                                    <Text style={styles.btnTxt}>Update Week Schedule</Text>
+                                </Pressable>
+
+
+                                <Pressable style={styles.btn} onPress={() => handleProfileUpdate()}>
+                                    <Text style={styles.btnTxt}>Update Profile</Text>
+                                </Pressable>
+
+                            </>
+
+
+
                         }
                     />
                 </KeyboardAvoidingView>
+
+            </View>
+
+
+            <View style={styles.centeredView}>
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => {
+                        alert("Modal has been closed.");
+                        setModalVisible(!modalVisible);
+                    }}
+                >
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <Text style={[styles.label, { fontSize: 20 }]}>Select Weekly Schedule</Text>
+
+                            <ScrollView horizontal >
+                                <View style={styles.weekScheduleContainer}>
+
+                                    <View style={styles.flexRow}>
+                                        <Text style={styles.weekDayNameHeading}>Monday</Text>
+                                        <Text style={styles.weekDayNameHeading}>Tuesday</Text>
+                                        <Text style={styles.weekDayNameHeading}>Wednesday</Text>
+                                        <Text style={styles.weekDayNameHeading}>Thursday</Text>
+                                        <Text style={styles.weekDayNameHeading}>Friday</Text>
+                                        <Text style={styles.weekDayNameHeading}>Saturday</Text>
+                                        <Text style={styles.weekDayNameHeading}>Sunday</Text>
+                                    </View>
+                                    <View style={styles.flexRow}>
+                                        <Text style={[styles.weekDayName, styles.selectedWeedTime]}>7-8 PM</Text>
+                                        <Text style={[styles.weekDayName, styles.selectedWeedTime]}>7-8 PM</Text>
+                                        <Text style={styles.weekDayName}>7-8 PM</Text>
+                                        <Text style={styles.weekDayName}>7-8 PM</Text>
+                                        <Text style={styles.weekDayName}>7-8 PM</Text>
+                                        <Text style={styles.weekDayName}>7-8 PM</Text>
+                                        <Text style={styles.weekDayName}>7-8 PM</Text>
+                                    </View>
+                                    <View style={styles.flexRow}>
+                                        <Text style={styles.weekDayName}>8-9 AM</Text>
+                                        <Text style={[styles.weekDayName, styles.selectedWeedTime]}>8-9 AM</Text>
+                                        <Text style={styles.weekDayName}>8-9 AM</Text>
+                                        <Text style={styles.weekDayName}>8-9 AM</Text>
+                                        <Text style={styles.weekDayName}>8-9 AM</Text>
+                                        <Text style={styles.weekDayName}>8-9 AM</Text>
+                                        <Text style={styles.weekDayName}>8-9 AM</Text>
+                                    </View>
+                                    <View style={styles.flexRow}>
+                                        <Text style={styles.weekDayName}>9-10 AM</Text>
+                                        <Text style={styles.weekDayName}>9-10 AM</Text>
+                                        <Text style={styles.weekDayName}>9-10 AM</Text>
+                                        <Text style={[styles.weekDayName, styles.selectedWeedTime]}>9-10 AM</Text>
+                                        <Text style={styles.weekDayName}>9-10 AM</Text>
+                                        <Text style={styles.weekDayName}>9-10 AM</Text>
+                                        <Text style={styles.weekDayName}>9-10 AM</Text>
+                                    </View>
+                                    <View style={styles.flexRow}>
+                                        <Text style={styles.weekDayName}>11-12 AM</Text>
+                                        <Text style={styles.weekDayName}>11-12 AM</Text>
+                                        <Text style={[styles.weekDayName, styles.selectedWeedTime]}>11-12 AM</Text>
+                                        <Text style={styles.weekDayName}>11-12 AM</Text>
+                                        <Text style={styles.weekDayName}>11-12 AM</Text>
+                                        <Text style={styles.weekDayName}>11-12 AM</Text>
+                                        <Text style={styles.weekDayName}>11-12 AM</Text>
+                                    </View>
+                                    <View style={styles.flexRow}>
+                                        <Text style={styles.weekDayName}>1-2 PM</Text>
+                                        <Text style={styles.weekDayName}>1-2 PM</Text>
+                                        <Text style={styles.weekDayName}>1-2 PM</Text>
+                                        <Text style={styles.weekDayName}>1-2 PM</Text>
+                                        <Text style={styles.weekDayName}>1-2 PM</Text>
+                                        <Text style={styles.weekDayName}>1-2 PM</Text>
+                                        <Text style={styles.weekDayName}>1-2 PM</Text>
+                                    </View>
+                                    <View style={styles.flexRow}>
+                                        <Text style={styles.weekDayName}>2-3 PM</Text>
+                                        <Text style={[styles.weekDayName, styles.selectedWeedTime]}>2-3 PM</Text>
+                                        <Text style={styles.weekDayName}>2-3 PM</Text>
+                                        <Text style={styles.weekDayName}>2-3 PM</Text>
+                                        <Text style={styles.weekDayName}>2-3 PM</Text>
+                                        <Text style={[styles.weekDayName, styles.selectedWeedTime]}>2-3 PM</Text>
+                                        <Text style={styles.weekDayName}>2-3 PM</Text>
+                                    </View>
+                                    <View style={styles.flexRow}>
+                                        <Text style={[styles.weekDayName, styles.selectedWeedTime]}>3-4 PM</Text>
+                                        <Text style={styles.weekDayName}>3-4 PM</Text>
+                                        <Text style={styles.weekDayName}>3-4 PM</Text>
+                                        <Text style={styles.weekDayName}>3-4 PM</Text>
+                                        <Text style={styles.weekDayName}>3-4 PM</Text>
+                                        <Text style={styles.weekDayName}>3-4 PM</Text>
+                                        <Text style={styles.weekDayName}>3-4 PM</Text>
+                                    </View>
+                                    <View style={styles.flexRow}>
+                                        <Text style={styles.weekDayName}>4-5 PM</Text>
+                                        <Text style={styles.weekDayName}>4-5 PM</Text>
+                                        <Text style={styles.weekDayName}>4-5 PM</Text>
+                                        <Text style={styles.weekDayName}>4-5 PM</Text>
+                                        <Text style={styles.weekDayName}>4-5 PM</Text>
+                                        <Text style={styles.weekDayName}>4-5 PM</Text>
+                                        <Text style={styles.weekDayName}>4-5 PM</Text>
+                                    </View>
+                                </View>
+
+
+
+
+                            </ScrollView>
+                            <Pressable style={styles.btn} onPress={() => setModalVisible(false)}>
+                                <Text style={styles.btnTxt}>Save Week Schedule</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </Modal>
 
             </View>
         </>
@@ -316,8 +446,33 @@ const styles = StyleSheet.create({
         paddingHorizontal: 25,
         paddingTop: hp(5)
     },
+
+
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        // paddingTop: 22,
+        backgroundColor: "rgba(0,0,0,0.5)",
+    },
+    modalView: {
+        margin: 10,
+
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 15,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+
     innerContainer: {
-        width: wp(82),
+        width: wp(88),
         display: "flex",
         justifyContent: "center",
         paddingTop: 30,
@@ -335,6 +490,43 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderWidth: 2,
         borderColor: Appearance.getColorScheme() == 'dark' ? dark_colors.primary : light_colors.primary,
+    },
+
+    weekScheduleContainer: {
+        display: "flex",
+        alignSelf: "center",
+        flexDirection: "column",
+        paddingHorizontal: 10,
+        marginTop: 0,
+    },
+    weekDayNameHeading: {
+        paddingHorizontal: 15,
+        borderWidth: 1,
+        borderColor: "grey",
+        backgroundColor: colorObj.primarColor,
+        color: "white",
+        width: 100,
+        paddingVertical: 10,
+        textAlign: "center",
+        margin: 5,
+        borderRadius: 5,
+        height: 40
+    },
+    weekDayName: {
+        paddingHorizontal: 15,
+        width: 100,
+        paddingVertical: 10,
+        textAlign: "center",
+        borderColor: "grey",
+        borderWidth: 1,
+        borderRadius: 5,
+        margin: 5,
+        height: 40
+    },
+
+    selectedWeedTime: {
+        backgroundColor: colorObj.orangeColor,
+        color: "white"
     },
 
     ///////txt
