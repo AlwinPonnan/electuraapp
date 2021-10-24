@@ -228,7 +228,7 @@ export default function AccountEdit(props) {
                                         profilePhoto != "" && profilePhoto ?
                                             <Image style={styles.profileImage} source={{ uri: generateImageUrl(profilePhoto) }} />
                                             :
-                                            <Image style={styles.profileImage} source={require("../../assets/images/user.jpg")} />
+                                            <Image style={styles.profileImage} source={require("../../assets/images/user.png")} />
                                     }
 
                                     <TouchableOpacity style={styles.PickImageBtn} onPress={() => pickImageProfilePhoto()}>

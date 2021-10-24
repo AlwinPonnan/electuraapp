@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj, light_colors } from '../globals/colors';
@@ -6,11 +6,14 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import NavBar from '../components/Navbar';
 import { getAllCategory } from '../Services/Category';
 import { useIsFocused } from '@react-navigation/core';
+import { getAllTeachers } from '../Services/User';
+import { imageObj } from '../globals/images';
 
 export default function HomeScreen(props) {
 
-    const isFocused=useIsFocused()
+    const isFocused = useIsFocused()
     const [selectedCategoryId, setSelectedCategoryId] = useState('');
+    const [teachersArr, setTeachersArr] = useState([]);
     const [productsArr, setProductsArr] = useState([
         {
             name: "Lorem Course",
@@ -56,15 +59,15 @@ export default function HomeScreen(props) {
 
     const [categoryArr, setCategoryArr] = useState([]);
 
-    const getCategories=async()=>{
+    const getCategories = async () => {
         try {
-            const {data:res}=await getAllCategory();
-            if(res.success){
-                let tempArr=res.data;
-                tempArr=tempArr.map(el=>{
-                    let obj={
+            const { data: res } = await getAllCategory();
+            if (res.success) {
+                let tempArr = res.data;
+                tempArr = tempArr.map(el => {
+                    let obj = {
                         ...el,
-                        selected:false
+                        selected: false
                     }
                     return obj
                 })
@@ -75,21 +78,36 @@ export default function HomeScreen(props) {
         }
     }
 
-    useEffect(()=>{
+    const getTeachers = async () => {
+        try {
+            const { data: res } = await getAllTeachers();
+            if (res.success) {
+
+                setTeachersArr(res.data)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+
+    useEffect(() => {
         getCategories()
-    },[isFocused])
+        getTeachers()
+    }, [isFocused])
 
 
     const renderItem = ({ item, index }) => {
         return (
             <Pressable style={styles.cardContainer} >
-                <Image style={styles.teacherImg} source={{ uri: item.teacherImg }} />
+                
+                <Image style={styles.teacherImg} source={{ uri: item?.teacherImg ? item?.teacherImg : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
                 <View style={styles.textCardContainer}>
                     <View>
 
-                        <Text style={styles.textCardMainHeading}>{item.teacher}</Text>
-                        <Text style={styles.textCardMainSubHeading1}>{item.categoryName}</Text>
-                        <Text style={styles.textCardMainSubHeading2}>10 Year Experience</Text>
+                        <Text style={styles.textCardMainHeading}>{item?.name}</Text>
+                        <Text style={styles.textCardMainSubHeading1}>Maths</Text>
+                        <Text style={styles.textCardMainSubHeading2}>{item?.enquiryObj?.experience} Year Experience</Text>
                     </View>
                     <View style={{ position: 'absolute', top: 5, right: 10 }} >
                         <Icon name="bookmark-outline" size={16} color="black" />
@@ -112,9 +130,9 @@ export default function HomeScreen(props) {
                     data={categoryArr}
                     renderItem={({ item, index }) => {
                         return (
-                            <Pressable onPress={()=>setSelectedCategoryId(item._id)} style={[styles.categoryContainer, selectedCategoryId!=item._id && { backgroundColor: '#F7FFFE' }]}>
+                            <Pressable onPress={() => setSelectedCategoryId(item._id)} style={[styles.categoryContainer, selectedCategoryId != item._id && { backgroundColor: '#F7FFFE' }]}>
                                 {/* <Icon name="film-outline" size={14} /> */}
-                                <Text style={[styles.categoryName, selectedCategoryId!=item._id && { color: '#828282' }]}>{item.name}</Text>
+                                <Text style={[styles.categoryName, selectedCategoryId != item._id && { color: '#828282' }]}>{item.name}</Text>
                             </Pressable>
                         )
                     }}
@@ -129,7 +147,7 @@ export default function HomeScreen(props) {
                 <FlatList
                     style={{ height: 150 }}
                     horizontal
-                    data={productsArr}
+                    data={teachersArr}
                     renderItem={renderItem}
                     showsHorizontalScrollIndicator={false}
                     keyExtractor={(item, index) => `${index}`}

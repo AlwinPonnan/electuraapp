@@ -49,7 +49,7 @@ export default function CourseDetail(props) {
                         <Text style={styles.pageHeading}>{courseObj?.name}</Text>
                         <View style={[styles.flexRow, { alignItems: "center" }]}>
                             <Text style={styles.ratingTxt}>4.2</Text>
-                            <Icon name="star" size={10} color="rgba(8, 90, 78, 1)" />
+                            <Icon onPress={()=>alert("Added to wishlist")} name="star" size={10} color="rgba(8, 90, 78, 1)" />
                         </View>
                     </View>
                     <Icon name="heart-outline" size={20} color="rgba(8, 90, 78, 1)" />
