@@ -9,6 +9,7 @@ import { getUser, updateProfile, updateProfileImage } from '../Services/User';
 import { generateImageUrl } from '../globals/utils';
 import { Checkbox } from 'react-native-paper';
 import { profileContext, roleContext } from '../navigators/stacks/RootStack';
+import { imageObj } from '../globals/images';
 export default function AccountEdit(props) {
     const [modalVisible, setModalVisible] = useState(false);
     const [profileData, setProfileData] = useContext(profileContext);
@@ -214,7 +215,69 @@ export default function AccountEdit(props) {
     return (
         <>
             <NavBar rootProps={props} />
-            <View style={styles.container}>
+            <ScrollView style={styles.container}>
+                <View>
+                    <View style={styles.topContainer}>
+                        <View style={styles.addPhotoBtn}>
+                            <Icon name="camera-outline" size={16} color="black" />
+                            <Text style={styles.addPhotoBtnText}>Add Cover Photo</Text>
+                        </View>
+                    </View>
+                    <View style={styles.circleImg}>
+                        {
+                            profilePhoto != "" && profilePhoto ?
+                                <Image style={styles.profileImage} source={{ uri: generateImageUrl(profilePhoto) }} />
+                                :
+                                <Image style={styles.profileImage} source={require("../../assets/images/user.png")} />
+                        }
+
+                    </View>
+                </View>
+                <View style={styles.userInfoContainer}>
+                    <Text style={styles.userInfoText}>{profileData?.name}</Text>
+                    <View style={[styles.flexRow, { alignItems: 'center' }]}>
+                        <Icon name="call-outline" size={14} color="black" />
+
+                        <Text style={[styles.userInfoText, { fontFamily: 'Montserrat-Regular', fontSize: 16 }]}>+91-{profileData?.phone}</Text>
+                    </View>
+                </View>
+                <View style={styles.bottomLine}></View>
+                <View style={styles.mainContentContainer}>
+                    <View style={[styles.flexRow, { alignItems: 'center' }]}>
+                        <Icon name="person-outline" size={16} color="black" />
+                        <Text style={[styles.mainContentHeading, { paddingHorizontal: 10 }]}>About You</Text>
+                        <Pressable style={styles.mainContentBtn}>
+                            <Text style={styles.mainContentBtnText}>Add</Text>
+                        </Pressable>
+                    </View>
+                    <Text style={styles.mainContentText}>Tell us about your professional experience here and connect better with your students</Text>
+                    <Image source={imageObj.illustration} style={{ height: 70, width: 70, alignSelf: 'flex-end', marginTop: 10 }} />
+                </View>
+                <View style={styles.mainContentContainer}>
+                    <View style={[styles.flexRow, { alignItems: 'center' }]}>
+                        <Icon name="school-outline" size={16} color="black" />
+                        <Text style={[styles.mainContentHeading, { paddingHorizontal: 10 }]}>About Institute</Text>
+                        <Pressable style={styles.mainContentBtn}>
+                            <Text style={styles.mainContentBtnText}>Add</Text>
+                        </Pressable>
+                    </View>
+                    <Text style={styles.mainContentText}>Add your institute details here and find more students</Text>
+                    <Image source={imageObj.illustration} style={{ height: 70, width: 70, alignSelf: 'flex-end', marginTop: 10 }} />
+                </View>
+                <View style={styles.mainContentContainer}>
+                    <View style={[styles.flexRow, { alignItems: 'center' }]}>
+                        <Icon name="logo-youtube" size={16} color="black" />
+                        <Text style={[styles.mainContentHeading, { paddingHorizontal: 10 }]}>Social Media</Text>
+                        <Pressable style={styles.mainContentBtn}>
+                            <Text style={styles.mainContentBtnText}>Add</Text>
+                        </Pressable>
+                    </View>
+                    <Text style={styles.mainContentText}>Add Youtube channel ,Facebook links etc. to improve your branding</Text>
+                    <Image source={imageObj.illustration} style={{ height: 70, width: 70, alignSelf: 'flex-end', marginTop: 10 }} />
+                </View>
+            </ScrollView>
+            {/* <View style={styles.container}>
+
                 <KeyboardAvoidingView>
 
                     <FlatList
@@ -328,12 +391,11 @@ export default function AccountEdit(props) {
                     transparent={true}
                     visible={modalVisible}
                     onRequestClose={() => {
-                        alert("Modal has been closed.");
                         setModalVisible(!modalVisible);
                     }}
                 >
-                    <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
+                    <Pressable style={styles.centeredView} onPress={()=>setModalVisible(false)}>
+                        <Pressable style={styles.modalView}>
                             <Text style={[styles.label, { fontSize: 20 }]}>Select Weekly Schedule</Text>
 
                             <ScrollView horizontal >
@@ -429,11 +491,11 @@ export default function AccountEdit(props) {
                             <Pressable style={styles.btn} onPress={() => setModalVisible(false)}>
                                 <Text style={styles.btnTxt}>Save Week Schedule</Text>
                             </Pressable>
-                        </View>
-                    </View>
+                        </Pressable>
+                    </Pressable>
                 </Modal>
 
-            </View>
+            </View> */}
         </>
 
     )
@@ -443,11 +505,99 @@ const styles = StyleSheet.create({
         display: "flex",
         height: hp(97),
         backgroundColor: "white",
-        paddingHorizontal: 25,
-        paddingTop: hp(5)
+        // paddingHorizontal: 10,
+        // paddingTop: hp(5)
+    },
+    topContainer: {
+        height: hp(22),
+        backgroundColor: colorObj.primarColor,
+        width: wp(100),
+        paddingHorizontal: 5
+    },
+    circleImg: {
+        borderRadius: 50,
+        height: 100,
+        width: 100,
+        position: 'absolute',
+        bottom: -30,
+        left: 10,
+    },
+    addPhotoBtn: {
+        backgroundColor: colorObj.whiteColor,
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        // width:'35%',
+        position: 'absolute',
+        bottom: 10,
+        paddingVertical: 5,
+        right: 10,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center'
     },
 
+    addPhotoBtnText: {
+        fontFamily: 'Montserrat-Regular',
+        paddingHorizontal: 5
+    },
 
+    userInfoContainer: {
+        marginTop: 40,
+        paddingHorizontal: 10
+    },
+    userInfoText: {
+        fontFamily: 'Montserrat-SemiBold',
+        fontSize: 20
+    },
+    bottomLine: {
+        height: 1,
+        width: wp(90),
+        marginHorizontal: 15,
+        marginVertical: 10,
+        backgroundColor: colorObj.greyColor
+    },
+    mainContentContainer: {
+        height: hp(20),
+        width: wp(90),
+        backgroundColor: colorObj.whiteColor,
+        marginHorizontal: 15,
+        paddingHorizontal: 10,
+        paddingVertical: 10,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
+
+        elevation: 4,
+        marginVertical:5
+        // alignSelf:'center'
+    },
+    mainContentText: {
+        fontFamily: 'Montserrat-Regular',
+        fontSize: 13,
+        marginTop: 10,
+        color: '#ACB0BF'
+    },
+    mainContentHeading: {
+        fontSize: 16,
+        fontFamily: 'Montserrat-SemiBold'
+    },
+    mainContentBtn: {
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: colorObj.darkBlueColor,
+        paddingHorizontal: 10,
+        paddingVertical: 2,
+        position: 'absolute',
+        right: 10,
+        top: 0
+    },
+    mainContentBtnText: {
+        fontFamily: 'Montserrat-Regular',
+    },
     centeredView: {
         flex: 1,
         justifyContent: "center",

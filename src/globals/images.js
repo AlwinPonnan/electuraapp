@@ -5,7 +5,7 @@
 export const imageObj={
     loginEllipse:require('../../assets/images/MaskGroup.png'),
     verifyOtpImage:require('../../assets/images/verifyOtp.png'),
-    loginImage:require('../../assets/images/login.png')
-    
+    loginImage:require('../../assets/images/login.png'),
+    illustration:require('../../assets/images/online-learning.png')
 }
 // export default ImageUrls
