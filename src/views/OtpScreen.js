@@ -40,7 +40,7 @@ export default function VerifyOtp(props) {
             let sessionId = await EncryptedStorage.getItem("sessionIdOtp");
             const { data: resOtpVerify } = await CheckValidOtp(sessionId, otp)
             if (resOtpVerify.Status == "Success") {
-                // alert(`${resOtpVerify.Details} Successfully`)
+                alert(`${resOtpVerify.Details} Successfully`)
                 const { data: res } = await loginUser(obj);
                 if (res) {
                     await EncryptedStorage.setItem('AUTH_TOKEN', res.data);
