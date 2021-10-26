@@ -8,11 +8,15 @@ import { getAllCategory } from '../Services/Category';
 import { useIsFocused } from '@react-navigation/core';
 import { getAllTeachers } from '../Services/User';
 import { imageObj } from '../globals/images';
+import { getAllSubjects } from '../Services/Subjects';
+import { generateImageUrl } from '../globals/utils';
 
 export default function HomeScreen(props) {
 
     const isFocused = useIsFocused()
     const [selectedCategoryId, setSelectedCategoryId] = useState('');
+    const [subjectArr, setSubjectArr] = useState([]);
+    const [selectedSubjectId, setSelectedSubjectId] = useState('');
     const [teachersArr, setTeachersArr] = useState([]);
     const [productsArr, setProductsArr] = useState([
         {
@@ -59,9 +63,9 @@ export default function HomeScreen(props) {
 
     const [categoryArr, setCategoryArr] = useState([]);
 
-    const getCategories = async () => {
+    const getSubjects = async () => {
         try {
-            const { data: res } = await getAllCategory();
+            const { data: res } = await getAllSubjects();
             if (res.success) {
                 let tempArr = res.data;
                 tempArr = tempArr.map(el => {
@@ -71,7 +75,7 @@ export default function HomeScreen(props) {
                     }
                     return obj
                 })
-                setCategoryArr([...tempArr])
+                setSubjectArr([...tempArr])
             }
         } catch (error) {
             console.error(error)
@@ -92,7 +96,7 @@ export default function HomeScreen(props) {
 
 
     useEffect(() => {
-        getCategories()
+        getSubjects()
         getTeachers()
     }, [isFocused])
 
@@ -101,12 +105,12 @@ export default function HomeScreen(props) {
         return (
             <Pressable style={styles.cardContainer} >
                 
-                <Image style={styles.teacherImg} source={{ uri: item?.teacherImg ? item?.teacherImg : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
+                <Image style={styles.teacherImg} source={{ uri: item?.profileImage ?  generateImageUrl(item?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
                 <View style={styles.textCardContainer}>
                     <View>
 
                         <Text style={styles.textCardMainHeading}>{item?.name}</Text>
-                        <Text style={styles.textCardMainSubHeading1}>Maths</Text>
+                        <Text style={styles.textCardMainSubHeading1}>{item?.enquiryObj?.classesArr?.reduce((acc,el)=>acc+el.className+',','')}</Text>
                         <Text style={styles.textCardMainSubHeading2}>{item?.enquiryObj?.experience} Year Experience</Text>
                     </View>
                     <View style={{ position: 'absolute', top: 5, right: 10 }} >
@@ -127,12 +131,12 @@ export default function HomeScreen(props) {
                 <FlatList
 
                     horizontal
-                    data={categoryArr}
+                    data={subjectArr}
                     renderItem={({ item, index }) => {
                         return (
-                            <Pressable onPress={() => setSelectedCategoryId(item._id)} style={[styles.categoryContainer, selectedCategoryId != item._id && { backgroundColor: '#F7FFFE' }]}>
+                            <Pressable onPress={() => setSelectedSubjectId(item._id)} style={[styles.categoryContainer, selectedSubjectId != item._id && { backgroundColor: '#F7FFFE' }]}>
                                 {/* <Icon name="film-outline" size={14} /> */}
-                                <Text style={[styles.categoryName, selectedCategoryId != item._id && { color: '#828282' }]}>{item.name}</Text>
+                                <Text style={[styles.categoryName, selectedSubjectId != item._id && { color: '#828282' }]}>{item.name}</Text>
                             </Pressable>
                         )
                     }}
@@ -149,6 +153,9 @@ export default function HomeScreen(props) {
                     horizontal
                     data={teachersArr}
                     renderItem={renderItem}
+                    ListEmptyComponent={
+                        <Text style={{fontFamily:'Montserrat-Regular',padding:10}}>No teachers found</Text>
+                    }
                     showsHorizontalScrollIndicator={false}
                     keyExtractor={(item, index) => `${index}`}
                 />

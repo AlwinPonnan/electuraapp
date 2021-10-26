@@ -21,3 +21,6 @@ export const getAllForUsersHomePage=async()=>{
 export const getById=async(id)=>{
     return axios.get(`${url}/getById/${id}`)
 }
+export const uploadCourseImage=async(id,obj)=>{
+    return axios.patch(`${url}/uploadCourseImage/${id}`,obj)
+}

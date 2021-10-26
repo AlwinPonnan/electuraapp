@@ -7,12 +7,16 @@ import NavBar from '../components/Navbar';
 import { getAllCategory } from '../Services/Category';
 import { getAllForUsersHomePage } from '../Services/Course';
 import { useIsFocused } from '@react-navigation/core';
+import { generateImageUrl } from '../globals/utils';
+import { getAllSubjects } from '../Services/Subjects';
 
 export default function Courses(props) {
     const [courseArr, setCourseArr] = useState([
-
+        
     ])
     const focused = useIsFocused()
+    const [subjectArr, setSubjectArr] = useState([]);
+    const [selectedSubjectId, setSelectedSubjectId] = useState('');
 
     const [productsArr, setProductsArr] = useState([
         {
@@ -69,27 +73,35 @@ export default function Courses(props) {
         }
     }
 
+    const getSubjects = async () => {
+        try {
+            const { data: res } = await getAllSubjects();
+            if (res.success) {
+                let tempArr = res.data;
+                tempArr = tempArr.map(el => {
+                    let obj = {
+                        ...el,
+                        selected: false
+                    }
+                    return obj
+                })
+                setSubjectArr([...tempArr])
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
 
     const getCourses = async () => {
         try {
-            console.log("ASd")
             const { data: res } = await getAllForUsersHomePage();
             if (res.success) {
-                console.log(JSON.stringify(res.data[0].courses, null, 2))
-                let tempArr = res.data[0];
-                // console.log(JSON.stringify(tempArr.courses.map(el => {
-                //     let obj = {
-                //         ...el,
-                //         imgUrl: "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
-
-                //     }
-                //     return obj
-                // }), null, 2))
-                // setCourseArr(tempArr)
-                let temp = tempArr.courses.map(el => {
+                let tempArr = res.data;
+               
+                let temp = tempArr.map(el => {
                     let obj = {
                         ...el,
-                        imgUrl: "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
+                        imgUrl: el?.thumbnailImage?.url ?  generateImageUrl(el?.thumbnailImage?.url) :"https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
 
                     }
                     return obj
@@ -104,7 +116,7 @@ export default function Courses(props) {
 
 
     useEffect(() => {
-        getCategories()
+        getSubjects()
         getCourses()
     }, [focused])
 
@@ -142,13 +154,13 @@ export default function Courses(props) {
                 <FlatList
 
                     horizontal
-                    data={categoryArr}
+                    data={subjectArr}
                     renderItem={({ item, index }) => {
                         return (
-                            <View style={[styles.categoryContainer, index > 0 && { backgroundColor: '#F7FFFE' }]}>
+                            <Pressable onPress={() => setSelectedSubjectId(item._id)} style={[styles.categoryContainer, selectedSubjectId != item._id && { backgroundColor: '#F7FFFE' }]}>
                                 {/* <Icon name="film-outline" size={14} /> */}
-                                <Text style={[styles.categoryName, index > 0 && { color: '#828282' }]}>{item.name}</Text>
-                            </View>
+                                <Text style={[styles.categoryName, selectedSubjectId != item._id && { color: '#828282' }]}>{item.name}</Text>
+                            </Pressable>
                         )
                     }}
                     showsHorizontalScrollIndicator={false}
@@ -165,13 +177,16 @@ export default function Courses(props) {
                     horizontal
                     data={courseArr}
                     renderItem={renderItem}
+                    ListEmptyComponent={
+                        <Text style={{fontFamily:'Montserrat-Regular',padding:10}}>No Courses found</Text>
+                    }
                     showsHorizontalScrollIndicator={false}
                     keyExtractor={(item, index) => `${index}`}
                 />
 
 
 
-                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                {/* <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                     <Text style={styles.headingAboveCard}>Best in Finance</Text>
                     <Text style={styles.viewAllText}>View All</Text>
                 </View>
@@ -181,7 +196,7 @@ export default function Courses(props) {
                     renderItem={renderItem}
                     showsHorizontalScrollIndicator={false}
                     keyExtractor={(item, index) => `${index}`}
-                />
+                /> */}
 
 
 

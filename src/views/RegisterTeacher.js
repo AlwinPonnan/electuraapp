@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { View, Text, StyleSheet, Image, TextInput, Pressable, KeyboardAvoidingView, ScrollView, Platform, TouchableOpacity } from 'react-native'
+import React, { useState, useEffect, useCallback,useContext } from 'react'
+import { View, Text, StyleSheet, Image, TextInput, Pressable, KeyboardAvoidingView, ScrollView, Platform, TouchableOpacity, FlatList } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj } from '../globals/colors';
 import { imageObj } from '../globals/images';
@@ -10,35 +10,47 @@ import DocumentPicker from 'react-native-document-picker'
 import { getDecodedToken, getToken, getUser, SendOtp, updateProfileImage } from '../Services/User';
 import { checkValidPhone } from '../globals/utils';
 import NavBar from '../components/Navbar'
-import { newEnquiry } from '../Services/TeacherEnquiry';
+import { newEnquiry, uploadIdProof, uploadQualifications } from '../Services/TeacherEnquiry';
 import { Picker } from '@react-native-picker/picker';
 import { getAllCategory } from '../Services/Category';
 import { useIsFocused } from '@react-navigation/core';
 import { RadioButton } from 'react-native-paper';
 import { getAllClasses } from '../Services/Classses';
 import { Checkbox } from 'react-native-paper';
+
+import { nanoid } from 'nanoid/non-secure'
+import { loadingContext } from '../navigators/stacks/RootStack';
 export default function RegisterTeacher(props) {
-    const [qualificationArr, setQualificationArr] = useState([]);
     const [phone, setPhone] = useState();
-    const [checked, setChecked] = React.useState('first');
+    const [checked, setChecked] = React.useState('individual');
     const [pincode, setPincode] = useState("");
     const [onlineIsSelected, setOnlineIsSelected] = useState(false);
     const [offlineIsSelected, setOfflineIsSelected] = useState(false);
 
     const [classesArr, setClassesArr] = useState([]);
-    const [certificate, setCertificate] = useState("");
-    // const [selectedCategoryId, setSelectedCategoryId] = useState('');
+    const [certificate, setCertificate] = useState();
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    // const [address, setAddress] = useState('');
-    // const [description, setDescription] = useState('');
     const [experience, setExperience] = useState('');
-    const [subject, setSubject] = useState('');
-    const [teacherClass, setTeacherClass] = useState('');
     const [degree, setDegree] = useState('');
-    const [validId, setvalidId] = useState("");
+    const [validId, setvalidId] = useState()
     const [genderIsSelected, setGenderIsMale] = useState(false);
+    const [isLoading, setIsLoading] = useContext(loadingContext);
+    const [topicArr, setTopicArr] = useState([
+        {
+            text: '', id: nanoid()
+        },
+        {
+            text: '', id: nanoid()
+        },
+        { text: '', id: nanoid() }
+    ]);
+
+    const [facebookLink, setFacebookLink] = useState('');
+    const [youtubeLink, setYoutubeLink] = useState('');
+    const [instagramLink, setInstagramLink] = useState('');
+    const [telegramLink, setTelegramLink] = useState('');
 
 
     const [university, setUniversity] = useState('');
@@ -47,34 +59,66 @@ export default function RegisterTeacher(props) {
 
     const focused = useIsFocused();
     const handleSubmit = async () => {
+        setIsLoading(true)
         try {
 
-            let classesFilteredArr = classesArr.filter(el => el.checked == true).map(el => { return { classId: el._id } })
-            let categoryFilteredArr = categoryArr.filter(el => el.checked == true).map(el => { return { categoryId: el._id } })
-
-            if (name != "" && email != "" && phone != "" && classesFilteredArr.length > 0) {
+            let classesFilteredArr = classesArr.filter(el => el.checked).map(el => {
+                let obj = {
+                    ...el,
+                    classId: el._id,
+                    subjectArr: el.subjectArr.filter(ele => ele.checked).map(ele => {
+                        ele.subjectId = ele.subjectId
+                        return ele
+                    })
+                }
+                return obj
+            })
+            // let categoryFilteredArr = categoryArr.filter(el => el.checked == true).map(el => { return { categoryId: el._id } })
+            console.log(JSON.stringify(classesFilteredArr, null, 2))
+            if (validId?.name != "" && name != "" && email != "" && phone != "" && classesFilteredArr.length > 0) {
                 let userToken = await getDecodedToken()
                 let obj = {
                     name,
                     email,
-                    // address,
                     pincode: pincode,
                     userId: userToken.userId,
                     educationObj: {
                         degree,
-                        university
+                    },
+                    teacherType: checked,
+                    gender: genderIsSelected ? 'Male' : 'Female',
+                    modes: {
+                        online: onlineIsSelected,
+                        offline: offlineIsSelected
                     },
                     classesArr: classesFilteredArr,
-                    categoryArr: categoryFilteredArr,
                     experience,
-                    // feesObj: {
-                    //     minFees,
-                    //     maxFees
-                    // }
+                    facebookLink,
+                    youtubeLink,
+                    instagramLink,
+                    telegramLink,
+                    bestTopics: topicArr.map(el => {
+                        let obj = {
+                            name: el.text
+                        }
+                        return obj
+                    })
+
+
                 }
                 const { data: res } = await newEnquiry(obj);
                 if (res.success) {
+                    let formData = new FormData();
+                    formData.append('file', validId)
+                    const { data: response } = await uploadIdProof(res.data._id, formData)
+                    if (certificate?.name) {
+                        let form_data = new FormData();
+                        form_data.append('file', certificate)
+                        const { data: responses } = await uploadQualifications(res.data._id, formData)
+                    }
+
                     alert(res.message)
+                    props.navigation.goBack()
                 }
             }
             else {
@@ -89,24 +133,25 @@ export default function RegisterTeacher(props) {
                 alert(error.message)
             }
         }
+        setIsLoading(false)
     }
 
     const [categoryArr, setCategoryArr] = useState([]);
 
-    const getCategories = async () => {
-        try {
-            const { data: res } = await getAllCategory();
-            if (res.success) {
-                let tempArr = res.data.map(el => {
-                    el.checked = false
-                    return el
-                })
-                setCategoryArr(tempArr)
-            }
-        } catch (error) {
-            console.error(error)
-        }
-    }
+    // const getCategories = async () => {
+    //     try {
+    //         const { data: res } = await getAllCategory();
+    //         if (res.success) {
+    //             let tempArr = res.data.map(el => {
+    //                 el.checked = false
+    //                 return el
+    //             })
+    //             setCategoryArr(tempArr)
+    //         }
+    //     } catch (error) {
+    //         console.error(error)
+    //     }
+    // }
 
 
     const getUserData = async () => {
@@ -133,8 +178,19 @@ export default function RegisterTeacher(props) {
             if (statusCode == 200 || statusCode == 304) {
 
                 let tempArr = res.data.map(el => {
-                    el.checked = false
-                    return el
+                    let obj = {
+                        ...el,
+                        subjectArr: el.subjectArr.map(ele => {
+                            let tempObj = {
+                                ...ele,
+                                checked: false
+                            }
+                            return tempObj
+                        }),
+                        checked: false
+
+                    }
+                    return obj
                 })
                 // console.log(JSON.stringify(tempArr, null, 2), "classes")
                 setClassesArr(tempArr)
@@ -157,16 +213,28 @@ export default function RegisterTeacher(props) {
         console.log(tempArr, "temp arr")
     }
 
-    const setCategorySelected = (id) => {
+    const setSelectedSubject = (classId, subjectId) => {
+        setClassesArr(prevState => {
+            let index = prevState.findIndex(el => el._id == classId);
+            if (index != -1) {
+                let subjectIndex = prevState[index].subjectArr.findIndex(ele => ele.subjectId == subjectId)
+                if (subjectIndex != -1)
+                    prevState[index].subjectArr[subjectIndex].checked = !prevState[index].subjectArr[subjectIndex].checked;
 
-        let tempArr = categoryArr.map(el => {
-            if (el._id == id) {
-                el.checked = !el.checked
             }
-            return el
+            return [...prevState]
         })
-        setCategoryArr(tempArr)
     }
+    // const setCategorySelected = (id) => {
+
+    //     let tempArr = categoryArr.map(el => {
+    //         if (el._id == id) {
+    //             el.checked = !el.checked
+    //         }
+    //         return el
+    //     })
+    //     setCategoryArr(tempArr)
+    // }
 
 
     const pickImageValidId = async () => {
@@ -238,9 +306,17 @@ export default function RegisterTeacher(props) {
     }
 
 
+
+    const handleTopicSet = (index, text) => {
+        setTopicArr(prevState => {
+            prevState[index].text = text;
+            return [...prevState]
+        })
+    }
+
     useEffect(() => {
         if (focused) {
-            getCategories()
+            // getCategories()
             getUserData()
             getClasses()
         }
@@ -270,24 +346,24 @@ export default function RegisterTeacher(props) {
 
                                 <RadioButton
                                     color={colorObj.primarColor}
-                                    value="first"
+                                    value="individual"
                                     uncheckedColor="grey"
-                                    status={checked === 'first' ? 'checked' : 'unchecked'}
-                                    onPress={() => setChecked('first')}
+                                    status={checked === 'individual' ? 'checked' : 'unchecked'}
+                                    onPress={() => setChecked('individual')}
                                 />
-                                <Pressable onPress={() => setChecked('first')}>
+                                <Pressable onPress={() => setChecked('individual')}>
                                     <Text style={styles.RadioBtnTxt}>I'm an individual tutor</Text>
                                 </Pressable>
                             </View>
                             <View style={styles.flexRowAlignCenter}>
                                 <RadioButton
-                                    value="second"
+                                    value="institute"
                                     color={colorObj.primarColor}
                                     uncheckedColor="grey"
-                                    status={checked === 'second' ? 'checked' : 'unchecked'}
-                                    onPress={() => setChecked('second')}
+                                    status={checked === 'institute' ? 'checked' : 'unchecked'}
+                                    onPress={() => setChecked('institute')}
                                 />
-                                <Pressable onPress={() => setChecked('second')}>
+                                <Pressable onPress={() => setChecked('institute')}>
                                     <Text style={styles.RadioBtnTxt}>I’m an institute</Text>
                                 </Pressable>
                             </View>
@@ -313,52 +389,61 @@ export default function RegisterTeacher(props) {
                         </View>
 
                         <Text style={styles.label}>Select Classes taught by you *</Text>
-                        {
-                            classesArr && classesArr.map((el, index) => {
+                        <FlatList
+                            data={classesArr}
+                            keyExtractor={(item, index) => `${item._id}`}
+                            renderItem={({ item, index }) => {
                                 return (
-                                    <View key={el._id} style={{ width: wp(91), marginTop: 10, alignItems: "center", alignSelf: "center", display: "flex", flexDirection: "row" }}>
-                                        <Checkbox
-                                            color={colorObj.primarColor}
-                                            status={el.checked ? "checked" : "unchecked"}
-                                            onPress={() => {
-                                                setClassSelected(el._id);
-                                            }}
-                                        />
-                                        <TouchableOpacity style={{ width: wp(82), paddingVertical: 5, }} onPress={() => {
-                                            setClassSelected(el._id);
-                                        }}>
-                                            <Text>{el.name}</Text>
-                                        </TouchableOpacity>
+                                    <View>
+                                        <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 10 }]}>
+                                            <Checkbox
+                                                color={colorObj.primarColor}
+                                                status={item.checked ? "checked" : "unchecked"}
+                                                onPress={() => {
+                                                    setClassSelected(item._id);
+                                                }}
+                                            />
+                                            <TouchableOpacity style={{ width: wp(82), paddingVertical: 5, }} onPress={() => {
+                                                setClassSelected(item._id);
+                                            }}>
+                                                <Text>{item.name}</Text>
+                                            </TouchableOpacity>
+
+                                        </View>
+                                        {item.checked &&
+                                            <FlatList
+                                                data={item.subjectArr}
+                                                keyExtractor={(item, index) => `${item._id}`}
+                                                renderItem={({ item: itemX, index: indexX }) => {
+                                                    return (
+                                                        <View style={[styles.flexRowAlignCenter, { marginVertical: 2, paddingHorizontal: 20 }]}>
+                                                            <Checkbox
+                                                                color={colorObj.primarColor}
+                                                                status={itemX.checked ? "checked" : "unchecked"}
+                                                                onPress={() => {
+                                                                    setSelectedSubject(item._id, itemX.subjectId);
+                                                                }}
+                                                            />
+                                                            <TouchableOpacity style={{ width: wp(82), paddingVertical: 5, }} onPress={() => {
+                                                                setSelectedSubject(item._id, itemX.subjectId);
+                                                            }}>
+                                                                <Text>{itemX.subjectName}</Text>
+                                                            </TouchableOpacity>
+                                                        </View>
+                                                    )
+                                                }}
+                                            />
+                                        }
                                     </View>
                                 )
-                            })
-                        }
-                        <Text style={styles.label}>Select Subjects taught by you *</Text>
-                        {
-                            categoryArr && categoryArr.map((el, index) => {
-                                return (
-                                    <View key={el._id} style={{ width: wp(91), marginTop: 10, alignItems: "center", alignSelf: "center", display: "flex", flexDirection: "row" }}>
-                                        <Checkbox
-                                            color={colorObj.primarColor}
-                                            status={el.checked ? "checked" : "unchecked"}
-                                            onPress={() => {
-                                                setCategorySelected(el._id);
-                                            }}
-                                        />
-                                        <TouchableOpacity style={{ width: wp(82), paddingVertical: 5, }} onPress={() => {
-                                            setCategorySelected(el._id);
-                                        }}>
-                                            <Text>{el.name}</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                )
-                            })
-                        }
+                            }}
+                        />
+
                         <Text style={styles.label}>Upload your Id</Text>
 
                         <TouchableOpacity style={[styles.inputContainer, { minHeight: 80 }]} onPress={() => pickImageValidId()}>
                             <Icon name="camera-outline" size={14} color={"#085A4E"} />
-                            <Text style={{ fontFamily: "Montserrat-Thin", fontSize: 14, marginLeft: 10 }}>{validId.name ? validId.name : "Upload An Id Image *"}</Text>
+                            <Text style={{ fontFamily: "Montserrat-Thin", fontSize: 14, marginLeft: 10 }}>{validId?.name ? validId?.name : "Upload An Id Image *"}</Text>
                         </TouchableOpacity>
                         <Text style={styles.label}>Select your Gender</Text>
 
@@ -397,19 +482,19 @@ export default function RegisterTeacher(props) {
 
 
                         <Text style={styles.label}>Enter your Proficient topics</Text>
+                        <FlatList
+                            data={topicArr}
+                            keyExtractor={(item, index) => `${item.id}`}
+                            renderItem={({ item, index }) => {
+                                return (
+                                    <View style={styles.inputContainer}>
+                                        <Icon name="book-outline" size={14} color="black" />
+                                        <TextInput style={styles.inputStyles} onChangeText={(val) => handleTopicSet(index, val)} value={item.text} placeholder={`Enter Topic ${index + 1} `} />
+                                    </View>
+                                )
+                            }}
+                        />
 
-                        <View style={styles.inputContainer}>
-                            <Icon name="book-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setPincode(val)} value={pincode} placeholder="Enter Topic 1" />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <Icon name="book-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setPincode(val)} value={pincode} placeholder="Enter Topic 2" />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <Icon name="book-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setPincode(val)} value={pincode} placeholder="Enter Topic 3" />
-                        </View>
 
                         <Text style={styles.label}>Select Mode of Teaching</Text>
 
@@ -449,17 +534,6 @@ export default function RegisterTeacher(props) {
 
                         </View>
 
-                        {/* <View style={styles.inputContainer}>
-                            <Icon name="home-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setAddress(val)} value={address} placeholder="Enter Address" multiline={true} />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <Icon name="home-outline" size={14} color="black" />
-                            <TextInput keyboardType="number-pad" style={styles.inputStyles} onChangeText={(val) => setMinFees(val)} value={minFees} placeholder="Enter Min Fees" keyboardType="numeric" />
-                        </View><View style={styles.inputContainer}>
-                            <Icon name="home-outline" size={14} color="black" />
-                            <TextInput keyboardType="number-pad" style={styles.inputStyles} onChangeText={(val) => setMaxFees(val)} value={maxFees} placeholder="Enter Max Fees" keyboardType="numeric" />
-                        </View> */}
                         <Text style={styles.label}>Enter your pincode</Text>
 
                         <View style={styles.inputContainer}>
@@ -472,10 +546,7 @@ export default function RegisterTeacher(props) {
                             <Icon name="library-outline" size={14} color="black" />
                             <TextInput multiline={true} style={styles.inputStyles} value={degree} onChangeText={(val) => setDegree(val)} placeholder="Enter your Highest Education" />
                         </View>
-                        {/* <View style={styles.inputContainer}>
-                            <Icon name="library-outline" size={14} color="black" />
-                            <TextInput multiline={true} style={styles.inputStyles} value={university} onChangeText={(val) => setUniversity(val)} placeholder="Enter your university" />
-                        </View> */}
+
                         <Text style={styles.label}>Enter your Experience</Text>
 
                         <View style={styles.inputContainer}>
@@ -485,29 +556,29 @@ export default function RegisterTeacher(props) {
                         <Text style={styles.label}>Enter your Certificate</Text>
                         <TouchableOpacity style={[styles.inputContainer, { minHeight: 80 }]} onPress={() => pickCertificate()}>
                             <Icon name="camera-outline" size={14} color={"#085A4E"} />
-                            <Text style={{ fontFamily: "Montserrat-Thin", fontSize: 14, marginLeft: 10 }}>{validId.name ? validId.name : "Upload An Id Image *"}</Text>
+                            <Text style={{ fontFamily: "Montserrat-Thin", fontSize: 14, marginLeft: 10 }}>{certificate?.name ? certificate.name : "Upload An Id Image *"}</Text>
                         </TouchableOpacity>
 
                         <Text style={styles.label}>Enter your Facebook Link</Text>
                         <View style={styles.inputContainer}>
                             <Icon name="logo-facebook" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setSubject(val)} value={subject} placeholder="Enter Facebook Link" />
+                            <TextInput style={styles.inputStyles} onChangeText={(val) => setFacebookLink(val)} value={facebookLink} placeholder="Enter Facebook Link" />
                         </View>
                         <Text style={styles.label}>Enter your Youtube Link</Text>
                         <View style={styles.inputContainer}>
                             <Icon name="logo-youtube" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setSubject(val)} value={subject} placeholder="Enter Youtube Link" />
+                            <TextInput style={styles.inputStyles} onChangeText={(val) => setYoutubeLink(val)} value={youtubeLink} placeholder="Enter Youtube Link" />
                         </View>
                         <Text style={styles.label}>Enter your Instagram Link</Text>
                         <View style={styles.inputContainer}>
                             <Icon name="logo-instagram" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setTeacherClass(val)} value={teacherClass} placeholder="Enter Instagram Link" />
+                            <TextInput style={styles.inputStyles} onChangeText={(val) => setInstagramLink(val)} value={instagramLink} placeholder="Enter Instagram Link" />
                         </View>
 
                         <Text style={styles.label}>Enter your Telegram Link</Text>
                         <View style={styles.inputContainer}>
                             <Icon name="paper-plane" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setTeacherClass(val)} value={teacherClass} placeholder="Enter Telegram Link" />
+                            <TextInput style={styles.inputStyles} onChangeText={(val) => setTelegramLink(val)} value={telegramLink} placeholder="Enter Telegram Link" />
                         </View>
 
 

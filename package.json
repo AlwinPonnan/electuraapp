@@ -19,6 +19,7 @@
     "@react-navigation/native-stack": "^6.0.4",
     "axios": "^0.21.1",
     "jwt-decode": "^3.1.2",
+    "nanoid": "^3.1.30",
     "react": "17.0.1",
     "react-native": "0.64.2",
     "react-native-document-picker": "^7.1.0",
@@ -34,6 +35,7 @@
     "react-native-screens": "^3.5.0",
     "react-native-tab-view": "^3.1.1",
     "react-native-vector-icons": "^8.1.0",
+    "react-native-youtube-iframe": "^2.1.2",
     "rn-range-slider": "^2.1.1"
   },
   "devDependencies": {

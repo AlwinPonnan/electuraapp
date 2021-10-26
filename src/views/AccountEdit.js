@@ -10,6 +10,10 @@ import { generateImageUrl } from '../globals/utils';
 import { Checkbox } from 'react-native-paper';
 import { profileContext, roleContext } from '../navigators/stacks/RootStack';
 import { imageObj } from '../globals/images';
+
+import { Button, Paragraph, Dialog, Portal, Provider } from 'react-native-paper';
+import { useIsFocused } from '@react-navigation/core';
+
 export default function AccountEdit(props) {
     const [modalVisible, setModalVisible] = useState(false);
     const [profileData, setProfileData] = useContext(profileContext);
@@ -24,32 +28,10 @@ export default function AccountEdit(props) {
     const [documentVal, setDocumentVal] = useState("");
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
     const [genderIsSelected, setGenderIsMale] = useState(false);
+    const [degree, setDegree] = useState('');
+    const [aboutModal, setAboutModal] = useState(false);
 
-    const addQualification = () => {
-        setQualificationArr(previousState => {
-            return [...previousState, { qualificationName: "" }]
-        })
-    }
-
-    const removeQualification = (index) => {
-        setQualificationArr(previousState => {
-
-            previousState.splice(index, 1)
-
-            return [...previousState]
-        })
-    }
-
-    const handleQualificationInput = (index, val) => {
-        let tempArr = QualificationArr.map((el, i) => {
-            if (i == index) {
-                el.qualificationName = val
-            }
-            return el
-        })
-        setQualificationArr(tempArr)
-    }
-
+    const focused=useIsFocused()
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener(
             'keyboardDidShow',
@@ -77,12 +59,7 @@ export default function AccountEdit(props) {
             const res = await DocumentPicker.pickSingle({
                 type: [DocumentPicker.types.images],
             })
-            console.log(
-                res.uri,
-                res.type, // mime type
-                res.name,
-                res.size,
-            )
+            
             setProfilePhoto(res)
 
             handleProfileImageUpdate(res)
@@ -136,6 +113,8 @@ export default function AccountEdit(props) {
             let { data: res, status: statusCode } = await updateProfile(obj)
             if (statusCode == 200 || statusCode == 304) {
                 console.log(res.message)
+                getUserData()
+                setAboutModal(false)
                 alert(res.message)
             }
             console.log(res)
@@ -170,18 +149,7 @@ export default function AccountEdit(props) {
 
 
 
-    const renderQualification = ({ item, index }) => {
-        return (
-            <>
-                <View style={[styles.flexRow, { alignItems: "center", marginVertical: 7 }]}>
-                    <TextInput onChangeText={(val) => handleQualificationInput(index, val)} value={item.qualificationName} style={[styles.txtInput, { flex: 1 }]} placeholder="Topic Name" />
-                    <TouchableOpacity style={[styles.AddBtn, { padding: 5, marginLeft: 10 }]} onPress={() => removeQualification(index)}>
-                        <Icon name="ios-trash-outline" size={20} color={"#085A4E"} />
-                    </TouchableOpacity>
-                </View>
-            </>
-        )
-    }
+    
 
 
 
@@ -196,6 +164,8 @@ export default function AccountEdit(props) {
                 setMobile(res.data.phone)
                 setProfilePhoto(res.data.profileImage)
                 setProfileData(res.data)
+                setDegree(res?.data?.enquiryObj?.educationObj?.degree)
+                setGenderIsMale(res.data.gender == "Male" ? true : false)
                 setRoleName(res.data.role)
                 // console.log(JSON.stringify(res.data, null, 2))
             }
@@ -207,7 +177,7 @@ export default function AccountEdit(props) {
 
     useEffect(() => {
         getUserData()
-    }, [])
+    }, [focused])
 
 
 
@@ -218,12 +188,12 @@ export default function AccountEdit(props) {
             <ScrollView style={styles.container}>
                 <View>
                     <View style={styles.topContainer}>
-                        <View style={styles.addPhotoBtn}>
+                        {/* <View style={styles.addPhotoBtn}>
                             <Icon name="camera-outline" size={16} color="black" />
                             <Text style={styles.addPhotoBtnText}>Add Cover Photo</Text>
-                        </View>
+                        </View> */}
                     </View>
-                    <View style={styles.circleImg}>
+                    <Pressable onPress={()=>pickImageProfilePhoto()} style={styles.circleImg}>
                         {
                             profilePhoto != "" && profilePhoto ?
                                 <Image style={styles.profileImage} source={{ uri: generateImageUrl(profilePhoto) }} />
@@ -231,7 +201,7 @@ export default function AccountEdit(props) {
                                 <Image style={styles.profileImage} source={require("../../assets/images/user.png")} />
                         }
 
-                    </View>
+                    </Pressable>
                 </View>
                 <View style={styles.userInfoContainer}>
                     <Text style={styles.userInfoText}>{profileData?.name}</Text>
@@ -246,36 +216,89 @@ export default function AccountEdit(props) {
                     <View style={[styles.flexRow, { alignItems: 'center' }]}>
                         <Icon name="person-outline" size={16} color="black" />
                         <Text style={[styles.mainContentHeading, { paddingHorizontal: 10 }]}>About You</Text>
-                        <Pressable style={styles.mainContentBtn}>
-                            <Text style={styles.mainContentBtnText}>Add</Text>
+                        <Pressable style={styles.mainContentBtn} onPress={() => setAboutModal(true)}>
+                            <Text style={styles.mainContentBtnText}>Add {profileData?.name && "/ Edit"}</Text>
                         </Pressable>
                     </View>
                     <Text style={styles.mainContentText}>Tell us about your professional experience here and connect better with your students</Text>
                     <Image source={imageObj.illustration} style={{ height: 70, width: 70, alignSelf: 'flex-end', marginTop: 10 }} />
                 </View>
-                <View style={styles.mainContentContainer}>
-                    <View style={[styles.flexRow, { alignItems: 'center' }]}>
-                        <Icon name="school-outline" size={16} color="black" />
-                        <Text style={[styles.mainContentHeading, { paddingHorizontal: 10 }]}>About Institute</Text>
-                        <Pressable style={styles.mainContentBtn}>
-                            <Text style={styles.mainContentBtnText}>Add</Text>
-                        </Pressable>
-                    </View>
-                    <Text style={styles.mainContentText}>Add your institute details here and find more students</Text>
-                    <Image source={imageObj.illustration} style={{ height: 70, width: 70, alignSelf: 'flex-end', marginTop: 10 }} />
-                </View>
-                <View style={styles.mainContentContainer}>
-                    <View style={[styles.flexRow, { alignItems: 'center' }]}>
-                        <Icon name="logo-youtube" size={16} color="black" />
-                        <Text style={[styles.mainContentHeading, { paddingHorizontal: 10 }]}>Social Media</Text>
-                        <Pressable style={styles.mainContentBtn}>
-                            <Text style={styles.mainContentBtnText}>Add</Text>
-                        </Pressable>
-                    </View>
-                    <Text style={styles.mainContentText}>Add Youtube channel ,Facebook links etc. to improve your branding</Text>
-                    <Image source={imageObj.illustration} style={{ height: 70, width: 70, alignSelf: 'flex-end', marginTop: 10 }} />
-                </View>
+                {
+                    roleName == "TEACHER" &&
+                    <>
+                        <View style={styles.mainContentContainer}>
+                            <View style={[styles.flexRow, { alignItems: 'center' }]}>
+                                <Icon name="school-outline" size={16} color="black" />
+                                <Text style={[styles.mainContentHeading, { paddingHorizontal: 10 }]}>About Institute</Text>
+                                <Pressable style={styles.mainContentBtn}>
+                                    <Text style={styles.mainContentBtnText}>Add</Text>
+                                </Pressable>
+                            </View>
+                            <Text style={styles.mainContentText}>Add your institute details here and find more students</Text>
+                            <Image source={imageObj.illustration} style={{ height: 70, width: 70, alignSelf: 'flex-end', marginTop: 10 }} />
+                        </View>
+                        <View style={styles.mainContentContainer}>
+                            <View style={[styles.flexRow, { alignItems: 'center' }]}>
+                                <Icon name="logo-youtube" size={16} color="black" />
+                                <Text style={[styles.mainContentHeading, { paddingHorizontal: 10 }]}>Social Media</Text>
+                                <Pressable style={styles.mainContentBtn}>
+                                    <Text style={styles.mainContentBtnText}>Add</Text>
+                                </Pressable>
+                            </View>
+                            <Text style={styles.mainContentText}>Add Youtube channel ,Facebook links etc. to improve your branding</Text>
+                            <Image source={imageObj.illustration} style={{ height: 70, width: 70, alignSelf: 'flex-end', marginTop: 10 }} />
+                        </View>
+                    </>
+
+                }
+
             </ScrollView>
+            <Portal>
+                <Dialog visible={aboutModal} onDismiss={() => setAboutModal(false)}>
+                    <Dialog.Title style={{ textAlign: 'center', fontFamily: 'Montserrat-SemiBold', fontSize: 20 }}>About You</Dialog.Title>
+                    <Dialog.Content>
+                        <Text style={styles.label}>
+                            Name
+                        </Text>
+                        <TextInput value={name} onChangeText={(e) => setName(e)} style={styles.txtInput} placeholder="Name" />
+                        <Text style={styles.label}>
+                            Email
+                        </Text>
+                        <TextInput value={email} onChangeText={(e) => setEmail(e)} style={styles.txtInput} placeholder="Email" />
+                        <Text style={styles.label}>
+                            Phone
+                        </Text>
+                        <TextInput value={mobile} onChangeText={(e) => setMobile(e)} maxLength={10} style={styles.txtInput} keyboardType="number-pad" placeholder="Phone" />
+
+                    </Dialog.Content>
+                    <Dialog.Actions>
+                        <Button onPress={() => handleProfileUpdate()} >Done</Button>
+                    </Dialog.Actions>
+                </Dialog>
+            </Portal>
+            <Portal>
+                <Dialog visible={aboutModal} onDismiss={() => setAboutModal(false)}>
+                    <Dialog.Title style={{ textAlign: 'center', fontFamily: 'Montserrat-SemiBold', fontSize: 20 }}>About You</Dialog.Title>
+                    <Dialog.Content>
+                        <Text style={styles.label}>
+                            Name
+                        </Text>
+                        <TextInput value={name} onChangeText={(e) => setName(e)} style={styles.txtInput} placeholder="Name" />
+                        <Text style={styles.label}>
+                            Email
+                        </Text>
+                        <TextInput value={email} onChangeText={(e) => setEmail(e)} style={styles.txtInput} placeholder="Email" />
+                        <Text style={styles.label}>
+                            Phone
+                        </Text>
+                        <TextInput value={mobile} onChangeText={(e) => setMobile(e)} maxLength={10} style={styles.txtInput} keyboardType="number-pad" placeholder="Phone" />
+
+                    </Dialog.Content>
+                    <Dialog.Actions>
+                        <Button onPress={() => handleProfileUpdate()} >Done</Button>
+                    </Dialog.Actions>
+                </Dialog>
+            </Portal>
             {/* <View style={styles.container}>
 
                 <KeyboardAvoidingView>
@@ -510,8 +533,9 @@ const styles = StyleSheet.create({
     },
     topContainer: {
         height: hp(22),
-        backgroundColor: colorObj.primarColor,
+        backgroundColor: colorObj.orangeColor,
         width: wp(100),
+        position: 'relative',
         paddingHorizontal: 5
     },
     circleImg: {
@@ -572,7 +596,7 @@ const styles = StyleSheet.create({
         shadowRadius: 2.62,
 
         elevation: 4,
-        marginVertical:5
+        marginVertical: 5
         // alignSelf:'center'
     },
     mainContentText: {
@@ -685,10 +709,10 @@ const styles = StyleSheet.create({
         fontFamily: 'OpenSans-SemiBold',
         color: "black",
         fontSize: 14,
-        marginBottom: 8,
+        // marginBottom: 8,
         color: "grey",
         paddingLeft: 5,
-        marginTop: 30,
+        marginVertical: 5,
         // paddingTop: 15,
         textTransform: "capitalize",
     },
@@ -718,6 +742,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         paddingLeft: 20,
         backgroundColor: "#fff",
+        fontFamily: 'Montserrat-Regular',
+        marginBottom: 10
 
     },
 
