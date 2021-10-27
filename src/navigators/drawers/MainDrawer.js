@@ -32,6 +32,7 @@ export default function MainDrawer() {
     const [isAuthorized, setIsAuthorized] = useContext(AuthContext);
     const [roleName, setRoleName] = useContext(roleContext);
 
+    
     ////////////////////custom user drawer 
     function CustomDrawerContent(props) {
 
@@ -97,6 +98,7 @@ export default function MainDrawer() {
             if (statusCode == 200 || statusCode == 304) {
                 console.log(JSON.stringify(res.data, null, 2))
                 setProfileData(res.data)
+                setRoleName(res.data.role)
             }
         }
         catch (err) {

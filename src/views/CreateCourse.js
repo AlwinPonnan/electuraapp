@@ -46,7 +46,7 @@ export default function CreateCourse(props) {
                 }
                 return obj
             })
-            if (courseImg?.name != "" && name!="" && hours!="" && assignments!="" && youtubeLink!="" && description!="" && classesFilteredArr.length>1) {
+            if (courseImg?.name != "" && name!="" && hours!="" && assignments!="" && youtubeLink!="" && description!="" && classesFilteredArr.length>=1) {
 
                 let userToken = await getDecodedToken()
                 console.log(userToken)
@@ -263,11 +263,11 @@ export default function CreateCourse(props) {
                         />
                         <View style={styles.inputContainer}>
                             <Icon name="library-outline" size={14} color="black" />
-                            <TextInput multiline={true} style={styles.inputStyles} onChangeText={(val) => setHours(val)} placeholder="No of Hours" />
+                            <TextInput  keyboardType="numeric" style={styles.inputStyles} onChangeText={(val) => setHours(val)} placeholder="No of Hours" />
                         </View>
                         <View style={styles.inputContainer}>
                             <Icon name="library-outline" size={14} color="black" />
-                            <TextInput multiline={true} style={styles.inputStyles} onChangeText={(val) => setAssignments(val)} placeholder="No Of assignments" />
+                            <TextInput keyboardType="numeric" style={styles.inputStyles} onChangeText={(val) => setAssignments(val)} placeholder="No Of assignments" />
                         </View>
                         <View style={[styles.inputContainer, { minHeight: 80 }]}>
                             <Icon name="chatbox-ellipses-outline" size={14} color="black" />
