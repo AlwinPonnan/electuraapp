@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { View, Text, StyleSheet, Image, TouchableOpacity, Pressable, Appearance, Modal, TextInput, ScrollView, Keyboard, FlatList, KeyboardAvoidingView } from 'react-native'
+import { View, Text, StyleSheet, Image, TouchableOpacity, Pressable, Appearance, Modal, TextInput, ScrollView, Keyboard, FlatList, KeyboardAvoidingView,ImageBackground } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from "react-native-vector-icons/Ionicons"
 import NavBar from '../components/Navbar';
@@ -31,7 +31,7 @@ export default function AccountEdit(props) {
     const [degree, setDegree] = useState('');
     const [aboutModal, setAboutModal] = useState(false);
 
-    const focused=useIsFocused()
+    const focused = useIsFocused()
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener(
             'keyboardDidShow',
@@ -59,7 +59,7 @@ export default function AccountEdit(props) {
             const res = await DocumentPicker.pickSingle({
                 type: [DocumentPicker.types.images],
             })
-            
+
             setProfilePhoto(res)
 
             handleProfileImageUpdate(res)
@@ -149,7 +149,7 @@ export default function AccountEdit(props) {
 
 
 
-    
+
 
 
 
@@ -187,13 +187,23 @@ export default function AccountEdit(props) {
             <NavBar rootProps={props} />
             <ScrollView style={styles.container}>
                 <View>
-                    <View style={styles.topContainer}>
-                        {/* <View style={styles.addPhotoBtn}>
-                            <Icon name="camera-outline" size={16} color="black" />
-                            <Text style={styles.addPhotoBtnText}>Add Cover Photo</Text>
-                        </View> */}
-                    </View>
-                    <Pressable onPress={()=>pickImageProfilePhoto()} style={styles.circleImg}>
+                    {
+                        profileData?.backgroundImage ?
+                            <View style={styles.topContainer}>
+                                <View style={styles.addPhotoBtn}>
+                                    <Icon name="camera-outline" size={16} color="black" />
+                                    <Text style={styles.addPhotoBtnText}>Add Cover Photo</Text>
+                                </View>
+                            </View>
+                            :
+                            <ImageBackground source={imageObj.teacherBackBanner} style={styles.topContainer}>
+                                <View style={styles.addPhotoBtn}>
+                                    <Icon name="camera-outline" size={16} color="black" />
+                                    <Text style={styles.addPhotoBtnText}>Add Cover Photo</Text>
+                                </View>
+                            </ImageBackground>
+                    }
+                    <Pressable onPress={() => pickImageProfilePhoto()} style={styles.circleImg}>
                         {
                             profilePhoto != "" && profilePhoto ?
                                 <Image style={styles.profileImage} source={{ uri: generateImageUrl(profilePhoto) }} />

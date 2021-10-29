@@ -4,9 +4,13 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { colorObj, light_colors } from '../globals/colors';
 import Icon from 'react-native-vector-icons/Ionicons'
 import NavBar from '../components/Navbar';
+
 export default function Enquiry(props) {
     const [listIsExpanded, setListIsExpanded] = useState(false);
     const [listIsExpanded2, setListIsExpanded2] = useState(false);
+
+
+
     return (
         <>
             <NavBar rootProps={props} />
