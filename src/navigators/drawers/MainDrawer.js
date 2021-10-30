@@ -23,8 +23,12 @@ import { getUser } from '../../Services/User';
 import { generateImageUrl } from '../../globals/utils';
 import CreateCourse from '../../views/CreateCourse';
 import { useIsFocused } from '@react-navigation/core';
+
 const Drawer = createDrawerNavigator();
+
+
 export default function MainDrawer() {
+
     const [name, setName] = useState("");
     const [profilePhoto, setProfilePhoto] = useState("");
     const focused = useIsFocused()
