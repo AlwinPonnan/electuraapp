@@ -23,6 +23,7 @@ import { getUser } from '../../Services/User';
 import { generateImageUrl } from '../../globals/utils';
 import CreateCourse from '../../views/CreateCourse';
 import { useIsFocused } from '@react-navigation/core';
+import TeacherProfile from '../../views/TeacherProfile';
 const Drawer = createDrawerNavigator();
 export default function MainDrawer() {
     const [name, setName] = useState("");
@@ -32,7 +33,7 @@ export default function MainDrawer() {
     const [isAuthorized, setIsAuthorized] = useContext(AuthContext);
     const [roleName, setRoleName] = useContext(roleContext);
 
-    
+
     ////////////////////custom user drawer 
     function CustomDrawerContent(props) {
 
@@ -71,6 +72,7 @@ export default function MainDrawer() {
                     {/* <TouchableOpacity style={styles.DrawerItem}><Icon name="person-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Update Profile</Text></TouchableOpacity> */}
 
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="help-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Support</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate('TeacherProfile')}><Icon name="user-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Teacher Profile</Text></TouchableOpacity>
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="help-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> FAQs</Text></TouchableOpacity>
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="document-text-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Policies</Text></TouchableOpacity>
                     <TouchableOpacity onPress={() => { handleLogout() }} style={styles.DrawerItem}><Icon name="log-out-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Logout</Text></TouchableOpacity>
@@ -115,6 +117,7 @@ export default function MainDrawer() {
         <Drawer.Navigator screenOptions={{ headerShown: false }} drawerContent={props => <CustomDrawerContent {...props} />}>
             <Drawer.Screen name="MainBottomTab" component={MainBottomTab} />
             <Drawer.Screen name="AccountEdit" component={AccountEdit} />
+            <Drawer.Screen name="TeacherProfile" component={TeacherProfile} />
             <Drawer.Screen name="CreateCourse" component={CreateCourse} />
             <Drawer.Screen name="RegisterTeacher" component={RegisterTeacher} />
         </Drawer.Navigator>

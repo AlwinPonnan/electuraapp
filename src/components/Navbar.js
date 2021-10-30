@@ -31,7 +31,7 @@ export default function NavBar(props) {
         <Pressable onPress={() => props.rootProps.navigation.navigate("MainTopTab")} android_ripple={{ color: '#ddd' }} style={styles.iconButton}>
           <Icon name="chatbubble-ellipses-outline" size={20} style={styles.icon} />
         </Pressable>
-        <Pressable android_ripple={{ color: '#ddd' }} style={styles.iconButton}>
+        <Pressable onPress={() => props.rootProps.navigation.navigate("Notification")} android_ripple={{ color: '#ddd' }} style={styles.iconButton}>
           <Icon name="notifications-outline" size={22} style={styles.icon} />
         </Pressable>
       </View>
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginHorizontal: 15,
     // backgroundColor:'red',
-    width:'20%'
+    width: '20%'
   },
   iconContainer: {
     display: "flex",
