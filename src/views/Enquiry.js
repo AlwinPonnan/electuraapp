@@ -35,7 +35,7 @@ export default function Enquiry(props) {
                     </View>
 
 
-                    <View style={styles.enquiryListHeader}>
+                    <Pressable style={styles.enquiryListHeader} onPress={() => setListIsExpanded(!listIsExpanded)} >
                         <View style={[styles.flexRowAlignCenter, { justifyContent: "space-between" }]}>
                             <View style={styles.flexRow}>
                                 <Text style={styles.ListHeaderName}>Enquiry 1</Text>
@@ -52,7 +52,7 @@ export default function Enquiry(props) {
                                 <Icon name="chevron-down-outline" size={20} color="#828282" />
                             </TouchableOpacity>
                         </View>
-                    </View>
+                    </Pressable>
                     {
                         !listIsExpanded
                             ?

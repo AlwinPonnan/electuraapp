@@ -1,16 +1,18 @@
 import React, { useEffect, useContext, useRef, useState } from 'react'
-import { View, Text, StyleSheet, Image, TextInput, Pressable } from 'react-native'
+import { View, Text, StyleSheet, Image, TextInput, Pressable, KeyboardAvoidingView, Platform, ScrollView } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj } from '../globals/colors';
 import { imageObj } from '../globals/images';
 
 import Icon from 'react-native-vector-icons/Ionicons'
-import { CheckValidOtp, loginUser } from '../Services/User';
+import { CheckValidOtp, loginUser, SendOtp } from '../Services/User';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
 import { AuthContext, loadingContext, roleContext } from '../navigators/stacks/RootStack';
 import LoadingContainer from './LoadingContainer';
+import OTPInputView from '@twotalltotems/react-native-otp-input'
 export default function VerifyOtp(props) {
+    
     const [isAuthorized, setIsAuthorized] = useContext(AuthContext);
     const [loading, setLoading] = useContext(loadingContext);
 
@@ -29,6 +31,7 @@ export default function VerifyOtp(props) {
     const input5 = useRef();
     const input6 = useRef();
 
+    const [otpCode, setOtpCode] = useState();
 
     const handleOtpSubmit = async () => {
         try {
@@ -36,8 +39,10 @@ export default function VerifyOtp(props) {
             let obj = {
                 phone: props.route.params.data
             }
-            let otp = `${val1}${val2}${val3}${val4}${val5}${val6}`
+            let otp = `${otpCode}`
+            console.log(otp)
             let sessionId = await EncryptedStorage.getItem("sessionIdOtp");
+            console.log(sessionId)
             const { data: resOtpVerify } = await CheckValidOtp(sessionId, otp)
             if (resOtpVerify.Status == "Success") {
                 const { data: res } = await loginUser(obj);
@@ -59,8 +64,24 @@ export default function VerifyOtp(props) {
     }
 
 
+    const handleResendOtp = async () => {
+        setLoading(true)
+        try {
+            const { data: res } = await SendOtp(props.route.params.data)
+            if (res.Status) {
+                alert(`OTP sent successfully on ${props.route.params.data} , Do not share Otp with anyone.`)
+                await EncryptedStorage.setItem("sessionIdOtp", res.Details)
+            }
+        } catch (error) {
+            console.error(error)
+            alert("Unable to send otp")
+        }
+        setLoading(false)
+    }
+
+
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
             {
                 loading
                     ?
@@ -70,103 +91,36 @@ export default function VerifyOtp(props) {
                         <View style={styles.topContainer}>
                             <Image source={imageObj.verifyOtpImage} />
                         </View>
-                        <View style={styles.bottomContainer}>
+                        <KeyboardAvoidingView style={styles.bottomContainer} behavior={Platform.OS === "ios" ? "padding" : "height"}>
                             <View style={styles.textContainer}>
                                 <Text style={styles.labelHeading}>Verify your number</Text>
-                                <Text style={styles.labelSubHeading}>OTP will be sent on this number</Text>
+                                <Text style={styles.labelSubHeading}>Enter the OTP sent to +91-{props.route.params.data}</Text>
                             </View>
                             <View style={styles.inputContainer}>
-                                <TextInput
-                                    placeholderTextColor="black"
-                                    placeholder="*"
-                                    onChangeText={(val) => {
-                                        if (val) {
-                                            input2.current.focus()
-                                        }
-                                        setVal1(val)
+
+                                <OTPInputView
+                                    style={{ width: '70%', height: 70, }}
+                                    pinCount={6}
+                                    placeholderCharacter="*"
+                                    // code={this.state.code} //You can supply this prop or not. The component will be used as a controlled / uncontrolled component respectively.
+                                    onCodeChanged={code => setOtpCode(code)}
+                                    autoFocusOnLoad
+                                    selectionColor="black"
+                                    editable={true}
+                                    keyboardType="number-pad"
+
+                                    codeInputFieldStyle={styles.underlineStyleBase}
+                                    codeInputHighlightStyle={styles.underlineStyleHighLighted}
+                                    onCodeFilled={(code) => {
+                                        console.log(`Code is ${code}, you are good to go!`)
                                     }}
-                                    keyboardType="numeric"
-                                    ref={input1} value={val1} style={styles.inputStyles} maxLength={1} keyboardType="numeric" />
-
-
-
-                                <TextInput ref={input2}
-                                    placeholderTextColor="black"
-                                    placeholder="*"
-                                    onChangeText={(val) => {
-                                        if (val) {
-                                            input3.current.focus()
-                                        }
-                                        else {
-                                            input1.current.focus()
-                                        }
-                                        setVal2(val)
-                                    }} value={val2} style={styles.inputStyles} maxLength={1} keyboardType="numeric" />
-
-
-                                <TextInput
-                                    placeholderTextColor="black"
-                                    placeholder="*"
-                                    onChangeText={(val) => {
-                                        if (val) {
-                                            input4.current.focus()
-                                        }
-                                        else
-                                            input2.current.focus()
-                                        setVal3(val)
-                                    }}
-                                    keyboardType="numeric"
-                                    maxLength={1}
-
-
-                                    ref={input3} value={val3} style={styles.inputStyles} maxLength={1} keyboardType="numeric" />
-                                <TextInput
-                                    placeholderTextColor="black"
-                                    placeholder="*"
-                                    onChangeText={(val) => {
-                                        if (val) {
-                                            input5.current.focus()
-                                        }
-                                        else
-                                            input3.current.focus()
-                                        setVal4(val)
-                                    }}
-                                    keyboardType="numeric"
-                                    maxLength={1}
-
-
-                                    ref={input4} value={val4} style={styles.inputStyles} maxLength={1} keyboardType="numeric" />
-                                <TextInput
-                                    placeholderTextColor="black"
-                                    placeholder="*"
-                                    onChangeText={(val) => {
-                                        if (val) {
-                                            input6.current.focus()
-                                        }
-                                        else
-                                            input4.current.focus()
-                                        setVal5(val)
-                                    }}
-                                    keyboardType="numeric"
-                                    maxLength={1}
-
-                                    ref={input5} value={val5} style={styles.inputStyles} maxLength={1} keyboardType="numeric" />
-                                <TextInput
-                                    placeholderTextColor="black"
-                                    placeholder="*"
-                                    onChangeText={(val) => {
-                                        if (!val) {
-                                            input5.current.focus()
-                                        }
-                                        setVal6(val)
-                                    }}
-                                    keyboardType="numeric"
-                                    maxLength={1}
-                                    ref={input6} value={val6} style={styles.inputStyles} maxLength={1} keyboardType="numeric" />
-
-
+                                />
 
                             </View>
+                            <Pressable onPress={() => handleResendOtp()}>
+                                <Text style={[styles.resendOtp]}> Resend OTP</Text>
+                            </Pressable>
+
                             <View >
                                 <Pressable style={styles.btn} onPress={() => handleOtpSubmit()}>
                                     <Text style={styles.btnText}>Verify</Text>
@@ -176,11 +130,11 @@ export default function VerifyOtp(props) {
                                 <Text style={styles.termsText}>Already have an account ?<Text style={{ color: colorObj.primarColor }}> LogIn</Text></Text>
 
                             </View>
-                        </View>
+                        </KeyboardAvoidingView>
                     </>
 
             }
-        </View>
+        </ScrollView>
     )
 }
 
@@ -199,7 +153,8 @@ const styles = StyleSheet.create({
     },
     bottomContainer: {
         width: wp(100),
-        height: hp(60)
+        height: hp(60),
+        // flex:1
     },
     textContainer: {
         padding: 20,
@@ -226,7 +181,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderColor: 'transparent',
-        marginVertical: 10
+        marginVertical: 10,
+        // backgroundColor:'red'
     },
     inputStyles: {
         borderBottomWidth: 1,
@@ -242,6 +198,7 @@ const styles = StyleSheet.create({
         width: wp(80),
         paddingVertical: 15,
         alignSelf: 'center',
+        marginVertical: 10
 
     },
     btnText: {
@@ -258,13 +215,46 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         textAlign: 'center'
     },
+    resendOtp: {
+        fontSize: 17,
+        color: '#828282',
+        fontFamily: 'Montserrat-Regular',
+        marginVertical: 10,
+        textAlign: 'right',
+        width: wp(85),
+        // backgroundColor:'red'
+    },
     btnContainer: {
         width: wp(90),
         paddingHorizontal: 20,
-        position: 'absolute',
-        bottom: 50,
+        // position: 'absolute',
+        // bottom: 50,
         // backgroundColor:'red',
-        left: 20
-    }
+        // left: 20
+    },
+
+    borderStyleBase: {
+        width: 30,
+        height: 45,
+        backgroundColor: 'black'
+    },
+
+    borderStyleHighLighted: {
+        borderColor: "black",
+    },
+
+    underlineStyleBase: {
+        width: 30,
+        height: 45,
+        borderWidth: 0,
+        borderBottomWidth: 1,
+        borderBottomColor: 'black',
+        color: 'black',
+        fontFamily: 'Montserrat-Regular'
+    },
+
+    underlineStyleHighLighted: {
+        borderColor: "black",
+    },
 })
 

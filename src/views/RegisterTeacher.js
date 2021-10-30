@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback,useContext } from 'react'
+import React, { useState, useEffect, useCallback, useContext } from 'react'
 import { View, Text, StyleSheet, Image, TextInput, Pressable, KeyboardAvoidingView, ScrollView, Platform, TouchableOpacity, FlatList } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj } from '../globals/colors';
@@ -20,7 +20,11 @@ import { Checkbox } from 'react-native-paper';
 
 import { nanoid } from 'nanoid/non-secure'
 import { loadingContext } from '../navigators/stacks/RootStack';
+
+import RNPickerSelect from 'react-native-picker-select';
+
 export default function RegisterTeacher(props) {
+
     const [phone, setPhone] = useState();
     const [checked, setChecked] = React.useState('individual');
     const [pincode, setPincode] = useState("");
@@ -58,6 +62,7 @@ export default function RegisterTeacher(props) {
     const [maxFees, setMaxFees] = useState('');
 
     const focused = useIsFocused();
+
     const handleSubmit = async () => {
         setIsLoading(true)
         try {
@@ -75,47 +80,24 @@ export default function RegisterTeacher(props) {
             })
             // let categoryFilteredArr = categoryArr.filter(el => el.checked == true).map(el => { return { categoryId: el._id } })
             console.log(JSON.stringify(classesFilteredArr, null, 2))
-            if (validId?.name != "" && name != "" && email != "" && phone != "" && classesFilteredArr.length > 0) {
+            if (validId?.name != "" && name != "" && classesFilteredArr.length > 0) {
                 let userToken = await getDecodedToken()
                 let obj = {
                     name,
                     email,
-                    pincode: pincode,
                     userId: userToken.userId,
-                    educationObj: {
-                        degree,
-                    },
-                    teacherType: checked,
-                    gender: genderIsSelected ? 'Male' : 'Female',
-                    modes: {
-                        online: onlineIsSelected,
-                        offline: offlineIsSelected
-                    },
                     classesArr: classesFilteredArr,
-                    experience,
-                    facebookLink,
-                    youtubeLink,
-                    instagramLink,
-                    telegramLink,
-                    bestTopics: topicArr.map(el => {
-                        let obj = {
-                            name: el.text
-                        }
-                        return obj
-                    })
-
-
                 }
                 const { data: res } = await newEnquiry(obj);
                 if (res.success) {
                     let formData = new FormData();
                     formData.append('file', validId)
                     const { data: response } = await uploadIdProof(res.data._id, formData)
-                    if (certificate?.name) {
-                        let form_data = new FormData();
-                        form_data.append('file', certificate)
-                        const { data: responses } = await uploadQualifications(res.data._id, formData)
-                    }
+                    // if (certificate?.name) {
+                    //     let form_data = new FormData();
+                    //     form_data.append('file', certificate)
+                    //     const { data: responses } = await uploadQualifications(res.data._id, formData)
+                    // }
 
                     alert(res.message)
                     props.navigation.goBack()
@@ -180,14 +162,19 @@ export default function RegisterTeacher(props) {
                 let tempArr = res.data.map(el => {
                     let obj = {
                         ...el,
+                        label: el.name,
+                        value: el._id,
+                        addMore: false,
                         subjectArr: el.subjectArr.map(ele => {
                             let tempObj = {
                                 ...ele,
-                                checked: false
+                                checked: false,
+
                             }
                             return tempObj
                         }),
-                        checked: false
+                        checked: false,
+
 
                     }
                     return obj
@@ -373,14 +360,14 @@ export default function RegisterTeacher(props) {
 
                         <View style={styles.inputContainer}>
                             <Icon name="person-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} value={name} editable={false} onChangeText={(val) => setName(val)} placeholder="Enter your Name *" />
+                            <TextInput style={styles.inputStyles} value={name} onChangeText={(val) => setName(val)} placeholder="Enter your Name *" />
                         </View>
-                        <Text style={styles.label}>Enter your email</Text>
+                        {/* <Text style={styles.label}>Enter your email</Text>
 
                         <View style={styles.inputContainer}>
                             <Icon name="mail-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} value={email} editable={false} onChangeText={(val) => setEmail(val)} keyboardType="email-address" placeholder="Enter your Email *" />
-                        </View>
+                            <TextInput style={styles.inputStyles} value={email}  onChangeText={(val) => setEmail(val)} keyboardType="email-address" placeholder="Enter your Email " />
+                        </View> */}
                         <Text style={styles.label}>Enter your phone</Text>
 
                         <View style={styles.inputContainer}>
@@ -389,6 +376,8 @@ export default function RegisterTeacher(props) {
                         </View>
 
                         <Text style={styles.label}>Select Classes taught by you *</Text>
+
+
                         <FlatList
                             data={classesArr}
                             keyExtractor={(item, index) => `${item._id}`}
@@ -396,6 +385,7 @@ export default function RegisterTeacher(props) {
                                 return (
                                     <View>
                                         <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 10 }]}>
+
                                             <Checkbox
                                                 color={colorObj.primarColor}
                                                 status={item.checked ? "checked" : "unchecked"}
@@ -406,7 +396,7 @@ export default function RegisterTeacher(props) {
                                             <TouchableOpacity style={{ width: wp(82), paddingVertical: 5, }} onPress={() => {
                                                 setClassSelected(item._id);
                                             }}>
-                                                <Text>{item.name}</Text>
+                                                <Text style={{ fontFamily: 'Montserrat-Regular' }}>{item.name}</Text>
                                             </TouchableOpacity>
 
                                         </View>
@@ -427,7 +417,7 @@ export default function RegisterTeacher(props) {
                                                             <TouchableOpacity style={{ width: wp(82), paddingVertical: 5, }} onPress={() => {
                                                                 setSelectedSubject(item._id, itemX.subjectId);
                                                             }}>
-                                                                <Text>{itemX.subjectName}</Text>
+                                                                <Text style={{ fontFamily: 'Montserrat-Regular' }}>{itemX.subjectName}</Text>
                                                             </TouchableOpacity>
                                                         </View>
                                                     )
@@ -445,7 +435,7 @@ export default function RegisterTeacher(props) {
                             <Icon name="camera-outline" size={14} color={"#085A4E"} />
                             <Text style={{ fontFamily: "Montserrat-Thin", fontSize: 14, marginLeft: 10 }}>{validId?.name ? validId?.name : "Upload An Id Image *"}</Text>
                         </TouchableOpacity>
-                        <Text style={styles.label}>Select your Gender</Text>
+                        {/* <Text style={styles.label}>Select your Gender</Text>
 
                         <View style={[styles.flexRowAlignCenter, { justifyContent: "flex-start", marginLeft: wp(5) }]}>
 
@@ -478,10 +468,10 @@ export default function RegisterTeacher(props) {
                                 </TouchableOpacity>
                             </View>
 
-                        </View>
+                        </View> */}
 
 
-                        <Text style={styles.label}>Enter your Proficient topics</Text>
+                        {/* <Text style={styles.label}>Enter your Proficient topics</Text>
                         <FlatList
                             data={topicArr}
                             keyExtractor={(item, index) => `${item.id}`}
@@ -579,7 +569,7 @@ export default function RegisterTeacher(props) {
                         <View style={styles.inputContainer}>
                             <Icon name="paper-plane" size={14} color="black" />
                             <TextInput style={styles.inputStyles} onChangeText={(val) => setTelegramLink(val)} value={telegramLink} placeholder="Enter Telegram Link" />
-                        </View>
+                        </View> */}
 
 
 

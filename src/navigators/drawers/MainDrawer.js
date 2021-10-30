@@ -47,7 +47,7 @@ export default function MainDrawer() {
             <DrawerContentScrollView {...props}>
                 <View style={styles.profilePicContainer}>
                     <Image source={profileData.profileImage ? { uri: generateImageUrl(profileData.profileImage) } : require('../../../assets/images/user.png')} style={styles.profilePic} />
-                    <Text style={styles.userName}>{profileData.name != "" && profileData.name ? profileData.name : "User"} </Text>
+                    <Text style={styles.userName}>+91-{profileData.phone} </Text>
                 </View>
 
 

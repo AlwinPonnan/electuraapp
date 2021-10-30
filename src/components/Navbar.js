@@ -54,9 +54,11 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center',
-    marginHorizontal: 15
+    marginHorizontal: 15,
+    // backgroundColor:'red',
+    width:'20%'
   },
   iconContainer: {
     display: "flex",
