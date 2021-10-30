@@ -10,7 +10,8 @@ import { getAllTeachers } from '../Services/User';
 import { imageObj } from '../globals/images';
 import { getAllSubjects } from '../Services/Subjects';
 import { generateImageUrl } from '../globals/utils';
-
+import messaging from '@react-native-firebase/messaging';
+import { saveTokenToDatabase } from '../Services/User';
 export default function HomeScreen(props) {
 
     const isFocused = useIsFocused()
@@ -18,6 +19,7 @@ export default function HomeScreen(props) {
     const [subjectArr, setSubjectArr] = useState([]);
     const [selectedSubjectId, setSelectedSubjectId] = useState('');
     const [teachersArr, setTeachersArr] = useState([]);
+    const [mainTeachersArr, setMainTeachersArr] = useState([]);
     const [productsArr, setProductsArr] = useState([
         {
             name: "Lorem Course",
@@ -88,17 +90,41 @@ export default function HomeScreen(props) {
             if (res.success) {
 
                 setTeachersArr(res.data)
+                setMainTeachersArr(res.data)
             }
+
         } catch (error) {
             console.error(error)
         }
     }
+
+    async function registerAppWithFCM() {
+        await messaging().registerDeviceForRemoteMessages();
+    }
+    useEffect(() => {
+        messaging()
+            .getToken()
+            .then(token => {
+                return saveTokenToDatabase(token);
+            });
+        registerAppWithFCM();
+    }, [])
 
 
     useEffect(() => {
         getSubjects()
         getTeachers()
     }, [isFocused])
+
+
+
+    const handleSubjectSelection = async (id) => {
+        let tempArr = [...mainTeachersArr];
+        console.log(JSON.stringify(tempArr, null, 2))
+        tempArr = tempArr.filter(el => el.enquiryObj.classesArr.some(ele => ele.subjectArr.some(elx => elx.subjectId == id)))
+        setTeachersArr([...tempArr])
+        setSelectedSubjectId(id)
+    }
 
 
     const renderItem = ({ item, index }) => {

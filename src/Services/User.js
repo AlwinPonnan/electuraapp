@@ -117,4 +117,13 @@ export const getAllTeachers = async () => {
     }
 }
 
+export const saveTokenToDatabase = async (token) => {
+    try {
+        let tokenD = await getDecodedToken()
+        return await axios.post(`${url}/registerUserFcmToken`, { token,userId:tokenD?.userId })
+    } catch (error) {
+        console.error(error)
+        throw (error)
+    }
+}
 

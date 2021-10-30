@@ -25,7 +25,10 @@ import CreateCourse from '../../views/CreateCourse';
 import { useIsFocused } from '@react-navigation/core';
 import TeacherProfile from '../../views/TeacherProfile';
 const Drawer = createDrawerNavigator();
+
+
 export default function MainDrawer() {
+
     const [name, setName] = useState("");
     const [profilePhoto, setProfilePhoto] = useState("");
     const focused = useIsFocused()
