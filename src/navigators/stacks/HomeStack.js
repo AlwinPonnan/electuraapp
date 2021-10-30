@@ -6,6 +6,7 @@ import CourseDetail from '../../views/CourseDetail';
 import HomeScreen from '../../views/HomeScreen';
 import MainTopTab from '../tabs/MainTopTab';
 import SearchScreen from '../../views/SearchScreen';
+import Notification from '../../views/Notification';
 
 
 
@@ -16,7 +17,8 @@ export default function HomeStack() {
         <Stack.Navigator initialRouteName="HomeScreen"  >
             <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} />
             <Stack.Screen name="SearchScreen" component={SearchScreen} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} />
-            
+            <Stack.Screen name="Notification" component={Notification} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} />
+
             <Stack.Screen name="MainTopTab" component={MainTopTab} options={{
                 headerShown: true, showLabel: false, title: "", label: "",
                 headerShadowVisible: false
