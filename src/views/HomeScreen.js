@@ -103,7 +103,7 @@ export default function HomeScreen(props) {
 
     const renderItem = ({ item, index }) => {
         return (
-            <Pressable style={styles.cardContainer} >
+            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("TeacherProfile")}>
 
                 <Image style={styles.teacherImg} source={{ uri: item?.profileImage ? generateImageUrl(item?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
                 <View style={styles.textCardContainer}>
@@ -134,7 +134,7 @@ export default function HomeScreen(props) {
                     data={subjectArr}
                     renderItem={({ item, index }) => {
                         return (
-                            <Pressable onPress={() => {setSelectedSubjectId(item._id)}} style={[styles.categoryContainer, selectedSubjectId != item._id && { backgroundColor: '#f0faf9' }]}>
+                            <Pressable onPress={() => { setSelectedSubjectId(item._id) }} style={[styles.categoryContainer, selectedSubjectId != item._id && { backgroundColor: '#f0faf9' }]}>
                                 {/* <Icon name="film-outline" size={14} /> */}
                                 <Text style={[styles.categoryName, selectedSubjectId != item._id && { color: '#000' }]}>{item.name}</Text>
                             </Pressable>
