@@ -7,9 +7,7 @@ import NavBar from '../components/Navbar';
 import { getAllEnquiries } from '../Services/Enquiry';
 import { useIsFocused } from '@react-navigation/core';
 
-import { FAB } from 'react-native-paper';
-export default function Enquiry(props) {
-
+export default function GeneralEnquiries(props) {
     const [enquiryArr, setEnquiryArr] = useState([]);
     const Focused = useIsFocused()
     const getYourEnquires = async () => {
@@ -28,14 +26,7 @@ export default function Enquiry(props) {
             console.error(error)
         }
     }
-    const handleEnquirySelection = (id) => {
-        setEnquiryArr(prevState => {
-            let index = prevState.findIndex(el => el._id == id);
-            if (index != -1)
-                prevState[index].checked = !prevState[index].checked
-            return [...prevState]
-        })
-    }
+
 
     const handleOnint = () => {
         getYourEnquires()
@@ -45,8 +36,6 @@ export default function Enquiry(props) {
     useEffect(() => {
         handleOnint()
     }, [Focused])
-
-
     return (
         <>
             <NavBar rootProps={props} />
@@ -79,7 +68,7 @@ export default function Enquiry(props) {
                         renderItem={({ item, index }) => {
                             return (
                                 <>
-                                    <Pressable style={styles.enquiryListHeader} onPress={() => handleEnquirySelection(item._id)} >
+                                    <Pressable style={styles.enquiryListHeader} onPress={()=>props.navigation.navigate('EnquiryDetail',{enquiryId:item._id})} >
                                         <View style={[styles.flexRowAlignCenter, { justifyContent: "space-between" }]}>
                                             <View style={styles.flexRow}>
                                                 <Text style={styles.ListHeaderName}>Enquiry {index + 1}</Text>
@@ -105,60 +94,13 @@ export default function Enquiry(props) {
                                             </TouchableOpacity>
                                         </View>
                                     </Pressable>
-                                    {item.checked &&
 
-                                        <View style={styles.EnquiryContainer}>
-
-                                            <View style={styles.card}>
-                                                <View style={styles.flexRow}>
-                                                    <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
-                                                    <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                                                        <Text style={styles.cardHeading}>Ishaan Sharma</Text>
-                                                        <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
-                                                    </View>
-
-                                                </View>
-                                                <Icon name="chatbubble-ellipses-outline" size={20} color={"black"} />
-                                            </View>
-                                            <View style={styles.card}>
-                                                <View style={styles.flexRow}>
-                                                    <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
-                                                    <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                                                        <Text style={styles.cardHeading}>Ishaan Sharma</Text>
-                                                        <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
-                                                    </View>
-
-                                                </View>
-                                                <Icon name="chatbubble-ellipses-outline" size={20} color={"black"} />
-                                            </View>
-                                            <View style={styles.card}>
-                                                <View style={styles.flexRow}>
-                                                    <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
-                                                    <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                                                        <Text style={styles.cardHeading}>Ishaan Sharma</Text>
-                                                        <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
-                                                    </View>
-
-                                                </View>
-                                                <Icon name="chatbubble-ellipses-outline" size={20} color={"black"} />
-                                            </View>
-                                        </View>
-                                    }
 
                                 </>
                             )
                         }}
                     />
-                    
-                    <FAB
-                        style={styles.fab}
-                        small
-                        color={colorObj.whiteColor}
-                        
-                        icon="plus"
-                        label="General Enquiries"
-                        onPress={() => props.navigation.navigate('GeneralEnquiries')}
-                    />
+
 
 
 
@@ -176,8 +118,8 @@ const styles = StyleSheet.create({
         margin: 16,
         right: 0,
         bottom: 0,
-        backgroundColor:colorObj?.primarColor
-      },
+        backgroundColor: colorObj?.primarColor
+    },
     container: {
         // backgroundColor: 'red',
         backgroundColor: '#fff',

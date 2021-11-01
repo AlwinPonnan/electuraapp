@@ -19,3 +19,11 @@ export const getAllEnquiries = async () => {
 }
 
 
+export const getEnquiryById=async(id)=>{
+    try {
+        return axios.get(`${url}/getById/${id}`)
+    } catch (error) {
+        console.error(error)
+    }
+}
+
