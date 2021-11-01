@@ -1,14 +1,50 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView, TextInput, TouchableOpacity } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj, light_colors } from '../globals/colors';
 import Icon from 'react-native-vector-icons/Ionicons'
 import NavBar from '../components/Navbar';
+import { getAllEnquiries } from '../Services/Enquiry';
+import { useIsFocused } from '@react-navigation/core';
 
+import { FAB } from 'react-native-paper';
 export default function Enquiry(props) {
-    const [listIsExpanded, setListIsExpanded] = useState(false);
-    const [listIsExpanded2, setListIsExpanded2] = useState(false);
 
+    const [enquiryArr, setEnquiryArr] = useState([]);
+    const Focused = useIsFocused()
+    const getYourEnquires = async () => {
+        try {
+            const { data: res } = await getAllEnquiries();
+            if (res.success) {
+                setEnquiryArr(res.data.map(el => {
+                    let obj = {
+                        ...el,
+                        checked: false
+                    }
+                    return obj
+                }))
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+    const handleEnquirySelection = (id) => {
+        setEnquiryArr(prevState => {
+            let index = prevState.findIndex(el => el._id == id);
+            if (index != -1)
+                prevState[index].checked = !prevState[index].checked
+            return [...prevState]
+        })
+    }
+
+    const handleOnint = () => {
+        getYourEnquires()
+    }
+
+
+    useEffect(() => {
+        handleOnint()
+    }, [Focused])
 
 
     return (
@@ -28,139 +64,103 @@ export default function Enquiry(props) {
                             {/* <Image style={styles.searchImages} source={require('../../assets/images/Filter.png')} /> */}
                         </View>
 
-                        <TouchableOpacity style={styles.greenBtn}>
+                        <TouchableOpacity style={styles.greenBtn} onPress={() => props.navigation.navigate('CreateEnquiry')}>
                             <Text style={styles.greenBtnText}>Create+</Text>
                         </TouchableOpacity>
 
                     </View>
 
+                    <FlatList
+                        data={enquiryArr}
+                        keyExtractor={(item, index) => `${index}`}
+                        ListEmptyComponent={
+                            <Text>No Enquiries Found</Text>
+                        }
+                        renderItem={({ item, index }) => {
+                            return (
+                                <>
+                                    <Pressable style={styles.enquiryListHeader} onPress={() => handleEnquirySelection(item._id)} >
+                                        <View style={[styles.flexRowAlignCenter, { justifyContent: "space-between" }]}>
+                                            <View style={styles.flexRow}>
+                                                <Text style={styles.ListHeaderName}>Enquiry {index + 1}</Text>
+                                                {
+                                                    item.enquiryStatus == "OPEN" &&
+                                                    <Text style={[styles.ListHeaderStatus, { borderColor: "#33D18F", color: "#33D18F", borderWidth: 1, borderRadius: 3 }]}>Open</Text>
+                                                }
+                                                {
+                                                    item.enquiryStatus == "CLOSED" &&
+                                                    <Text style={[styles.ListHeaderStatus, { borderColor: "#EB5757", color: "#EB5757", borderWidth: 1, borderRadius: 3 }]}>Closed</Text>
+                                                }
 
-                    <Pressable style={styles.enquiryListHeader} onPress={() => setListIsExpanded(!listIsExpanded)} >
-                        <View style={[styles.flexRowAlignCenter, { justifyContent: "space-between" }]}>
-                            <View style={styles.flexRow}>
-                                <Text style={styles.ListHeaderName}>Enquiry 1</Text>
-                                <Text style={[styles.ListHeaderStatus, { borderColor: "#33D18F", color: "#33D18F", borderWidth: 1, borderRadius: 3 }]}>Open</Text>
-                            </View>
-                            <Icon name="ellipsis-vertical-outline" size={20} color="#828282" />
+                                            </View>
+                                            <Icon name="ellipsis-vertical-outline" size={20} color="#828282" />
 
-                        </View>
-                        <View style={[styles.flexRowAlignCenter, { marginTop: 7, justifyContent: "space-between" }]}>
-                            <Text style={styles.ListHeaderDescription}>
-                                High educated and exprienced professional musician
-                            </Text>
-                            <TouchableOpacity onPress={() => setListIsExpanded(!listIsExpanded)}>
-                                <Icon name="chevron-down-outline" size={20} color="#828282" />
-                            </TouchableOpacity>
-                        </View>
-                    </Pressable>
-                    {
-                        !listIsExpanded
-                            ?
-                            <>
-                            </>
-                            :
-                            <View style={styles.EnquiryContainer}>
-
-                                <View style={styles.card}>
-                                    <View style={styles.flexRow}>
-                                        <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
-                                        <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                                            <Text style={styles.cardHeading}>Ishaan Sharma</Text>
-                                            <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
                                         </View>
-
-                                    </View>
-                                    <Icon name="chatbubble-ellipses-outline" size={20} color={"black"} />
-                                </View>
-                                <View style={styles.card}>
-                                    <View style={styles.flexRow}>
-                                        <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
-                                        <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                                            <Text style={styles.cardHeading}>Ishaan Sharma</Text>
-                                            <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
+                                        <View style={[styles.flexRowAlignCenter, { marginTop: 7, justifyContent: "space-between" }]}>
+                                            <Text style={styles.ListHeaderDescription}>
+                                                {item.className},{item.subjectName},{item.topicName}
+                                            </Text>
+                                            <TouchableOpacity onPress={() => handleEnquirySelection(item._id)}>
+                                                <Icon name="chevron-down-outline" size={20} color="#828282" />
+                                            </TouchableOpacity>
                                         </View>
+                                    </Pressable>
+                                    {item.checked &&
 
-                                    </View>
-                                    <Icon name="chatbubble-ellipses-outline" size={20} color={"black"} />
-                                </View>
-                                <View style={styles.card}>
-                                    <View style={styles.flexRow}>
-                                        <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
-                                        <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                                            <Text style={styles.cardHeading}>Ishaan Sharma</Text>
-                                            <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
+                                        <View style={styles.EnquiryContainer}>
+
+                                            <View style={styles.card}>
+                                                <View style={styles.flexRow}>
+                                                    <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
+                                                    <View style={[styles.flexColumn, { justifyContent: "center" }]}>
+                                                        <Text style={styles.cardHeading}>Ishaan Sharma</Text>
+                                                        <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
+                                                    </View>
+
+                                                </View>
+                                                <Icon name="chatbubble-ellipses-outline" size={20} color={"black"} />
+                                            </View>
+                                            <View style={styles.card}>
+                                                <View style={styles.flexRow}>
+                                                    <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
+                                                    <View style={[styles.flexColumn, { justifyContent: "center" }]}>
+                                                        <Text style={styles.cardHeading}>Ishaan Sharma</Text>
+                                                        <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
+                                                    </View>
+
+                                                </View>
+                                                <Icon name="chatbubble-ellipses-outline" size={20} color={"black"} />
+                                            </View>
+                                            <View style={styles.card}>
+                                                <View style={styles.flexRow}>
+                                                    <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
+                                                    <View style={[styles.flexColumn, { justifyContent: "center" }]}>
+                                                        <Text style={styles.cardHeading}>Ishaan Sharma</Text>
+                                                        <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
+                                                    </View>
+
+                                                </View>
+                                                <Icon name="chatbubble-ellipses-outline" size={20} color={"black"} />
+                                            </View>
                                         </View>
+                                    }
 
-                                    </View>
-                                    <Icon name="chatbubble-ellipses-outline" size={20} color={"black"} />
-                                </View>
-                            </View>
-                    }
+                                </>
+                            )
+                        }}
+                    />
+                    <FAB
+                        style={styles.fab}
+                        small
+                        color={colorObj.whiteColor}
+                        
+                        icon="plus"
+                        label="General Enquiries"
+                        onPress={() => console.log('Pressed')}
+                    />
 
 
 
-
-                    <View style={styles.enquiryListHeader}>
-                        <View style={[styles.flexRowAlignCenter, { justifyContent: "space-between" }]}>
-                            <View style={styles.flexRow}>
-                                <Text style={styles.ListHeaderName}>Enquiry 1</Text>
-                                <Text style={[styles.ListHeaderStatus, { borderColor: "#EB5757", color: "#EB5757", borderWidth: 1, borderRadius: 3 }]}>Closed</Text>
-                            </View>
-                            <Icon name="ellipsis-vertical-outline" size={20} color="#828282" />
-
-                        </View>
-                        <View style={[styles.flexRowAlignCenter, { marginTop: 7, justifyContent: "space-between" }]}>
-                            <Text style={styles.ListHeaderDescription}>
-                                High educated and exprienced professional musician
-                            </Text>
-                            <TouchableOpacity onPress={() => setListIsExpanded2(!listIsExpanded2)}>
-                                <Icon name="chevron-down-outline" size={20} color="#828282" />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    {
-                        !listIsExpanded2
-                            ?
-                            <>
-                            </>
-                            :
-                            <View style={styles.EnquiryContainer}>
-
-                                <View style={styles.card}>
-                                    <View style={styles.flexRow}>
-                                        <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
-                                        <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                                            <Text style={styles.cardHeading}>Ishaan Sharma</Text>
-                                            <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
-                                        </View>
-
-                                    </View>
-                                    <Icon name="chatbubble-ellipses-outline" size={20} color={"black"} />
-                                </View>
-                                <View style={styles.card}>
-                                    <View style={styles.flexRow}>
-                                        <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
-                                        <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                                            <Text style={styles.cardHeading}>Ishaan Sharma</Text>
-                                            <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
-                                        </View>
-
-                                    </View>
-                                    <Icon name="chatbubble-ellipses-outline" size={20} color={"black"} />
-                                </View>
-                                <View style={styles.card}>
-                                    <View style={styles.flexRow}>
-                                        <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
-                                        <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                                            <Text style={styles.cardHeading}>Ishaan Sharma</Text>
-                                            <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
-                                        </View>
-
-                                    </View>
-                                    <Icon name="chatbubble-ellipses-outline" size={20} color={"black"} />
-                                </View>
-                            </View>
-                    }
 
 
                 </View>
@@ -170,6 +170,13 @@ export default function Enquiry(props) {
 }
 
 const styles = StyleSheet.create({
+    fab: {
+        position: 'absolute',
+        margin: 16,
+        right: 0,
+        bottom: 0,
+        backgroundColor:colorObj?.primarColor
+      },
     container: {
         // backgroundColor: 'red',
         backgroundColor: '#fff',
@@ -211,6 +218,8 @@ const styles = StyleSheet.create({
     enquiryListHeader: {
         padding: 10,
         marginTop: 10,
+        marginHorizontal: 2,
+        marginBottom: 2,
         backgroundColor: "white",
         borderRadius: 5,
         shadowColor: "#000",

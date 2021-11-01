@@ -12,6 +12,8 @@ export default function Profile(props) {
             <View style={styles.innerContainer}>
                 <Text style={styles.mainHeading}>My Account</Text>
                 <Text style={styles.subHeading}>My Courses</Text>
+                <Text style={styles.subHeading}>My Enquires</Text>
+
                 <Text style={styles.subHeading}>My Teachers</Text>
                 <Text style={styles.subHeading}>Feedbacks</Text>
                 <Text style={[styles.subHeading, { fontFamily: 'RedHatText-SemiBold', color: "#085A4E" }]}>Become a Teacher</Text>

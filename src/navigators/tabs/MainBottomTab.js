@@ -16,6 +16,7 @@ import CourseStack from '../stacks/CourseStack';
 import HomeStack from '../stacks/HomeStack';
 import Enquiry from '../../views/Enquiry';
 import Profile from '../../views/Profile';
+import EnquiryStack from '../stacks/EnquiryStack';
 
 
 const Tab = createBottomTabNavigator();
@@ -64,7 +65,7 @@ export default function MainBottomTab() {
       />
       <Tab.Screen
         name="Enquiry"
-        component={Enquiry}
+        component={EnquiryStack}
         activeColor="#fff"
         inactiveColor="#000"
 
