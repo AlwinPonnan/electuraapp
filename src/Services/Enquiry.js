@@ -1,6 +1,6 @@
 import axios from "axios";
 import { serverUrl } from './Url'
-import {getDecodedToken} from './User'
+import { getDecodedToken } from './User'
 
 const url = `${serverUrl}/enquiry`
 
@@ -19,11 +19,24 @@ export const getAllEnquiries = async () => {
 }
 
 
-export const getEnquiryById=async(id)=>{
-    try {
-        return axios.get(`${url}/getById/${id}`)
-    } catch (error) {
-        console.error(error)
-    }
+export const getEnquiryById = async (id) => {
+    return axios.get(`${url}/getById/${id}`)
+
+}
+
+
+export const sendGeneralEnquiryResponse = async (formData) => {
+    return axios.post(`${url}/submitGeneralEnquiryResponse`, formData)
+
+}
+
+
+export const updateEnquiryStatusById = async (id, obj) => {
+    return axios.patch(`${url}/updateEnquiryStatusById/${id}`, obj)
+}
+
+
+export const checkNcreateChatRoom = async (teacherId) => {
+    return axios.post(`${url}/checkNcreateChatRoom/${teacherId}`)
 }
 

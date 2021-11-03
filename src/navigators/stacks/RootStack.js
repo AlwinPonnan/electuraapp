@@ -18,6 +18,7 @@ import CreateCourse from '../../views/CreateCourse'
 import { serverUrl } from '../../Services/Url';
 import { getDecodedToken } from '../../Services/User';
 import jwt_decode from "jwt-decode";
+import { connectToServerSocket, disconnectToServerSocket } from '../../globals/socket';
 
 
 const Stack = createNativeStackNavigator();
@@ -26,11 +27,17 @@ export const AuthContext = createContext()
 export const roleContext = createContext()
 export const profileContext = createContext()
 export const loadingContext = createContext()
+
+
+
 export default function RootStack() {
     const [roleName, setRoleName] = useState('USER');
     const [isAuthorized, setIsAuthorized] = useState(false);
     const [profileData, setProfileData] = useState({});
     const [loading, setLoading] = useState(false);
+
+
+
     const CheckAuthorized = async () => {
         let isLoggedIn = await EncryptedStorage.getItem("AUTH_TOKEN");
         console.log(isLoggedIn)
@@ -43,8 +50,16 @@ export default function RootStack() {
             setIsAuthorized(false)
         }
     }
+
     useEffect(() => {
-        console.log("ROLE CHANG", roleName)
+        if (isAuthorized)
+            connectToServerSocket()
+        else
+            disconnectToServerSocket()
+        return () => disconnectToServerSocket()
+    }, [isAuthorized])
+
+    useEffect(() => {
     }, [roleName])
 
 
@@ -69,21 +84,6 @@ export default function RootStack() {
             },
             async (err) => {
                 console.log("INterceptor error")
-                // console.log(err.config)
-                // if (err?.response?.status === 401) {
-                //   // console.log("ONLY IN ERROR")
-                //   // toast.error('401 Unauthorized')
-                //   localStorage.removeItem('AUTH_TOKEN')
-                //   setIsAuthorized(false)
-                // }
-                // if(err?.response?.data?.message){
-                //     toast.error(err?.response?.data?.message)
-                // }
-                // else{
-                //     toast.error(err.message)
-                // }
-                // return Promise.reject(err);
-
 
                 // Access Token was expired
                 if (err?.response?.status === 401) {

@@ -160,7 +160,7 @@ export default function HomeScreen(props) {
                     data={subjectArr}
                     renderItem={({ item, index }) => {
                         return (
-                            <Pressable onPress={() => { setSelectedSubjectId(item._id) }} style={[styles.categoryContainer, selectedSubjectId != item._id && { backgroundColor: '#f0faf9' }]}>
+                            <Pressable onPress={() => { handleSubjectSelection(item._id) }} style={[styles.categoryContainer, selectedSubjectId != item._id && { backgroundColor: '#f0faf9' }]}>
                                 {/* <Icon name="film-outline" size={14} /> */}
                                 <Text style={[styles.categoryName, selectedSubjectId != item._id && { color: '#000' }]}>{item.name}</Text>
                             </Pressable>

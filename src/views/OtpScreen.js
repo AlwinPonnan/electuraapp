@@ -11,6 +11,7 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import { AuthContext, loadingContext, roleContext } from '../navigators/stacks/RootStack';
 import LoadingContainer from './LoadingContainer';
 import OTPInputView from '@twotalltotems/react-native-otp-input'
+import Clipboard from '@react-native-community/clipboard';
 export default function VerifyOtp(props) {
     
     const [isAuthorized, setIsAuthorized] = useContext(AuthContext);
@@ -47,6 +48,7 @@ export default function VerifyOtp(props) {
             if (resOtpVerify.Status == "Success") {
                 const { data: res } = await loginUser(obj);
                 if (res) {
+                    await Clipboard.setString('')
                     await EncryptedStorage.setItem('AUTH_TOKEN', res.data);
                     await EncryptedStorage.setItem('AUTH_REFRESH_TOKEN', res.refreshToken);
                     await EncryptedStorage.removeItem("sessionIdOtp");

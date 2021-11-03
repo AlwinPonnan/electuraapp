@@ -46,7 +46,7 @@ export default function CreateCourse(props) {
                 }
                 return obj
             })
-            if (courseImg?.name != "" && name!="" && hours!="" && assignments!="" && youtubeLink!="" && description!="" && classesFilteredArr.length>=1) {
+            if (courseImg?.name != "" && name!="" && hours!="" && assignments!=""  && description!="" && classesFilteredArr.length>=1) {
 
                 let userToken = await getDecodedToken()
                 console.log(userToken)

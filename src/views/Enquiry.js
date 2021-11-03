@@ -1,17 +1,27 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView, TextInput, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView, TextInput, TouchableOpacity, Modal } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj, light_colors } from '../globals/colors';
 import Icon from 'react-native-vector-icons/Ionicons'
 import NavBar from '../components/Navbar';
-import { getAllEnquiries } from '../Services/Enquiry';
+import { checkNcreateChatRoom, getAllEnquiries, updateEnquiryStatusById } from '../Services/Enquiry';
 import { useIsFocused } from '@react-navigation/core';
 
-import { FAB } from 'react-native-paper';
+import { FAB, RadioButton } from 'react-native-paper';
+
+import { generateImageUrl } from '../globals/utils'
+import EnquiryStatuses from '../globals/EnquiryStatus';
+
 export default function Enquiry(props) {
 
     const [enquiryArr, setEnquiryArr] = useState([]);
     const Focused = useIsFocused()
+
+    const [optionsModal, setOptionsModal] = useState(false);
+
+    const [selectedEnquriyObj, setSelectedEnquriyObj] = useState({});
+
+    const [selectedEnquiryStatus, setSelectedEnquiryStatus] = useState(EnquiryStatuses.OPEN);
     const getYourEnquires = async () => {
         try {
             const { data: res } = await getAllEnquiries();
@@ -28,6 +38,22 @@ export default function Enquiry(props) {
             console.error(error)
         }
     }
+
+
+    const handleEnquiryStatusUpdate = async () => {
+        try {
+
+            const { data: res } = await updateEnquiryStatusById(selectedEnquriyObj._id, { enquiryStatus: selectedEnquiryStatus });
+            if (res.success) {
+                handleOnint()
+                setOptionsModal(false)
+                alert(res.message)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     const handleEnquirySelection = (id) => {
         setEnquiryArr(prevState => {
             let index = prevState.findIndex(el => el._id == id);
@@ -41,6 +67,24 @@ export default function Enquiry(props) {
         getYourEnquires()
     }
 
+
+    const handleOptionsModal = (obj) => {
+        setSelectedEnquriyObj(obj);
+        setSelectedEnquiryStatus(obj.enquiryStatus)
+        setOptionsModal(true)
+    }
+
+
+    const handleChatButtonClick = async (id) => {
+        try {
+            const { data: res } = await checkNcreateChatRoom(id);
+            if (res.success) {
+                alert(res.message)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
 
     useEffect(() => {
         handleOnint()
@@ -93,7 +137,10 @@ export default function Enquiry(props) {
                                                 }
 
                                             </View>
-                                            <Icon name="ellipsis-vertical-outline" size={20} color="#828282" />
+                                            <Pressable onPress={() => { handleOptionsModal(item) }}>
+
+                                                <Icon name="ellipsis-vertical-outline" size={20} color="#828282" />
+                                            </Pressable>
 
                                         </View>
                                         <View style={[styles.flexRowAlignCenter, { marginTop: 7, justifyContent: "space-between" }]}>
@@ -108,40 +155,33 @@ export default function Enquiry(props) {
                                     {item.checked &&
 
                                         <View style={styles.EnquiryContainer}>
-
-                                            <View style={styles.card}>
-                                                <View style={styles.flexRow}>
-                                                    <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
-                                                    <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                                                        <Text style={styles.cardHeading}>Ishaan Sharma</Text>
-                                                        <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
+                                            <FlatList
+                                                data={item.enquiryResponses}
+                                                keyExtractor={(item, index) => `${item._id}`}
+                                                ListEmptyComponent={
+                                                    <View style={styles.card}>
+                                                        <Text style={styles.cardHeading}>No Response Found</Text>
                                                     </View>
+                                                }
+                                                renderItem={({ item: itemX, index: indexX }) => {
+                                                    return (
+                                                        <View style={styles.card}>
+                                                            <View style={styles.flexRow}>
+                                                                <Image source={{ uri: generateImageUrl(itemX.userObj?.profileImage) }} style={styles.cardImage} />
+                                                                <View style={[styles.flexColumn, { justifyContent: "center" }]}>
+                                                                    <Text style={styles.cardHeading}>{itemX?.userObj?.name}</Text>
+                                                                    <Text style={styles.cardSmallData}>{itemX?.message} . {new Date(itemX.createdAt).toDateString()},{new Date(itemX.createdAt).toLocaleTimeString()}</Text>
+                                                                </View>
 
-                                                </View>
-                                                <Icon name="chatbubble-ellipses-outline" size={20} color={"black"} />
-                                            </View>
-                                            <View style={styles.card}>
-                                                <View style={styles.flexRow}>
-                                                    <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
-                                                    <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                                                        <Text style={styles.cardHeading}>Ishaan Sharma</Text>
-                                                        <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
-                                                    </View>
+                                                            </View>
+                                                            <Pressable onPress={() => handleChatButtonClick(itemX?.teacherId)}>
 
-                                                </View>
-                                                <Icon name="chatbubble-ellipses-outline" size={20} color={"black"} />
-                                            </View>
-                                            <View style={styles.card}>
-                                                <View style={styles.flexRow}>
-                                                    <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
-                                                    <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                                                        <Text style={styles.cardHeading}>Ishaan Sharma</Text>
-                                                        <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
-                                                    </View>
-
-                                                </View>
-                                                <Icon name="chatbubble-ellipses-outline" size={20} color={"black"} />
-                                            </View>
+                                                                <Icon name="chatbubble-ellipses-outline" size={20} color={"black"} />
+                                                            </Pressable>
+                                                        </View>
+                                                    )
+                                                }}
+                                            />
                                         </View>
                                     }
 
@@ -149,12 +189,45 @@ export default function Enquiry(props) {
                             )
                         }}
                     />
-                    
+
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={optionsModal}
+                        onRequestClose={() => {
+                            setOptionsModal(false);
+                        }}
+                    >
+                        <Pressable style={styles.centeredView} onPress={() => setOptionsModal(false)}>
+                            <Pressable style={styles.modalView}>
+                                <Text style={styles.responseModalHeading}>Enquiry Status</Text>
+                                <RadioButton.Group onValueChange={newValue => setSelectedEnquiryStatus(newValue)} value={selectedEnquiryStatus}>
+                                    <View style={[{ marginVertical: 10 }, styles.flexRow, { justifyContent: 'space-between', alignItems: 'center' }]}>
+
+                                        <Pressable onPress={() => setSelectedEnquiryStatus(EnquiryStatuses.OPEN)} style={[styles.flexRow, { justifyContent: 'space-between', alignItems: 'center' }]}>
+                                            <Text style={styles.radioText}>Open</Text>
+                                            <RadioButton color={colorObj.primarColor} value={EnquiryStatuses.OPEN} />
+                                        </Pressable>
+                                        <Pressable onPress={() => setSelectedEnquiryStatus(EnquiryStatuses.CLOSED)} style={[styles.flexRow, { justifyContent: 'space-between', alignItems: 'center' }]}>
+
+                                            <Text style={styles.radioText}>Close</Text>
+                                            <RadioButton color={colorObj.primarColor} value={EnquiryStatuses.CLOSED} />
+                                        </Pressable>
+
+                                    </View>
+                                </RadioButton.Group>
+                                <Pressable style={styles.submitBtn} onPress={() => handleEnquiryStatusUpdate()}>
+                                    <Text style={styles.submitBtnText}>Submit</Text>
+                                </Pressable>
+
+                            </Pressable>
+                        </Pressable>
+                    </Modal>
                     <FAB
                         style={styles.fab}
                         small
                         color={colorObj.whiteColor}
-                        
+
                         icon="plus"
                         label="General Enquiries"
                         onPress={() => props.navigation.navigate('GeneralEnquiries')}
@@ -176,8 +249,8 @@ const styles = StyleSheet.create({
         margin: 16,
         right: 0,
         bottom: 0,
-        backgroundColor:colorObj?.primarColor
-      },
+        backgroundColor: colorObj?.primarColor
+    },
     container: {
         // backgroundColor: 'red',
         backgroundColor: '#fff',
@@ -301,4 +374,53 @@ const styles = StyleSheet.create({
         fontSize: 12,
     },
     // fontFamily: 'Montserrat-SemiBold',
+
+    //modal styles
+
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        // marginTop: 22,
+        backgroundColor: 'rgba(0,0,0,0.6)'
+
+    },
+    modalView: {
+        margin: 20,
+        width: wp(80),
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+    responseModalHeading: {
+        fontFamily: 'OpenSans-SemiBold',
+        fontSize: 20,
+        color: '#000',
+        textAlign: 'center',
+        marginVertical: 10
+    },
+    radioText: {
+        fontFamily: 'OpenSans-Regular',
+        fontSize: 14
+    },
+    submitBtn: {
+        backgroundColor: colorObj.primarColor,
+        borderRadius: 25,
+        marginVertical: 10
+    },
+    submitBtnText: {
+        fontFamily: 'OpenSans-SemiBold',
+        fontSize: 16,
+        color: colorObj.whiteColor,
+        textAlign: 'center',
+        paddingVertical: 10,
+    },
 })
