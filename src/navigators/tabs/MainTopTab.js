@@ -22,7 +22,8 @@ export default function MainTopTab() {
                 tabBarItemStyle: { width: widthPercentageToDP(50) },
                 tabBarStyle: { backgroundColor: 'white' },
                 tabBarIndicatorStyle: {
-                    backgroundColor: "#085A4E"
+                    backgroundColor: "#085A4E",
+                    height:1
                 },
             }}>
             <Tab.Screen name="Chat" component={Chat} />

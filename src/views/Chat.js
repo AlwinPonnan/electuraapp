@@ -1,131 +1,72 @@
-import React from 'react'
-import { View, Text, StyleSheet, Image } from 'react-native'
+import { useIsFocused } from '@react-navigation/core';
+import React, { useState, useEffect } from 'react'
+import { View, Text, StyleSheet, Image, FlatList } from 'react-native'
 import { Searchbar } from 'react-native-paper';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { getAllChats } from '../Services/Chat';
 
 export default function Chat() {
+
     const [searchQuery, setSearchQuery] = React.useState('');
 
     const onChangeSearch = query => setSearchQuery(query);
+    const [chatArr, setChatArr] = useState([]);
+
+
+    const focused = useIsFocused()
+
+    const getChats = async () => {
+        try {
+            const { data: res } = await getAllChats();
+            if (res.success) {
+                setChatArr(res.data)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+
+    const handleOnint = () => {
+        getChats()
+    }
+
+    useEffect(() => {
+        handleOnint()
+    }, [focused])
+
+
+
     return (
         <View style={styles.container}>
-            <Searchbar
-                style={styles.searchBar}
-                placeholder="Search"
-                onChangeText={onChangeSearch}
-                value={searchQuery}
-            />
+            <View style={styles.innerContainer}>
 
-            <View style={styles.card}>
-                <View style={styles.flexRow}>
-                    <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
-                    <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                        <Text style={styles.cardHeading}>Ishaan Sharma</Text>
-                        <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
-                    </View>
+                <Searchbar
+                    style={styles.searchBar}
+                    placeholder="Search"
+                    inputStyle={{ fontFamily: 'OpenSans-Regular', fontSize: 14 }}
+                    onChangeText={onChangeSearch}
+                    value={searchQuery}
+                />
 
-                </View>
-
-            </View>
-            <View style={styles.card}>
-                <View style={styles.flexRow}>
-                    <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
-                    <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                        <Text style={styles.cardHeading}>Ishaan Sharma</Text>
-                        <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
-                    </View>
-
-                </View>
-
-            </View>
-            <View style={styles.card}>
-                <View style={styles.flexRow}>
-                    <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
-                    <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                        <Text style={styles.cardHeading}>Ishaan Sharma</Text>
-                        <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
-                    </View>
-
-                </View>
-
-            </View>
-            <View style={styles.card}>
-                <View style={styles.flexRow}>
-                    <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
-                    <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                        <Text style={styles.cardHeading}>Ishaan Sharma</Text>
-                        <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
-                    </View>
-
-                </View>
-
-            </View>
-            <View style={styles.card}>
-                <View style={styles.flexRow}>
-                    <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
-                    <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                        <Text style={styles.cardHeading}>Ishaan Sharma</Text>
-                        <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
-                    </View>
-
-                </View>
-
-            </View>
-            <View style={styles.card}>
-                <View style={styles.flexRow}>
-                    <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
-                    <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                        <Text style={styles.cardHeading}>Ishaan Sharma</Text>
-                        <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
-                    </View>
-
-                </View>
-
-            </View>
-            <View style={styles.card}>
-                <View style={styles.flexRow}>
-                    <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
-                    <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                        <Text style={styles.cardHeading}>Ishaan Sharma</Text>
-                        <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
-                    </View>
-
-                </View>
-
-            </View>
-            <View style={styles.card}>
-                <View style={styles.flexRow}>
-                    <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
-                    <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                        <Text style={styles.cardHeading}>Ishaan Sharma</Text>
-                        <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
-                    </View>
-
-                </View>
-
-            </View>
-            <View style={styles.card}>
-                <View style={styles.flexRow}>
-                    <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
-                    <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                        <Text style={styles.cardHeading}>Ishaan Sharma</Text>
-                        <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
-                    </View>
-
-                </View>
-
-            </View>
-            <View style={styles.card}>
-                <View style={styles.flexRow}>
-                    <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
-                    <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                        <Text style={styles.cardHeading}>Ishaan Sharma</Text>
-                        <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
-                    </View>
-
-                </View>
-
+                <FlatList
+                    data={chatArr}
+                    keyExtractor={(item, index) => `${item._id}`}
+                    renderItem={({ item, index }) => {
+                        return (
+                            <View style={styles.card}>
+                                <View style={styles.flexRow}>
+                                    <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
+                                    <View style={[styles.flexColumn, { justifyContent: "center" }]}>
+                                        <Text style={styles.cardHeading}>Ishaan Sharma</Text>
+                                        <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
+                                    </View>
+                                </View>
+                            </View>
+                        )
+                    }}
+                />
             </View>
 
         </View>
@@ -133,10 +74,17 @@ export default function Chat() {
 }
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: "white"
+        backgroundColor: "white",
+        flex: 1
+    },
+    innerContainer: {
+        width: wp(90),
+        // paddingHorizontal:20,
+        // backgroundColor:'red',
+        alignSelf: 'center'
     },
     searchBar: {
-        width: wp(95),
+        width: '100%',
         display: "flex",
         alignSelf: "center",
         borderRadius: 10,
@@ -153,6 +101,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.18,
         shadowRadius: 1.00,
         elevation: 1,
+        fontFamily: 'OpenSans-Regular'
     },
 
 
@@ -175,11 +124,11 @@ const styles = StyleSheet.create({
         marginRight: 15
     },
     cardHeading: {
-        fontFamily: 'Montserrat-Regular', fontSize: 15, color: '#000',
+        fontFamily: 'OpenSans-Regular', fontSize: 15, color: '#27303E',
         marginBottom: 3,
     },
     cardSmallData: {
-        fontFamily: 'Montserrat-Thin', fontSize: 10, color: '#000000'
+        fontFamily: 'OpenSans-Light', fontSize: 10, color: '#828282'
     },
     flexRow: {
         display: "flex",

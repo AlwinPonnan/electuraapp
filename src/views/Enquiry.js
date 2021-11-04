@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
         paddingTop: 15,
     },
     searchContainer: {
-        backgroundColor: "#edf7f7",
+        backgroundColor: "#F5F5F5",
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         alignSelf: "center",
-        backgroundColor: "#edf7f7"
+        backgroundColor: "rgba(245, 245, 245, 0.6);"
     },
     cardImage: {
         height: 50,
@@ -350,11 +350,11 @@ const styles = StyleSheet.create({
         marginRight: 15
     },
     cardHeading: {
-        fontFamily: 'Montserrat-Regular', fontSize: 15, color: '#000',
+        fontFamily: 'OpenSans-SemiBold', fontSize: 15, color: '#27303E',
         marginBottom: 3,
     },
     cardSmallData: {
-        fontFamily: 'Montserrat-Thin', fontSize: 10, color: '#000000'
+        fontFamily: 'OpenSans-Regular', fontSize: 10, color: '#828282'
     },
 
     ///////card ends here
