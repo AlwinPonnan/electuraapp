@@ -1,12 +1,12 @@
 import { useIsFocused } from '@react-navigation/core';
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, Image, FlatList } from 'react-native'
+import { View, Text, StyleSheet, Image, FlatList, Pressable } from 'react-native'
 import { Searchbar } from 'react-native-paper';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { getAllChats } from '../Services/Chat';
-
-export default function Chat() {
+import {generateImageUrl} from '../globals/utils'
+export default function Chat(props) {
 
     const [searchQuery, setSearchQuery] = React.useState('');
 
@@ -20,6 +20,7 @@ export default function Chat() {
         try {
             const { data: res } = await getAllChats();
             if (res.success) {
+                console.log(JSON.stringify(res.data,null,2))
                 setChatArr(res.data)
             }
         } catch (error) {
@@ -55,15 +56,15 @@ export default function Chat() {
                     keyExtractor={(item, index) => `${item._id}`}
                     renderItem={({ item, index }) => {
                         return (
-                            <View style={styles.card}>
+                            <Pressable onPress={()=>props.navigation.navigate('SpecificChat',{chatRoomId:item.chatRoomId})} style={styles.card}>
                                 <View style={styles.flexRow}>
-                                    <Image source={require("../../assets/images/user.png")} style={styles.cardImage} />
+                                    <Image source={{uri:generateImageUrl(item?.userObj?.profileImage)}} style={styles.cardImage} />
                                     <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                                        <Text style={styles.cardHeading}>Ishaan Sharma</Text>
+                                        <Text style={styles.cardHeading}>{item?.userObj?.name}</Text>
                                         <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
                                     </View>
                                 </View>
-                            </View>
+                            </Pressable>
                         )
                     }}
                 />

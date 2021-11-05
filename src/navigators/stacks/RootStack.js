@@ -20,6 +20,8 @@ import { getDecodedToken } from '../../Services/User';
 import jwt_decode from "jwt-decode";
 import { connectToServerSocket, disconnectToServerSocket } from '../../globals/socket';
 import Notification from '../../views/Notification';
+import MainTopTab from '../tabs/MainTopTab';
+import SpecificChat from '../../views/SpecificChat';
 
 
 const Stack = createNativeStackNavigator();
@@ -136,7 +138,13 @@ export default function RootStack() {
                                         <Stack.Screen name="MainDrawer" component={MainDrawer} options={{ headerShown: false }} />
                                         <Stack.Screen name="CreateCourse" component={CreateCourse} options={{ headerShown: false }} />
                                         <Stack.Screen name="Notification" component={Notification} options={{ headerShown: false, cardStyles: { backgroundColor: '#ffffff' } }} />
-
+                                        <Stack.Screen name="MainTopTab" component={MainTopTab} options={{
+                                            headerShown: true, showLabel: false, title: "", label: "",
+                                            headerShadowVisible: false
+                                        }} />
+                                        <Stack.Screen name="SpecificChat" component={SpecificChat} options={{
+                                            headerShown: false
+                                        }} />
                                     </>
 
                                     :

@@ -11,3 +11,8 @@ export const getAllChats=()=>{
 }
 
 
+
+export const getChatHistoryByRoomId=(id)=>{
+    return axios.get(`${url}/getChatByChatRoomId/${id}`)
+}
+
