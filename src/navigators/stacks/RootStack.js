@@ -19,6 +19,7 @@ import { serverUrl } from '../../Services/Url';
 import { getDecodedToken } from '../../Services/User';
 import jwt_decode from "jwt-decode";
 import { connectToServerSocket, disconnectToServerSocket } from '../../globals/socket';
+import Notification from '../../views/Notification';
 
 
 const Stack = createNativeStackNavigator();
@@ -134,6 +135,7 @@ export default function RootStack() {
                                     <>
                                         <Stack.Screen name="MainDrawer" component={MainDrawer} options={{ headerShown: false }} />
                                         <Stack.Screen name="CreateCourse" component={CreateCourse} options={{ headerShown: false }} />
+                                        <Stack.Screen name="Notification" component={Notification} options={{ headerShown: false, cardStyles: { backgroundColor: '#ffffff' } }} />
 
                                     </>
 
