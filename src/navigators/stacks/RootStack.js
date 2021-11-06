@@ -22,6 +22,7 @@ import { connectToServerSocket, disconnectToServerSocket } from '../../globals/s
 import Notification from '../../views/Notification';
 import MainTopTab from '../tabs/MainTopTab';
 import SpecificChat from '../../views/SpecificChat';
+import LoadingContainer from '../../views/LoadingContainer';
 
 
 const Stack = createNativeStackNavigator();
@@ -160,6 +161,9 @@ export default function RootStack() {
 
                             </Stack.Navigator>
                         </NavigationContainer>
+                        {loading &&
+                            <LoadingContainer />
+                        }
                     </loadingContext.Provider>
                 </profileContext.Provider>
             </roleContext.Provider>

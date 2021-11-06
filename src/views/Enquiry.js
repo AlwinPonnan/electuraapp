@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView, TextInput, TouchableOpacity, Modal } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj, light_colors } from '../globals/colors';
@@ -12,6 +12,8 @@ import { FAB, RadioButton } from 'react-native-paper';
 import { generateImageUrl } from '../globals/utils'
 import EnquiryStatuses from '../globals/EnquiryStatus';
 
+import { loadingContext } from '../navigators/stacks/RootStack';
+
 export default function Enquiry(props) {
 
     const [enquiryArr, setEnquiryArr] = useState([]);
@@ -22,7 +24,11 @@ export default function Enquiry(props) {
     const [selectedEnquriyObj, setSelectedEnquriyObj] = useState({});
 
     const [selectedEnquiryStatus, setSelectedEnquiryStatus] = useState(EnquiryStatuses.OPEN);
+
+    const [loading, setLoading] = useContext(loadingContext);
+
     const getYourEnquires = async () => {
+        setLoading(true)
         try {
             const { data: res } = await getAllEnquiries();
             if (res.success) {
@@ -37,6 +43,7 @@ export default function Enquiry(props) {
         } catch (error) {
             console.error(error)
         }
+        setLoading(false)
     }
 
 

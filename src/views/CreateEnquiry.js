@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { View, Text, StyleSheet, TextInput, Pressable, ScrollView } from 'react-native'
 import NavBar from '../components/Navbar'
 import { colorObj } from '../globals/colors'
@@ -10,7 +10,13 @@ import { getBySubjectId } from '../Services/Classses';
 import { Picker } from '@react-native-picker/picker';
 import { getByClassNsubjectId } from '../Services/Topic';
 import { NewEnquiry } from '../Services/Enquiry';
+
+import { successAlertContext } from '../../App';
+
 export default function CreateEnquiry(props) {
+
+
+
 
     const focused = useIsFocused()
     const [ClassType, setClassType] = useState("Immediately");
@@ -26,6 +32,23 @@ export default function CreateEnquiry(props) {
     const [selectedClassId, setSelectedClassId] = useState('');
     const [topicArr, setTopicArr] = useState([]);
     const [selectedTopicId, setSelectedTopicId] = useState('');
+
+
+
+    const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
+
+
+    const [successAlert, setSuccessAlert] = successAlertArr
+    const [warningAlert, setWarningAlert] = warningAlertArr
+    const [errorAlert, setErrorAlert] = errorAlertArr
+
+
+    const [alertText, setAlertText] = alertTextArr
+
+
+
+
+
     const getSubjects = async () => {
         try {
             const { data: res } = await getAllSubjects();
@@ -81,25 +104,37 @@ export default function CreateEnquiry(props) {
 
 
 
-    const handleEnquirySubmit=async()=>{
+    const handleEnquirySubmit = async () => {
         try {
-            let obj={
-                classId:selectedClassId,
-                subjectId:selectedSubjectId,
-                topicId:selectedTopicId,
-                region,
-                ClassType,
-                gender,
-                price,
-                specificRequirement
+            if (selectedClassId != "" && selectedSubjectId != "" && ClassType != "" && price != "" && gender != "") {
+
+                let obj = {
+                    classId: selectedClassId,
+                    subjectId: selectedSubjectId,
+                    topicId: selectedTopicId,
+                    region,
+                    ClassType,
+                    gender,
+                    price,
+                    specificRequirement
+                }
+                let { data: res } = await NewEnquiry(obj);
+                if (res.success) {
+                    setSuccessAlert(true)
+                    setAlertText(res.message)
+                    // alert(res.message)
+                }
             }
-            let {data:res}=await NewEnquiry(obj);
-            if(res.success){
-                alert(res.message)
+            else {
+                setWarningAlert(true)
+                setAlertText("Please Fill All the fields")
             }
             console.log(obj)
         } catch (error) {
             console.log(error)
+            setErrorAlert(true)
+            setAlertText(error.message)
+
         }
     }
 
@@ -225,7 +260,7 @@ export default function CreateEnquiry(props) {
                         </Pressable>
                     </View>
                 </RadioButton.Group>
-                <Pressable style={styles.submitBtn} onPress={()=>handleEnquirySubmit()}>
+                <Pressable style={styles.submitBtn} onPress={() => handleEnquirySubmit()}>
                     <Text style={styles.submitBtnText}>Submit Enquiry</Text>
                 </Pressable>
             </View>
@@ -274,16 +309,16 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginVertical: 4
     },
-    submitBtn:{
-        backgroundColor:colorObj.primarColor,
-        borderRadius:25,
-        marginVertical:10
+    submitBtn: {
+        backgroundColor: colorObj.primarColor,
+        borderRadius: 25,
+        marginVertical: 10
     },
-    submitBtnText:{
-        fontFamily:'OpenSans-SemiBold',
-        fontSize:16,
-        color:colorObj.whiteColor,
-        textAlign:'center',
-        paddingVertical:10,
+    submitBtnText: {
+        fontFamily: 'OpenSans-SemiBold',
+        fontSize: 16,
+        color: colorObj.whiteColor,
+        textAlign: 'center',
+        paddingVertical: 10,
     }
 })

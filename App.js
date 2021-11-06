@@ -11,7 +11,8 @@ import { DefaultTheme, Provider as PaperProvider, Modal, Portal } from 'react-na
 import { light_colors, dark_colors } from './src/globals/colors';
 import messaging from '@react-native-firebase/messaging';
 var PushNotification = require("react-native-push-notification");
-
+import LottieView from 'lottie-react-native';
+import { heightPercentageToDP, widthPercentageToDP } from 'react-native-responsive-screen';
 export const successAlertContext = createContext()
 
 const App = () => {
@@ -20,6 +21,14 @@ const App = () => {
   const [isDarkMode, setIsDarkMode] = useState(false)
 
   const [successAlert, setSuccessAlert] = useState(false);
+  const [warningAlert, setWarningAlert] = useState(false);
+  const [errorAlert, setErrorAlert] = useState(false);
+
+  const [alertText, setAlertText] = useState('Success');
+
+
+
+
   useEffect(() => {
     setIsDarkMode(currentColorScheme == 'dark')
   }, [currentColorScheme])
@@ -34,7 +43,7 @@ const App = () => {
     },
   };
 
-  
+
   const notifyChannel = () => {
     PushNotification.createChannel(
       {
@@ -55,7 +64,7 @@ const App = () => {
     // Geocoder.init("AIzaSyCtkZzuFSZ94CSPnDArwvPMqxkk58Fzfno")
 
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      
+
       PushNotification.localNotification({
         /* Android Only Properties */
         channelId: "Electura", // (required) channelId, if the channel doesn't exist, it will be created with options passed above (importance, vibration, sound). Once the channel is created, the channel will not be update. Make sure your channelId is different if you change these options. If you have created a custom channel, it will apply options of the channel.
@@ -116,14 +125,36 @@ const App = () => {
   return (
     <PaperProvider theme={theme}>
       <SafeAreaView style={{ backgroundColor: 'white', minHeight: '100%' }}>
-        <successAlertContext.Provider value={[successAlert, successAlertContext]}>
+        <successAlertContext.Provider value={{ successAlertArr: [successAlert, setSuccessAlert], warningAlertArr: [warningAlert, setWarningAlert], errorAlertArr: [errorAlert, setErrorAlert], alertTextArr: [alertText, setAlertText] }}>
 
           <RootStack />
-          <Portal>
-            <Modal visible={successAlert} onDismiss={() => setSuccessAlert(false)} contentContainerStyle={styles.containerStyle}>
 
+          {/* Success Modal */}
+
+          <Portal>
+            <Modal visible={successAlert} onDismiss={() => { setSuccessAlert(false); setAlertText('Success') }} contentContainerStyle={styles.containerStyle}>
+              <LottieView source={require('./assets/images/success.json')} autoSize resizeMode="cover" autoPlay loop={false} style={styles.lottieStyle} />
+              <Text style={styles.alertText}>{alertText}</Text>
             </Modal>
           </Portal>
+
+          {/* Warning Modal */}
+
+          <Portal>
+            <Modal visible={warningAlert} onDismiss={() => { setWarningAlert(false); setAlertText('Warning') }} contentContainerStyle={styles.containerStyle}>
+              <LottieView source={require('./assets/images/warning.json')} autoSize resizeMode="cover" autoPlay loop={false} style={styles.lottieStyle} />
+              <Text style={styles.alertText}>{alertText}</Text>
+            </Modal>
+          </Portal>
+
+          {/* Error Modal */}
+          <Portal>
+            <Modal visible={errorAlert} onDismiss={() => { setErrorAlert(false); setAlertText('Error') }} contentContainerStyle={styles.containerStyle}>
+              <LottieView source={require('./assets/images/error.json')} autoSize resizeMode="cover" autoPlay loop={false} style={styles.lottieStyle} />
+              <Text style={styles.alertText}>{alertText}</Text>
+            </Modal>
+          </Portal>
+
         </successAlertContext.Provider>
       </SafeAreaView>
     </PaperProvider>
@@ -133,7 +164,21 @@ const App = () => {
 const styles = StyleSheet.create({
   containerStyle: {
     backgroundColor: 'white',
-    padding: 20
+    padding: 20,
+    width: widthPercentageToDP(80),
+    alignSelf: 'center',
+    borderRadius: 5,
+  },
+  lottieStyle: {
+    height: 100,
+    width: 100,
+    alignSelf: 'center'
+  },
+  alertText: {
+    fontFamily: 'Montserrat-Medium',
+    fontSize: 14,
+    textAlign: 'center',
+    paddingVertical: 20
   }
 })
 

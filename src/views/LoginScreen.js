@@ -11,6 +11,7 @@ import { checkValidPhone } from '../globals/utils';
 import { loadingContext } from '../navigators/stacks/RootStack';
 import LoadingContainer from './LoadingContainer';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import { successAlertContext } from '../../App';
 
 
 
@@ -18,54 +19,62 @@ export default function login(props) {
     const [loading, setLoading] = useContext(loadingContext);
     const [phone, setPhone] = useState('');
 
+
+    const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
+
+
+    const [successAlert, setSuccessAlert] = successAlertArr
+    const [warningAlert, setWarningAlert] = warningAlertArr
+    const [errorAlert, setErrorAlert] = errorAlertArr
+
+
+    const [alertText, setAlertText] = alertTextArr
     const handleOtpSend = async () => {
         try {
             if (checkValidPhone(phone)) {
                 setLoading(true)
                 const { data: res } = await SendOtp(phone)
                 if (res.Status) {
-                    alert(`OTP sent successfully on ${phone} , Do not share Otp with anyone.`)
                     setLoading(false)
-                    console.log(res.Details, "detailss")
+                    setAlertText(`OTP sent successfully on ${phone} , Do not share Otp with anyone.`)
+                    setSuccessAlert(true)
                     await EncryptedStorage.setItem("sessionIdOtp", res.Details)
                     props.navigation.navigate('OtpScreen', { data: phone })
                 }
             }
             else {
-                alert("Enter valid phone number")
+                setWarningAlert(true)
+                setAlertText("Enter valid phone number")
             }
         } catch (error) {
             console.error(error)
             setLoading(false)
-            alert("Unable to send otp")
+            setErrorAlert(true)
+            setAlertText("Unable To Send Otp")
+
         }
     }
     return (
         <View style={styles.container}>
-            {
-                loading
-                    ?
-                    <LoadingContainer />
-                    :
-                    <ScrollView contentContainerStyle={styles.innerContainer}>
-                        <Image source={imageObj.loginImage} style={{ alignSelf: 'center', marginTop: 10 }} />
-                        <View style={styles.textContainer}>
-                            <Text style={styles.mainHeading}>Find The Best In Education</Text>
-                            <Text style={styles.labelSubHeading}>Learn new profession from the comfort of your home or anywhere</Text>
-                        </View>
 
-                        <KeyboardAvoidingView style={styles.inputContainer}>
-                            <Icon name="call-outline" size={14} color="black" />
-                            <TextInput placeholderTextColor="black" maxLength={10} style={styles.inputStyles} onChangeText={(val) => setPhone(val)} keyboardType="numeric" placeholder="+91     Enter Number" />
-                        </KeyboardAvoidingView>
-                        <View style={styles.btnContainer}>
-                            <Text style={styles.termsText}>By Continuing you accept the <Text style={{ color: colorObj.primarColor }}>terms and conditions</Text></Text>
-                            <Pressable style={styles.btn} onPress={() => handleOtpSend()}>
-                                <Text style={styles.btnText}>Send Otp</Text>
-                            </Pressable>
-                        </View>
-                    </ScrollView>
-            }
+            <ScrollView contentContainerStyle={styles.innerContainer}>
+                <Image source={imageObj.loginImage} style={{ alignSelf: 'center', marginTop: 10 }} />
+                <View style={styles.textContainer}>
+                    <Text style={styles.mainHeading}>Find The Best In Education</Text>
+                    <Text style={styles.labelSubHeading}>Learn new profession from the comfort of your home or anywhere</Text>
+                </View>
+
+                <KeyboardAvoidingView style={styles.inputContainer}>
+                    <Icon name="call-outline" size={14} color="black" />
+                    <TextInput placeholderTextColor="black" maxLength={10} style={styles.inputStyles} onChangeText={(val) => setPhone(val)} keyboardType="numeric" placeholder="+91     Enter Number" />
+                </KeyboardAvoidingView>
+                <View style={styles.btnContainer}>
+                    <Text style={styles.termsText}>By Continuing you accept the <Text style={{ color: colorObj.primarColor }}>terms and conditions</Text></Text>
+                    <Pressable style={styles.btn} onPress={() => handleOtpSend()}>
+                        <Text style={styles.btnText}>Send Otp</Text>
+                    </Pressable>
+                </View>
+            </ScrollView>
         </View>
     )
 }
