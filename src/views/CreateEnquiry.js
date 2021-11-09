@@ -129,7 +129,6 @@ export default function CreateEnquiry(props) {
                 setWarningAlert(true)
                 setAlertText("Please Fill All the fields")
             }
-            console.log(obj)
         } catch (error) {
             console.log(error)
             setErrorAlert(true)

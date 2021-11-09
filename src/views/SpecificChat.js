@@ -13,6 +13,7 @@ import { colorObj } from '../globals/colors'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { Avatar, Badge } from 'react-native-paper';
+import { generateImageUrl } from '../globals/utils';
 export default function SpecificChat(props) {
 
     const [chatArr, setChatArr] = useState([]);
@@ -21,6 +22,7 @@ export default function SpecificChat(props) {
     const focused = useIsFocused()
     const [messageStr, setMessageStr] = useState('');
 
+    const [chatUserObj, setChatUserObj] = useState({});
     const [tokenObj, setTokenObj] = useState({});
     const chatRoomId = props.route.params.chatRoomId
 
@@ -61,6 +63,9 @@ export default function SpecificChat(props) {
             if (res.success) {
                 setChatArr(res.data.chatArr)
                 setChatRoomObj(res.data.chatRoomObj)
+                let decodedToken = await getDecodedToken()
+                console.log(JSON.stringify(res.data.chatRoomObj, null, 2))
+                setChatUserObj(res.data.chatRoomObj.userArr.filter(el => el.userId != decodedToken.userId)[0])
                 setTimeout(() =>
                     flatListRef.current.scrollToEnd()
                     , 500)
@@ -110,14 +115,14 @@ export default function SpecificChat(props) {
         <View style={styles.container}>
             <View style={styles.innerContainer}>
 
-                <View style={[styles.flexRow, { alignItems: 'center',height:hp(5) }]}>
+                <View style={[styles.flexRow, { alignItems: 'center', height: hp(5) }]}>
                     <Pressable onPress={() => props.navigation.goBack()}>
                         <Icon name="chevron-back-outline" size={20} color="black" />
                     </Pressable>
                     <Pressable style={[styles.flexRow, { alignItems: 'center', paddingHorizontal: 20 }]}>
-                        <Avatar.Image size={35} source={require('../../assets/images/user.png')} />
+                        <Avatar.Image size={35} source={{uri: generateImageUrl(chatUserObj.userObj?.profileImage)}} />
                         <View style={styles.userProfileContainer}>
-                            <Text style={styles.userName}>Bhaskar</Text>
+                            <Text style={styles.userName}>{chatUserObj?.userObj?.name}</Text>
                             <View style={[styles.flexRow, { alignItems: 'center' }]}>
                                 <Text style={styles.userStatus}>Active</Text>
                                 <Badge size={8} style={{ marginHorizontal: 5, backgroundColor: colorObj.primarColor }} />
@@ -172,7 +177,7 @@ const styles = StyleSheet.create({
         marginVertical: 20,
         position: 'relative',
         flex: 1,
-        justifyContent:'space-between'
+        justifyContent: 'space-between'
     },
     //userProfile
     userProfileContainer: {

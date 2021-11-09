@@ -17,6 +17,10 @@ export const getAllEnquiries = async () => {
     let tokenObj = await getDecodedToken()
     return axios.get(`${url}/getEnquiryByUserId/${tokenObj.userId}`)
 }
+export const getAllGeneralEnquiriesForTeacher = async () => {
+    let tokenObj = await getDecodedToken()
+    return axios.get(`${url}/getAllGeneralEnquiriesForTeacher/${tokenObj.userId}`)
+}
 
 
 export const getEnquiryById = async (id) => {
