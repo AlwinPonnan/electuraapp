@@ -4,7 +4,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { colorObj, light_colors } from '../globals/colors';
 import Icon from 'react-native-vector-icons/Ionicons'
 import NavBar from '../components/Navbar';
-import { getAllEnquiries } from '../Services/Enquiry';
+import { getAllEnquiries, getAllGeneralEnquiriesForTeacher } from '../Services/Enquiry';
 import { useIsFocused } from '@react-navigation/core';
 
 export default function GeneralEnquiries(props) {
@@ -12,7 +12,7 @@ export default function GeneralEnquiries(props) {
     const Focused = useIsFocused()
     const getYourEnquires = async () => {
         try {
-            const { data: res } = await getAllEnquiries();
+            const { data: res } = await getAllGeneralEnquiriesForTeacher();
             if (res.success) {
                 setEnquiryArr(res.data.map(el => {
                     let obj = {
@@ -89,9 +89,9 @@ export default function GeneralEnquiries(props) {
                                             <Text style={styles.ListHeaderDescription}>
                                                 {item.className},{item.subjectName},{item.topicName}
                                             </Text>
-                                            <TouchableOpacity onPress={() => handleEnquirySelection(item._id)}>
+                                            {/* <TouchableOpacity onPress={() => handleEnquirySelection(item._id)}>
                                                 <Icon name="chevron-down-outline" size={20} color="#828282" />
-                                            </TouchableOpacity>
+                                            </TouchableOpacity> */}
                                         </View>
                                     </Pressable>
 
