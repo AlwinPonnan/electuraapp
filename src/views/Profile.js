@@ -4,13 +4,23 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { colorObj, light_colors } from '../globals/colors';
 import Icon from 'react-native-vector-icons/Ionicons'
 import NavBar from '../components/Navbar';
-
+import { Switch } from 'react-native-paper';
 export default function Profile(props) {
+    const [isSwitchOn, setIsSwitchOn] = React.useState(false);
+
+    const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
     return (
         <View style={styles.container}>
             <NavBar rootProps={props} />
             <View style={styles.innerContainer}>
-                <Text style={styles.mainHeading}>My Account</Text>
+                <View style={styles.flexRow}>
+
+                    <Text style={styles.mainHeading}>My Account</Text>
+                    <View style={styles.flexRow}>
+                        <Text style={styles.onlineText}>Online</Text>
+                        <Switch color={colorObj.primarColor} value={isSwitchOn} onValueChange={onToggleSwitch} />
+                    </View>
+                </View>
                 <Text style={styles.subHeading}>My Courses</Text>
                 <Text style={styles.subHeading}>My Enquires</Text>
 
@@ -58,6 +68,11 @@ const styles = StyleSheet.create({
         borderBottomWidth: 0.5,
         paddingBottom: 10
 
+    },
+    onlineText:{
+        fontFamily: 'RedHatText-Regular',
+        fontSize: 14,
+        color: '#27303E',
     },
     flexRow: {
         display: 'flex',
