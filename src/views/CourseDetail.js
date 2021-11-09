@@ -6,11 +6,13 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import NavBar from '../components/Navbar';
 import { getById } from '../Services/Course';
 import { useIsFocused } from '@react-navigation/core';
+import OrderSummary from './OrderSummary';
+import { useNavigation } from '@react-navigation/core';
 
 
 export default function CourseDetail(props) {
     const [courseObj, setCourseObj] = useState({});
-
+    const navigation = useNavigation()
     const isFocused = useIsFocused();
     const getCourseById = async () => {
         try {
@@ -26,6 +28,7 @@ export default function CourseDetail(props) {
 
     const handleLinkingOpen=()=>{
         Linking.openURL(courseObj?.youtubeLink)
+       navigation.navigate(OrderSummary)
     }
 
 
