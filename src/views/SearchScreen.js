@@ -6,10 +6,12 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import NavBar from '../components/Navbar';
 import { getAllCategory } from "../Services/Category"
 import { Searchbar } from 'react-native-paper';
+import { getAllSubjects } from '../Services/Subjects';
 
 export default function SearchScreen(props) {
     const [categoryArr, setCategoryArr] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
+    const [selectedSubjectId, setSelectedSubjectId] = useState('');
 
     const onChangeSearch = query => setSearchQuery(query);
     const [productsArr, setProductsArr] = useState([
@@ -65,7 +67,7 @@ export default function SearchScreen(props) {
 
     const getCategories = async () => {
         try {
-            const { data: res } = await getAllCategory();
+            const { data: res } = await getAllSubjects();
             if (res.success) {
                 setCategoryArr(res.data)
             }
@@ -79,6 +81,13 @@ export default function SearchScreen(props) {
     }, [])
 
 
+    const handleSubjectSelection = async (id) => {
+        // let tempArr = [...mainTeachersArr];
+        // console.log(JSON.stringify(tempArr, null, 2))
+        // tempArr = tempArr.filter(el => el.enquiryObj.classesArr.some(ele => ele.subjectArr.some(elx => elx.subjectId == id)))
+        // setTeachersArr([...tempArr])
+        // setSelectedSubjectId(id)
+    }
 
 
     const renderItem = ({ item, index }) => {
@@ -125,14 +134,9 @@ export default function SearchScreen(props) {
     }
     const renderCategoryItem = ({ item, index }) => {
         return (
-            <Pressable style={styles.categoryCard} >
-                <View style={[styles.flexRow, { alignItems: 'center', marginVertical: 10 }]}>
-                    {/* <Image style={styles.categoryImage} source={{ uri: item.teacherImg }} /> */}
-                    {/* <Text style={[styles.cardCategoryName]}>{item.teacher}</Text> */}
-                    <Text style={[styles.textCardMainSubHeading1, { paddingHorizontal: 10, paddingVertical: 5 }]}>{item.name}</Text>
-
-                </View>
-
+            <Pressable onPress={() => { handleSubjectSelection(item._id) }} style={[styles.categoryContainer, selectedSubjectId != item._id && { backgroundColor: '#f0faf9' }]}>
+                {/* <Icon name="film-outline" size={14} /> */}
+                <Text style={[styles.categoryName, selectedSubjectId != item._id && { color: '#000' }]}>{item.name}</Text>
             </Pressable>
         )
     }
@@ -153,8 +157,10 @@ export default function SearchScreen(props) {
                     contentContainerStyle={{ paddingHorizontal: 10 }}
                     data={categoryArr}
                     renderItem={renderCategoryItem}
-                    numColumns={3}
-                    columnWrapperStyle={{ justifyContent: 'space-between' }}
+                    // numColumns={3}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    // columnWrapperStyle={{ justifyContent: 'space-between' }}
                     keyExtractor={(item, index) => `${index}`}
                 />
                 <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
@@ -357,21 +363,43 @@ const styles = StyleSheet.create({
 
     ///category
     categoryCard: {
+        // width: wp(30),
+        // // height: 80,
+        // shadowColor: "#000",
+        // shadowOffset: {
+        //     width: 0,
+        //     height: 2,
+        // },
+        // shadowOpacity: 0.25,
+        // shadowRadius: 3.84,
+        // paddingHorizontal: 20,
+        // // marginHorizontal: 10,
+        // marginVertical: 10,
+        // elevation: 5,
+        // backgroundColor: colorObj.whiteColor,
+        // borderRadius: 10
+
+
+        backgroundColor: colorObj.primarColor,
+        borderRadius: 26,
         width: wp(30),
-        // height: 80,
+
+        paddingVertical: 10,
+        marginVertical: 10,
+        marginHorizontal: 10,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
-            height: 2,
+            height: 1,
         },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        paddingHorizontal: 20,
-        // marginHorizontal: 10,
-        marginVertical: 10,
-        elevation: 5,
-        backgroundColor: colorObj.whiteColor,
-        borderRadius: 10
+        shadowOpacity: 0.18,
+        shadowRadius: 1.00,
+
+        elevation: 1,
     },
     categoryImage: {
         height: 40,

@@ -43,6 +43,7 @@ export default function MainDrawer() {
 
         const handleLogout = async () => {
             await EncryptedStorage.removeItem('AUTH_TOKEN')
+            await EncryptedStorage.removeItem('AUTH_REFRESH_TOKEN')
             setRoleName('USER')
             setIsAuthorized(false)
         }
