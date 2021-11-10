@@ -2,6 +2,7 @@ import axios from "axios";
 import { serverUrl } from './Url';
 import jwt_decode from "jwt-decode";
 import EncryptedStorage from 'react-native-encrypted-storage';
+import { axiosApiInstance } from "../../App";
 
 const otpApiKey = "c563ebaa-c079-11eb-8089-0200cd936042"
 const url = `${serverUrl}/users`
@@ -28,7 +29,7 @@ export const getDecodedToken = async () => {
 
 export const registerUser = (obj) => {
     try {
-        let res = axios.post(`${url}/register`, obj)
+        let res = axiosApiInstance.post(`${url}/register`, obj)
         return res
     }
     catch (err) {
@@ -38,7 +39,7 @@ export const registerUser = (obj) => {
 
 
 export const loginUser = (obj) => {
-    let res = axios.post(`${url}/login`, obj)
+    let res = axiosApiInstance.post(`${url}/login`, obj)
     return res
 
 }
@@ -48,7 +49,7 @@ export const loginUser = (obj) => {
 export const getUser = async () => {
     try {
         let token = await getDecodedToken()
-        let res = axios.get(`${url}/getById/${token?.userId}`)
+        let res = axiosApiInstance.get(`${url}/getById/${token?.userId}`)
         return res
     }
     catch (err) {
@@ -59,7 +60,7 @@ export const getUser = async () => {
 export const updateProfile = async (obj) => {
     try {
         let token = await getDecodedToken()
-        let res = axios.patch(`${url}/updateById/${token?.userId}`, obj)
+        let res = axiosApiInstance.patch(`${url}/updateById/${token?.userId}`, obj)
         return res
     }
     catch (err) {
@@ -69,14 +70,14 @@ export const updateProfile = async (obj) => {
 
 export const updateBackgroundProfile = async (obj) => {
     let token = await getDecodedToken()
-    let res = axios.patch(`${url}/updateById/${token?.userId}`, obj)
+    let res = axiosApiInstance.patch(`${url}/updateById/${token?.userId}`, obj)
     return res
 }
 
 export const updateProfileImage = async (obj) => {
     try {
         let token = await getDecodedToken()
-        let res = axios.patch(`${url}/updateImage/${token.userId}`, obj)
+        let res = axiosApiInstance.patch(`${url}/updateImage/${token.userId}`, obj)
         return res
     }
     catch (err) {
@@ -90,7 +91,7 @@ export const updateProfileImage = async (obj) => {
 
 export const SendOtp = (phone) => {
     try {
-        return axios.get(`https://2factor.in/API/V1/${otpApiKey}/SMS/+91${phone}/AUTOGEN`)
+        return axiosApiInstance.get(`https://2factor.in/API/V1/${otpApiKey}/SMS/+91${phone}/AUTOGEN`)
     } catch (error) {
         console.error(error)
         throw (error)
@@ -100,7 +101,7 @@ export const SendOtp = (phone) => {
 
 export const CheckValidOtp = async (sessionId, otp) => {
     try {
-        return axios.get(`https://2factor.in/API/V1/${otpApiKey}/SMS/VERIFY/${sessionId}/${otp}`)
+        return axiosApiInstance.get(`https://2factor.in/API/V1/${otpApiKey}/SMS/VERIFY/${sessionId}/${otp}`)
 
     } catch (error) {
         console.error(error, "error")
@@ -111,7 +112,7 @@ export const CheckValidOtp = async (sessionId, otp) => {
 
 export const getAllTeachers = async () => {
     try {
-        return axios.get(`${url}/getAllTeachers`)
+        return axiosApiInstance.get(`${url}/getAllTeachers`)
     } catch (error) {
         console.error(error)
     }
@@ -120,7 +121,7 @@ export const getAllTeachers = async () => {
 export const saveTokenToDatabase = async (token) => {
     try {
         let tokenD = await getDecodedToken()
-        return await axios.post(`${url}/registerUserFcmToken`, { token,userId:tokenD?.userId })
+        return await axiosApiInstance.post(`${url}/registerUserFcmToken`, { token,userId:tokenD?.userId })
     } catch (error) {
         console.error(error)
         throw (error)

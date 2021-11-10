@@ -13,7 +13,10 @@ import messaging from '@react-native-firebase/messaging';
 var PushNotification = require("react-native-push-notification");
 import LottieView from 'lottie-react-native';
 import { heightPercentageToDP, widthPercentageToDP } from 'react-native-responsive-screen';
+import axios from 'axios';
 export const successAlertContext = createContext()
+
+export const axiosApiInstance = axios.create();
 
 const App = () => {
 

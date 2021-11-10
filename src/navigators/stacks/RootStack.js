@@ -24,7 +24,7 @@ import MainTopTab from '../tabs/MainTopTab';
 import SpecificChat from '../../views/SpecificChat';
 import LoadingContainer from '../../views/LoadingContainer';
 
-
+import { axiosApiInstance } from '../../../App';
 const Stack = createNativeStackNavigator();
 
 export const AuthContext = createContext()
@@ -68,7 +68,7 @@ export default function RootStack() {
 
 
     useMemo(() => {
-        axios.interceptors.request.use(
+        axiosApiInstance.interceptors.request.use(
             async (config) => {
                 const token = await EncryptedStorage.getItem('AUTH_TOKEN');
                 // console.log(token)
@@ -81,40 +81,42 @@ export default function RootStack() {
             error => {
                 Promise.reject(error)
             });
-        axios.interceptors.response.use(
+        axiosApiInstance.interceptors.response.use(
             (res) => {
                 // Add configurations here
                 return res;
             },
             async (err) => {
                 console.log("INterceptor error")
-
+                const originalRequest = err.config;
                 // Access Token was expired
-                if (err?.response?.status === 401) {
-                    let authToken = await EncryptedStorage.getItem('AUTH_TOKEN')
-                    await EncryptedStorage.removeItem('AUTH_TOKEN')
-                    if (authToken) {
+                if (err?.response?.status == 401 && !originalRequest._retry) {
+                    console.log("asddsa")
+                    // let authToken = await EncryptedStorage.getItem('AUTH_TOKEN')
+                    // await EncryptedStorage.removeItem('AUTH_TOKEN')
+                    // if (originalRequest) {
+                        originalRequest._retry = true;
 
-                        try {
-                            let token = await EncryptedStorage.getItem('AUTH_REFRESH_TOKEN')
-                            const rs = await axios.get(`${serverUrl}/users/generateNewAccessToken/${token}`)
-                            console.log(rs.data)
-                            if (rs.data.success) {
-                                await EncryptedStorage.setItem('AUTH_TOKEN', rs.data.data)
-                                let decodedToken = await jwt_decode(rs.data.data)
-                                console.log(decodedToken.role)
-                                setRoleName(decodedToken.role)
-                                return axios(err.config)
-                            }
-
-                        } catch (error) {
-                            await EncryptedStorage.removeItem('AUTH_TOKEN')
-                            await EncryptedStorage.removeItem('AUTH_REFRESH_TOKEN')
-                            setIsAuthorized(false)
-
-                            return Promise.reject(error);
+                    try {
+                        let token = await EncryptedStorage.getItem('AUTH_REFRESH_TOKEN')
+                        const rs = await axios.get(`${serverUrl}/users/generateNewAccessToken/${token}`)
+                        console.log(rs.data)
+                        if (rs.data.success) {
+                            await EncryptedStorage.setItem('AUTH_TOKEN', rs.data.data)
+                            let decodedToken = await jwt_decode(rs.data.data)
+                            setRoleName(decodedToken.role)
+                            axios.defaults.headers["authorization"] = 'Bearer' + rs.data.data;
+                            return axiosApiInstance(originalRequest)
                         }
+
+                    } catch (error) {
+                        await EncryptedStorage.removeItem('AUTH_TOKEN')
+                        await EncryptedStorage.removeItem('AUTH_REFRESH_TOKEN')
+                        setIsAuthorized(false)
+
+                        return Promise.reject(err);
                     }
+                    // }
                 }
 
                 return Promise.reject(err);
