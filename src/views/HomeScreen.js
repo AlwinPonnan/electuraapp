@@ -12,8 +12,10 @@ import { getAllSubjects } from '../Services/Subjects';
 import { generateImageUrl } from '../globals/utils';
 import messaging from '@react-native-firebase/messaging';
 import { saveTokenToDatabase } from '../Services/User';
+import AllTeacher from './AllTeacher';
+import { useNavigation } from '@react-navigation/core';
 export default function HomeScreen(props) {
-
+    const navigation = useNavigation()
     const isFocused = useIsFocused()
     const [selectedCategoryId, setSelectedCategoryId] = useState('');
     const [subjectArr, setSubjectArr] = useState([]);
@@ -65,6 +67,9 @@ export default function HomeScreen(props) {
 
     const [categoryArr, setCategoryArr] = useState([]);
 
+    const handleViewAll = () => {
+        navigation.navigate(AllTeacher)
+    }
     const getSubjects = async () => {
         try {
             const { data: res } = await getAllSubjects();
@@ -171,7 +176,7 @@ export default function HomeScreen(props) {
                 />
                 <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                     <Text style={styles.headingAboveCard}>Top Instructors</Text>
-                    <Text style={styles.viewAllText}>View All</Text>
+                    <Pressable onPress={() => handleViewAll()}><Text style={styles.viewAllText}>View All</Text></Pressable>
                 </View>
 
                 <FlatList
