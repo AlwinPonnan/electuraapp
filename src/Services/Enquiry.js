@@ -23,6 +23,12 @@ export const getAllGeneralEnquiriesForTeacher = async () => {
     return axiosApiInstance.get(`${url}/getAllGeneralEnquiriesForTeacher/${tokenObj.userId}`)
 }
 
+export const getAllEnquiryRequests = async () => {
+    let tokenObj = await getDecodedToken()
+    return axiosApiInstance.get(`${url}/getAllEnquiryRequests/${tokenObj.userId}`)
+}
+
+
 
 export const getEnquiryById = async (id) => {
     return axiosApiInstance.get(`${url}/getById/${id}`)

@@ -132,4 +132,10 @@ export const saveTokenToDatabase = async (token) => {
 export const getById = async (id) => {
     return await axiosApiInstance.get(`${url}/getById/${id}`)
 }
+export const addTOWishList = async (obj) => {
+    return await axiosApiInstance.post(`${url}/addToWishlist`,obj)
+}
+export const getWishlist = async () => {
+    return await axiosApiInstance.get(`${url}/getWishlist`)
+}
 

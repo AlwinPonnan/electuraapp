@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { View, Text, StyleSheet, TextInput, FlatList, Pressable, Image } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -8,10 +8,20 @@ import Feather from 'react-native-vector-icons/Feather';
 import { useIsFocused } from '@react-navigation/core';
 import { getAllTeachers } from '../Services/User';
 import { generateImageUrl } from '../globals/utils';
+import RBSheet from "react-native-raw-bottom-sheet";
+import { NewEnquiry } from '../Services/Enquiry';
+
+import { RadioButton } from 'react-native-paper';
+import EnquiryTypes from '../globals/EnquiryTypes';
+import { colorObj } from '../globals/colors';
+
 export default function AllTeacher(props) {
 
     const focused = useIsFocused()
+    const refRBSheet = useRef();
+    const [checked, setChecked] = useState(EnquiryTypes.ONETOONE);
 
+    const [selectedTeacherObj, setSelectedTeacherObj] = useState({});
     const [productsArr, setProductsArr] = useState([
         {
             name: "Lorem Course",
@@ -84,6 +94,38 @@ export default function AllTeacher(props) {
 
 
 
+    const handleEnquireNow = async () => {
+        refRBSheet.current.close()
+        try {
+
+
+            let obj = {
+                classId: '',
+                subjectId: '',
+                topicId: '',
+                region: '',
+                ClassType: '',
+                gender: '',
+                price: '',
+                specificRequirement: '',
+                enquiryType: checked,
+                teacherId: selectedTeacherObj?._id
+            }
+            let { data: res } = await NewEnquiry(obj);
+            if (res.success) {
+                setSuccessAlert(true)
+                setAlertText(res.message)
+                // alert(res.message)
+            }
+
+        } catch (error) {
+            console.log(error)
+            setErrorAlert(true)
+            setAlertText(error.message)
+
+        }
+    }
+
     const renderItem = ({ item, index }) => {
         return (
             <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("TeacherProfile", { data: item._id })}>
@@ -125,7 +167,7 @@ export default function AllTeacher(props) {
 
                             <Text style={[styles.button, { color: '#828282', marginRight: 25 }]}>View Profile</Text>
                         </Pressable>
-                        <Pressable>
+                        <Pressable onPress={()=>{setSelectedTeacherObj(item._id);refRBSheet.current.open()}}>
 
                             <Text style={[styles.button, { backgroundColor: '#085A4E', color: '#fff', paddingHorizontal: 15, paddingVertical: 3, borderRadius: 5 }]}>Enquire</Text>
                         </Pressable>
@@ -175,6 +217,63 @@ export default function AllTeacher(props) {
                 renderItem={renderTeacherItem}
                 keyExtractor={(item, index) => `${index}`}
             />
+            {/* bottom  sheet */}
+            <RBSheet
+                ref={refRBSheet}
+                closeOnDragDown={true}
+                closeOnPressMask={false}
+                animationType="slide"
+                customStyles={{
+                    wrapper: {
+                        backgroundColor: "rgba(0,0,0,0.5)",
+                    },
+                    container: {
+                        height: hp(30)
+                    },
+                    draggableIcon: {
+                        backgroundColor: "#000"
+                    }
+                }}
+            >
+                <View style={styles.bottomSheetInnerContainer}>
+
+                    <Text style={styles.bottomSheetHeading}>Enquiry Options</Text>
+                    <Pressable onPress={() => setChecked('specific')} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
+                        <Text style={styles.bottomSheetOptionText}>Specific Enquriy</Text>
+                        <RadioButton
+                            value={EnquiryTypes.ONETOONE}
+                            color={colorObj.primarColor}
+                            status={checked == EnquiryTypes.ONETOONE ? 'checked' : 'unchecked'}
+                            onPress={() => setChecked(EnquiryTypes.ONETOONE)}
+                        />
+
+                    </Pressable>
+                    <Pressable onPress={() => setChecked('slot')} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
+                        <Text style={styles.bottomSheetOptionText}>Slot Booking</Text>
+                        <RadioButton
+                            value={EnquiryTypes.SLOT}
+                            color={colorObj.primarColor}
+
+                            status={checked === EnquiryTypes.SLOT ? 'checked' : 'unchecked'}
+                            onPress={() => setChecked(EnquiryTypes.SLOT)}
+                        />
+                    </Pressable>
+                    <Pressable onPress={() => setChecked('connect')} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
+                        <Text style={styles.bottomSheetOptionText}>Connect Now</Text>
+                        <RadioButton
+                            value="connect"
+                            color={colorObj.primarColor}
+                            status={checked === 'connect' ? 'checked' : 'unchecked'}
+                            onPress={() => setChecked('connect')}
+                        />
+                    </Pressable>
+
+
+                    <Pressable style={styles.btn} onPress={() => handleEnquireNow()}>
+                        <Text style={styles.btnTxt}>Enquire</Text>
+                    </Pressable>
+                </View>
+            </RBSheet>
         </View>
     )
 }
@@ -301,5 +400,64 @@ const styles = StyleSheet.create({
         fontSize: 10,
         fontFamily: 'Montserrat-SemiBold',
         marginTop: 10
-    }
+    },
+
+
+     ////bottom sheet 
+     bottomSheetHeading: {
+        color: '#333333',
+        fontFamily: 'Montserrat-Medium',
+        fontSize: 18,
+        marginVertical: 10
+
+    },
+    bottomSheetInnerContainer: {
+        width: wp(90),
+        paddingHorizontal: 20
+    },
+    bottomSheetOptionText: {
+        color: '#333333',
+        fontFamily: 'Montserrat-Medium',
+        fontSize: 14,
+        marginVertical: 10
+    },
+    flexRow: {
+        display: "flex",
+        flexDirection: "row",
+    },
+    flexColumn: {
+        display: "flex",
+        flexDirection: "column",
+    },
+    btn: {
+        backgroundColor: colorObj.primarColor,
+        borderRadius: 50,
+        // width: wp(20),
+        paddingHorizontal: 25,
+        height: 40,
+        // paddingVertical: 10,
+        marginVertical: 10,
+        marginLeft: 40,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.18,
+        shadowRadius: 1.00,
+
+        elevation: 1,
+    },
+
+    btnTxt: {
+        fontFamily: 'Montserrat-SemiBold',
+        fontSize: 13,
+        color: "white",
+        // marginTop: 15
+    },
+
 })

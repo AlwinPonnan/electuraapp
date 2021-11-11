@@ -45,18 +45,12 @@ export default function SpecificChat(props) {
                 return [...prevState]
             })
             console.log("ASdADsADs")
-            console.log(flatListRef)
-            flatListRef.current.scrollToEnd()
         })
 
     }
 
 
-    // useEffect(() => {
-    //     if (chatArr.length)
-    //         flatListRef.current.scrollToEnd()
-
-    // }, [chatArr])
+   
     const getChatHistory = async () => {
         try {
             const { data: res } = await getChatHistoryByRoomId(chatRoomId);
@@ -66,9 +60,7 @@ export default function SpecificChat(props) {
                 let decodedToken = await getDecodedToken()
                 console.log(JSON.stringify(res.data.chatRoomObj, null, 2))
                 setChatUserObj(res.data.chatRoomObj.userArr.filter(el => el.userId != decodedToken.userId)[0])
-                setTimeout(() =>
-                    flatListRef.current.scrollToEnd()
-                    , 500)
+                
 
             }
         } catch (error) {

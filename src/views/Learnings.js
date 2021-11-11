@@ -1,11 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj, light_colors } from '../globals/colors';
 import Icon from 'react-native-vector-icons/Ionicons'
 import NavBar from '../components/Navbar';
+import { useIsFocused } from '@react-navigation/core';
+import { getWishlist } from '../Services/User';
+import { generateImageUrl } from '../globals/utils';
 
 export default function Learnings(props) {
+
+    const [wishListArr, setWishListArr] = useState([]);
+    const focused = useIsFocused()
     const [productsArr, setProductsArr] = useState([
         {
             name: "Lorem Course",
@@ -62,23 +68,52 @@ export default function Learnings(props) {
         }
     ]);
 
+
+    const handleOnit = () => {
+        getMyWishList()
+    }
+
+    const getMyWishList = async () => {
+        try {
+            const { data: res } = await getWishlist();
+            if(res.success){
+                let tempArr = res.data;
+               
+                let temp = tempArr.map(el => {
+                    let obj = {
+                        ...el,
+                        imgUrl: el?.thumbnailImage?.url ?  generateImageUrl(el?.thumbnailImage?.url) :"https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
+
+                    }
+                    return obj
+                })
+                console.log(temp)
+                setWishListArr(temp)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    useEffect(() => {
+        handleOnit()
+    }, [focused])
+
     const renderItem = ({ item, index }) => {
         return (
-            <Pressable style={styles.cardContainer} >
-                <Image style={styles.courseImg} source={{ uri: item.teacherImg }} />
+            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("CourseDetail",{data:item._id})} >
+                <Image style={styles.courseImg} source={{ uri: item?.imgUrl }} />
                 <View style={styles.textCardContainer}>
                     <View>
 
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                            <Text style={styles.textCardMainHeading}>{item.teacher}</Text>
+                            <Text style={styles.textCardMainHeading}>{item?.name}</Text>
                             <Icon name="heart" size={14} color={colorObj.primarColor} />
-
                         </View>
-                        <Text style={styles.textCardMainSubHeading1}>{item.categoryName}</Text>
+                        <Text style={styles.textCardMainSubHeading1}>{item?.teacherName}</Text>
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                            <Text style={styles.textCardMainSubHeading2}>₹699</Text>
+                            <Text style={styles.textCardMainSubHeading2}>₹{item?.price}</Text>
                             <Text style={styles.textCardMainSubHeading2}><Icon name="star" size={14} color={colorObj.primarColor} />4.2</Text>
-
                         </View>
                     </View>
 
@@ -92,8 +127,8 @@ export default function Learnings(props) {
             <NavBar rootProps={props} />
 
             <ScrollView>
-               
-                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between',marginTop:20 }]}>
+
+                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }]}>
                     <Text style={styles.headingAboveCard}>My Courses</Text>
                 </View>
 
@@ -111,7 +146,7 @@ export default function Learnings(props) {
                 </View>
                 <FlatList
                     horizontal
-                    data={productsArr}
+                    data={wishListArr}
                     renderItem={renderItem}
                     showsHorizontalScrollIndicator={false}
                     keyExtractor={(item, index) => `${index}`}

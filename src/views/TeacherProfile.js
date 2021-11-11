@@ -4,7 +4,6 @@ import NavBar from '../components/Navbar';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { colorObj } from '../globals/colors';
-import RBSheet from "react-native-raw-bottom-sheet";
 import { RadioButton } from 'react-native-paper';
 
 import Swipeable from 'react-native-swipeable';
@@ -17,8 +16,11 @@ import { Rating, AirbnbRating } from 'react-native-ratings';
 import { addNewFeedBack, getAllFeedBacksByTeacherId } from '../Services/TeacherFeedBack';
 import { successAlertContext } from '../../App';
 import { loadingContext } from '../navigators/stacks/RootStack';
+import EnquiryTypes from '../globals/EnquiryTypes';
+import { NewEnquiry } from '../Services/Enquiry';
 
 
+import RBSheet from "react-native-raw-bottom-sheet";
 
 export default function TeacherProfile(props) {
 
@@ -26,7 +28,7 @@ export default function TeacherProfile(props) {
     const [isLoading, setIsLoading] = useContext(loadingContext);
     const refRBSheet = useRef();
 
-    const [checked, setChecked] = useState('specific');
+    const [checked, setChecked] = useState(EnquiryTypes.ONETOONE);
 
     const focused = useIsFocused()
 
@@ -183,6 +185,40 @@ export default function TeacherProfile(props) {
         }
     }
 
+
+    const handleEnquireNow = async () => {
+        refRBSheet.current.close()
+        try {
+
+
+            let obj = {
+                classId: '',
+                subjectId: '',
+                topicId: '',
+                region: '',
+                ClassType: '',
+                gender: '',
+                price: '',
+                specificRequirement: '',
+                enquiryType: checked,
+                teacherId: teacherObj?._id
+            }
+            let { data: res } = await NewEnquiry(obj);
+            if (res.success) {
+                setSuccessAlert(true)
+                setAlertText(res.message)
+                // alert(res.message)
+            }
+
+        } catch (error) {
+            console.log(error)
+            setErrorAlert(true)
+            setAlertText(error.message)
+
+        }
+    }
+
+
     useEffect(() => {
         handleOnint()
     }, [focused])
@@ -278,7 +314,7 @@ export default function TeacherProfile(props) {
                                         <Text style={styles.textCardMainHeading}>{item?.sentByObj?.name}</Text>
                                     </View>
 
-                                    <View style={[styles.flexRow, { alignItems: 'center'}]}>
+                                    <View style={[styles.flexRow, { alignItems: 'center' }]}>
                                         {item?.ratingArr?.map((el, i) => {
                                             return (
                                                 <Icon key={i} name="star" size={16} color="#FF900E" />
@@ -326,21 +362,21 @@ export default function TeacherProfile(props) {
                     <Pressable onPress={() => setChecked('specific')} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
                         <Text style={styles.bottomSheetOptionText}>Specific Enquriy</Text>
                         <RadioButton
-                            value="specific"
+                            value={EnquiryTypes.ONETOONE}
                             color={colorObj.primarColor}
-                            status={checked == 'specific' ? 'checked' : 'unchecked'}
-                            onPress={() => setChecked('specific')}
+                            status={checked == EnquiryTypes.ONETOONE ? 'checked' : 'unchecked'}
+                            onPress={() => setChecked(EnquiryTypes.ONETOONE)}
                         />
 
                     </Pressable>
                     <Pressable onPress={() => setChecked('slot')} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
                         <Text style={styles.bottomSheetOptionText}>Slot Booking</Text>
                         <RadioButton
-                            value="slot"
+                            value={EnquiryTypes.SLOT}
                             color={colorObj.primarColor}
 
-                            status={checked === 'slot' ? 'checked' : 'unchecked'}
-                            onPress={() => setChecked('slot')}
+                            status={checked === EnquiryTypes.SLOT ? 'checked' : 'unchecked'}
+                            onPress={() => setChecked(EnquiryTypes.SLOT)}
                         />
                     </Pressable>
                     <Pressable onPress={() => setChecked('connect')} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
@@ -354,7 +390,7 @@ export default function TeacherProfile(props) {
                     </Pressable>
 
 
-                    <Pressable style={styles.btn} onPress={() => refRBSheet.current.close()}>
+                    <Pressable style={styles.btn} onPress={() => handleEnquireNow()}>
                         <Text style={styles.btnTxt}>Enquire</Text>
                     </Pressable>
                 </View>

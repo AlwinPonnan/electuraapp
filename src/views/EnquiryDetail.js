@@ -1,12 +1,15 @@
 import { useIsFocused } from '@react-navigation/core';
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect,useContext } from 'react'
 import { View, Text, ScrollView, StyleSheet, Pressable, Modal, TextInput } from 'react-native'
 import { colorObj } from '../globals/colors';
 import { getEnquiryById, sendGeneralEnquiryResponse } from '../Services/Enquiry'
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { successAlertContext } from '../../App';
+import { loadingContext } from '../navigators/stacks/RootStack';
 
 export default function EnquiryDetail(props) {
+    const [loading, setLoading] = useContext(loadingContext);
 
     const [enquiryObj, setEnquiryObj] = useState({});
 
@@ -16,6 +19,16 @@ export default function EnquiryDetail(props) {
 
     const [responseModal, setResponseModal] = useState(false);
 
+
+    const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
+
+
+    const [successAlert, setSuccessAlert] = successAlertArr
+    const [warningAlert, setWarningAlert] = warningAlertArr
+    const [errorAlert, setErrorAlert] = errorAlertArr
+
+
+    const [alertText, setAlertText] = alertTextArr
     const getSpecificEnquiry = async () => {
         try {
             let enquiryId = props.route.params.enquiryId
@@ -29,19 +42,27 @@ export default function EnquiryDetail(props) {
     }
 
     const handleSubmit = async () => {
+        setResponseModal(false)
+
+        setLoading(true)
         try {
+
             let obj = {
                 enquiryId: enquiryObj?._id,
                 message: responseMessage
             }
             const { data: res } = await sendGeneralEnquiryResponse(obj);
             if (res.success) {
-                alert(res.message);
-                setResponseModal(false)
+                setAlertText(res.message)
+                setSuccessAlert(true)
+                
             }
         } catch (error) {
-            console.error(error)
+            setErrorAlert(true)
+            setAlertText("Unable To Respond")
+
         }
+        setLoading(false)
     }
 
 

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView,Linking } from 'react-native'
+import React, { useState, useEffect,useContext } from 'react'
+import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView, Linking } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj, light_colors } from '../globals/colors';
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -8,12 +8,32 @@ import { getById } from '../Services/Course';
 import { useIsFocused } from '@react-navigation/core';
 import OrderSummary from './OrderSummary';
 import { useNavigation } from '@react-navigation/core';
+import { addTOWishList, getDecodedToken } from '../Services/User';
+import { successAlertContext } from '../../App';
+import { loadingContext } from '../navigators/stacks/RootStack';
 
 
 export default function CourseDetail(props) {
+    const [loading, setLoading] = useContext(loadingContext);
+
     const [courseObj, setCourseObj] = useState({});
     const navigation = useNavigation()
     const isFocused = useIsFocused();
+
+
+
+
+    const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
+
+
+    const [successAlert, setSuccessAlert] = successAlertArr
+    const [warningAlert, setWarningAlert] = warningAlertArr
+    const [errorAlert, setErrorAlert] = errorAlertArr
+
+
+    const [alertText, setAlertText] = alertTextArr
+
+
     const getCourseById = async () => {
         try {
             const { data: res } = await getById(props.route.params.data)
@@ -26,11 +46,37 @@ export default function CourseDetail(props) {
         }
     }
 
-    const handleLinkingOpen=()=>{
+    const handleLinkingOpen = () => {
         Linking.openURL(courseObj?.youtubeLink)
-       navigation.navigate(OrderSummary)
+        navigation.navigate(OrderSummary)
     }
 
+
+    const handleAddCourseToWhishlist = async() => {
+        try {
+            let tokenObj = await getDecodedToken()
+            let obj = {
+                userId: tokenObj?.userId,
+                courseId: courseObj?._id
+            }
+            console.log(obj)
+            const { data: res } = await addTOWishList(obj);
+            if (res.success) {
+                setAlertText(res.message);
+                setSuccessAlert(true)
+            }
+        } catch (error) {
+            console.error(error)
+            if (error.response.data.message) {
+                setErrorAlert(true)
+                setAlertText(error.response.data.message)
+            }
+            else {
+                setErrorAlert(true)
+                setAlertText(error.message)
+            }
+        }
+    }
 
 
     const handleOnint = () => {
@@ -52,10 +98,14 @@ export default function CourseDetail(props) {
                         <Text style={styles.pageHeading}>{courseObj?.name}</Text>
                         <View style={[styles.flexRow, { alignItems: "center" }]}>
                             <Text style={styles.ratingTxt}>4.2</Text>
-                            <Icon onPress={()=>alert("Added to wishlist")} name="star" size={10} color="rgba(8, 90, 78, 1)" />
+
+                            <Icon name="star" size={10} color="rgba(8, 90, 78, 1)" />
                         </View>
                     </View>
-                    <Icon name="heart-outline" size={20} color="rgba(8, 90, 78, 1)" />
+                    <Pressable onPress={() => handleAddCourseToWhishlist()}>
+
+                        <Icon name="heart-outline" size={20} color="rgba(8, 90, 78, 1)" />
+                    </Pressable>
                 </View>
                 <View style={[styles.flexRow, { alignItems: "center", marginTop: 5 }]}>
                     <Image source={require("../../assets//images/user.png")} style={styles.img} />
@@ -74,7 +124,7 @@ export default function CourseDetail(props) {
                     {courseObj?.description}
                 </Text>
             </View>
-            <Pressable style={styles.btn} onPress={() =>handleLinkingOpen()}>
+            <Pressable style={styles.btn} onPress={() => handleLinkingOpen()}>
                 <Text style={styles.btnText}>Buy Now</Text>
             </Pressable>
         </View>

@@ -12,9 +12,11 @@ import { FAB, RadioButton } from 'react-native-paper';
 import { generateImageUrl } from '../globals/utils'
 import EnquiryStatuses from '../globals/EnquiryStatus';
 
-import { loadingContext } from '../navigators/stacks/RootStack';
+import { loadingContext, roleContext } from '../navigators/stacks/RootStack';
+import EnquiryTypes from '../globals/EnquiryTypes';
 
 export default function Enquiry(props) {
+    const [roleName, setRoleName] = useContext(roleContext);
 
     const [enquiryArr, setEnquiryArr] = useState([]);
     const Focused = useIsFocused()
@@ -83,14 +85,16 @@ export default function Enquiry(props) {
 
 
     const handleChatButtonClick = async (id) => {
+        setLoading(true)
         try {
             const { data: res } = await checkNcreateChatRoom(id);
             if (res.success) {
-                alert(res.message)
+                props.navigation.navigate("MainTopTab")
             }
         } catch (error) {
             console.error(error)
         }
+        setLoading(false)
     }
 
     useEffect(() => {
@@ -151,9 +155,16 @@ export default function Enquiry(props) {
 
                                         </View>
                                         <View style={[styles.flexRowAlignCenter, { marginTop: 7, justifyContent: "space-between" }]}>
-                                            <Text style={styles.ListHeaderDescription}>
-                                                {item.className},{item.subjectName},{item.topicName}
-                                            </Text>
+                                            {
+                                                item?.enquiryType == EnquiryTypes.GENERAL ?
+                                                <Text style={styles.ListHeaderDescription}>
+                                                    {item.className},{item.subjectName},{item.topicName}
+                                                </Text>
+                                                :
+                                                <Text style={styles.ListHeaderDescription}>
+                                                    {item.enquiryType}
+                                                </Text>
+                                            }
                                             <TouchableOpacity onPress={() => handleEnquirySelection(item._id)}>
                                                 <Icon name="chevron-down-outline" size={20} color="#828282" />
                                             </TouchableOpacity>
@@ -230,15 +241,19 @@ export default function Enquiry(props) {
                             </Pressable>
                         </Pressable>
                     </Modal>
-                    <FAB
-                        style={styles.fab}
-                        small
-                        color={colorObj.whiteColor}
+                    {
+                        roleName == "TEACHER" &&
 
-                        icon="plus"
-                        label="General Enquiries"
-                        onPress={() => props.navigation.navigate('GeneralEnquiries')}
-                    />
+                        <FAB
+                            style={styles.fab}
+                            small
+                            color={colorObj.whiteColor}
+
+                            icon="plus"
+                            label="General Enquiries"
+                            onPress={() => props.navigation.navigate('GeneralEnquiries')}
+                        />
+                    }
 
 
 
