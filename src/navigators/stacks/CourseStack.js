@@ -16,7 +16,7 @@ export default function CourseStack() {
     const Stack = createNativeStackNavigator();
 
     return (
-        <Stack.Navigator initialRouteName="Coupons">
+        <Stack.Navigator initialRouteName="Course">
             <Stack.Screen name="Course" component={Courses} options={{ headerShown: false, cardStyles: { backgroundColor: '#ffffff' } }} />
             <Stack.Screen name="CourseDetail" component={CourseDetail} options={{ headerShown: false }} />
             <Stack.Screen name="OrderSummary" component={OrderSummary} options={{ headerShown: false }} />

@@ -7,65 +7,45 @@ import NavBar from '../components/Navbar';
 import { getAllCategory } from "../Services/Category"
 import { Searchbar } from 'react-native-paper';
 import { getAllSubjects } from '../Services/Subjects';
+import { getAllTeachers } from '../Services/User';
+import { generateImageUrl } from '../globals/utils';
+import { getAllForUsersHomePage } from '../Services/Course';
 
 export default function SearchScreen(props) {
     const [categoryArr, setCategoryArr] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedSubjectId, setSelectedSubjectId] = useState('');
+    const [teachersArr, setTeachersArr] = useState([]);
+    const [mainTeachersArr, setMainTeachersArr] = useState([]);
 
-    const onChangeSearch = query => setSearchQuery(query);
-    const [productsArr, setProductsArr] = useState([
-        {
-            name: "Lorem Course",
-            categoryName: 'Science',
-            teacher: "Mr. Teacher",
-            teacherImg: "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80",
-            imgUrl: "https://images.unsplash.com/photo-1475778057357-d35f37fa89dd?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
-            description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
-            courseEstimatedTime: '1hr 30min',
-            active: false
-
-        },
-        {
-            name: "Lorem Course2",
-            categoryName: 'Physics',
-            teacher: "Mr. Teacher",
-            teacherImg: "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80",
-            imgUrl: "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
-            description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
-            courseEstimatedTime: '1hr 30min',
-            active: false
-        },
-        {
-            name: "Lorem Course3",
-            categoryName: 'A.I.',
-            teacher: "Mr. CBSE",
-            teacherImg: "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80",
-            imgUrl: "https://images.unsplash.com/photo-1475778057357-d35f37fa89dd?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
-            description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
-            active: false
-        },
-        {
-            name: "Lorem Course",
-            categoryName: 'Science',
-            teacher: "Mr. Teacher",
-            teacherImg: "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80",
-            imgUrl: "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
-            description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
-            courseEstimatedTime: '1hr 30min',
-            active: false
-        },
-    ])
+    const [courseArr, setCourseArr] = useState([]);
+    const [mainCourseArr, setMainCourseArr] = useState([]);
 
 
 
 
 
 
+    const onChangeSearch = query => {
+        let tempQuery=query.toLowerCase()
+        // let tempArr = [...mainTeachersArr];
+        // console.log(JSON.stringify(tempArr, null, 2))
+        // tempArr = tempArr.filter(el => el.enquiryObj.classesArr.some(ele => ele.subjectArr.some(elx => elx.subjectName.toLowerCase().includes(tempQuery))))
+        // setTeachersArr([...tempArr])
+
+
+        let tempCourseArr = [...mainCourseArr]
+        tempCourseArr = tempCourseArr.filter(el => el.classesArr.some(ele => ele.subjectArr.some(elx => elx.subjectName.toLowerCase().includes(tempQuery))) || el.name.includes(tempQuery) )
+        setCourseArr([...tempCourseArr])
+
+        setSearchQuery(query)
+
+    };
 
 
 
-    const getCategories = async () => {
+
+    const getSubjects = async () => {
         try {
             const { data: res } = await getAllSubjects();
             if (res.success) {
@@ -76,37 +56,84 @@ export default function SearchScreen(props) {
         }
     }
 
+    const getTeachers = async () => {
+        try {
+            const { data: res } = await getAllTeachers();
+            if (res.success) {
+
+                setTeachersArr(res.data)
+                setMainTeachersArr(res.data)
+            }
+
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const getCourses = async () => {
+        try {
+            const { data: res } = await getAllForUsersHomePage();
+            if (res.success) {
+                let tempArr = res.data;
+
+                let temp = tempArr.map(el => {
+                    let obj = {
+                        ...el,
+                        imgUrl: el?.thumbnailImage?.url ? generateImageUrl(el?.thumbnailImage?.url) : "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
+
+                    }
+                    return obj
+                })
+                console.log(JSON.stringify(temp,null,2))
+                setCourseArr(temp)
+                setMainCourseArr(temp)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+    const handleOnint = () => {
+        getSubjects()
+        getTeachers()
+        getCourses()
+    }
+
     useEffect(() => {
-        getCategories()
+        handleOnint()
     }, [])
 
 
+
     const handleSubjectSelection = async (id) => {
-        // let tempArr = [...mainTeachersArr];
-        // console.log(JSON.stringify(tempArr, null, 2))
-        // tempArr = tempArr.filter(el => el.enquiryObj.classesArr.some(ele => ele.subjectArr.some(elx => elx.subjectId == id)))
-        // setTeachersArr([...tempArr])
-        // setSelectedSubjectId(id)
+        let tempArr = [...mainTeachersArr];
+        console.log(JSON.stringify(tempArr, null, 2))
+        tempArr = tempArr.filter(el => el.enquiryObj.classesArr.some(ele => ele.subjectArr.some(elx => elx.subjectId == id)))
+        setTeachersArr([...tempArr])
+
+
+        let tempCourseArr = [...mainCourseArr]
+        tempCourseArr = tempCourseArr.filter(el => el.classesArr.some(ele => ele.subjectArr.some(elx => elx.subjectId == id)))
+        setCourseArr([...tempCourseArr])
+
+        setSelectedSubjectId(id)
     }
 
 
     const renderItem = ({ item, index }) => {
         return (
-            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("CourseDetail")} >
-                <Image style={styles.courseImg} source={{ uri: item.teacherImg }} />
+            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("CourseDetail", { data: item._id })} >
+                <Image style={styles.courseImg} source={{ uri: item?.imgUrl }} />
                 <View style={styles.textCardContainer}>
                     <View>
 
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                            <Text style={styles.textCardMainHeading}>{item.teacher}</Text>
+                            <Text style={styles.textCardMainHeading}>{item?.name}</Text>
                             <Icon name="heart" size={14} color={colorObj.primarColor} />
-
                         </View>
-                        <Text style={styles.textCardMainSubHeading1}>{item.categoryName}</Text>
+                        <Text style={styles.textCardMainSubHeading1}>{item?.teacherName}</Text>
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                            <Text style={styles.textCardMainSubHeading2}>₹699</Text>
+                            <Text style={styles.textCardMainSubHeading2}>₹{item?.price}</Text>
                             <Text style={styles.textCardMainSubHeading2}><Icon name="star" size={14} color={colorObj.primarColor} />4.2</Text>
-
                         </View>
                     </View>
 
@@ -116,14 +143,15 @@ export default function SearchScreen(props) {
     }
     const renderInstructorItem = ({ item, index }) => {
         return (
-            <Pressable style={styles.cardInstructorContainer} >
-                <Image style={styles.teacherInstructorImg} source={{ uri: item.teacherImg }} />
+            <Pressable style={styles.cardInstructorContainer} onPress={() => props.navigation.navigate("TeacherProfile")} >
+                <Image style={styles.teacherImg} source={{ uri: item?.profileImage ? generateImageUrl(item?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
+
                 <View style={styles.textCardInstructorContainer}>
                     <View>
 
-                        <Text style={styles.textCardMainHeading}>{item.teacher}</Text>
-                        <Text style={styles.textCardMainSubHeading1}>{item.categoryName}</Text>
-                        <Text style={styles.textCardMainSubHeading2}>10 Year Experience</Text>
+                        <Text style={styles.textCardMainHeading}>{item?.name}</Text>
+                        <Text style={styles.textCardMainSubHeading1}>{item?.enquiryObj?.classesArr?.reduce((acc, el) => acc + el.className + ',', '')}</Text>
+                        <Text style={styles.textCardMainSubHeading2}>{item?.enquiryObj?.experience} Year Experience</Text>
                     </View>
                     <View style={{ position: 'absolute', top: 5, right: 10 }} >
                         <Icon name="bookmark-outline" size={16} color="black" />
@@ -132,6 +160,9 @@ export default function SearchScreen(props) {
             </Pressable>
         )
     }
+
+
+
     const renderCategoryItem = ({ item, index }) => {
         return (
             <Pressable onPress={() => { handleSubjectSelection(item._id) }} style={[styles.categoryContainer, selectedSubjectId != item._id && { backgroundColor: '#f0faf9' }]}>
@@ -170,9 +201,12 @@ export default function SearchScreen(props) {
 
                 <FlatList
                     horizontal
-                    data={productsArr}
+                    data={courseArr}
                     renderItem={renderItem}
                     showsHorizontalScrollIndicator={false}
+                    ListEmptyComponent={
+                        <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>No Courses found</Text>
+                    }
                     keyExtractor={(item, index) => `${index}`}
                 />
                 <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
@@ -183,8 +217,11 @@ export default function SearchScreen(props) {
                 <FlatList
                     style={{ height: 150 }}
                     horizontal
-                    data={productsArr}
+                    data={teachersArr}
                     renderItem={renderInstructorItem}
+                    ListEmptyComponent={
+                        <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>No Results found</Text>
+                    }
                     showsHorizontalScrollIndicator={false}
                     keyExtractor={(item, index) => `${index}`}
                 />
@@ -411,5 +448,13 @@ const styles = StyleSheet.create({
         fontFamily: 'Montserrat-SemiBold',
         paddingHorizontal: 10,
         color: '#232323'
-    }
+    },
+    teacherImg: {
+        height: 100,
+        width: 100,
+        left: -10,
+        top: 15,
+        position: "absolute",
+        borderRadius: 100
+    },
 })
