@@ -5,7 +5,12 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
-export default function AllTeacher() {
+import { useIsFocused } from '@react-navigation/core';
+import { getAllTeachers } from '../Services/User';
+import { generateImageUrl } from '../globals/utils';
+export default function AllTeacher(props) {
+
+    const focused = useIsFocused()
 
     const [productsArr, setProductsArr] = useState([
         {
@@ -50,21 +55,38 @@ export default function AllTeacher() {
         },
     ])
 
-    const [TeacherArr, setTeacherArr] = useState([
-        {
-            name: "Drake Ramoray",
-            location: 'Vilnius, Lithuania',
-            subject: 'MSc. Maths',
-            course: '5 Courses',
-            experience: '10 year experience',
-            imgUrl: "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
+    const [TeachersArr, setTeachersArr] = useState([])
+    const [MainTeachersArr, setMainTeachersArr] = useState([]);
 
-        },
-    ])
+    const getTeachers = async () => {
+        try {
+            const { data: res } = await getAllTeachers();
+            if (res.success) {
+
+                setTeachersArr(res.data)
+                setMainTeachersArr(res.data)
+            }
+
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+
+    const handleOnint = () => {
+        getTeachers()
+    }
+
+    useEffect(() => {
+        handleOnint()
+    }, [focused])
+
+
+
 
     const renderItem = ({ item, index }) => {
         return (
-            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("TeacherProfile")}>
+            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("TeacherProfile", { data: item._id })}>
 
                 <Image style={styles.teacherImg} source={{ uri: item?.profileImage ? generateImageUrl(item?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
                 <View style={styles.textCardContainer}>
@@ -88,24 +110,30 @@ export default function AllTeacher() {
 
                 <Image
                     style={styles.listImage}
-                    source={{
-                        uri: item.imgUrl
-                    }}
+                    source={{ uri: item?.profileImage ? generateImageUrl(item?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }}
                 />
                 <View style={{ flex: 1, marginLeft: 10 }}>
                     <Text style={[styles.listName]}>{item.name}</Text>
-                    <Text style={[styles.location]}><Ionicons name="location-outline" size={16} color="#A3A3A3" style={{ marginRight: 10 }} />{item.location}</Text>
+                    <Text style={[styles.location]}><Ionicons name="location-outline" size={16} color="#A3A3A3" style={{ marginRight: 10 }} />{item?.location ? item?.location : "Delhi"}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', width: '90%' }}>
-                        <Text style={[styles.subject]}>{item.subject}</Text>
+                        <Text style={[styles.subject]}>{item?.enquiryObj?.classesArr?.reduce((acc, el) => acc + el.className + ',', '')}</Text>
                         <Text style={[styles.subject]}>{item.course}</Text>
-                        <Text style={[styles.subject]}>{item.experience}</Text>
+                        <Text style={[styles.subject]}>{item?.enquiryObj?.experience ? item?.enquiryObj?.experience : 1}+ Year Experience</Text>
                     </View>
                     <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
-                        <Text style={[styles.button, { color: '#828282', marginRight: 25 }]}>View Profile</Text>
-                        <Text style={[styles.button, { backgroundColor: '#085A4E', color: '#fff', paddingHorizontal: 15, paddingVertical: 3, borderRadius: 5 }]}>Enquire</Text></View></View>
+                        <Pressable onPress={() => props.navigation.navigate("TeacherProfile", { data: item._id })}>
+
+                            <Text style={[styles.button, { color: '#828282', marginRight: 25 }]}>View Profile</Text>
+                        </Pressable>
+                        <Pressable>
+
+                            <Text style={[styles.button, { backgroundColor: '#085A4E', color: '#fff', paddingHorizontal: 15, paddingVertical: 3, borderRadius: 5 }]}>Enquire</Text>
+                        </Pressable>
+                    </View>
+                </View>
 
 
-            </View>
+            </View >
 
 
 
@@ -134,15 +162,16 @@ export default function AllTeacher() {
                 <FlatList
                     style={{ height: 150 }}
                     horizontal
-                    data={productsArr}
+                    data={TeachersArr}
                     renderItem={renderItem}
                     showsHorizontalScrollIndicator={false}
                     keyExtractor={(item, index) => `${index}`}
-                /></View>
-            <Text style={[styles.title]}>Instructors Online</Text>
+                />
+            </View>
+            <Text style={[styles.title, { marginVertical: 10 }]}>Instructors Online</Text>
             <FlatList
                 style={{ height: 300 }}
-                data={TeacherArr}
+                data={TeachersArr}
                 renderItem={renderTeacherItem}
                 keyExtractor={(item, index) => `${index}`}
             />
@@ -171,7 +200,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontFamily: 'RedHatText-SemiBold',
-        fontSize: 20,
+        fontSize: 16,
         color: 'black',
         marginTop: 40
     },
@@ -240,35 +269,36 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.22,
         shadowRadius: 2.22,
         padding: 15,
-        paddingVertical: 20,
+        // paddingVertical: 20,
         elevation: 2,
-        width: '100%',
-        height: '100%',
-        position: 'relative',
+        // width: '100%',
+        // height: '100%',
+        // position: 'relative',
+        marginVertical: 5,
         flexDirection: 'row',
         alignItems: 'center'
     },
     listName: {
-        fontSize: 15,
+        fontSize: 14,
         fontFamily: 'Montserrat-SemiBold',
         color: 'black',
         justifyContent: 'space-between',
         flexDirection: 'row'
     },
     location: {
-        fontSize: 11,
+        fontSize: 10,
         fontFamily: 'Montserrat-Regular',
         color: '#A3A3A3',
         marginTop: 7
     },
     subject: {
-        fontSize: 12,
+        fontSize: 10,
         fontFamily: 'Montserrat-Regular',
         color: '#A3A3A3',
         marginTop: 7
     },
     button: {
-        fontSize: 13,
+        fontSize: 10,
         fontFamily: 'Montserrat-SemiBold',
         marginTop: 10
     }

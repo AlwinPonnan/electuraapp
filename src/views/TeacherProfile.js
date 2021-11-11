@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo, useState, useRef } from 'react';
-import { View, Text, StyleSheet, Image, Pressable, ImageBackground, TouchableHighlight } from 'react-native';
+import React, { useEffect, useState, useRef, useContext } from 'react';
+import { View, Text, StyleSheet, Image, Pressable, ImageBackground, TouchableHighlight, FlatList, ScrollView, Modal, TextInput } from 'react-native';
 import NavBar from '../components/Navbar';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -8,11 +8,52 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import { RadioButton } from 'react-native-paper';
 
 import Swipeable from 'react-native-swipeable';
+import { useIsFocused } from '@react-navigation/core';
+import { getById } from '../Services/User';
+import { generateImageUrl } from '../globals/utils';
+import { getByCoursesUserId } from '../Services/Course';
+
+import { Rating, AirbnbRating } from 'react-native-ratings';
+import { addNewFeedBack, getAllFeedBacksByTeacherId } from '../Services/TeacherFeedBack';
+import { successAlertContext } from '../../App';
+import { loadingContext } from '../navigators/stacks/RootStack';
+
+
+
 export default function TeacherProfile(props) {
 
+
+    const [isLoading, setIsLoading] = useContext(loadingContext);
     const refRBSheet = useRef();
 
     const [checked, setChecked] = useState('specific');
+
+    const focused = useIsFocused()
+
+    const [coursesArr, setCoursesArr] = useState([]);
+
+    const [teacherObj, setTeacherObj] = useState({});
+
+    const [rating, setRating] = useState(0);
+
+    const [responseMessage, setResponseMessage] = useState('');
+
+    const [responseModal, setResponseModal] = useState(false);
+
+
+    const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
+
+
+    const [successAlert, setSuccessAlert] = successAlertArr
+    const [warningAlert, setWarningAlert] = warningAlertArr
+    const [errorAlert, setErrorAlert] = errorAlertArr
+
+
+    const [alertText, setAlertText] = alertTextArr
+
+
+    const [feedBackArr, setFeedBackArr] = useState([]);
+
     const leftContent = () => {
         return (
             <Pressable style={styles.btn} >
@@ -22,8 +63,132 @@ export default function TeacherProfile(props) {
     };
 
 
+
+    const handleOnint = () => {
+        getTeacher()
+        getCourses()
+        getAllFeedBacks()
+    }
+
+    const getTeacher = async () => {
+        try {
+            let userId = props.route.params.data;
+            const { data: res } = await getById(userId)
+            console.log(JSON.stringify(res.data, null, 2))
+            if (res.success) {
+                setTeacherObj(res.data)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+
+    const getCourses = async () => {
+        try {
+            let userId = props.route.params.data;
+            const { data: res } = await getByCoursesUserId(userId)
+            console.log(JSON.stringify(res.data, null, 2))
+            if (res.success) {
+                let tempArr = res.data;
+
+                let temp = tempArr.map(el => {
+                    let obj = {
+                        ...el,
+                        imgUrl: el?.thumbnailImage?.url ? generateImageUrl(el?.thumbnailImage?.url) : "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
+
+                    }
+                    return obj
+                })
+                console.log(temp)
+                setCoursesArr(temp)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+
+    const renderCourseItem = ({ item, index }) => {
+        return (
+            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("CourseDetail", { data: item._id })} >
+                <Image style={styles.courseImg} source={{ uri: item?.imgUrl }} />
+                <View style={styles.textCardContainer}>
+                    <View>
+
+                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                            <Text style={styles.textCardMainHeading}>{item?.name}</Text>
+                            <Icon name="heart" size={14} color={colorObj.primarColor} />
+                        </View>
+                        <Text style={styles.textCardMainSubHeading1}>{item?.teacherName}</Text>
+                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                            <Text style={styles.textCardMainSubHeading2}>₹{item?.price}</Text>
+                            <Text style={styles.textCardMainSubHeading2}><Icon name="star" size={14} color={colorObj.primarColor} />4.2</Text>
+                        </View>
+                    </View>
+
+                </View>
+            </Pressable>
+        )
+    }
+
+
+    const handleSubmitFeedBack = async () => {
+        setResponseModal(false)
+        setIsLoading(true)
+        try {
+            let obj = {
+                rating,
+                message: responseMessage,
+                teacherId: teacherObj._id
+            }
+            const { data: res } = await addNewFeedBack(obj)
+            if (res.success) {
+                setAlertText(res.message)
+                setSuccessAlert(true)
+            }
+        } catch (error) {
+            if (error.response.data.message) {
+                setErrorAlert(true)
+                setAlertText(error.response.data.message)
+            }
+            else {
+                setErrorAlert(true)
+                setAlertText(error.message)
+            }
+        }
+        setIsLoading(false)
+    }
+
+
+    const getAllFeedBacks = async () => {
+        try {
+            let userId = props.route.params.data;
+            const { data: res } = await getAllFeedBacksByTeacherId(userId);
+            console.log(JSON.stringify(res.data, null, 2))
+            if (res.success) {
+                let tempArr = res.data;
+                tempArr = tempArr.map(el => {
+                    let obj = {
+                        ...el,
+                        ratingArr: Array(el.rating).fill(1)
+                    }
+
+                    return obj
+                })
+                setFeedBackArr([...tempArr])
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    useEffect(() => {
+        handleOnint()
+    }, [focused])
+
     return (
-        <>
+        <ScrollView scrollEnabled={true} contentContainerStyle={{ backgroundColor: colorObj.whiteColor }}>
             <NavBar rootProps={props} />
             <ImageBackground resizeMode="cover" source={require('../../assets/images/teacherBackBanner.png')} style={{ width: wp(100), height: hp(15) }}>
 
@@ -35,14 +200,14 @@ export default function TeacherProfile(props) {
 
             </ImageBackground>
             <View style={[styles.flexRow, { width: wp(90), alignSelf: "center", justifyContent: 'space-between' }]}>
-                <Image source={require('../../assets/images/user.png')} style={{ width: 100, height: 100, position: "relative", top: -40, }} resizeMode="cover" />
+                <Image source={{ uri: teacherObj?.profileImage ? generateImageUrl(teacherObj?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} style={{ width: 100, height: 100, position: "relative", top: -40, borderRadius: 50 }} resizeMode="cover" />
 
                 <Pressable style={styles.btn} onPress={() => refRBSheet.current.open()}>
                     <Text style={styles.btnTxt}>Enquire</Text>
                 </Pressable>
             </View>
             <View style={[styles.flexRow, { marginLeft: 15, marginTop: -10, alignItems: 'center' }]}>
-                <Text style={styles.TeacherName}>Annie Besant</Text>
+                <Text style={styles.TeacherName}>{teacherObj?.name}</Text>
                 <View style={[styles.flexRow, { alignItems: 'center', paddingHorizontal: 20 }]}>
                     <Text style={{ fontFamily: 'RedHatText-Medium', fontSize: 12, color: '#828282' }}>4.2</Text>
                     <Icon name="star" style={{ marginHorizontal: 3 }} size={15} color="orange" />
@@ -51,23 +216,86 @@ export default function TeacherProfile(props) {
             <View style={[styles.flexRow, { width: wp(90), alignSelf: "center", marginVertical: 10 }]}>
                 <View style={[styles.flexRow, { width: "33%" }]}>
                     <Image source={require("../../assets/images/office.png")} />
-                    <Text style={styles.smallTxt}>Mayo Clinic</Text>
+                    <Text style={styles.smallTxt}>{teacherObj?.address ? teacherObj?.address : "Delhi"}</Text>
                 </View>
                 <View style={[styles.flexRow, { width: "33%" }]}>
                     <Image source={require("../../assets/images/medal.png")} />
-                    <Text style={styles.smallTxt}>MBBS, MD</Text>
+                    <Text style={styles.smallTxt}>{teacherObj?.enquiryObj?.educationObj?.degree ? item?.enquiryObj?.educationObj?.degree : "PGT"}</Text>
 
                 </View>
                 <View style={[styles.flexRow, { width: "33%" }]}>
                     <Image source={require("../../assets/images/time.png")} />
-                    <Text style={styles.smallTxt}>10 year experience</Text>
+                    <Text style={styles.smallTxt}>{teacherObj?.enquiryObj?.experience ? teacherObj?.enquiryObj?.experience : "1"} year experience</Text>
                 </View>
             </View>
 
 
             <View style={[styles.flexColumn, { width: wp(90), alignSelf: "center", marginTop: 20, }]}>
-                <Text style={styles.description}>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Officiis ducimus quasi quis. Qui, neque fugit </Text>
+                <Text style={styles.description}>{teacherObj?.enquiryObj?.description ? teacherObj?.enquiryObj?.description : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,"}</Text>
             </View>
+
+
+
+            <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                <Text style={styles.headingAboveCard}>Courses ({coursesArr.length})</Text>
+                <Text style={styles.viewAllText}>View All</Text>
+            </View>
+
+            <FlatList
+                horizontal
+                data={coursesArr}
+                renderItem={renderCourseItem}
+                ListEmptyComponent={
+                    <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>No Courses found</Text>
+                }
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={(item, index) => `${index}`}
+            />
+
+
+            <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                <Text style={styles.headingAboveCard}>Feedback ({feedBackArr.length})</Text>
+                <Pressable onPress={() => setResponseModal(true)}>
+                    <Text style={[styles.viewAllText, { color: colorObj.primarColor, textDecorationLine: 'underline' }]}>Add Feedback</Text>
+                </Pressable>
+            </View>
+
+            <FlatList
+                horizontal
+                data={feedBackArr}
+                ListEmptyComponent={
+                    <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>No FeedBacks found</Text>
+                }
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={(item, index) => `${index}`}
+                renderItem={({ item, index }) => {
+                    return (
+                        <Pressable style={[styles.cardContainer, { height: hp(15) }]}  >
+                            <View style={styles.textCardContainer}>
+                                <View>
+
+                                    <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                                        <Text style={styles.textCardMainHeading}>{item?.sentByObj?.name}</Text>
+                                    </View>
+
+                                    <View style={[styles.flexRow, { alignItems: 'center'}]}>
+                                        {item?.ratingArr?.map((el, i) => {
+                                            return (
+                                                <Icon key={i} name="star" size={16} color="#FF900E" />
+                                            )
+                                        })}
+                                    </View>
+
+
+                                    <Text style={styles.textCardMainSubHeading1}>{item?.message}</Text>
+
+                                </View>
+
+                            </View>
+                        </Pressable>
+                    )
+                }}
+            />
 
             {/* <Swipeable leftActionActivationDistance={10} onLeftActionRelease={() => alert("Enquired")} leftContent={leftContent}>
                 <Text>Enquire Now</Text>
@@ -133,7 +361,49 @@ export default function TeacherProfile(props) {
             </RBSheet>
 
 
-        </>
+
+            {/* //// Modal */}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={responseModal}
+                onRequestClose={() => {
+                    setResponseModal(false);
+                }}
+            >
+                <Pressable style={styles.centeredView} onPress={() => setResponseModal(false)}>
+                    <Pressable style={styles.modalView}>
+                        <Text style={styles.responseModalHeading}>Feedback</Text>
+
+                        <View style={[styles.flexRow, { marginVertical: 10, alignItems: 'center' }]}>
+                            <Image source={{ uri: teacherObj?.profileImage ? generateImageUrl(teacherObj?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} style={{ width: 50, height: 50, borderRadius: 50 }} resizeMode="cover" />
+                            <Text style={[styles.TeacherName, { paddingHorizontal: 20, fontFamily: 'RedHatText-SemiBold' }]}>{teacherObj?.name}</Text>
+                        </View>
+
+                        <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Rating</Text>
+
+                        <Rating
+                            style={{ alignSelf: 'flex-start', marginVertical: 5 }}
+                            type='custom'
+                            onFinishRating={(val) => setRating(val)}
+                            ratingCount={5}
+                            imageSize={25}
+                            showRating
+                            ratingTextColor={colorObj.primarColor}
+                            showRating={false}
+
+                        />
+                        <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Message</Text>
+                        <TextInput style={[styles.textInput]} multiline numberOfLines={4} value={responseMessage} onChangeText={(e) => setResponseMessage(e)} />
+                        <Pressable style={styles.submitBtn} onPress={() => handleSubmitFeedBack()}>
+                            <Text style={styles.submitBtnText}>Submit</Text>
+                        </Pressable>
+
+                    </Pressable>
+                </Pressable>
+            </Modal>
+
+        </ScrollView>
     )
 }
 const styles = StyleSheet.create({
@@ -150,19 +420,19 @@ const styles = StyleSheet.create({
         flexDirection: "column",
     },
     TeacherName: {
-        fontFamily: 'Montserrat-Bold',
+        fontFamily: 'RedHatText-Bold',
         fontSize: 18,
         color: colorObj.primarColor,
         // marginTop: 15
     },
     smallTxt: {
-        fontFamily: 'Montserrat-Regular',
+        fontFamily: 'RedHatText-Regular',
         fontSize: 12,
         color: "black",
         marginLeft: 5
     },
     description: {
-        fontFamily: 'Montserrat-Regular',
+        fontFamily: 'RedHatText-Regular',
         fontSize: 13,
         color: "black",
         lineHeight: 20,
@@ -226,7 +496,126 @@ const styles = StyleSheet.create({
         fontFamily: 'Montserrat-Medium',
         fontSize: 14,
         marginVertical: 10
-    }
+    },
 
+
+
+
+    ////category card
+    headingAboveCard: {
+        fontSize: 16, fontFamily: 'OpenSans-SemiBold', color: '#303030', paddingLeft: 13, marginTop: 10
+    },
+    viewAllText: {
+        fontSize: 14, fontFamily: 'OpenSans-Regular', color: '#828282', paddingRight: 13, marginTop: 10
+    },
+
+
+
+
+    cardContainer: {
+        width: wp(40),
+        backgroundColor: 'white',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        height: hp(25),
+        shadowOpacity: 0.20,
+        shadowRadius: 1.41,
+
+        elevation: 2,
+        borderRadius: 14,
+        marginHorizontal: 10,
+        marginVertical: 10,
+        paddingVertical: 10,
+    },
+    textCardContainer: {
+        paddingHorizontal: 15,
+        paddingVertical: 10
+
+    },
+    courseImg: {
+        height: 100,
+        width: '90%',
+        alignSelf: 'center',
+        borderRadius: 14
+    },
+    textCardMainHeading: {
+        fontFamily: 'Montserrat-SemiBold', fontSize: 14, color: '#232323'
+    },
+    textCardMainSubHeading1: {
+        fontFamily: 'Montserrat-Regular', fontSize: 12, color: '#7E7E7E', marginTop: 2
+    },
+    textCardMainSubHeading2: {
+        fontFamily: 'Montserrat-Regular', fontSize: 12, color: colorObj.primarColor, marginTop: 15
+    },
+
+    //modal styles
+
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        // marginTop: 22,
+        backgroundColor: 'rgba(0,0,0,0.6)'
+
+    },
+    modalView: {
+        margin: 20,
+        width: wp(90),
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+
+    responseModalHeading: {
+        fontFamily: 'Montserrat-SemiBold',
+        fontSize: 20,
+        color: '#000',
+        textAlign: 'left',
+        marginVertical: 10,
+
+        borderBottomWidth: 1,
+        borderBottomColor: '#E0E0E0'
+    },
+
+    //text input styles
+    textInputLabel: {
+        fontFamily: 'RedHatText-SemiBold',
+        fontSize: 16,
+        color: '#000'
+    },
+    textInput: {
+        backgroundColor: '#F5F6FA',
+        borderRadius: 5,
+        marginVertical: 10,
+        width: '100%',
+        fontFamily: 'Montserrat-Regular'
+
+    },
+
+    submitBtn: {
+        backgroundColor: colorObj.primarColor,
+        borderRadius: 25,
+        marginVertical: 10,
+        alignSelf: 'flex-end'
+    },
+    submitBtnText: {
+        fontFamily: 'Montserrat-SemiBold',
+        fontSize: 16,
+        color: colorObj.whiteColor,
+        textAlign: 'center',
+        paddingVertical: 10,
+        paddingHorizontal: 20
+    },
 
 })

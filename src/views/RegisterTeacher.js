@@ -22,6 +22,7 @@ import { nanoid } from 'nanoid/non-secure'
 import { loadingContext } from '../navigators/stacks/RootStack';
 
 import RNPickerSelect from 'react-native-picker-select';
+import { successAlertContext } from '../../App';
 
 export default function RegisterTeacher(props) {
 
@@ -61,6 +62,21 @@ export default function RegisterTeacher(props) {
     const [minFees, setMinFees] = useState('');
     const [maxFees, setMaxFees] = useState('');
 
+
+
+
+
+    const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
+
+
+    const [successAlert, setSuccessAlert] = successAlertArr
+    const [warningAlert, setWarningAlert] = warningAlertArr
+    const [errorAlert, setErrorAlert] = errorAlertArr
+
+
+    const [alertText, setAlertText] = alertTextArr
+
+
     const focused = useIsFocused();
 
     const handleSubmit = async () => {
@@ -98,21 +114,25 @@ export default function RegisterTeacher(props) {
                     //     form_data.append('file', certificate)
                     //     const { data: responses } = await uploadQualifications(res.data._id, formData)
                     // }
-
-                    alert(res.message)
+                    setAlertText(res.message)
+                    setSuccessAlert(true)
+                    // alert(res.message)
                     props.navigation.goBack()
                 }
             }
             else {
-                alert("Please enter all required Values")
+                setWarningAlert(true)
+                setAlertText("Please Enter All Required Values")
             }
         } catch (error) {
             console.error(error)
             if (error.response.data.message) {
-                alert(error.response.data.message)
+                setErrorAlert(true)
+                setAlertText(error.response.data.message)
             }
             else {
-                alert(error.message)
+                setErrorAlert(true)
+                setAlertText(error.message)
             }
         }
         setIsLoading(false)

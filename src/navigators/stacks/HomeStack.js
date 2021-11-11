@@ -17,7 +17,7 @@ export default function HomeStack() {
     const Stack = createNativeStackNavigator();
 
     return (
-        <Stack.Navigator initialRouteName="AllCourses"  >
+        <Stack.Navigator initialRouteName="HomeScreen"  >
             <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} />
             <Stack.Screen name="SearchScreen" component={SearchScreen} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} />
             {/* <Stack.Screen name="Notification" component={Notification} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} /> */}

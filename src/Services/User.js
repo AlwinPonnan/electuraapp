@@ -121,10 +121,15 @@ export const getAllTeachers = async () => {
 export const saveTokenToDatabase = async (token) => {
     try {
         let tokenD = await getDecodedToken()
-        return await axiosApiInstance.post(`${url}/registerUserFcmToken`, { token,userId:tokenD?.userId })
+        return await axiosApiInstance.post(`${url}/registerUserFcmToken`, { token, userId: tokenD?.userId })
     } catch (error) {
         console.error(error)
         throw (error)
     }
+}
+
+
+export const getById = async (id) => {
+    return await axiosApiInstance.get(`${url}/getById/${id}`)
 }
 

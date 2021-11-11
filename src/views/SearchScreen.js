@@ -143,7 +143,7 @@ export default function SearchScreen(props) {
     }
     const renderInstructorItem = ({ item, index }) => {
         return (
-            <Pressable style={styles.cardInstructorContainer} onPress={() => props.navigation.navigate("TeacherProfile")} >
+            <Pressable style={styles.cardInstructorContainer} onPress={() => props.navigation.navigate("TeacherProfile",{data:item._id})} >
                 <Image style={styles.teacherImg} source={{ uri: item?.profileImage ? generateImageUrl(item?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
 
                 <View style={styles.textCardInstructorContainer}>

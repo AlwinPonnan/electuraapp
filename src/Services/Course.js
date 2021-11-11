@@ -4,24 +4,31 @@ import { serverUrl } from './Url';
 
 const url = `${serverUrl}/course`
 
-export const courseAdd=async(formData)=>{
-    return axiosApiInstance.post(`${url}`,formData)
+export const courseAdd = async (formData) => {
+    return axiosApiInstance.post(`${url}`, formData)
 }
 
 
-export const getAllCourses=async()=>{
+export const getAllCourses = async () => {
     return axiosApiInstance.get(`${serverUrl}/`)
 }
 
 
-export const getAllForUsersHomePage=async()=>{
+export const getAllForUsersHomePage = async () => {
     return axiosApiInstance.get(`${url}/getAllForUsersHomePage`)
 }
 
+export const getByCoursesUserId = async (id) => {
+    return axiosApiInstance.get(`${url}/getByUserId/${id}`)
+}
 
-export const getById=async(id)=>{
+
+export const getById = async (id) => {
     return axiosApiInstance.get(`${url}/getById/${id}`)
 }
-export const uploadCourseImage=async(id,obj)=>{
-    return axiosApiInstance.patch(`${url}/uploadCourseImage/${id}`,obj)
+export const uploadCourseImage = async (id, obj) => {
+    return axiosApiInstance.patch(`${url}/uploadCourseImage/${id}`, obj)
 }
+
+
+

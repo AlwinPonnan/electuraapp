@@ -34,13 +34,13 @@ export default function VerifyOtp(props) {
 
     const [otpCode, setOtpCode] = useState();
 
-    const handleOtpSubmit = async () => {
+    const handleOtpSubmit = async (code,autoFill) => {
         try {
             setLoading(true)
             let obj = {
                 phone: props.route.params.data
             }
-            let otp = `${otpCode}`
+            let otp = `${code}`
             console.log(otp)
             let sessionId = await EncryptedStorage.getItem("sessionIdOtp");
             console.log(sessionId)
@@ -106,15 +106,14 @@ export default function VerifyOtp(props) {
                                     placeholderCharacter="*"
                                     // code={this.state.code} //You can supply this prop or not. The component will be used as a controlled / uncontrolled component respectively.
                                     onCodeChanged={code => setOtpCode(code)}
-                                    autoFocusOnLoad
                                     selectionColor="black"
                                     editable={true}
                                     keyboardType="number-pad"
-
+                                    autoFocusOnLoad={false}
                                     codeInputFieldStyle={styles.underlineStyleBase}
                                     codeInputHighlightStyle={styles.underlineStyleHighLighted}
                                     onCodeFilled={(code) => {
-                                        console.log(`Code is ${code}, you are good to go!`)
+                                        handleOtpSubmit(code,true)
                                     }}
                                 />
 
@@ -124,14 +123,14 @@ export default function VerifyOtp(props) {
                             </Pressable>
 
                             <View >
-                                <Pressable style={styles.btn} onPress={() => handleOtpSubmit()}>
+                                <Pressable style={styles.btn} onPress={() => handleOtpSubmit(otpCode,false)}>
                                     <Text style={styles.btnText}>Verify</Text>
                                 </Pressable>
                             </View>
-                            <View style={styles.btnContainer}>
+                            <Pressable onPress={()=>props.navigation.navigate('Login')} style={styles.btnContainer}>
                                 <Text style={styles.termsText}>Already have an account ?<Text style={{ color: colorObj.primarColor }}> LogIn</Text></Text>
 
-                            </View>
+                            </Pressable>
                         </KeyboardAvoidingView>
                     </>
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback,useContext } from 'react'
 import { View, Text, StyleSheet, Image, TextInput, Pressable, KeyboardAvoidingView, ScrollView, Platform, TouchableOpacity, FlatList } from 'react-native'
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -18,10 +18,13 @@ import { courseAdd, uploadCourseImage } from '../Services/Course';
 import { Checkbox } from 'react-native-paper';
 import { getAllClasses } from '../Services/Classses';
 import DocumentPicker from 'react-native-document-picker'
+import { successAlertContext } from '../../App';
+import { loadingContext } from '../navigators/stacks/RootStack';
 
 export default function CreateCourse(props) {
 
-
+    const [loading, setLoading] = useContext(loadingContext);
+    
     const [name, setName] = useState('');
     const [experience, setExperience] = useState('');
     const [description, setDescription] = useState('');
@@ -33,8 +36,20 @@ export default function CreateCourse(props) {
     const [youtubeLink, setYoutubeLink] = useState('');
     const [classesArr, setClassesArr] = useState([]);
     const [courseImg, setCourseImg] = useState();
+
+    const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
+
+
+    const [successAlert, setSuccessAlert] = successAlertArr
+    const [warningAlert, setWarningAlert] = warningAlertArr
+    const [errorAlert, setErrorAlert] = errorAlertArr
+
+
+    const [alertText, setAlertText] = alertTextArr
     const handleSubmit = async () => {
+        setLoading(true)
         try {
+
             let classesFilteredArr = classesArr.filter(el => el.checked == true).map(el => {
                 let obj = {
                     ...el,
@@ -68,23 +83,29 @@ export default function CreateCourse(props) {
                     formData.append('file',courseImg)
 
                     const {data:response}=await uploadCourseImage(res.data._id,formData)
-                    alert(res.message)
+                    
+                    setAlertText(res.message)
+                    setSuccessAlert(true)
                     props.navigation.goBack()
                 }
             }
             else{
-                alert("Please fill all the  fields")
+                setWarningAlert(true)
+                setAlertText("Please fill all the fields")
             }
 
         } catch (error) {
             console.error(error)
             if (error.response.data.message) {
-                alert(error.response.data.message)
+                setErrorAlert(true)
+                setAlertText(error.response.data.message)
             }
             else {
-                alert(error.message)
+                setErrorAlert(true)
+                setAlertText(error.message)
             }
         }
+        setLoading(false)
     }
 
 
