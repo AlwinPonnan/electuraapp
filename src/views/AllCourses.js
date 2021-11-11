@@ -21,6 +21,46 @@ export default function AllCourses() {
         },
     ])
 
+    const DATA = [
+        {
+            id: 1,
+            teacher: 'Chris Parkar',
+            course: 'Stock Analysis',
+            price: '699',
+            rating: '4.2',
+            imgUrl: "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
+
+        },
+        {
+            id: 2,
+            teacher: 'Chris Parkar',
+            course: 'Stock Analysis',
+            price: '699',
+            rating: '4.2',
+            imgUrl: "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
+
+        }
+    ]
+
+    const renderItem = ({ item, index }) => {
+        return (
+            <View style={[styles.renderView]}>
+                <Image
+                    style={styles.renderImage}
+                    source={{
+                        uri: item.imgUrl
+                    }}
+                />
+                <Text style={[styles.renderTitle]}>{item.course}</Text>
+                <Text style={[styles.renderTeacher]}>{item.teacher}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}><FontAwesome name='inr' size={14} color={'#085A4E'} style={[styles.renderIcon]} /><Text style={[styles.renderPrice]}>{item.price}</Text></View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}><FontAwesome name='star' size={14} color={'#085A4E'} style={[styles.renderIcon]} />
+                        <Text style={[styles.renderPrice]}>{item.rating}</Text></View>
+                </View>
+            </View>
+        )
+    }
 
     const renderTeacherItem = ({ item, index }) => {
         return (
@@ -41,7 +81,6 @@ export default function AllCourses() {
                         <Text style={[styles.subject]}>{item.experience}</Text>
                     </View>
                     <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
-                        <Text style={[styles.button, { color: '#828282', marginRight: 25 }]}>View Profile</Text>
                         <Text style={[styles.button, { backgroundColor: '#085A4E', color: '#fff', paddingHorizontal: 15, paddingVertical: 3, borderRadius: 5 }]}>Enquire</Text></View></View>
 
 
@@ -70,6 +109,14 @@ export default function AllCourses() {
                 <Feather name='align-right' size={20} style={[styles.topIcons, { marginRight: 10 }]} />
             </View>
             <Text style={[styles.title]}>Recommended Courses</Text>
+            <FlatList
+                horizontal
+                data={DATA}
+                renderItem={renderItem}
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={(item, index) => `${index}`}
+            />
+
             <Text style={[styles.title]}>New Courses</Text>
             <FlatList
                 style={{ height: 300 }}
@@ -164,6 +211,7 @@ const styles = StyleSheet.create({
     listView: {
         borderBottomRightRadius: 10,
         shadowColor: "rgba(0,0,0,0.3)",
+        marginTop: 20,
         shadowOffset: {
             width: 0,
             height: 1,
@@ -202,5 +250,49 @@ const styles = StyleSheet.create({
         fontSize: 13,
         fontFamily: 'Montserrat-SemiBold',
         marginTop: 10
+    },
+    renderImage: {
+        width: 200,
+        height: '40%',
+        borderRadius: 5
+    },
+    renderTitle: {
+        fontSize: 16,
+        fontFamily: 'OpenSans-SemiBold',
+        color: 'black',
+        marginTop: 15
+    },
+    renderTeacher: {
+        fontSize: 13,
+        fontFamily: 'OpenSans-Regular',
+        color: '#828282',
+        marginTop: 5
+    },
+    renderPrice: {
+        fontSize: 16,
+        fontFamily: 'OpenSans-SemiBold',
+        color: '#085A4E',
+        marginTop: 15
+    },
+    renderIcon: {
+        marginTop: 15,
+        marginRight: 5
+    },
+    renderView: {
+        borderWidth: 1,
+        marginRight: 15,
+        marginTop: 20,
+        padding: 10,
+        paddingVertical: 5,
+        justifyContent: 'center',
+        borderRadius: 10,
+        shadowColor: "rgba(0,0,0,0.3)",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.22,
+        shadowRadius: 2.22,
+        borderColor: '#E5E5E5'
     }
 })
