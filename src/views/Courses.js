@@ -5,19 +5,20 @@ import { colorObj, light_colors } from '../globals/colors';
 import Icon from 'react-native-vector-icons/Ionicons'
 import NavBar from '../components/Navbar';
 import { getAllCategory } from '../Services/Category';
-import { getAllForUsersHomePage } from '../Services/Course';
+import { getAllCoursesSubjectWise, getAllForUsersHomePage } from '../Services/Course';
 import { useIsFocused } from '@react-navigation/core';
 import { generateImageUrl } from '../globals/utils';
 import { getAllSubjects } from '../Services/Subjects';
 
 export default function Courses(props) {
     const [courseArr, setCourseArr] = useState([
-        
+
     ])
     const focused = useIsFocused()
     const [subjectArr, setSubjectArr] = useState([]);
     const [selectedSubjectId, setSelectedSubjectId] = useState('');
 
+    const [subjectWiseCoursesArr, setSubjectWiseCoursesArr] = useState([]);
     const [productsArr, setProductsArr] = useState([
         {
             name: "Lorem Course",
@@ -97,11 +98,11 @@ export default function Courses(props) {
             const { data: res } = await getAllForUsersHomePage();
             if (res.success) {
                 let tempArr = res.data;
-               
+
                 let temp = tempArr.map(el => {
                     let obj = {
                         ...el,
-                        imgUrl: el?.thumbnailImage?.url ?  generateImageUrl(el?.thumbnailImage?.url) :"https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
+                        imgUrl: el?.thumbnailImage?.url ? generateImageUrl(el?.thumbnailImage?.url) : "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
 
                     }
                     return obj
@@ -114,15 +115,30 @@ export default function Courses(props) {
         }
     }
 
+    const getSubjectWise = async () => {
+        try {
+            const { data: res } = await getAllCoursesSubjectWise();
+            if (res.success) {
+                let tempArr = res.data;
+                tempArr = tempArr.filter(el => el.courseArr.length >= 1)
+                console.log(JSON.stringify(tempArr, null, 2))
+
+                setSubjectWiseCoursesArr([...tempArr])
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
 
     useEffect(() => {
         getSubjects()
         getCourses()
+        getSubjectWise()
     }, [focused])
 
     const renderItem = ({ item, index }) => {
         return (
-            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("CourseDetail",{data:item._id})} >
+            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("CourseDetail", { data: item._id })} >
                 <Image style={styles.courseImg} source={{ uri: item?.imgUrl }} />
                 <View style={styles.textCardContainer}>
                     <View>
@@ -142,6 +158,9 @@ export default function Courses(props) {
             </Pressable>
         )
     }
+
+
+   
 
     return (
         <View style={styles.container}>
@@ -178,12 +197,75 @@ export default function Courses(props) {
                     data={courseArr}
                     renderItem={renderItem}
                     ListEmptyComponent={
-                        <Text style={{fontFamily:'Montserrat-Regular',padding:10}}>No Courses found</Text>
+                        <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>No Courses found</Text>
                     }
                     showsHorizontalScrollIndicator={false}
                     keyExtractor={(item, index) => `${index}`}
                 />
 
+                <FlatList
+                    data={subjectWiseCoursesArr}
+                    renderItem={({ item, index }) => {
+                        return (
+                            <View>
+                                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                                    <Text style={styles.headingAboveCard}>{item?.name}</Text>
+                                    <Text style={styles.viewAllText}>View All</Text>
+                                </View>
+                                <FlatList
+                                    data={item?.courseArr}
+                                    keyExtractor={(item, index) => `${item._id}`}
+                                    horizontal
+                                    renderItem={({ item: itemX, index: indexX }) => {
+                                        return (
+                                            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("CourseDetail", { data: itemX._id })} >
+                                                <Image style={styles.courseImg} source={{ uri: generateImageUrl(itemX?.thumbnailImage?.url) }} />
+                                                <View style={styles.textCardContainer}>
+                                                    <View>
+
+                                                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                                                            <Text style={styles.textCardMainHeading}>{itemX?.name}</Text>
+                                                            <Icon name="heart" size={14} color={colorObj.primarColor} />
+                                                        </View>
+                                                        <Text style={styles.textCardMainSubHeading1}>{itemX?.teacherName}</Text>
+                                                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                                                            <Text style={styles.textCardMainSubHeading2}>₹{itemX?.price}</Text>
+                                                            <Text style={styles.textCardMainSubHeading2}><Icon name="star" size={14} color={colorObj.primarColor} />4.2</Text>
+                                                        </View>
+                                                    </View>
+
+                                                </View>
+                                            </Pressable>
+                                        )
+                                    }}
+                                />
+                            </View>
+                        )
+                    }}
+                    ListEmptyComponent={
+                        <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>No Courses found</Text>
+                    }
+                    // ListHeaderComponent={
+                    //     <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                    //         <Text style={styles.headingAboveCard}>{title}</Text>
+                    //         <Text style={styles.viewAllText}>View All</Text>
+                    //     </View>
+                    // }
+                    showsHorizontalScrollIndicator={false}
+                    keyExtractor={(item, index) => `${index}`}
+                />
+
+
+
+                {/* <SectionList
+                    sections={subjectWiseCoursesArr}
+                    keyExtractor={(item, index) => `${item._id}`}
+                    // horizontal
+                    renderItem={({ item, index }) => <RenderSectionCourses horizontal item={item} />}
+                    renderSectionHeader={({ section: { title, _id } }) => (
+                        
+                    )}
+                /> */}
 
 
                 {/* <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>

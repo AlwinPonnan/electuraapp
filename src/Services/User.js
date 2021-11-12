@@ -118,6 +118,11 @@ export const getAllTeachers = async () => {
     }
 }
 
+
+
+export const getAllTeachersSubjectWise = async () => {
+    return await axiosApiInstance.get(`${url}/getAllTeachersSubjectWise`)
+}
 export const saveTokenToDatabase = async (token) => {
     try {
         let tokenD = await getDecodedToken()

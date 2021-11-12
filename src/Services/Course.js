@@ -18,6 +18,11 @@ export const getAllForUsersHomePage = async () => {
     return axiosApiInstance.get(`${url}/getAllForUsersHomePage`)
 }
 
+export const getAllCoursesSubjectWise = async () => {
+    return axiosApiInstance.get(`${url}/getAllCoursesSubjectWise`)
+}
+
+
 export const getByCoursesUserId = async (id) => {
     return axiosApiInstance.get(`${url}/getByUserId/${id}`)
 }

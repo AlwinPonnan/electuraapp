@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import NavBar from '../components/Navbar';
 import { getAllCategory } from '../Services/Category';
 import { useIsFocused } from '@react-navigation/core';
-import { getAllTeachers } from '../Services/User';
+import { getAllTeachers, getAllTeachersSubjectWise } from '../Services/User';
 import { imageObj } from '../globals/images';
 import { getAllSubjects } from '../Services/Subjects';
 import { generateImageUrl } from '../globals/utils';
@@ -22,6 +22,11 @@ export default function HomeScreen(props) {
     const [selectedSubjectId, setSelectedSubjectId] = useState('');
     const [teachersArr, setTeachersArr] = useState([]);
     const [mainTeachersArr, setMainTeachersArr] = useState([]);
+
+
+
+    const [subjectWiseTeacherArr, setSubjectWiseTeacherArr] = useState([]);
+
     const [productsArr, setProductsArr] = useState([
         {
             name: "Lorem Course",
@@ -103,6 +108,23 @@ export default function HomeScreen(props) {
         }
     }
 
+    const getSubjectWise = async () => {
+        try {
+            const { data: res } = await getAllTeachersSubjectWise();
+            if (res.success) {
+                let tempArr = res.data;
+                tempArr = tempArr.filter(el => el.userArr.length >= 1)
+                console.log(JSON.stringify(tempArr, null, 2))
+
+                setSubjectWiseTeacherArr([...tempArr])
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+
+
     async function registerAppWithFCM() {
         await messaging().registerDeviceForRemoteMessages();
     }
@@ -119,6 +141,7 @@ export default function HomeScreen(props) {
     useEffect(() => {
         getSubjects()
         getTeachers()
+        getSubjectWise()
     }, [isFocused])
 
 
@@ -134,7 +157,7 @@ export default function HomeScreen(props) {
 
     const renderItem = ({ item, index }) => {
         return (
-            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("TeacherProfile",{data:item._id})}>
+            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("TeacherProfile", { data: item._id })}>
 
                 <Image style={styles.teacherImg} source={{ uri: item?.profileImage ? generateImageUrl(item?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
                 <View style={styles.textCardContainer}>
@@ -192,20 +215,69 @@ export default function HomeScreen(props) {
                 />
 
 
-                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                    <Text style={styles.headingAboveCard}>Maths Instructors</Text>
-                    <Pressable onPress={()=>props.navigation.navigate('AllTeacher')}>
-                        <Text style={styles.viewAllText}>View All</Text>
-                    </Pressable>
-                </View>
+
+
+
+               
                 <FlatList
+                    data={subjectWiseTeacherArr}
+                    renderItem={({ item, index }) => {
+                        return (
+                            <View style={{marginVertical:10}}>
+                                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                                    <Text style={styles.headingAboveCard}>{item?.name} Instructors</Text>
+                                    <Pressable onPress={() => props.navigation.navigate('AllTeacher')}>
+                                        <Text style={styles.viewAllText}>View All</Text>
+                                    </Pressable>
+                                </View>
+                                <FlatList
+                                    data={item?.userArr}
+                                    keyExtractor={(item, index) => `${item._id}`}
+                                    horizontal
+                                    renderItem={({ item: itemX, index: indexX }) => {
+                                        return (
+                                            <Pressable style={[styles.cardContainer,{marginVertical:10,paddingVertical:5}]} onPress={() => props.navigation.navigate("TeacherProfile", { data: itemX._id })}>
+
+                                                <Image style={styles.teacherImg} source={{ uri: itemX?.profileImage ? generateImageUrl(itemX?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
+                                                <View style={styles.textCardContainer}>
+                                                    <View>
+
+                                                        <Text style={styles.textCardMainHeading}>{itemX?.name}</Text>
+                                                        <Text style={styles.textCardMainSubHeading1}>{itemX?.enquiryObj?.classesArr?.reduce((acc, el) => acc + el.className + ',', '')}</Text>
+                                                        <Text style={styles.textCardMainSubHeading2}>{itemX?.enquiryObj?.experience} Year Experience</Text>
+                                                    </View>
+                                                    <View style={{ position: 'absolute', top: 5, right: 10 }} >
+                                                        <Icon name="bookmark-outline" size={16} color="black" />
+                                                    </View>
+                                                </View>
+                                            </Pressable>
+                                        )
+                                    }}
+                                />
+                            </View>
+                        )
+                    }}
+                    ListEmptyComponent={
+                        <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>No Courses found</Text>
+                    }
+
+                    showsHorizontalScrollIndicator={false}
+                    keyExtractor={(item, index) => `${index}`}
+                />
+
+
+
+
+
+
+                {/* <FlatList
                     style={{ height: 150 }}
                     horizontal
                     data={productsArr}
                     renderItem={renderItem}
                     showsHorizontalScrollIndicator={false}
                     keyExtractor={(item, index) => `${index}`}
-                />
+                /> */}
 
 
 
