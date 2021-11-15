@@ -2,13 +2,13 @@ import React from 'react'
 import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
 import { colorObj } from '../globals/colors'
 
-export default function PaymentSuccess() {
+export default function PaymentSuccess(props) {
 
     const handleTrackStatus = () => {
 
     }
     const handleBackHome = () => {
-
+        props.navigation.navigate('MainDrawer')
     }
 
     return (

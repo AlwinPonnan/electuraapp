@@ -13,10 +13,11 @@ import { NewEnquiry } from '../Services/Enquiry';
 
 import { successAlertContext } from '../../App';
 
+import { loadingContext } from '../navigators/stacks/RootStack';
 export default function CreateEnquiry(props) {
 
 
-
+    const [isLoading, setIsLoading] = useContext(loadingContext);
 
     const focused = useIsFocused()
     const [ClassType, setClassType] = useState("Immediately");
@@ -105,6 +106,7 @@ export default function CreateEnquiry(props) {
 
 
     const handleEnquirySubmit = async () => {
+        setIsLoading(true)
         try {
             if (selectedClassId != "" && selectedSubjectId != "" && ClassType != "" && price != "" && gender != "") {
 
@@ -135,6 +137,7 @@ export default function CreateEnquiry(props) {
             setAlertText(error.message)
 
         }
+        setIsLoading(false)
     }
 
 

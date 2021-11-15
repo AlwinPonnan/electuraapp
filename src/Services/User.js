@@ -144,3 +144,11 @@ export const getWishlist = async () => {
     return await axiosApiInstance.get(`${url}/getWishlist`)
 }
 
+
+export const addToCart = async (obj) => {
+    return await axiosApiInstance.post(`${url}/addToCart`,obj)
+}
+export const getCart = async () => {
+    return await axiosApiInstance.get(`${url}/getCart`)
+}
+

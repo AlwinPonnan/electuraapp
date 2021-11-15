@@ -8,7 +8,7 @@ import { getById } from '../Services/Course';
 import { useIsFocused } from '@react-navigation/core';
 import OrderSummary from './OrderSummary';
 import { useNavigation } from '@react-navigation/core';
-import { addTOWishList, getDecodedToken } from '../Services/User';
+import { addToCart, addTOWishList, getDecodedToken } from '../Services/User';
 import { successAlertContext } from '../../App';
 import { loadingContext } from '../navigators/stacks/RootStack';
 
@@ -79,6 +79,36 @@ export default function CourseDetail(props) {
     }
 
 
+    const handleAddCourseToCart = async() => {
+        try {
+            let tokenObj = await getDecodedToken()
+            let obj = {
+                userId: tokenObj?.userId,
+                courseId: courseObj?._id
+            }
+            console.log(obj)
+            const { data: res } = await addToCart(obj);
+            if (res.success) {
+                setAlertText(res.message);
+                setSuccessAlert(true)
+            }
+        } catch (error) {
+            console.error(error)
+            if (error.response.data.message) {
+                setErrorAlert(true)
+                setAlertText(error.response.data.message)
+            }
+            else {
+                setErrorAlert(true)
+                setAlertText(error.message)
+            }
+        }
+    }
+
+
+    
+    
+
     const handleOnint = () => {
 
         getCourseById()
@@ -124,7 +154,7 @@ export default function CourseDetail(props) {
                     {courseObj?.description}
                 </Text>
             </View>
-            <Pressable style={styles.btn} onPress={() => handleLinkingOpen()}>
+            <Pressable style={styles.btn} onPress={() => handleAddCourseToCart()}>
                 <Text style={styles.btnText}>Buy Now</Text>
             </Pressable>
         </View>

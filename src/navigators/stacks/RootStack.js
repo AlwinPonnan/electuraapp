@@ -25,6 +25,13 @@ import SpecificChat from '../../views/SpecificChat';
 import LoadingContainer from '../../views/LoadingContainer';
 
 import { axiosApiInstance } from '../../../App';
+import ShoppingCart from '../../views/ShopingCart';
+import PaymentSuccess from '../../views/PaymentSuccess';
+import PaymentFailed from '../../views/PaymentFailed';
+import OrderSummary from '../../views/OrderSummary';
+import Order from '../../views/Order';
+import OrderDetail from '../../views/OrderDetail';
+import IncomingOrders from '../../views/IncomingOrders';
 const Stack = createNativeStackNavigator();
 
 export const AuthContext = createContext()
@@ -95,7 +102,7 @@ export default function RootStack() {
                     // let authToken = await EncryptedStorage.getItem('AUTH_TOKEN')
                     // await EncryptedStorage.removeItem('AUTH_TOKEN')
                     // if (originalRequest) {
-                        originalRequest._retry = true;
+                    originalRequest._retry = true;
 
                     try {
                         let token = await EncryptedStorage.getItem('AUTH_REFRESH_TOKEN')
@@ -148,6 +155,16 @@ export default function RootStack() {
                                         <Stack.Screen name="SpecificChat" component={SpecificChat} options={{
                                             headerShown: false
                                         }} />
+                                        <Stack.Screen name="ShoppingCart" component={ShoppingCart} options={{ headerShown: false }} />
+                                        <Stack.Screen name="OrderSummary" component={OrderSummary} options={{ headerShown: false }} />
+                                        <Stack.Screen name="PaymentSuccess" component={PaymentSuccess} options={{ headerShown: false }} />
+                                        <Stack.Screen name="PaymentFailed" component={PaymentFailed} options={{ headerShown: false }} />
+                                        <Stack.Screen name="Orders" component={Order} options={{ headerShown: false }} />
+                                        <Stack.Screen name="OrderDetail" component={OrderDetail} options={{ headerShown: false }} />
+                                        <Stack.Screen name="IncomingOrders" component={IncomingOrders} options={{ headerShown: false }} />
+
+
+
                                     </>
 
                                     :

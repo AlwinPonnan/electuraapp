@@ -1,14 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj, light_colors } from '../globals/colors';
 import Icon from 'react-native-vector-icons/Ionicons'
 import NavBar from '../components/Navbar';
 import { Switch } from 'react-native-paper';
+
+import { roleContext } from '../navigators/stacks/RootStack';
 export default function Profile(props) {
     const [isSwitchOn, setIsSwitchOn] = React.useState(false);
 
     const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
+    const [roleName, setRoleName] = useContext(roleContext);
     return (
         <View style={styles.container}>
             <NavBar rootProps={props} />
@@ -22,13 +25,35 @@ export default function Profile(props) {
                     </View>
                 </View>
                 <Text style={styles.subHeading}>My Courses</Text>
+
+                <Pressable onPress={() => props.navigation.navigate('ShoppingCart')}>
+
+                    <Text style={styles.subHeading}>My Cart</Text>
+                </Pressable>
+                <Pressable onPress={() => props.navigation.navigate('Orders')}>
+
+                    <Text style={styles.subHeading}>My Orders</Text>
+                </Pressable>
+                {roleName == "TEACHER" &&
+                    <>
+                        <Pressable onPress={() => props.navigation.navigate('IncomingOrders')}>
+
+                            <Text style={styles.subHeading}>Incoming Orders</Text>
+                        </Pressable>
+                    </>
+                }
                 <Text style={styles.subHeading}>My Enquires</Text>
 
                 <Text style={styles.subHeading}>My Teachers</Text>
                 <Text style={styles.subHeading}>Feedbacks</Text>
-                <Text style={[styles.subHeading, { fontFamily: 'RedHatText-SemiBold', color: "#085A4E" }]}>Become a Teacher</Text>
+                {
+                    roleName == "USER" &&
+                    <>
+                        <Text style={[styles.subHeading, { fontFamily: 'RedHatText-SemiBold', color: "#085A4E" }]}>Become a Teacher</Text>
 
-                <Text style={[styles.subHeading, { fontFamily: 'RedHatText-SemiBold', color: "#085A4E" }]}>Create Your Course</Text>
+                        <Text style={[styles.subHeading, { fontFamily: 'RedHatText-SemiBold', color: "#085A4E" }]}>Create Your Course</Text>
+                    </>
+                }
                 <View style={styles.flexRow}>
 
                     <Text style={[styles.subHeading, { fontFamily: 'RedHatText-SemiBold', borderBottomWidth: 0, color: "#085A4E" }]}>Logout</Text>
@@ -69,7 +94,7 @@ const styles = StyleSheet.create({
         paddingBottom: 10
 
     },
-    onlineText:{
+    onlineText: {
         fontFamily: 'RedHatText-Regular',
         fontSize: 14,
         color: '#27303E',

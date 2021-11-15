@@ -3,11 +3,11 @@ import { StyleSheet, Text, View, FlatList, Image, Pressable, Modal } from 'react
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
-import { getMyOrders } from '../Services/Order';
+import { getIncomingOrders, getMyOrders } from '../Services/Order';
 import { useIsFocused } from '@react-navigation/core';
 import { generateImageUrl } from '../globals/utils';
 
-export default function Order(props) {
+export default function IncomingOrders(props) {
 
     const [ordersArr, setOrdersArr] = useState([]);
 
@@ -15,7 +15,7 @@ export default function Order(props) {
 
     const getOrders = async () => {
         try {
-            const { data: res } = await getMyOrders();
+            const { data: res } = await getIncomingOrders();
             if (res) {
                 setOrdersArr(res.data)
             }
