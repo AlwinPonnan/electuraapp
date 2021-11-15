@@ -2,7 +2,7 @@ import React from 'react'
 import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
 import { colorObj } from '../globals/colors'
 
-export default function PaymentFailed() {
+export default function PaymentFailed(props) {
 
     const handleTrackStatus = () => {
 
@@ -21,7 +21,7 @@ export default function PaymentFailed() {
                     <Text style={[styles.content]}>Please go to payment mode and try again</Text>
                 </View></View>
                            <View  style={{ marginTop:20, padding: 20,paddingHorizontal:50 }}>
-                               <Pressable style={[styles.Btn, { backgroundColor: '#E75430', }]} onPress={() => handleBack()}>
+                               <Pressable style={[styles.Btn, { backgroundColor: '#E75430', }]} onPress={() => props.navigation.goBack()}>
                     <Text style={[styles.BtnText, { color: '#FFF', }]}>Back</Text>
                 </Pressable>
             </View>

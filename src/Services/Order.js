@@ -12,6 +12,11 @@ export const createOrder = async (obj) => {
     return await axiosApiInstance.post(`${url}/createOrder`, obj)
 }
 
+export const createSingleOrder = async (obj) => {
+    return await axiosApiInstance.post(`${url}/createSingleOrder`, obj)
+}
+
+
 
 export const paymentCallBack = async (orderId) => {
     return await axiosApiInstance.get(`${url}/paymentCB/${orderId}`)

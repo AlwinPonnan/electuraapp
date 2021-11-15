@@ -5,7 +5,8 @@ import { colorObj } from '../globals/colors'
 export default function PaymentSuccess(props) {
 
     const handleTrackStatus = () => {
-
+        props.navigation.navigate('Orders')
+        
     }
     const handleBackHome = () => {
         props.navigation.navigate('MainDrawer')

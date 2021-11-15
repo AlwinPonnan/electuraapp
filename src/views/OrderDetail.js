@@ -76,6 +76,7 @@ export default function OrderDetail(props) {
 
             const { data: res } = await dispatchOrder(orderObj?._id)
             if (res) {
+                getOrders()
                 setAlertText(res.message)
                 setSuccessAlert(true)
             }
@@ -201,11 +202,11 @@ export default function OrderDetail(props) {
                                     <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Dispatch</Text>
                                 </Pressable>
                             }
-                            {orderObj?.statusObj?.status == "DISPATCHED" &&
+                            {/* {orderObj?.statusObj?.status == "DISPATCHED" &&
                                 <Pressable style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }} onPress={() => handleDeliverOrder()}>
                                     <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Deliver</Text>
                                 </Pressable>
-                            }
+                            } */}
                             {orderObj?.statusObj?.status == "DELIVERED" &&
                                 <Pressable style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }}>
                                     <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Delivered</Text>
