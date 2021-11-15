@@ -1,10 +1,37 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, Image, Pressable } from 'react-native'
 import { colorObj } from '../globals/colors'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/Ionicons';
 import NavBar from '../components/Navbar';
+import { useIsFocused } from '@react-navigation/core';
+import { getAllNotifications } from '../Services/User';
+import { FlatList } from 'react-native-gesture-handler';
+import { generateImageUrl } from '../globals/utils';
+
+
 export default function Notification(props) {
+
+
+    const [notificationArr, setNotificationArr] = useState([]);
+
+    const focused = useIsFocused()
+
+    const getNotifications = async () => {
+        try {
+            const { data: res } = await getAllNotifications()
+            if (res.success) {
+                setNotificationArr(res.data)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+
+    useEffect(() => {
+        getNotifications()
+    }, [focused])
     return (
         <>
             <View style={styles.container}>
@@ -13,7 +40,7 @@ export default function Notification(props) {
                 <View style={styles.innerContainer}>
 
                     <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                        <Pressable onPress={()=>props.navigation.goBack()}>
+                        <Pressable onPress={() => props.navigation.goBack()}>
                             <Icon name="chevron-back-outline" size={20} color="black" />
                         </Pressable>
                         <Text style={styles.markAsReadText} >Mark as read</Text>
@@ -22,22 +49,30 @@ export default function Notification(props) {
                     <Text style={styles.heading}>Notification</Text>
 
 
+                    <FlatList
+                        data={notificationArr}
+                        keyExtractor={(item, index) => `${item._id}`}
+                        renderItem={({ item, index }) => {
+                            return (
 
-                    <View style={styles.notiCard}>
-                        <View style={[styles.flexRow, { alignItems: 'center' }]}>
-                            <View>
-                                <Image style={{ height: 50, width: 50 }} source={require('../../assets/images/user.png')} />
-                            </View>
+                                <View style={styles.notiCard}>
+                                    <View style={[styles.flexRow, { alignItems: 'center',marginHorizontal:5 }]}>
+                                        <View>
+                                            <Image style={{ height: 50, width: 50 }} source={{uri:generateImageUrl(item?.userObj?.profileImage)}} />
+                                        </View>
 
-                            <View style={styles.notificationInnerContainer}>
-                                <Text style={styles.cardHeading}>Notification Heading</Text>
-                                <Text style={styles.cardData}>Monday</Text>
-                            </View>
-                        </View>
-                        {/* <Text style={styles.cardHeading}>Couse Purchased successfully !</Text>
+                                        <View style={styles.notificationInnerContainer}>
+                                            <Text style={styles.cardHeading}>{item?.title}</Text>
+                                            <Text style={styles.cardData}>{item?.content}</Text>
+                                        </View>
+                                    </View>
+                                    {/* <Text style={styles.cardHeading}>Couse Purchased successfully !</Text>
                         <Text style={styles.cardData}>See the message and go to the your deshboard</Text>
                         <Text style={styles.cardTime}>08:20 am</Text> */}
-                    </View>
+                                </View>
+                            )
+                        }}
+                    />
 
                 </View>
             </View>

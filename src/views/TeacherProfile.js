@@ -8,7 +8,7 @@ import { RadioButton } from 'react-native-paper';
 
 import Swipeable from 'react-native-swipeable';
 import { useIsFocused } from '@react-navigation/core';
-import { getById } from '../Services/User';
+import { getById, getDecodedToken } from '../Services/User';
 import { generateImageUrl } from '../globals/utils';
 import { getByCoursesUserId } from '../Services/Course';
 
@@ -56,6 +56,8 @@ export default function TeacherProfile(props) {
 
     const [feedBackArr, setFeedBackArr] = useState([]);
 
+    const [decodedObj, setDecodedObj] = useState({});
+
     const leftContent = () => {
         return (
             <Pressable style={styles.btn} >
@@ -73,7 +75,10 @@ export default function TeacherProfile(props) {
     }
 
     const getTeacher = async () => {
+        setIsLoading(true)
         try {
+            let decodedTokenObj = await getDecodedToken();
+            setDecodedObj(decodedTokenObj)
             let userId = props.route.params.data;
             const { data: res } = await getById(userId)
             console.log(JSON.stringify(res.data, null, 2))
@@ -83,6 +88,7 @@ export default function TeacherProfile(props) {
         } catch (error) {
             console.error(error)
         }
+        setIsLoading(false)
     }
 
 
@@ -237,10 +243,18 @@ export default function TeacherProfile(props) {
             </ImageBackground>
             <View style={[styles.flexRow, { width: wp(90), alignSelf: "center", justifyContent: 'space-between' }]}>
                 <Image source={{ uri: teacherObj?.profileImage ? generateImageUrl(teacherObj?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} style={{ width: 100, height: 100, position: "relative", top: -40, borderRadius: 50 }} resizeMode="cover" />
+                {
+                    (teacherObj?.role == "TEACHER" && teacherObj?._id == decodedObj?.userId) ?
 
-                <Pressable style={styles.btn} onPress={() => refRBSheet.current.open()}>
-                    <Text style={styles.btnTxt}>Enquire</Text>
-                </Pressable>
+                        <Pressable style={styles.btn} onPress={() => props.navigation.navigate('AccountEdit')}>
+                            <Text style={styles.btnTxt}>Edit</Text>
+                        </Pressable>
+                        :
+
+                        <Pressable style={styles.btn} onPress={() => refRBSheet.current.open()}>
+                            <Text style={styles.btnTxt}>Enquire</Text>
+                        </Pressable>
+                }
             </View>
             <View style={[styles.flexRow, { marginLeft: 15, marginTop: -10, alignItems: 'center' }]}>
                 <Text style={styles.TeacherName}>{teacherObj?.name}</Text>

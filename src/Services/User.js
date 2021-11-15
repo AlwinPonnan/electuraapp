@@ -152,3 +152,10 @@ export const getCart = async () => {
     return await axiosApiInstance.get(`${url}/getCart`)
 }
 
+
+export const getAllNotifications = async () => {
+    let tokenD = await getDecodedToken()
+
+    return await axiosApiInstance.get(`${url}/getNotifications/${tokenD?.userId}`)
+}
+
