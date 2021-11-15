@@ -58,6 +58,8 @@ export default function TeacherProfile(props) {
 
     const [decodedObj, setDecodedObj] = useState({});
 
+    const [additionalMessage, setAdditionalMessage] = useState('');
+
     const leftContent = () => {
         return (
             <Pressable style={styles.btn} >
@@ -193,6 +195,7 @@ export default function TeacherProfile(props) {
 
 
     const handleEnquireNow = async () => {
+        setIsLoading(true)
         refRBSheet.current.close()
         try {
 
@@ -207,7 +210,8 @@ export default function TeacherProfile(props) {
                 price: '',
                 specificRequirement: '',
                 enquiryType: checked,
-                teacherId: teacherObj?._id
+                teacherId: teacherObj?._id,
+                additionalMessage
             }
             let { data: res } = await NewEnquiry(obj);
             if (res.success) {
@@ -222,6 +226,7 @@ export default function TeacherProfile(props) {
             setAlertText(error.message)
 
         }
+        setIsLoading(false)
     }
 
 
@@ -363,7 +368,7 @@ export default function TeacherProfile(props) {
                         backgroundColor: "rgba(0,0,0,0.5)",
                     },
                     container: {
-                        height: hp(30)
+                        height: hp(50)
                     },
                     draggableIcon: {
                         backgroundColor: "#000"
@@ -383,6 +388,7 @@ export default function TeacherProfile(props) {
                         />
 
                     </Pressable>
+
                     <Pressable onPress={() => setChecked('slot')} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
                         <Text style={styles.bottomSheetOptionText}>Slot Booking</Text>
                         <RadioButton
@@ -402,7 +408,9 @@ export default function TeacherProfile(props) {
                             onPress={() => setChecked('connect')}
                         />
                     </Pressable>
+                    <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Message</Text>
 
+                    <TextInput style={[styles.textInput, { width: wp(90) }]} multiline numberOfLines={2} value={additionalMessage} onChangeText={(e) => setAdditionalMessage(e)} />
 
                     <Pressable style={styles.btn} onPress={() => handleEnquireNow()}>
                         <Text style={styles.btnTxt}>Enquire</Text>

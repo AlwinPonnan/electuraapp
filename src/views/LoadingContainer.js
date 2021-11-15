@@ -8,7 +8,7 @@ export default function LoadingContainer() {
     return (
         <>
             <View style={styles.container}>
-                <LottieView source={require('../../assets/images/loading.json')} autoSize resizeMode="cover" autoPlay loop={false} style={styles.lottieStyle} />
+                <LottieView source={require('../../assets/images/loading.json')} autoSize resizeMode="cover" autoPlay loop={true} style={styles.lottieStyle} />
 
             </View>
         </>

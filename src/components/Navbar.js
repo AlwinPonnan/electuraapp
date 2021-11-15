@@ -1,18 +1,38 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Image, Pressable, StyleSheet, View } from 'react-native';
 
 import { Appbar } from 'react-native-paper';
 import { light_colors } from '../globals/colors';
 import Icon from 'react-native-vector-icons/Ionicons'
 import ImageUrls from '../globals/images';
-import { DrawerActions } from '@react-navigation/native';
-
+import { DrawerActions, useIsFocused } from '@react-navigation/native';
+import { Badge } from 'react-native-paper';
+import { getCart } from '../Services/User';
 export default function NavBar(props) {
 
 
   const toggle = () => {
     props.rootProps.navigation.dispatch(DrawerActions.toggleDrawer())
   }
+
+  const [cartObj, setCartObj] = useState({});
+
+  const focused = useIsFocused()
+  const getUserCart = async () => {
+    try {
+      const { data: res } = await getCart();
+      if (res.success) {
+        console.log(res.data)
+        setCartObj(res.data)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  useEffect(() => {
+    getUserCart()
+  }, [focused])
 
   return (
     <View style={styles.headerContainer}>
@@ -24,8 +44,11 @@ export default function NavBar(props) {
 
       <View style={styles.iconContainer}>
 
-        <Pressable onPress={() => props.rootProps.navigation.navigate("ShoppingCart")} android_ripple={{ color: '#ddd' }} style={styles.iconButton}>
+        <Pressable onPress={() => props.rootProps.navigation.navigate("ShoppingCart")} android_ripple={{ color: '#ddd' }} style={[styles.iconButton, { flexDirection: 'row' }]}>
           <Icon name="cart-outline" size={20} style={styles.icon} />
+          {cartObj?.courseArr?.length > 0 &&
+            <Badge size={14}>{cartObj?.courseArr?.length}</Badge>
+          }
         </Pressable>
         <Pressable onPress={() => props.rootProps.navigation.navigate("SearchScreen")} android_ripple={{ color: '#ddd' }} style={styles.iconButton}>
           <Icon name="search-outline" size={20} style={styles.icon} />

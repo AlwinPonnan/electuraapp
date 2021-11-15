@@ -33,7 +33,7 @@ export default function ShoppingCart(props) {
 
 
     const renderItem = ({ item }) => (
-        <View style={[styles.topView,{marginVertical:10}]}>
+        <View style={[styles.topView, { marginVertical: 10 }]}>
             <Image
                 style={[styles.img]}
                 source={{

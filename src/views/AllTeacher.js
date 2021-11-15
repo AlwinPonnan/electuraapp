@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef,useContext } from 'react'
 import { View, Text, StyleSheet, TextInput, FlatList, Pressable, Image } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -14,7 +14,7 @@ import { NewEnquiry } from '../Services/Enquiry';
 import { RadioButton } from 'react-native-paper';
 import EnquiryTypes from '../globals/EnquiryTypes';
 import { colorObj } from '../globals/colors';
-
+import { loadingContext } from '../navigators/stacks/RootStack';
 export default function AllTeacher(props) {
 
     const focused = useIsFocused()
@@ -22,6 +22,7 @@ export default function AllTeacher(props) {
     const [checked, setChecked] = useState(EnquiryTypes.ONETOONE);
 
     const [selectedTeacherObj, setSelectedTeacherObj] = useState({});
+    const [isLoading, setIsLoading] = useContext(loadingContext);
     const [productsArr, setProductsArr] = useState([
         {
             name: "Lorem Course",
@@ -67,9 +68,12 @@ export default function AllTeacher(props) {
 
     const [TeachersArr, setTeachersArr] = useState([])
     const [MainTeachersArr, setMainTeachersArr] = useState([]);
+    const [additionalMessage, setAdditionalMessage] = useState('');
 
     const getTeachers = async () => {
+        setIsLoading(true)
         try {
+
             const { data: res } = await getAllTeachers();
             if (res.success) {
 
@@ -80,6 +84,7 @@ export default function AllTeacher(props) {
         } catch (error) {
             console.error(error)
         }
+        setIsLoading(false)
     }
 
 
@@ -95,6 +100,7 @@ export default function AllTeacher(props) {
 
 
     const handleEnquireNow = async () => {
+        setIsLoading(true)
         refRBSheet.current.close()
         try {
 
@@ -109,7 +115,8 @@ export default function AllTeacher(props) {
                 price: '',
                 specificRequirement: '',
                 enquiryType: checked,
-                teacherId: selectedTeacherObj?._id
+                teacherId: selectedTeacherObj?._id,
+                additionalMessage
             }
             let { data: res } = await NewEnquiry(obj);
             if (res.success) {
@@ -124,6 +131,7 @@ export default function AllTeacher(props) {
             setAlertText(error.message)
 
         }
+        setIsLoading(false)
     }
 
     const renderItem = ({ item, index }) => {
@@ -167,7 +175,7 @@ export default function AllTeacher(props) {
 
                             <Text style={[styles.button, { color: '#828282', marginRight: 25 }]}>View Profile</Text>
                         </Pressable>
-                        <Pressable onPress={()=>{setSelectedTeacherObj(item._id);refRBSheet.current.open()}}>
+                        <Pressable onPress={() => { setSelectedTeacherObj(item._id); refRBSheet.current.open() }}>
 
                             <Text style={[styles.button, { backgroundColor: '#085A4E', color: '#fff', paddingHorizontal: 15, paddingVertical: 3, borderRadius: 5 }]}>Enquire</Text>
                         </Pressable>
@@ -182,10 +190,10 @@ export default function AllTeacher(props) {
         )
     }
 
-    const handleSearch=(e)=>{
-        let tempArr=[...MainTeachersArr]
-        let query=e.toLowerCase()
-        tempArr=tempArr.filter(el=>el.name.toLowerCase().includes(query) || el?.enquiryObj?.classesArr?.some(ele => ele.subjectArr.some(elx => elx.subjectName.toLowerCase().includes(query))))
+    const handleSearch = (e) => {
+        let tempArr = [...MainTeachersArr]
+        let query = e.toLowerCase()
+        tempArr = tempArr.filter(el => el.name.toLowerCase().includes(query) || el?.enquiryObj?.classesArr?.some(ele => ele.subjectArr.some(elx => elx.subjectName.toLowerCase().includes(query))))
         setTeachersArr([...tempArr])
     }
 
@@ -203,7 +211,7 @@ export default function AllTeacher(props) {
                 <AntDesign name='search1' size={20} style={[styles.topIcons, { marginRight: 15 }]} />
                 <TextInput
                     style={styles.input}
-                    onChangeText={(e)=>handleSearch(e)}
+                    onChangeText={(e) => handleSearch(e)}
                     placeholder="Search Categories"
                 />
                 <Feather name='align-right' size={20} style={[styles.topIcons, { marginRight: 10 }]} />
@@ -237,7 +245,7 @@ export default function AllTeacher(props) {
                         backgroundColor: "rgba(0,0,0,0.5)",
                     },
                     container: {
-                        height: hp(30)
+                        height: hp(50)
                     },
                     draggableIcon: {
                         backgroundColor: "#000"
@@ -276,6 +284,9 @@ export default function AllTeacher(props) {
                             onPress={() => setChecked('connect')}
                         />
                     </Pressable>
+                    <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Message</Text>
+
+                    <TextInput style={[styles.textInput, { width: wp(90) }]} multiline numberOfLines={2} value={additionalMessage} onChangeText={(e) => setAdditionalMessage(e)} />
 
 
                     <Pressable style={styles.btn} onPress={() => handleEnquireNow()}>
@@ -412,8 +423,8 @@ const styles = StyleSheet.create({
     },
 
 
-     ////bottom sheet 
-     bottomSheetHeading: {
+    ////bottom sheet 
+    bottomSheetHeading: {
         color: '#333333',
         fontFamily: 'Montserrat-Medium',
         fontSize: 18,
