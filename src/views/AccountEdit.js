@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { View, Text, StyleSheet, Image, TouchableOpacity, Pressable, Appearance, Modal, TextInput, ScrollView, Keyboard, FlatList, KeyboardAvoidingView,ImageBackground } from 'react-native'
+import { View, Text, StyleSheet, Image, TouchableOpacity, Pressable, Appearance, Modal, TextInput, ScrollView, Keyboard, FlatList, KeyboardAvoidingView, ImageBackground } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from "react-native-vector-icons/Ionicons"
 import NavBar from '../components/Navbar';
@@ -14,6 +14,7 @@ import { imageObj } from '../globals/images';
 import { Button, Paragraph, Dialog, Portal, Provider } from 'react-native-paper';
 import { useIsFocused } from '@react-navigation/core';
 
+import { loadingContext } from '../navigators/stacks/RootStack';
 export default function AccountEdit(props) {
     const [modalVisible, setModalVisible] = useState(false);
     const [profileData, setProfileData] = useContext(profileContext);
@@ -32,6 +33,8 @@ export default function AccountEdit(props) {
     const [aboutModal, setAboutModal] = useState(false);
 
     const focused = useIsFocused()
+
+    const [isLoading, setIsLoading] = useContext(loadingContext);
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener(
             'keyboardDidShow',
@@ -108,13 +111,14 @@ export default function AccountEdit(props) {
                 name,
                 email,
                 phone: mobile,
+                gender: genderIsSelected ? "Male" : "Female",
+                enquiryObj: profileData.enquiryObj
             }
             console.log(obj)
             let { data: res, status: statusCode } = await updateProfile(obj)
             if (statusCode == 200 || statusCode == 304) {
                 console.log(res.message)
                 getUserData()
-                setAboutModal(false)
                 alert(res.message)
             }
             console.log(res)
@@ -154,6 +158,7 @@ export default function AccountEdit(props) {
 
 
     const getUserData = async () => {
+        setIsLoading(true)
         try {
             let { data: res, status: statusCode } = await getUser();
             console.log(statusCode)
@@ -165,7 +170,7 @@ export default function AccountEdit(props) {
                 setProfilePhoto(res.data.profileImage)
                 setProfileData(res.data)
                 setDegree(res?.data?.enquiryObj?.educationObj?.degree)
-                setGenderIsMale(res.data.gender == "Male" ? true : false)
+                setGenderIsMale(res?.data?.enquiryObj?.gender == "Male" ? true : false)
                 setRoleName(res.data.role)
                 // console.log(JSON.stringify(res.data, null, 2))
             }
@@ -173,7 +178,31 @@ export default function AccountEdit(props) {
         catch (err) {
             console.error(err)
         }
+        setIsLoading(false)
     }
+
+    const handleProfileDataUpdate = (val, field) => {
+        if (field == "address") {
+            setProfileData(prevState => {
+                prevState.enquiryObj.address = val;
+                return { ...prevState }
+            })
+        }
+        else if (field == "experience") {
+            setProfileData(prevState => {
+                prevState.enquiryObj.experience = val;
+                return { ...prevState }
+            })
+        }
+
+        else if (field == "description") {
+            setProfileData(prevState => {
+                prevState.enquiryObj.description = val;
+                return { ...prevState }
+            })
+        }
+    }
+
 
     useEffect(() => {
         getUserData()
@@ -187,7 +216,7 @@ export default function AccountEdit(props) {
             <NavBar rootProps={props} />
             <ScrollView style={styles.container}>
                 <View>
-                    {
+                    {/* {
                         profileData?.backgroundImage ?
                             <View style={styles.topContainer}>
                                 <View style={styles.addPhotoBtn}>
@@ -196,13 +225,10 @@ export default function AccountEdit(props) {
                                 </View>
                             </View>
                             :
-                            <ImageBackground source={imageObj.teacherBackBanner} style={styles.topContainer}>
-                                <View style={styles.addPhotoBtn}>
-                                    <Icon name="camera-outline" size={16} color="black" />
-                                    <Text style={styles.addPhotoBtnText}>Add Cover Photo</Text>
-                                </View>
-                            </ImageBackground>
-                    }
+                    } */}
+                    <ImageBackground source={imageObj.teacherBackBanner} style={styles.topContainer}>
+
+                    </ImageBackground>
                     <Pressable onPress={() => pickImageProfilePhoto()} style={styles.circleImg}>
                         {
                             profilePhoto != "" && profilePhoto ?
@@ -210,60 +236,80 @@ export default function AccountEdit(props) {
                                 :
                                 <Image style={styles.profileImage} source={require("../../assets/images/user.png")} />
                         }
-
                     </Pressable>
                 </View>
                 <View style={styles.userInfoContainer}>
-                    <Text style={styles.userInfoText}>{profileData?.name}</Text>
-                    <View style={[styles.flexRow, { alignItems: 'center' }]}>
-                        <Icon name="call-outline" size={14} color="black" />
+                    <Text style={styles.label}>
+                        Name
+                    </Text>
+                    <TextInput value={name} onChangeText={(e) => setName(e)} style={styles.txtInput} placeholder="Name" />
+                    <Text style={styles.label}>
+                        Email
+                    </Text>
+                    <TextInput value={email} keyboardType="email-address" onChangeText={(e) => setEmail(e)} style={styles.txtInput} placeholder="Enter your email" />
+                    <Text style={styles.label}>
+                        Phone
+                    </Text>
+                    <TextInput value={mobile} keyboardType="numeric" onChangeText={(e) => setMobile(e)} style={styles.txtInput} placeholder="Enter your phone" />
+                    {
+                        roleName == "TEACHER" &&
+                        <>
+                            <Text style={styles.label}>
+                                Location
+                            </Text>
+                            <TextInput value={profileData?.enquiryObj?.address} onChangeText={(e) => handleProfileDataUpdate(e, "address")} style={styles.txtInput} placeholder="Enter your address" />
+                            <Text style={styles.label}>
+                                Description
+                            </Text>
+                            <TextInput multiline value={profileData?.enquiryObj?.description} onChangeText={(e) => handleProfileDataUpdate(e, "description")} style={styles.txtInput} placeholder="Enter your Description" />
+                            <Text style={styles.label}>Select your Gender</Text>
+                            <View style={{ display: "flex", flexDirection: "row" }}>
 
-                        <Text style={[styles.userInfoText, { fontFamily: 'Montserrat-Regular', fontSize: 16 }]}>+91-{profileData?.phone}</Text>
-                    </View>
-                </View>
-                <View style={styles.bottomLine}></View>
-                <View style={styles.mainContentContainer}>
-                    <View style={[styles.flexRow, { alignItems: 'center' }]}>
-                        <Icon name="person-outline" size={16} color="black" />
-                        <Text style={[styles.mainContentHeading, { paddingHorizontal: 10 }]}>About You</Text>
-                        <Pressable style={styles.mainContentBtn} onPress={() => setAboutModal(true)}>
-                            <Text style={styles.mainContentBtnText}>Add {profileData?.name && "/ Edit"}</Text>
-                        </Pressable>
-                    </View>
-                    <Text style={styles.mainContentText}>Tell us about your professional experience here and connect better with your students</Text>
-                    <Image source={imageObj.illustration} style={{ height: 70, width: 70, alignSelf: 'flex-end', marginTop: 10 }} />
-                </View>
-                {
-                    roleName == "TEACHER" &&
-                    <>
-                        <View style={styles.mainContentContainer}>
-                            <View style={[styles.flexRow, { alignItems: 'center' }]}>
-                                <Icon name="school-outline" size={16} color="black" />
-                                <Text style={[styles.mainContentHeading, { paddingHorizontal: 10 }]}>About Institute</Text>
-                                <Pressable style={styles.mainContentBtn}>
-                                    <Text style={styles.mainContentBtnText}>Add</Text>
-                                </Pressable>
+                                <View style={{ marginTop: 10, alignItems: "center", alignSelf: "center", display: "flex", flexDirection: "row" }}>
+                                    <Checkbox
+                                        color={colorObj.primarColor}
+                                        status={genderIsSelected ? "checked" : "unchecked"}
+                                        onPress={() => {
+                                            setGenderIsMale(true);
+                                        }}
+                                    />
+                                    <TouchableOpacity style={{ paddingVertical: 5, }} onPress={() => {
+                                        setGenderIsMale(true);
+                                    }}>
+                                        <Text style={styles.CheckboxText}>Male</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={{ marginTop: 10, alignItems: "center", alignSelf: "center", display: "flex", flexDirection: "row" }}>
+                                    <Checkbox
+                                        color={colorObj.primarColor}
+                                        status={genderIsSelected ? "unchecked" : "checked"
+                                        }
+                                        onPress={() => {
+                                            setGenderIsMale(false);
+                                        }}
+                                    />
+                                    <TouchableOpacity style={{ paddingVertical: 5, }} onPress={() => {
+                                        setGenderIsMale(false);
+                                    }}>
+                                        <Text style={styles.CheckboxText}>Female</Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
-                            <Text style={styles.mainContentText}>Add your institute details here and find more students</Text>
-                            <Image source={imageObj.illustration} style={{ height: 70, width: 70, alignSelf: 'flex-end', marginTop: 10 }} />
-                        </View>
-                        <View style={styles.mainContentContainer}>
-                            <View style={[styles.flexRow, { alignItems: 'center' }]}>
-                                <Icon name="logo-youtube" size={16} color="black" />
-                                <Text style={[styles.mainContentHeading, { paddingHorizontal: 10 }]}>Social Media</Text>
-                                <Pressable style={styles.mainContentBtn}>
-                                    <Text style={styles.mainContentBtnText}>Add</Text>
-                                </Pressable>
-                            </View>
-                            <Text style={styles.mainContentText}>Add Youtube channel ,Facebook links etc. to improve your branding</Text>
-                            <Image source={imageObj.illustration} style={{ height: 70, width: 70, alignSelf: 'flex-end', marginTop: 10 }} />
-                        </View>
-                    </>
 
-                }
+                            <Text style={styles.label}>
+                                Teaching Experience
+                            </Text>
+                            <TextInput value={profileData?.enquiryObj?.experience} onChangeText={(e) => handleProfileDataUpdate(e, "experience")} style={styles.txtInput} placeholder="Your Teaching Experience" />
+                        </>
+
+                    }
+                    <Pressable style={styles.btn} onPress={() => handleProfileUpdate()}>
+                        <Text style={styles.btnTxt}>Save</Text>
+                    </Pressable>
+                </View>
 
             </ScrollView>
-            <Portal>
+            {/* <Portal>
                 <Dialog visible={aboutModal} onDismiss={() => setAboutModal(false)}>
                     <Dialog.Title style={{ textAlign: 'center', fontFamily: 'Montserrat-SemiBold', fontSize: 20 }}>About You</Dialog.Title>
                     <Dialog.Content>
@@ -308,7 +354,7 @@ export default function AccountEdit(props) {
                         <Button onPress={() => handleProfileUpdate()} >Done</Button>
                     </Dialog.Actions>
                 </Dialog>
-            </Portal>
+            </Portal> */}
             {/* <View style={styles.container}>
 
                 <KeyboardAvoidingView>
@@ -542,7 +588,7 @@ const styles = StyleSheet.create({
         // paddingTop: hp(5)
     },
     topContainer: {
-        height: hp(22),
+        height: hp(18),
         backgroundColor: colorObj.orangeColor,
         width: wp(100),
         position: 'relative',
@@ -554,7 +600,8 @@ const styles = StyleSheet.create({
         width: 100,
         position: 'absolute',
         bottom: -30,
-        left: 10,
+        left: '40%',
+        alignSelf: 'center'
     },
     addPhotoBtn: {
         backgroundColor: colorObj.whiteColor,
@@ -577,7 +624,7 @@ const styles = StyleSheet.create({
 
     userInfoContainer: {
         marginTop: 40,
-        paddingHorizontal: 10
+        paddingHorizontal: 25
     },
     userInfoText: {
         fontFamily: 'Montserrat-SemiBold',
@@ -716,14 +763,12 @@ const styles = StyleSheet.create({
     ///////txt
 
     label: {
-        fontFamily: 'OpenSans-SemiBold',
-        color: "black",
-        fontSize: 14,
-        // marginBottom: 8,
+        fontFamily: 'Montserrat-Medium',
+        color: "#BDBDBD",
+        fontSize: 16,
         color: "grey",
         paddingLeft: 5,
         marginVertical: 5,
-        // paddingTop: 15,
         textTransform: "capitalize",
     },
     btnTxt: {
@@ -745,15 +790,16 @@ const styles = StyleSheet.create({
 
     //////txtinput
     txtInput: {
-        borderColor: "rgba(0,0,0,0.1)",
-        borderWidth: 2,
-        borderRadius: 25,
-        marginTop: 20,
+        borderBottomColor: "rgba(0,0,0,0.1)",
+        borderBottomWidth: 2,
+        // borderRadius: 25,
+        // marginTop: 20,
         paddingHorizontal: 10,
-        paddingLeft: 20,
+        // paddingLeft: 20,
         backgroundColor: "#fff",
-        fontFamily: 'Montserrat-Regular',
-        marginBottom: 10
+        fontFamily: 'Montserrat-Medium',
+        marginBottom: 10,
+        color: '#333333'
 
     },
 
@@ -787,12 +833,15 @@ const styles = StyleSheet.create({
     },
     btn: {
         backgroundColor: "#085A4E",
-        borderRadius: 25,
+        borderRadius: 5,
 
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        marginTop: 50,
+        alignSelf: 'flex-end',
+        paddingHorizontal: 20,
+        marginVertical: 10,
+        marginBottom: 20,
         paddingVertical: 10,
     },
 
@@ -805,4 +854,9 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
     },
+
+    CheckboxText: {
+        fontFamily: 'Montserrat-Medium',
+        fontSize: 14
+    }
 })

@@ -6,6 +6,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import { getMyOrders } from '../Services/Order';
 import { useIsFocused } from '@react-navigation/core';
 import { generateImageUrl } from '../globals/utils';
+import { widthPercentageToDP } from 'react-native-responsive-screen';
 
 export default function Order(props) {
 
@@ -52,7 +53,7 @@ export default function Order(props) {
     return (
         <View style={[styles.container]}>
             <View style={{ flexDirection: 'row' }}>
-                <Pressable onPress={()=>props.navigation.goBack()}>
+                <Pressable onPress={() => props.navigation.goBack()}>
 
                     <AntDesign name='arrowleft' size={20} style={{ color: 'black' }} />
                 </Pressable>
@@ -65,6 +66,12 @@ export default function Order(props) {
                 data={ordersArr}
                 renderItem={renderItem}
                 keyExtractor={(item, index) => `${index}`}
+                ListEmptyComponent={
+                    <View style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
+                        <Image source={require('../../assets/images/Icon.png')} resizeMode="center" />
+                        <Text style={{ fontFamily: 'Montserrat-SemiBold', fontSize: 20 }}>No orders found</Text>
+                    </View>
+                }
 
             />
 

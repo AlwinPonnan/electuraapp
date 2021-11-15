@@ -69,11 +69,11 @@ export default function OrderDetail(props) {
             console.error(error)
         }
     }
-    
+
     const handleDispatchOrder = async () => {
         setIsLoading(true)
         try {
-            
+
             const { data: res } = await dispatchOrder(orderObj?._id)
             if (res) {
                 setAlertText(res.message)
@@ -83,12 +83,13 @@ export default function OrderDetail(props) {
             console.error(error)
             setAlertText(error.message)
             setErrorAlert(true)
-            
+
         }
         setIsLoading(false)
     }
 
     const handleDeliverOrder = async () => {
+        setIsLoading(true)
         try {
             const { data: res } = await deliverOrder(orderObj?._id)
             if (res) {
@@ -102,6 +103,7 @@ export default function OrderDetail(props) {
             setErrorAlert(true)
 
         }
+        setIsLoading(false)
     }
 
 
@@ -122,30 +124,40 @@ export default function OrderDetail(props) {
                         <AntDesign name='arrowleft' size={20} style={{ color: 'black' }} />
                     </Pressable>
                     <Text style={[styles.topText, { flex: 1, marginLeft: 20 }]}>Summary</Text>
-                    <AntDesign name='message1' size={20} style={{ color: 'black', marginRight: 20 }} />
-                    <Feather name='bell' size={20} style={{ color: 'black' }} />
+                    <Pressable onPress={() => props.navigation.navigate('MainTopTab')}>
+
+                        <AntDesign name='message1' size={20} style={{ color: 'black', marginRight: 20 }} />
+                    </Pressable>
+                    <Pressable onPress={() => props.navigation.navigate('Notification')}>
+
+                        <Feather name='bell' size={20} style={{ color: 'black' }} />
+                    </Pressable>
                 </View>
 
-                {/* <View style={{ flex: 1 }}> */}
-                {/* <ProgressSteps isComplete={true} completedStepIconColor={colorObj.primarColor} completedProgressBarColor={colorObj.primarColor} activeStepIconBorderColor={colorObj.primarColor} activeLabelColor={colorObj.primarColor} labelFontFamily="RedHatText-Medium" completedLabelColor={colorObj.primarColor} activeStep={3} >
-                    <ProgressStep removeBtnRow={true} label="Placed">
-                        <View style={{ alignItems: 'center' }}>
-                            
-                        </View>
-                    </ProgressStep>
-                    <ProgressStep removeBtnRow={true} label="Dispatched">
-                        <View style={{ alignItems: 'center' }}>
-                                <Text>DISPATCHED</Text>
+                {orderObj?.teacherId != decodedJwtToken.userId &&
+
+                    <ProgressSteps isComplete={true} completedStepIconColor={colorObj.primarColor} completedProgressBarColor={colorObj.primarColor} activeStepIconBorderColor={colorObj.primarColor} activeLabelColor={colorObj.primarColor} labelFontFamily="RedHatText-Medium" completedLabelColor={colorObj.primarColor} activeStep={2} >
+                        <ProgressStep removeBtnRow={true} label="Placed">
+                            <View style={{ alignItems: 'center' }}>
+                                <Text></Text>
                             </View>
-                    </ProgressStep>
-                    <ProgressStep removeBtnRow={true} label="Delivered">
-                        <View style={{ alignItems: 'center' }}>
-                        </View>
-                    </ProgressStep>
-                </ProgressSteps> */}
+                        </ProgressStep>
+                        <ProgressStep removeBtnRow={true} label="Dispatched">
+                            <View style={{ alignItems: 'center' }}>
+                                <Text></Text>
+                            </View>
+                        </ProgressStep>
+                        <ProgressStep removeBtnRow={true} label="Delivered">
+                            <View style={{ alignItems: 'center' }}>
+                                <Text></Text>
+                            </View>
+                        </ProgressStep>
+                    </ProgressSteps>
+                }
+                {/* <View style={{ flex: 1 }}> */}
                 {/* </View> */}
 
-                <View style={[styles.topView]}>
+                <View style={[styles.topView, { marginTop: 50 }]}>
 
                     <Image
                         style={[styles.img]}
@@ -159,37 +171,57 @@ export default function OrderDetail(props) {
                         <Text style={[styles.address, { marginTop: 5, color: '#929292', }]}>{orderObj?.statusObj?.status}</Text>
                         <Text style={[styles.address, { marginTop: 5, color: '#FFA949' }]}>SUMMARY</Text>
                     </View>
-                    <View style={{ width:widthPercentageToDP(35) }}>
-                        {orderObj?.teacherId == decodedJwtToken.userId ?
-                            <View style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }}>
+                    {/* <View style={{ width: widthPercentageToDP(35) }}> */}
 
-                                <Picker
 
-                                    style={{ color: colorObj.whiteColor, }}
-                                    dropdownIconColor={colorObj.whiteColor}
-                                    // mode="dropdown"
-                                    selectedValue={selectedOrderStatus}
-                                    onValueChange={(itemValue, itemIndex) =>
-                                        // setSelectedOrderStatus(itemValue)
-                                        handleOrderStatusUpdate(itemValue)
-                                    }>
-                                    {orderStatusArr.map((el, i) => {
-                                        return (
-                                            <Picker.Item  key={i} label={el} value={el} />
-                                        )
-                                    })}
+                    {orderObj?.teacherId == decodedJwtToken.userId ?
+                        // <View >
 
-                                </Picker>
-                            </View>
+                        //     <Picker
 
-                            :
-                            <View style={styles.topView}>
-                                <Text style={[{ color: '#828282', marginLeft: 5, fontSize: 14, fontFamily: 'RedHatText-Regular', }]}>{new Date(orderObj?.createdAt).toDateString()}</Text>
-                            </View>
 
-                        }
+                        //         dropdownIconColor={colorObj.whiteColor}
+                        //         // mode="dropdown"
+                        //         selectedValue={selectedOrderStatus}
+                        //         onValueChange={(itemValue, itemIndex) =>
+                        //             // setSelectedOrderStatus(itemValue)
+                        //             handleOrderStatusUpdate(itemValue)
+                        //         }>
+                        //         {orderStatusArr.map((el, i) => {
+                        //             return (
+                        //                 <Picker.Item  key={i} label={el} value={el} />
+                        //             )
+                        //         })}
 
-                    </View>
+                        //     </Picker>
+                        // </View>
+                        <View>
+                            {orderObj?.statusObj?.status == "PLACED" &&
+                                <Pressable style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }} onPress={() => handleDispatchOrder()}>
+                                    <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Dispatch</Text>
+                                </Pressable>
+                            }
+                            {orderObj?.statusObj?.status == "DISPATCHED" &&
+                                <Pressable style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }} onPress={() => handleDeliverOrder()}>
+                                    <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Deliver</Text>
+                                </Pressable>
+                            }
+                            {orderObj?.statusObj?.status == "DELIVERED" &&
+                                <Pressable style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }}>
+                                    <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Delivered</Text>
+                                </Pressable>
+                            }
+
+                        </View>
+
+                        :
+                        <View style={styles.topView}>
+                            <Text style={[{ color: '#828282', marginLeft: 5, fontSize: 14, fontFamily: 'RedHatText-Regular', }]}>{new Date(orderObj?.createdAt).toDateString()}</Text>
+                        </View>
+
+                    }
+
+                    {/* </View> */}
                 </View>
 
 
@@ -201,11 +233,11 @@ export default function OrderDetail(props) {
                 <View style={styles.bottomLine}></View>
                 <View style={[styles.flexRow, { alignItems: 'center', marginHorizontal: 20, marginTop: 10 }]}>
                     <Icon name="call-outline" size={12} color="black" />
-                    <Text style={styles.addressText}>9999999999</Text>
+                    <Text style={styles.addressText}>{orderObj?.userDetails?.phone}</Text>
                 </View>
                 <View style={[styles.flexRow, { alignItems: 'center', marginHorizontal: 20, marginVertical: 10 }]}>
                     <Icon name="mail-outline" size={12} color="black" />
-                    <Text style={styles.addressText}>sample@gmail.com</Text>
+                    <Text style={styles.addressText}>{orderObj?.userDetails?.email}</Text>
                 </View>
             </View>
 

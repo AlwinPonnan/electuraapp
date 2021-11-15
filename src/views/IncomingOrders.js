@@ -65,6 +65,12 @@ export default function IncomingOrders(props) {
                 data={ordersArr}
                 renderItem={renderItem}
                 keyExtractor={(item, index) => `${index}`}
+                ListEmptyComponent={
+                    <View style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
+                        <Image source={require('../../assets/images/Icon.png')} resizeMode="center" />
+                        <Text style={{ fontFamily: 'Montserrat-SemiBold', fontSize: 20 }}>No orders found</Text>
+                    </View>
+                }
 
             />
 
