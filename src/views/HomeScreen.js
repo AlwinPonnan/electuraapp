@@ -128,6 +128,9 @@ export default function HomeScreen(props) {
     async function registerAppWithFCM() {
         await messaging().registerDeviceForRemoteMessages();
     }
+
+    
+
     useEffect(() => {
         messaging()
             .getToken()
@@ -149,7 +152,7 @@ export default function HomeScreen(props) {
     const handleSubjectSelection = async (id) => {
         let tempArr = [...mainTeachersArr];
         console.log(JSON.stringify(tempArr, null, 2))
-        tempArr = tempArr.filter(el => el.enquiryObj.classesArr.some(ele => ele.subjectArr.some(elx => elx.subjectId == id)))
+        tempArr = tempArr.filter(el => el?.enquiryObj?.classesArr?.some(ele => ele.subjectArr.some(elx => elx.subjectId == id)))
         setTeachersArr([...tempArr])
         setSelectedSubjectId(id)
     }
@@ -182,6 +185,11 @@ export default function HomeScreen(props) {
                 <View style={styles.bannerContainer}>
                     <Image source={require('../../assets/images/Banner.png')} />
                 </View>
+
+                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                    <Text style={styles.headingAboveCard}>Top Instructors</Text>
+                    <Pressable onPress={() => handleViewAll()}><Text style={styles.viewAllText}>View All</Text></Pressable>
+                </View>
                 <FlatList
 
                     horizontal
@@ -197,11 +205,6 @@ export default function HomeScreen(props) {
                     showsHorizontalScrollIndicator={false}
                     keyExtractor={(item, index) => `${index}`}
                 />
-                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                    <Text style={styles.headingAboveCard}>Top Instructors</Text>
-                    <Pressable onPress={() => handleViewAll()}><Text style={styles.viewAllText}>View All</Text></Pressable>
-                </View>
-
                 <FlatList
                     style={{ height: 150 }}
                     horizontal

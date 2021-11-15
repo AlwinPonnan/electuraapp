@@ -182,6 +182,14 @@ export default function AllTeacher(props) {
         )
     }
 
+    const handleSearch=(e)=>{
+        let tempArr=[...MainTeachersArr]
+        let query=e.toLowerCase()
+        tempArr=tempArr.filter(el=>el.name.toLowerCase().includes(query) || el?.enquiryObj?.classesArr?.some(ele => ele.subjectArr.some(elx => elx.subjectName.toLowerCase().includes(query))))
+        setTeachersArr([...tempArr])
+    }
+
+
     return (
         <View style={[styles.container]}>
             <View style={{ flexDirection: 'row' }}>
@@ -195,6 +203,7 @@ export default function AllTeacher(props) {
                 <AntDesign name='search1' size={20} style={[styles.topIcons, { marginRight: 15 }]} />
                 <TextInput
                     style={styles.input}
+                    onChangeText={(e)=>handleSearch(e)}
                     placeholder="Search Categories"
                 />
                 <Feather name='align-right' size={20} style={[styles.topIcons, { marginRight: 10 }]} />

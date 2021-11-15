@@ -19,6 +19,7 @@ export default function Courses(props) {
     const [selectedSubjectId, setSelectedSubjectId] = useState('');
 
     const [subjectWiseCoursesArr, setSubjectWiseCoursesArr] = useState([]);
+    const [mainCourseArr, setMainCourseArr] = useState([]);
     const [productsArr, setProductsArr] = useState([
         {
             name: "Lorem Course",
@@ -109,6 +110,7 @@ export default function Courses(props) {
                 })
                 console.log(temp)
                 setCourseArr(temp)
+                setMainCourseArr(temp)
             }
         } catch (error) {
             console.error(error)
@@ -160,7 +162,14 @@ export default function Courses(props) {
     }
 
 
-   
+    const handleSubjectSelection = async (id) => {
+        let tempArr = [...mainCourseArr];
+        console.log(JSON.stringify(tempArr, null, 2),"asddasdsa")
+        tempArr = tempArr.filter(el => el?.classesArr?.some(ele => ele.subjectArr.some(elx => elx.subjectId == id)))
+        setCourseArr([...tempArr])
+        setSelectedSubjectId(id)
+    }
+
 
     return (
         <View style={styles.container}>
@@ -176,7 +185,7 @@ export default function Courses(props) {
                     data={subjectArr}
                     renderItem={({ item, index }) => {
                         return (
-                            <Pressable onPress={() => setSelectedSubjectId(item._id)} style={[styles.categoryContainer, selectedSubjectId != item._id && { backgroundColor: '#F7FFFE' }]}>
+                            <Pressable onPress={() => handleSubjectSelection(item._id)} style={[styles.categoryContainer, selectedSubjectId != item._id && { backgroundColor: '#F7FFFE' }]}>
                                 {/* <Icon name="film-outline" size={14} /> */}
                                 <Text style={[styles.categoryName, selectedSubjectId != item._id && { color: '#828282' }]}>{item.name}</Text>
                             </Pressable>
