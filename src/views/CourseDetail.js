@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useContext } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView, Linking } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj, light_colors } from '../globals/colors';
@@ -11,6 +11,7 @@ import { useNavigation } from '@react-navigation/core';
 import { addToCart, addTOWishList, getDecodedToken } from '../Services/User';
 import { successAlertContext } from '../../App';
 import { loadingContext } from '../navigators/stacks/RootStack';
+import { generateImageUrl } from '../globals/utils';
 
 
 export default function CourseDetail(props) {
@@ -52,7 +53,7 @@ export default function CourseDetail(props) {
     }
 
 
-    const handleAddCourseToWhishlist = async() => {
+    const handleAddCourseToWhishlist = async () => {
         try {
             let tokenObj = await getDecodedToken()
             let obj = {
@@ -79,7 +80,7 @@ export default function CourseDetail(props) {
     }
 
 
-    const handleAddCourseToCart = async() => {
+    const handleAddCourseToCart = async () => {
         try {
             let tokenObj = await getDecodedToken()
             let obj = {
@@ -106,8 +107,8 @@ export default function CourseDetail(props) {
     }
 
 
-    
-    
+
+
 
     const handleOnint = () => {
 
@@ -121,7 +122,7 @@ export default function CourseDetail(props) {
     return (
         <View style={styles.container}>
             <NavBar rootProps={props} />
-            <View style={styles.innerContainer}>
+            <View style={[styles.innerContainer,{flex:1}]}>
 
                 <View style={[styles.flexRow, { alignItems: "center", justifyContent: "space-between", }]}>
                     <View style={[styles.flexRow]} >
@@ -142,7 +143,7 @@ export default function CourseDetail(props) {
                     <Text style={styles.userName}>{courseObj?.teacherName}</Text>
                 </View>
 
-                <Image source={require("../../assets//images/Banner1.png")} resizeMode="cover" style={styles.bannerimg} />
+                <Image source={{ uri: generateImageUrl(courseObj?.thumbnailImage?.url) }} resizeMode="cover" style={styles.bannerimg} />
 
 
                 <View style={[styles.flexRow, { marginVertical: 15 }]}>
@@ -153,10 +154,16 @@ export default function CourseDetail(props) {
                 <Text style={styles.description}>
                     {courseObj?.description}
                 </Text>
+                <View style={[styles.flexRow,{alignItems:'center',justifyContent:'space-between',width:wp(80),marginTop:100,alignSelf:'center'}]}>
+
+                    <Pressable style={styles.btn} onPress={() => handleAddCourseToCart()}>
+                        <Text style={styles.btnText}>Add to cart</Text>
+                    </Pressable>
+                    <Pressable style={styles.btn} onPress={() => handleAddCourseToCart()}>
+                        <Text style={styles.btnText}>Buy Now</Text>
+                    </Pressable>
+                </View>
             </View>
-            <Pressable style={styles.btn} onPress={() => handleAddCourseToCart()}>
-                <Text style={styles.btnText}>Buy Now</Text>
-            </Pressable>
         </View>
     )
 }
@@ -171,7 +178,7 @@ const styles = StyleSheet.create({
         display: "flex",
         marginTop: 15,
         flexDirection: "column",
-        justifyContent: "center",
+        // justifyContent: "center",
     },
     flexRow: {
         display: "flex",
@@ -199,7 +206,10 @@ const styles = StyleSheet.create({
     bannerimg: {
         display: "flex",
         alignSelf: "center",
-        marginLeft: wp(5)
+        marginLeft: wp(5),
+        marginTop: 10,
+        height: 250,
+        width: wp(90)
     },
     userName: {
         fontFamily: 'Montserrat-Regular', fontSize: 14, color: '#000000',
@@ -215,20 +225,22 @@ const styles = StyleSheet.create({
     btn: {
         backgroundColor: colorObj.primarColor,
         borderRadius: 61,
-        width: wp(80),
+        // width: wp(80),
         alignSelf: "center",
         display: "flex",
         marginTop: 100,
-        position: "absolute",
-        bottom: 30,
-        paddingVertical: 15
+        // position: "absolute",
+        // bottom: 30,
+        paddingVertical: 15,
+        paddingHorizontal:20
     },
     btnText: {
         fontFamily: 'Montserrat-SemiBold',
         color: colorObj.whiteColor,
         alignItems: 'center',
         textAlign: 'center',
-        fontSize: 20
+        fontSize: 20,
+
     },
     description: { fontFamily: 'Montserrat-Regular', fontSize: 14, color: 'rgba(0,0,0,0.6)', paddingHorizontal: 8 },
 })

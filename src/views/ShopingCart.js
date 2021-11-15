@@ -33,7 +33,7 @@ export default function ShoppingCart(props) {
 
 
     const renderItem = ({ item }) => (
-        <View style={[styles.topView,]}>
+        <View style={[styles.topView,{marginVertical:10}]}>
             <Image
                 style={[styles.img]}
                 source={{
@@ -51,25 +51,36 @@ export default function ShoppingCart(props) {
                 <Text style={[{ color: '#085A4E', marginLeft: 5, fontSize: 14, fontFamily: 'RedHatText-SemiBold', }]}>{item?.courseObj?.price}</Text></View>
         </View>
     );
-    
-    
+
+
 
 
     return (
         <View style={[styles.container]}>
             <View style={{ padding: 20 }}><View style={{ flexDirection: 'row' }}>
-                <AntDesign name='arrowleft' size={20} style={{ color: 'black' }} />
+                <Pressable onPress={() => props.navigation.goBack()}>
+
+                    <AntDesign name='arrowleft' size={20} style={{ color: 'black' }} />
+                </Pressable>
                 <Text style={[styles.topText, { flex: 1, marginLeft: 20 }]}>Shopping Cart</Text>
-                <AntDesign name='message1' size={20} style={{ color: 'black', marginRight: 20 }} />
-                <Feather name='bell' size={20} style={{ color: 'black' }} />
+                <Pressable onPress={() => props.navigation.navigate("MainTopTab")}>
+                    <AntDesign name='message1' size={20} style={{ color: 'black', marginRight: 20 }} />
+                </Pressable>
+                <Pressable onPress={() => props.navigation.navigate("Notification")}>
+                    <Feather name='bell' size={20} style={{ color: 'black' }} />
+                </Pressable>
             </View>
-                <View>
+                <View style={{ marginTop: 20 }}>
                     <FlatList
                         data={cartObj?.courseArr}
                         renderItem={renderItem}
                         keyExtractor={(item, index) => `${item.courseId}`}
-
-                    /></View></View>
+                        ListEmptyComponent={
+                            <Text>Your cart is empty</Text>
+                        }
+                    />
+                </View>
+            </View>
 
             <View style={{ backgroundColor: '#F9F9F9', padding: 20 }}>
                 <Text style={{ fontSize: 14, fontFamily: 'RedHatText-SemiBold', color: 'black' }}>PRICE DETAILS (2 Items)</Text>
@@ -98,7 +109,7 @@ export default function ShoppingCart(props) {
                                 ₹ {cartObj?.courseArr?.reduce((acc, el) => acc + el.courseObj.price, 0)}
                             </Text>
                         </View></View>
-                    <Pressable onPress={()=>props.navigation.navigate('OrderSummary')} style={{ backgroundColor: '#085A4E', justifyContent: 'center', paddingHorizontal: 15, borderRadius: 5 }}><Text style={{ color: '#fff', fontSize: 16, fontFamily: "RedHatText-Regular" }}>PLACE ORDER</Text></Pressable>
+                    <Pressable onPress={() => props.navigation.navigate('OrderSummary')} style={{ backgroundColor: '#085A4E', justifyContent: 'center', paddingHorizontal: 15, borderRadius: 5 }}><Text style={{ color: '#fff', fontSize: 16, fontFamily: "RedHatText-Regular" }}>PLACE ORDER</Text></Pressable>
                 </View>
             </View>
 
