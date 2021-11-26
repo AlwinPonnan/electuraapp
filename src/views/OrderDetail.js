@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, FlatList, Image, Pressable, Modal } from 'react
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
-import { deliverOrder, dispatchOrder, getById, getMyOrders } from '../Services/Order';
+import { deliverOrder, dispatchImage, dispatchOrder, getById, getMyOrders } from '../Services/Order';
 import { useIsFocused } from '@react-navigation/core';
 import { colorObj } from '../globals/colors';
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -17,6 +17,7 @@ import { getDecodedToken } from '../Services/User';
 import { successAlertContext } from '../../App';
 
 import { loadingContext } from '../navigators/stacks/RootStack';
+import DocumentPicker from 'react-native-document-picker'
 
 export default function OrderDetail(props) {
     const [isLoading, setIsLoading] = useContext(loadingContext);
@@ -40,6 +41,36 @@ export default function OrderDetail(props) {
 
     const [alertText, setAlertText] = alertTextArr
 
+    const [activeStepper, setActiveStepper] = useState(0);
+
+
+    const [dispatchImageFile, setDispatchImageFile] = useState();
+
+    const pickImg = async () => {
+        try {
+            const res = await DocumentPicker.pickSingle({
+                type: [DocumentPicker.types.images],
+            })
+            console.log(
+                res.uri,
+                res.type, // mime type
+                res.name,
+                res.size,
+            )
+            setDispatchImageFile(res)
+            handleDispatchOrder()
+
+
+        } catch (err) {
+            if (DocumentPicker.isCancel(err)) {
+                // User cancelled the picker, exit any dialogs or menus and move on
+            } else {
+                throw err
+            }
+        }
+    }
+
+
     const getOrders = async () => {
         try {
             let tempOrderId = props.route.params.data
@@ -47,8 +78,21 @@ export default function OrderDetail(props) {
             setDecodedJwtToken(decodedToken)
             const { data: res } = await getById(tempOrderId);
             if (res) {
+                let tempObj = res.data;
+                if (tempObj?.statusObj?.status == "PLACED") {
+                    setActiveStepper(1)
+                }
+                else if (tempObj?.statusObj?.status == "DISPATCHED") {
+                    setActiveStepper(2)
+                }
+                else if (tempObj?.statusObj?.status == "DELIVERED") {
+                    setActiveStepper(3)
+                }
+
+                setOrderObj(tempObj)
                 console.log(JSON.stringify(res.data, null, 2))
-                setOrderObj(res.data)
+
+
             }
         } catch (error) {
             console.error(error)
@@ -76,9 +120,13 @@ export default function OrderDetail(props) {
 
             const { data: res } = await dispatchOrder(orderObj?._id)
             if (res) {
+                let formData = new FormData()
+                formData.append('file', dispatchImageFile)
+                const { data: response } = await dispatchImage(orderObj?._id, formData)
                 getOrders()
                 setAlertText(res.message)
                 setSuccessAlert(true)
+
             }
         } catch (error) {
             console.error(error)
@@ -137,7 +185,7 @@ export default function OrderDetail(props) {
 
                 {orderObj?.teacherId != decodedJwtToken.userId &&
 
-                    <ProgressSteps isComplete={true} completedStepIconColor={colorObj.primarColor} completedProgressBarColor={colorObj.primarColor} activeStepIconBorderColor={colorObj.primarColor} activeLabelColor={colorObj.primarColor} labelFontFamily="RedHatText-Medium" completedLabelColor={colorObj.primarColor} activeStep={2} >
+                    <ProgressSteps isComplete={activeStepper == 3} completedStepIconColor={colorObj.primarColor} completedProgressBarColor={colorObj.primarColor} activeStepIconBorderColor={colorObj.primarColor} activeLabelColor={colorObj.primarColor} labelFontFamily="RedHatText-Medium" completedLabelColor={colorObj.primarColor} activeStep={activeStepper} >
                         <ProgressStep removeBtnRow={true} label="Placed">
                             <View style={{ alignItems: 'center' }}>
                                 <Text></Text>
@@ -198,7 +246,7 @@ export default function OrderDetail(props) {
                         // </View>
                         <View>
                             {orderObj?.statusObj?.status == "PLACED" &&
-                                <Pressable style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }} onPress={() => handleDispatchOrder()}>
+                                <Pressable style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }} onPress={() => pickImg()}>
                                     <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Dispatch</Text>
                                 </Pressable>
                             }
@@ -216,9 +264,17 @@ export default function OrderDetail(props) {
                         </View>
 
                         :
-                        <View style={styles.topView}>
-                            <Text style={[{ color: '#828282', marginLeft: 5, fontSize: 14, fontFamily: 'RedHatText-Regular', }]}>{new Date(orderObj?.createdAt).toDateString()}</Text>
-                        </View>
+                        <>
+                            {orderObj?.statusObj?.status == "DISPATCHED" ?
+                                <Pressable style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }} onPress={() => handleDeliverOrder()}>
+                                    <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Mark Delivered</Text>
+                                </Pressable>
+                                :
+                                <View style={styles.topView}>
+                                    <Text style={[{ color: '#828282', marginLeft: 5, fontSize: 14, fontFamily: 'RedHatText-Regular', }]}>{new Date(orderObj?.createdAt).toDateString()}</Text>
+                                </View>
+                            }
+                        </>
 
                     }
 
@@ -248,12 +304,12 @@ export default function OrderDetail(props) {
                 <View style={[styles.flexRow, { alignItems: 'center', marginHorizontal: 20, justifyContent: 'space-between', marginTop: 10 }]}>
                     <Text style={styles.addressText}>Total Mrp</Text>
 
-                    <Text style={styles.addressText}>₹ {orderObj?.payableAmount}</Text>
+                    <Text style={styles.addressText}>₹ {orderObj?.subTotalAmount}</Text>
                 </View>
                 <View style={[styles.flexRow, { alignItems: 'center', marginHorizontal: 20, justifyContent: 'space-between', marginTop: 10 }]}>
                     <Text style={styles.addressText}>Coupon Discount</Text>
 
-                    <Text style={styles.addressText}>₹ 0</Text>
+                    <Text style={styles.addressText}>₹ {orderObj?.discountedAmountByCoupon}</Text>
                 </View>
                 <View style={styles.bottomLine}></View>
                 <View style={[styles.flexRow, { alignItems: 'center', marginHorizontal: 20, justifyContent: 'space-between', marginVertical: 10 }]}>

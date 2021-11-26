@@ -33,6 +33,9 @@ export const getIncomingOrders = async () => {
 export const dispatchOrder = async (id) => {
     return await axiosApiInstance.patch(`${url}/dispatch/${id}`)
 }
+export const dispatchImage = async (id,obj) => {
+    return await axiosApiInstance.patch(`${url}/dispatchImageUpload/${id}`,obj)
+}
 export const deliverOrder = async (id) => {
     return await axiosApiInstance.patch(`${url}/deliver/${id}`)
 }

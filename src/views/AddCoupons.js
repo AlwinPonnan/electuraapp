@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback,useContext } from 'react'
+import React, { useState, useEffect, useCallback, useContext } from 'react'
 import { View, Text, StyleSheet, Image, TextInput, Pressable, KeyboardAvoidingView, ScrollView, Platform, TouchableOpacity, FlatList } from 'react-native'
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -14,23 +14,25 @@ import { newEnquiry } from '../Services/TeacherEnquiry';
 import { getAllCategory } from '../Services/Category';
 
 import { Picker } from '@react-native-picker/picker';
-import { courseAdd, uploadCourseImage } from '../Services/Course';
+import { courseAdd, getByCoursesUserId, uploadCourseImage } from '../Services/Course';
 import { Checkbox } from 'react-native-paper';
 import { getAllClasses } from '../Services/Classses';
 import DocumentPicker from 'react-native-document-picker'
 import { successAlertContext } from '../../App';
 import { loadingContext } from '../navigators/stacks/RootStack';
+import { useIsFocused } from '@react-navigation/core';
+import { newCoupon } from '../Services/Coupons';
 
 export default function AddCoupons(props) {
 
     const [loading, setLoading] = useContext(loadingContext);
-    
+
     const [code, setCode] = useState('');
 
     const [description, setDescription] = useState('');
     const [hours, setHours] = useState('');
+    const [amountOff, setAmountOff] = useState('');
 
-    
 
     const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
 
@@ -41,36 +43,36 @@ export default function AddCoupons(props) {
 
 
     const [alertText, setAlertText] = alertTextArr
+
+
+    const [courseArr, setCourseArr] = useState([]);
+
+    const focused = useIsFocused()
     const handleSubmit = async () => {
         setLoading(true)
         try {
 
-           
-            if (courseImg?.name != "" && code!="" && hours!="" && assignments!=""  && description!="" && classesFilteredArr.length>=1) {
 
-                let userToken = await getDecodedToken()
-                console.log(userToken)
+            if ( code != "" && amountOff!="" && courseArr.some(el=>el.checked)) {
                 let obj = {
-                    // name,
-                    // hours,
-                    // price,
-                    // assignments,
-                    // classesArr: classesFilteredArr,
-
-                    // youtubeLink,
-                    // description,
-                    // userId: userToken?.userId,
+                    code,
+                    amountOff,
+                    courseArr: courseArr.filter(el => el.checked).map(el => {
+                        let tempObj={
+                            courseId:el._id
+                        }
+                        return tempObj
+                    })
                 }
-                console.log(obj)
-                const { data: res } = await courseAdd(obj);
+                const { data: res } = await newCoupon(obj);
                 if (res.success) {
-                   
+
                     setAlertText(res.message)
                     setSuccessAlert(true)
                     props.navigation.goBack()
                 }
             }
-            else{
+            else {
                 setWarningAlert(true)
                 setAlertText("Please fill all the fields")
             }
@@ -89,9 +91,40 @@ export default function AddCoupons(props) {
         setLoading(false)
     }
 
+    const handleCourseGet = async () => {
+        try {
+            let decodedTokenObj = await getDecodedToken()
+            const { data: res } = await getByCoursesUserId(decodedTokenObj.userId);
+            if (res.success) {
+                setCourseArr([...res.data.map(el => {
+                    let obj = {
+                        ...el,
+                        checked: false
+                    }
+                    return obj
+                })])
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+
+    const handleCourseSelection = (id) => {
+        setCourseArr(prevState => {
+            let tempIndex = prevState.findIndex(el => el._id == id);
+            prevState[tempIndex].checked = !prevState[tempIndex].checked;
+            return [...prevState]
+        })
+    }
+
+    const handleOnint = () => {
+        handleCourseGet()
+    }
 
     useEffect(() => {
-    }, [])
+        handleOnint()
+    }, [focused])
 
 
     return (
@@ -110,19 +143,46 @@ export default function AddCoupons(props) {
                         </View>
                         <View style={styles.inputContainer}>
                             <Icon name="person-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setCode(val)} placeholder="Enter Name" />
+                            <TextInput style={styles.inputStyles} onChangeText={(val) => setCode(val)} placeholder="Enter Code" />
                         </View>
                         <View style={styles.inputContainer}>
                             <Icon name="home-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setPrice(val)} placeholder="Enter Price" keyboardType="numeric" />
+                            <TextInput style={styles.inputStyles} maxLength={2} onChangeText={(val) => setAmountOff(val)} placeholder="Enter Amount Off" keyboardType="numeric" />
                         </View>
-                        
-                        
-                        
-                        <View style={[styles.inputContainer, { minHeight: 80 }]}>
+
+                        <Text style={styles.label}>Select your courses *</Text>
+
+                        <FlatList
+                            data={courseArr}
+                            keyExtractor={(item, index) => `${item._id}`}
+                            renderItem={({ item, index }) => {
+                                return (
+                                    <View>
+                                        <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 10 }]}>
+                                            <Checkbox
+                                                color={colorObj.primarColor}
+                                                status={item.checked ? "checked" : "unchecked"}
+                                                onPress={() => {
+                                                    handleCourseSelection(item._id);
+                                                }}
+                                            />
+                                            <TouchableOpacity style={{ width: wp(82), paddingVertical: 5, }} onPress={() => {
+                                                handleCourseSelection(item._id);
+                                            }}>
+                                                <Text style={{ fontFamily: 'Montserrat-Regular' }}>{item.name}</Text>
+                                            </TouchableOpacity>
+
+                                        </View>
+
+                                    </View>
+                                )
+                            }}
+                        />
+
+                        {/* <View style={[styles.inputContainer, { minHeight: 80 }]}>
                             <Icon name="chatbox-ellipses-outline" size={14} color="black" />
                             <TextInput style={styles.inputStyles} onChangeText={(val) => setDescription(val)} placeholder="Enter Description" multiline={true} />
-                        </View>
+                        </View> */}
 
                         <View style={styles.btnContainer}>
                             <Text style={styles.termsText}></Text>
@@ -158,7 +218,8 @@ const styles = StyleSheet.create({
         // lineHeight: 21,
         marginVertical: 5,
         fontSize: 30,
-        color: colorObj.primarColor
+        color: colorObj.primarColor,
+        textAlign: 'center'
     },
     labelSubHeading: {
         fontFamily: 'Montserrat-Regular',
@@ -223,7 +284,7 @@ const styles = StyleSheet.create({
     },
     flexRowAlignCenter: {
         display: "flex",
-        marginVertical: 15,
+        marginVertical: 5,
         flexDirection: "row",
         alignItems: "center",
     },

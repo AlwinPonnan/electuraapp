@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, View, Text, TextInput, Pressable, Modal } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Pressable, Modal,FlatList } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import NavBar from '../components/Navbar';
@@ -31,11 +31,6 @@ export default function TeacherCoupons(props) {
 
     const [couponArr, setCouponArr] = useState([]);
 
-    const [couponModal, setCouponModal] = useState(false);
-
-    const [code, setCode] = useState('');
-    const [description, setDescription] = useState('');
-    const [expiry, setExpiry] = useState('');
 
     const getCoupons = async () => {
         setIsLoading(true)
@@ -79,19 +74,27 @@ export default function TeacherCoupons(props) {
                 </View>
             </View>
 
-            <View style={{ backgroundColor: '#F9F9F9', padding: 20 }}>
-                <View style={{ flexDirection: 'row', }}>
-                    <AntDesign name='checksquare' size={18} style={{ color: '#085A4E', marginRight: 20 }} />
-                    <View style={{ flex: 1 }}>
-                        <Text style={{ marginLeft: 7, color: '#085A4E', fontFamily: "RedHatText-SemiBold", borderStyle: 'dashed', borderWidth: 1, borderColor: '#085A4E', padding: 5, width: 100, textAlign: 'center' }}>ELECTURA</Text>
-                        <Text style={{ color: '#4F4F4F', fontSize: 13, fontFamily: "RedHatText-Regular", marginTop: 10 }}>Save $50</Text>
-                        <Text style={{ color: '#4F4F4F', fontSize: 13, fontFamily: "RedHatText-Regular", marginTop: 10 }}>Expires on: 09th December 202 1</Text>
-                    </View>
-                </View>
+            <FlatList
+                data={couponArr}
+                renderItem={({ item, index }) => {
+                    return (
+                        <View style={{ backgroundColor: '#F9F9F9', padding: 20 }}>
+                            <View style={{ flexDirection: 'row', }}>
+                                <AntDesign name='checksquare' size={18} style={{ color: '#085A4E', marginRight: 20 }} />
+                                <View style={{ flex: 1 }}>
+                                    <Text style={{ marginLeft: 7, color: '#085A4E', fontFamily: "RedHatText-SemiBold", borderStyle: 'dashed', borderWidth: 1, borderColor: '#085A4E', padding: 5, width: 100, textAlign: 'center' }}>{item?.code}</Text>
+                                    <Text style={{ color: '#4F4F4F', fontSize: 13, fontFamily: "RedHatText-Regular", marginTop: 10 }}>Discount {item.amountOff}%</Text>
+                                    <Text style={{ color: '#4F4F4F', fontSize: 13, fontFamily: "RedHatText-Regular", marginTop: 10 }}>created at: {new Date(item.createdAt).toDateString()}</Text>
+                                </View>
+                            </View>
 
 
-            </View>
-           
+                        </View>
+                    )
+                }}
+                keyExtractor={(item, index) => `${item._id}`}
+
+            />
             <FAB
                 style={styles.fab}
                 small

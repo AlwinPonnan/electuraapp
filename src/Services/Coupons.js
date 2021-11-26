@@ -13,5 +13,5 @@ export const getCouponsByTeacherId = async () => {
 
 
 export const newCoupon = async (obj) => {
-    return axiosApiInstance.get(`${url}/newCoupon`, obj)
+    return axiosApiInstance.post(`${url}/newCoupon`, obj)
 }

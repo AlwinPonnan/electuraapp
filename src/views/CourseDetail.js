@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef, useCallback } from 'react'
-import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView, Linking, Button, ImageBackground } from 'react-native'
+import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView, Linking, Button, ImageBackground, Modal, TextInput } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj, light_colors } from '../globals/colors';
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -18,6 +18,8 @@ import RazorpayCheckout from 'react-native-razorpay';
 
 
 import YoutubePlayer from "react-native-youtube-iframe";
+
+
 export default function CourseDetail(props) {
     const [loading, setLoading] = useContext(loadingContext);
 
@@ -38,7 +40,17 @@ export default function CourseDetail(props) {
 
     const [alertText, setAlertText] = alertTextArr
 
+    const [code, setCode] = useState('');
     const [playing, setPlaying] = useState(false);
+
+
+    const [name, setName] = useState('');
+    const [phone, setPhone] = useState('');
+    const [address, setAddress] = useState('');
+    const [line2, setLine2] = useState('');
+    const [city, setCity] = useState('');
+    const [pincode, setPincode] = useState('');
+    const [shippingState, setShippingState] = useState('');
 
     const onStateChange = useCallback((state) => {
         if (state === "ended") {
@@ -47,9 +59,18 @@ export default function CourseDetail(props) {
         }
     }, []);
 
+
+
     const [watchVideo, setWatchVideo] = useState(false);
 
     const [youtubeVideoId, setYoutubeVideoId] = useState('');
+
+
+
+    const [couponModal, setCouponModal] = useState(false);
+
+
+
     const togglePlaying = useCallback(() => {
         setPlaying((prev) => !prev);
     }, []);
@@ -192,7 +213,7 @@ export default function CourseDetail(props) {
 
 
     const buyPackage = async () => {
-
+        setCouponModal(false)
 
         setLoading(true)
         try {
@@ -202,7 +223,15 @@ export default function CourseDetail(props) {
                 let obj = {
 
                     userId: decoded.userId,
-                    courseId: courseObj?._id
+                    courseId: courseObj?._id,
+                    couponCode: code,
+                    addressObj: {
+                        line1: address,
+                        line2,
+                        city,
+                        pincode,
+                        state: shippingState
+                    }
                 }
                 let { data: res, status: statusCode } = await createSingleOrder(obj)
                 if (res) {
@@ -256,7 +285,7 @@ export default function CourseDetail(props) {
     }, [isFocused])
 
     return (
-        <ScrollView style={{ flex: 1 ,backgroundColor:colorObj.whiteColor }}>
+        <ScrollView style={{ flex: 1, backgroundColor: colorObj.whiteColor }}>
 
             <View style={[styles.container]}>
                 <NavBar rootProps={props} />
@@ -311,15 +340,57 @@ export default function CourseDetail(props) {
                     <Text style={styles.description}>
                         {courseObj?.description}
                     </Text>
-                    <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90), marginTop: 10, marginBottom:50,alignSelf: 'center' }]}>
+                    <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90), marginTop: 10, marginBottom: 50, alignSelf: 'center' }]}>
 
                         <Pressable style={styles.btn} onPress={() => handleAddCourseToCart()}>
                             <Text style={styles.btnText}>Add to cart</Text>
                         </Pressable>
-                        <Pressable style={styles.btn} onPress={() => buyPackage()}>
+                        <Pressable style={styles.btn} onPress={() => setCouponModal(true)}>
                             <Text style={styles.btnText}>Buy Now</Text>
                         </Pressable>
                     </View>
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={couponModal}
+                        onRequestClose={() => {
+                            setCouponModal(false);
+                        }}
+                    >
+                        <Pressable style={styles.centeredView} onPress={() => setCouponModal(false)}>
+                            <Pressable style={styles.modalView}>
+                                <ScrollView>
+
+                                    <Text style={styles.responseModalHeading}>Order Details</Text>
+
+
+                                    <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Address Line 1</Text>
+                                    <TextInput style={[styles.textInput]} value={address} onChangeText={(e) => setAddress(e)} />
+
+                                    <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Address Line 2</Text>
+                                    <TextInput style={[styles.textInput]} value={line2} onChangeText={(e) => setLine2(e)} />
+
+                                    <Text style={[styles.textInputLabel, { marginTop: 10 }]}>City</Text>
+                                    <TextInput style={[styles.textInput]} value={city} onChangeText={(e) => setCity(e)} />
+
+
+                                    <Text style={[styles.textInputLabel, { marginTop: 10 }]}>State</Text>
+                                    <TextInput style={[styles.textInput]} value={shippingState} onChangeText={(e) => setShippingState(e)} />
+
+
+                                    <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Pincode</Text>
+                                    <TextInput style={[styles.textInput]} maxLength={6} keyboardType="numeric" value={pincode} onChangeText={(e) => setPincode(e)} />
+
+                                    <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Enter Coupon Code (if any)</Text>
+                                    <TextInput style={[styles.textInput]} value={code} onChangeText={(e) => setCode(e)} />
+                                    <Pressable style={styles.submitBtn} onPress={() => buyPackage()}>
+                                        <Text style={styles.submitBtnText}>Submit</Text>
+                                    </Pressable>
+                                </ScrollView>
+
+                            </Pressable>
+                        </Pressable>
+                    </Modal>
                 </View>
             </View>
         </ScrollView>
@@ -402,4 +473,66 @@ const styles = StyleSheet.create({
 
     },
     description: { fontFamily: 'Montserrat-Regular', fontSize: 14, color: 'rgba(0,0,0,0.6)', paddingHorizontal: 8 },
+    //modal styles
+
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        // marginTop: 22,
+        backgroundColor: 'rgba(0,0,0,0.6)'
+
+    },
+    modalView: {
+        margin: 20,
+        width: wp(90),
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+    responseModalHeading: {
+        fontFamily: 'OpenSans-SemiBold',
+        fontSize: 20,
+        color: '#000',
+        textAlign: 'center',
+        marginVertical: 10
+    },
+    radioText: {
+        fontFamily: 'OpenSans-Regular',
+        fontSize: 14
+    },
+    submitBtn: {
+        backgroundColor: colorObj.primarColor,
+        borderRadius: 25,
+        marginVertical: 10
+    },
+    submitBtnText: {
+        fontFamily: 'OpenSans-SemiBold',
+        fontSize: 16,
+        color: colorObj.whiteColor,
+        textAlign: 'center',
+        paddingVertical: 10,
+    },
+    //text input styles
+    textInputLabel: {
+        fontFamily: 'OpenSans-SemiBold',
+        fontSize: 16,
+        color: '#000'
+    },
+    textInput: {
+        backgroundColor: '#F5F6FA',
+        borderRadius: 5,
+        marginVertical: 10,
+        width: '100%',
+        fontFamily: 'OpenSans-Regular'
+
+    },
 })
