@@ -24,6 +24,8 @@ import { generateImageUrl } from '../../globals/utils';
 import CreateCourse from '../../views/CreateCourse';
 import { useIsFocused } from '@react-navigation/core';
 import TeacherProfile from '../../views/TeacherProfile';
+import Coupons from '../../views/Coupons';
+import TeacherCoupons from '../../views/TeacherCoupon';
 const Drawer = createDrawerNavigator();
 
 
@@ -66,8 +68,11 @@ export default function MainDrawer() {
                     <TouchableOpacity style={styles.DrawerItem} onPress={() => profileData?.role == "TEACHER" ? props.navigation.navigate('TeacherProfile', { data: profileData?._id }) : props.navigation.navigate('AccountEdit')}><Icon name="settings-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Account Settings</Text></TouchableOpacity>
                     {
                         roleName == "TEACHER" &&
+                        <>
+                            <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate('CreateCourse')}><Icon name="desktop-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Create Your Course</Text></TouchableOpacity>
+                            <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate('TeacherCoupons')}><Icon name="desktop-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Coupons</Text></TouchableOpacity>
 
-                        <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate('CreateCourse')}><Icon name="desktop-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Create Your Course</Text></TouchableOpacity>
+                        </>
                     }
 
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="pencil-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Blogs</Text></TouchableOpacity>
@@ -122,6 +127,8 @@ export default function MainDrawer() {
             <Drawer.Screen name="MainBottomTab" component={MainBottomTab} />
             <Drawer.Screen name="AccountEdit" component={AccountEdit} />
             <Drawer.Screen name="CreateCourse" component={CreateCourse} />
+            <Drawer.Screen name="TeacherCoupons" component={TeacherCoupons} />
+
             <Drawer.Screen name="RegisterTeacher" component={RegisterTeacher} />
         </Drawer.Navigator>
     )

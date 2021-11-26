@@ -36,7 +36,7 @@ export default function TeacherProfile(props) {
 
     const [teacherObj, setTeacherObj] = useState({});
 
-    const [rating, setRating] = useState(0);
+    const [rating, setRating] = useState(3);
 
     const [responseMessage, setResponseMessage] = useState('');
 
@@ -154,6 +154,7 @@ export default function TeacherProfile(props) {
             }
             const { data: res } = await addNewFeedBack(obj)
             if (res.success) {
+                getAllFeedBacks()
                 setAlertText(res.message)
                 setSuccessAlert(true)
             }
@@ -336,7 +337,7 @@ export default function TeacherProfile(props) {
                                     <View style={[styles.flexRow, { alignItems: 'center' }]}>
                                         {item?.ratingArr?.map((el, i) => {
                                             return (
-                                                <Icon key={i} name="star" size={16} color="#FF900E" />
+                                                <Icon key={i} name="star" size={12} color="#FF900E" />
                                             )
                                         })}
                                     </View>
@@ -443,6 +444,7 @@ export default function TeacherProfile(props) {
                         <Rating
                             style={{ alignSelf: 'flex-start', marginVertical: 5 }}
                             type='custom'
+                            startingValue={rating}
                             onFinishRating={(val) => setRating(val)}
                             ratingCount={5}
                             imageSize={25}

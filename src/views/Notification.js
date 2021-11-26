@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect ,useContext} from 'react'
 import { View, Text, StyleSheet, Image, Pressable } from 'react-native'
 import { colorObj } from '../globals/colors'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -9,6 +9,7 @@ import { getAllNotifications } from '../Services/User';
 import { FlatList } from 'react-native-gesture-handler';
 import { generateImageUrl } from '../globals/utils';
 
+import { loadingContext } from '../navigators/stacks/RootStack';
 
 export default function Notification(props) {
 
@@ -17,7 +18,11 @@ export default function Notification(props) {
 
     const focused = useIsFocused()
 
+
+    const [isLoading, setIsLoading] = useContext(loadingContext);
+
     const getNotifications = async () => {
+        setIsLoading(true)
         try {
             const { data: res } = await getAllNotifications()
             if (res.success) {
@@ -26,6 +31,7 @@ export default function Notification(props) {
         } catch (error) {
             console.error(error)
         }
+        setIsLoading(false)
     }
 
 

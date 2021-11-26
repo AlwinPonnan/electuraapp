@@ -32,6 +32,7 @@ import OrderSummary from '../../views/OrderSummary';
 import Order from '../../views/Order';
 import OrderDetail from '../../views/OrderDetail';
 import IncomingOrders from '../../views/IncomingOrders';
+import AddCoupons from '../../views/AddCoupons';
 const Stack = createNativeStackNavigator();
 
 export const AuthContext = createContext()
@@ -162,6 +163,7 @@ export default function RootStack() {
                                         <Stack.Screen name="Orders" component={Order} options={{ headerShown: false }} />
                                         <Stack.Screen name="OrderDetail" component={OrderDetail} options={{ headerShown: false }} />
                                         <Stack.Screen name="IncomingOrders" component={IncomingOrders} options={{ headerShown: false }} />
+                                        <Stack.Screen name="AddCoupons" component={AddCoupons} options={{ headerShown: false }} />
 
 
 
