@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import NavBar from '../components/Navbar';
 import { getAllCategory } from '../Services/Category';
 import { useIsFocused } from '@react-navigation/core';
-import { getAllTeachers, getAllTeachersSubjectWise } from '../Services/User';
+import { BookmarkTeacher, getAllTeachers, getAllTeachersSubjectWise } from '../Services/User';
 import { imageObj } from '../globals/images';
 import { getAllSubjects } from '../Services/Subjects';
 import { generateImageUrl } from '../globals/utils';
@@ -15,6 +15,10 @@ import { saveTokenToDatabase } from '../Services/User';
 import AllTeacher from './AllTeacher';
 import { useNavigation } from '@react-navigation/core';
 export default function HomeScreen(props) {
+
+
+
+
     const navigation = useNavigation()
     const isFocused = useIsFocused()
     const [selectedCategoryId, setSelectedCategoryId] = useState('');
@@ -27,7 +31,7 @@ export default function HomeScreen(props) {
 
     const [subjectWiseTeacherArr, setSubjectWiseTeacherArr] = useState([]);
 
-   
+
 
     const [categoryArr, setCategoryArr] = useState([]);
 
@@ -67,6 +71,20 @@ export default function HomeScreen(props) {
         }
     }
 
+    const handleBookmarkTeacher = async (id) => {
+        try {
+            const { data: res } = await BookmarkTeacher(id);
+            if (res) {
+                alert(res.message)
+                handleOnint()
+
+            }
+
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     const getSubjectWise = async () => {
         try {
             const { data: res } = await getAllTeachersSubjectWise();
@@ -88,7 +106,7 @@ export default function HomeScreen(props) {
         await messaging().registerDeviceForRemoteMessages();
     }
 
-    
+
 
     useEffect(() => {
         messaging()
@@ -100,10 +118,14 @@ export default function HomeScreen(props) {
     }, [])
 
 
-    useEffect(() => {
+    const handleOnint = () => {
         getSubjects()
         getTeachers()
         getSubjectWise()
+    }
+
+    useEffect(() => {
+        handleOnint()
     }, [isFocused])
 
 
@@ -129,9 +151,15 @@ export default function HomeScreen(props) {
                         <Text style={styles.textCardMainSubHeading1}>{item?.enquiryObj?.classesArr?.reduce((acc, el) => acc + el.className + ',', '')}</Text>
                         <Text style={styles.textCardMainSubHeading2}>{item?.enquiryObj?.experience} Year Experience</Text>
                     </View>
-                    <View style={{ position: 'absolute', top: 5, right: 10 }} >
-                        <Icon name="bookmark-outline" size={16} color="black" />
-                    </View>
+                    <Pressable onPress={() => handleBookmarkTeacher(item?._id)} style={{ position: 'absolute', top: 5, right: 10 }} >
+                        {item?.enquiryObj?.bookmarked ?
+                            <Icon name="bookmark" size={16} color={colorObj?.primarColor} />
+
+                            :
+                            <Icon name="bookmark-outline" size={16} color={colorObj?.primarColor} />
+
+                        }
+                    </Pressable>
                 </View>
             </Pressable>
         )
@@ -180,12 +208,12 @@ export default function HomeScreen(props) {
 
 
 
-               
+
                 <FlatList
                     data={subjectWiseTeacherArr}
                     renderItem={({ item, index }) => {
                         return (
-                            <View style={{marginVertical:10}}>
+                            <View style={{ marginVertical: 10 }}>
                                 <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                                     <Text style={styles.headingAboveCard}>{item?.name} Instructors</Text>
                                     <Pressable onPress={() => props.navigation.navigate('AllTeacher')}>
@@ -196,9 +224,10 @@ export default function HomeScreen(props) {
                                     data={item?.userArr}
                                     keyExtractor={(item, index) => `${item._id}`}
                                     horizontal
+                                    showsHorizontalScrollIndicator={false}
                                     renderItem={({ item: itemX, index: indexX }) => {
                                         return (
-                                            <Pressable style={[styles.cardContainer,{marginVertical:10,paddingVertical:5}]} onPress={() => props.navigation.navigate("TeacherProfile", { data: itemX._id })}>
+                                            <Pressable style={[styles.cardContainer, { marginVertical: 10, paddingVertical: 5 }]} onPress={() => props.navigation.navigate("TeacherProfile", { data: itemX._id })}>
 
                                                 <Image style={styles.teacherImg} source={{ uri: itemX?.profileImage ? generateImageUrl(itemX?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
                                                 <View style={styles.textCardContainer}>
@@ -208,9 +237,14 @@ export default function HomeScreen(props) {
                                                         <Text style={styles.textCardMainSubHeading1}>{itemX?.enquiryObj?.classesArr?.reduce((acc, el) => acc + el.className + ',', '')}</Text>
                                                         <Text style={styles.textCardMainSubHeading2}>{itemX?.enquiryObj?.experience} Year Experience</Text>
                                                     </View>
-                                                    <View style={{ position: 'absolute', top: 5, right: 10 }} >
-                                                        <Icon name="bookmark-outline" size={16} color="black" />
-                                                    </View>
+                                                    <Pressable onPress={() => handleBookmarkTeacher(itemX?._id)} style={{ position: 'absolute', top: 5, right: 10 }} >
+                                                        {itemX?.enquiryObj?.bookmarked ?
+                                                            <Icon name="bookmark" size={16} color={colorObj?.primarColor} />
+                                                            :
+                                                            <Icon name="bookmark-outline" size={16} color={colorObj?.primarColor} />
+
+                                                        }
+                                                    </Pressable>
                                                 </View>
                                             </Pressable>
                                         )

@@ -33,6 +33,7 @@ import Order from '../../views/Order';
 import OrderDetail from '../../views/OrderDetail';
 import IncomingOrders from '../../views/IncomingOrders';
 import AddCoupons from '../../views/AddCoupons';
+import WishList from '../../views/WishList';
 const Stack = createNativeStackNavigator();
 
 export const AuthContext = createContext()
@@ -165,6 +166,7 @@ export default function RootStack() {
                                         <Stack.Screen name="IncomingOrders" component={IncomingOrders} options={{ headerShown: false }} />
                                         <Stack.Screen name="AddCoupons" component={AddCoupons} options={{ headerShown: false }} />
 
+                                        <Stack.Screen name="wishlist" component={WishList} options={{ headerShown: false }} />
 
 
                                     </>

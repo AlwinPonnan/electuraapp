@@ -143,6 +143,13 @@ export const addTOWishList = async (obj) => {
 export const getWishlist = async () => {
     return await axiosApiInstance.get(`${url}/getWishlist`)
 }
+export const removeFromWishlist = async (id) => {
+    return await axiosApiInstance.delete(`${url}/removeFromWishlist/${id}`)
+}
+
+export const BookmarkTeacher = async (id) => {
+    return await axiosApiInstance.post(`${url}/bookmarkTeacher/${id}`)
+}
 
 
 export const addToCart = async (obj) => {

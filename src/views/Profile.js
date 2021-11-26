@@ -19,10 +19,13 @@ export default function Profile(props) {
                 <View style={styles.flexRow}>
 
                     <Text style={styles.mainHeading}>My Account</Text>
-                    <View style={styles.flexRow}>
-                        <Text style={styles.onlineText}>Online</Text>
-                        <Switch color={colorObj.primarColor} value={isSwitchOn} onValueChange={onToggleSwitch} />
-                    </View>
+                    {roleName == "TEACHER" &&
+
+                        <View style={styles.flexRow}>
+                            <Text style={styles.onlineText}>Online</Text>
+                            <Switch color={colorObj.primarColor} value={isSwitchOn} onValueChange={onToggleSwitch} />
+                        </View>
+                    }
                 </View>
                 <Text style={styles.subHeading}>My Courses</Text>
 
@@ -30,6 +33,11 @@ export default function Profile(props) {
 
                     <Text style={styles.subHeading}>My Cart</Text>
                 </Pressable>
+                <Pressable onPress={() => props.navigation.navigate('wishlist')}>
+
+                    <Text style={styles.subHeading}>My Wishlist</Text>
+                </Pressable>
+                
                 <Pressable onPress={() => props.navigation.navigate('Orders')}>
 
                     <Text style={styles.subHeading}>My Orders</Text>

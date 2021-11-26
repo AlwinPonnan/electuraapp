@@ -123,6 +123,21 @@ const App = () => {
 
 
 
+  useEffect(() => {
+    if (successAlert)
+      setTimeout(() => setSuccessAlert(false), 4000)
+  }, [successAlert])
+
+
+  useEffect(() => {
+    if (warningAlert)
+      setTimeout(() => setWarningAlert(false), 4000)
+  }, [warningAlert])
+
+  useEffect(() => {
+    if (errorAlert)
+      setTimeout(() => setErrorAlert(false), 4000)
+  }, [errorAlert])
 
 
   return (
