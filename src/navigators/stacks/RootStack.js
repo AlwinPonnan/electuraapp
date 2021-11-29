@@ -167,10 +167,7 @@ export default function RootStack() {
                                         <Stack.Screen name="OrderDetail" component={OrderDetail} options={{ headerShown: false }} />
                                         <Stack.Screen name="IncomingOrders" component={IncomingOrders} options={{ headerShown: false }} />
                                         <Stack.Screen name="AddCoupons" component={AddCoupons} options={{ headerShown: false }} />
-
                                         <Stack.Screen name="wishlist" component={WishList} options={{ headerShown: false }} />
-
-
                                     </>
 
                                     :

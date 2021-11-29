@@ -56,12 +56,12 @@ export default function HomeScreen(props) {
             console.error(error)
         }
     }
-    
+
     const getTeachers = async () => {
         try {
             const { data: res } = await getAllTeachers();
             if (res.success) {
-                console.log(JSON.stringify(res.data, null,3), "teachers")
+                console.log(JSON.stringify(res.data, null, 3), "teachers")
 
                 setTeachersArr(res.data)
                 setMainTeachersArr(res.data)
@@ -146,8 +146,14 @@ export default function HomeScreen(props) {
                 <Image style={styles.teacherImg} source={{ uri: item?.profileImage ? generateImageUrl(item?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
                 <View style={styles.textCardContainer}>
                     <View>
-
-                        <Text style={styles.textCardMainHeading}>{item?.name}</Text>
+                        <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                            <Text style={styles.textCardMainHeading}>{item?.name}
+                            </Text>
+                            {
+                                item.onlineToggle == true &&
+                                <Text style={{ height: 8, width: 8, marginLeft: 8, backgroundColor: "#23e615", borderRadius: 50 }}></Text>
+                            }
+                        </View>
                         <Text style={styles.textCardMainSubHeading1}>{item?.enquiryObj?.classesArr?.reduce((acc, el) => acc + el.className + ',', '')}</Text>
                         <Text style={styles.textCardMainSubHeading2}>{item?.enquiryObj?.experience} Year Experience</Text>
                     </View>
@@ -197,7 +203,7 @@ export default function HomeScreen(props) {
                     data={teachersArr}
                     renderItem={renderItem}
                     ListEmptyComponent={
-                        <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>{selectedSubject.name ?`No teachers found for ${selectedSubject.name}`:"No teachers found"}</Text>
+                        <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>{selectedSubject.name ? `No teachers found for ${selectedSubject.name}` : "No teachers found"}</Text>
                     }
                     showsHorizontalScrollIndicator={false}
                     keyExtractor={(item, index) => `${index}`}
@@ -231,8 +237,15 @@ export default function HomeScreen(props) {
                                                 <Image style={styles.teacherImg} source={{ uri: itemX?.profileImage ? generateImageUrl(itemX?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
                                                 <View style={styles.textCardContainer}>
                                                     <View>
+                                                        <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                                                            <Text style={styles.textCardMainHeading}>{itemX?.name}
+                                                            </Text>
+                                                            {
+                                                                itemX.onlineToggle == true &&
+                                                                <Text style={{ height: 8, width: 8, marginLeft: 8, backgroundColor: "#23e615", borderRadius: 50 }}></Text>
+                                                            }
+                                                        </View>
 
-                                                        <Text style={styles.textCardMainHeading}>{itemX?.name}</Text>
                                                         <Text style={styles.textCardMainSubHeading1}>{itemX?.enquiryObj?.classesArr?.reduce((acc, el) => acc + el.className + ',', '')}</Text>
                                                         <Text style={styles.textCardMainSubHeading2}>{itemX?.enquiryObj?.experience} Year Experience</Text>
                                                     </View>

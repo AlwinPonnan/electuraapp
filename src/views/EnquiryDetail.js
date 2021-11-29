@@ -55,6 +55,7 @@ export default function EnquiryDetail(props) {
             if (res.success) {
                 setAlertText(res.message)
                 setSuccessAlert(true)
+                props.navigation.goBack()
                 
             }
         } catch (error) {

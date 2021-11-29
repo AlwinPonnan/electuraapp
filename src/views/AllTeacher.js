@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef,useContext } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import { View, Text, StyleSheet, TextInput, FlatList, Pressable, Image } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -141,8 +141,14 @@ export default function AllTeacher(props) {
                 <Image style={styles.teacherImg} source={{ uri: item?.profileImage ? generateImageUrl(item?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
                 <View style={styles.textCardContainer}>
                     <View>
-
-                        <Text style={styles.textCardMainHeading}>{item?.name}</Text>
+                    <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                        <Text style={styles.textCardMainHeading}>{item?.name}
+                        </Text>
+                        {
+                            item.onlineToggle == true &&
+                            <Text style={{ height: 8, width: 8, marginLeft: 8, backgroundColor: "#23e615", borderRadius: 50 }}></Text>
+                        }
+                    </View>
                         <Text style={styles.textCardMainSubHeading1}>{item?.enquiryObj?.classesArr?.reduce((acc, el) => acc + el.className + ',', '')}</Text>
                         <Text style={styles.textCardMainSubHeading2}>{item?.enquiryObj?.experience} Year Experience</Text>
                     </View>
@@ -163,7 +169,14 @@ export default function AllTeacher(props) {
                     source={{ uri: item?.profileImage ? generateImageUrl(item?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }}
                 />
                 <View style={{ flex: 1, marginLeft: 10 }}>
-                    <Text style={[styles.listName]}>{item.name}</Text>
+                    <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                        <Text style={styles.textCardMainHeading}>{item?.name}
+                        </Text>
+                        {
+                            item.onlineToggle == true &&
+                            <Text style={{ height: 8, width: 8, marginLeft: 8, backgroundColor: "#23e615", borderRadius: 50 }}></Text>
+                        }
+                    </View>
                     <Text style={[styles.location]}><Ionicons name="location-outline" size={16} color="#A3A3A3" style={{ marginRight: 10 }} />{item?.location ? item?.location : "Delhi"}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', width: '90%' }}>
                         <Text style={[styles.subject]}>{item?.enquiryObj?.classesArr?.reduce((acc, el) => acc + el.className + ',', '')}</Text>
@@ -230,7 +243,7 @@ export default function AllTeacher(props) {
             <Text style={[styles.title, { marginVertical: 10 }]}>Instructors Online</Text>
             <FlatList
                 style={{ height: 300 }}
-                data={TeachersArr}
+                data={TeachersArr.filter(el => el.onlineToggle)}
                 renderItem={renderTeacherItem}
                 keyExtractor={(item, index) => `${index}`}
             />

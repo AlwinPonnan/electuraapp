@@ -168,7 +168,7 @@ export const getAllNotifications = async () => {
 
 
 
-export const toggleOnline=()=>{
-    return await axiosApiInstance.get(`${url}/toggleOnline`)
+export const toggleOnline=async()=>{
+    return await axiosApiInstance.patch(`${url}/toggleOnline`)
 
 }

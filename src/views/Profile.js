@@ -7,7 +7,7 @@ import NavBar from '../components/Navbar';
 import { Switch } from 'react-native-paper';
 
 import { roleContext } from '../navigators/stacks/RootStack';
-import { toggleOnline } from '../Services/User';
+import { getUser, toggleOnline } from '../Services/User';
 import { useIsFocused } from '@react-navigation/core';
 
 export default function Profile(props) {
@@ -22,31 +22,29 @@ export default function Profile(props) {
 
 
 
-    const handleToggle = () => {
+    const handleToggle =async () => {
         try {
             let { data: res } = await toggleOnline();
             if (res.success) {
                 alert(res.message)
+                userGet()
             }
         } catch (error) {
             console.error(error)
         }
     }
-
-
-
+    
+    
+    
     const userGet = async () => {
         try {
             const { data: res } = await getUser();
             if (res.success) {
-                if (res.data.onlineToggle) {
-
-                    setIsSwitchOn(res.data.onlineToggle)
-                }
-                else {
-                    setIsSwitchOn(false)
-
-                }
+                console.log(res.data.onlineToggle)
+                setIsSwitchOn(res.data.onlineToggle)
+                // if (res.data.onlineToggle) {
+                    // }
+                // userGet()
             }
         } catch (error) {
             console.error(error)

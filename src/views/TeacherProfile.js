@@ -121,7 +121,7 @@ export default function TeacherProfile(props) {
 
     const renderCourseItem = ({ item, index }) => {
         return (
-            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("CourseDetail", { data: item._id })} >
+            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("CourseStack",{screen:"CourseDetail", params:{ data: item._id }})} >
                 <Image style={styles.courseImg} source={{ uri: item?.imgUrl }} />
                 <View style={styles.textCardContainer}>
                     <View>
@@ -241,13 +241,13 @@ export default function TeacherProfile(props) {
             <ImageBackground resizeMode="cover" source={require('../../assets/images/teacherBackBanner.png')} style={{ width: wp(100), height: hp(15) }}>
 
                 <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(25), position: 'absolute', bottom: 10, right: 20 }]}>
-                    <Pressable onPress={()=> Linking.openURL(teacherObj?.enquiryObj?.instagramLink)}>
+                    <Pressable onPress={() => Linking.openURL(teacherObj?.enquiryObj?.instagramLink)}>
                         <Icon name="logo-instagram" size={25} color={colorObj.whiteColor} />
                     </Pressable>
-                    <Pressable onPress={()=> Linking.openURL(teacherObj?.enquiryObj?.facebookLink)}>
+                    <Pressable onPress={() => Linking.openURL(teacherObj?.enquiryObj?.facebookLink)}>
                         <Icon name="logo-facebook" size={25} color={colorObj.whiteColor} />
                     </Pressable>
-                    <Pressable  onPress={()=> Linking.openURL(teacherObj?.enquiryObj?.youtubeLink)}>
+                    <Pressable onPress={() => Linking.openURL(teacherObj?.enquiryObj?.youtubeLink)}>
                         <Icon name="logo-youtube" size={25} color={colorObj.whiteColor} />
                     </Pressable>
                 </View>
@@ -269,7 +269,14 @@ export default function TeacherProfile(props) {
                 }
             </View>
             <View style={[styles.flexRow, { marginLeft: 15, marginTop: -10, alignItems: 'center' }]}>
-                <Text style={styles.TeacherName}>{teacherObj?.name}</Text>
+                <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                    <Text style={styles.textCardMainHeading}>{teacherObj?.name}
+                    </Text>
+                    {
+                        teacherObj.onlineToggle == true &&
+                        <Text style={{ height: 8, width: 8, marginLeft: 8, backgroundColor: "#23e615", borderRadius: 50 }}></Text>
+                    }
+                </View>
                 <View style={[styles.flexRow, { alignItems: 'center', paddingHorizontal: 20 }]}>
                     <Text style={{ fontFamily: 'RedHatText-Medium', fontSize: 12, color: '#828282' }}>4.2</Text>
                     <Icon name="star" style={{ marginHorizontal: 3 }} size={15} color="orange" />
