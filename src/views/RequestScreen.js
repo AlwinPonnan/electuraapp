@@ -36,8 +36,9 @@ export default function Requestscreen(props) {
     const getRequests = async () => {
         try {
             const { data: res } = await getAllEnquiryRequests();
-            console.log(res.data)
+            console.log(JSON.stringify(res.data),null,2)
             if (res.success) {
+                
                 setRequestArr(res.data)
             }
         } catch (error) {

@@ -19,6 +19,8 @@ export default function Enquiry(props) {
     const [roleName, setRoleName] = useContext(roleContext);
 
     const [enquiryArr, setEnquiryArr] = useState([]);
+    const [mainEnquiryArr, setMainEnquiryArr] = useState([]);
+
     const Focused = useIsFocused()
 
     const [optionsModal, setOptionsModal] = useState(false);
@@ -29,12 +31,23 @@ export default function Enquiry(props) {
 
     const [loading, setLoading] = useContext(loadingContext);
 
+
+    const [searchQuery, setSearchQuery] = useState('');
+
+
     const getYourEnquires = async () => {
         setLoading(true)
         try {
             const { data: res } = await getAllEnquiries();
             if (res.success) {
                 setEnquiryArr(res.data.map(el => {
+                    let obj = {
+                        ...el,
+                        checked: false
+                    }
+                    return obj
+                }))
+                setMainEnquiryArr(res.data.map(el => {
                     let obj = {
                         ...el,
                         checked: false
@@ -97,6 +110,16 @@ export default function Enquiry(props) {
         setLoading(false)
     }
 
+
+
+    const handleSearch = (value) => {
+        let tempStr = value.toLowerCase();
+        let tempArr = [...mainEnquiryArr]
+        console.log(JSON.stringify(tempArr,null,2))
+        tempArr = tempArr.filter(el => el.enquiryType.toLowerCase().includes(tempStr))
+        setEnquiryArr([...tempArr])
+    }
+
     useEffect(() => {
         handleOnint()
     }, [Focused])
@@ -113,7 +136,7 @@ export default function Enquiry(props) {
                         <View style={styles.searchContainer}>
                             <View style={styles.flexRowAlignCenter}>
                                 <Icon name="search-outline" size={20} color="#828282" />
-                                <TextInput style={styles.searchInput} placeholder="Search enquiries" placeholderTextColo="#828282" />
+                                <TextInput style={styles.searchInput} placeholder="Search enquiries" onChangeText={(e)=>handleSearch(e)} placeholderTextColor="#828282" />
                             </View>
                             <Icon name="options-outline" size={20} color="#828282" />
                             {/* <Image style={styles.searchImages} source={require('../../assets/images/Filter.png')} /> */}
@@ -157,13 +180,13 @@ export default function Enquiry(props) {
                                         <View style={[styles.flexRowAlignCenter, { marginTop: 7, justifyContent: "space-between" }]}>
                                             {
                                                 item?.enquiryType == EnquiryTypes.GENERAL ?
-                                                <Text style={styles.ListHeaderDescription}>
-                                                    {item.className},{item.subjectName},{item.topicName}
-                                                </Text>
-                                                :
-                                                <Text style={styles.ListHeaderDescription}>
-                                                    {item.enquiryType}
-                                                </Text>
+                                                    <Text style={styles.ListHeaderDescription}>
+                                                        {item.className},{item.subjectName},{item.topicName}
+                                                    </Text>
+                                                    :
+                                                    <Text style={styles.ListHeaderDescription}>
+                                                        {item.enquiryType}
+                                                    </Text>
                                             }
                                             <TouchableOpacity onPress={() => handleEnquirySelection(item._id)}>
                                                 <Icon name="chevron-down-outline" size={20} color="#828282" />
