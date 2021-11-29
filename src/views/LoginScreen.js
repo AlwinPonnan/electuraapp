@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext, useRef } from 'react'
 import { View, Text, StyleSheet, Image, TextInput, Pressable, KeyboardAvoidingView, ScrollView, ActivityIndicator } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj } from '../globals/colors';
@@ -19,7 +19,7 @@ export default function login(props) {
     const [loading, setLoading] = useContext(loadingContext);
     const [phone, setPhone] = useState('');
 
-
+    const phoneRef = useRef(null);
     const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
 
 
@@ -66,7 +66,10 @@ export default function login(props) {
 
                 <KeyboardAvoidingView style={styles.inputContainer}>
                     <Icon name="call-outline" size={14} color="black" />
-                    <TextInput placeholderTextColor="black" maxLength={10} style={styles.inputStyles} onChangeText={(val) => setPhone(val)} keyboardType="numeric" placeholder="+91     Enter Number" />
+                    <Pressable onPress={() => phoneRef.current.focus()}>
+                        <Text style={{ marginLeft: 10 }}>+91</Text>
+                    </Pressable>
+                    <TextInput placeholderTextColor="black" ref={phoneRef} maxLength={10} style={styles.inputStyles} onChangeText={(val) => setPhone(val)} keyboardType="numeric" placeholder="Enter Number" />
                 </KeyboardAvoidingView>
                 <View style={styles.btnContainer}>
                     <Text style={styles.termsText}>By Continuing you accept the <Text style={{ color: colorObj.primarColor }}>terms and conditions</Text></Text>

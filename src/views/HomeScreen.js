@@ -74,10 +74,10 @@ export default function HomeScreen(props) {
     const handleBookmarkTeacher = async (id) => {
         try {
             const { data: res } = await BookmarkTeacher(id);
+            console.log(res)
             if (res) {
                 alert(res.message)
                 handleOnint()
-
             }
 
         } catch (error) {

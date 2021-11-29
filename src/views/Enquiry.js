@@ -17,7 +17,7 @@ import EnquiryTypes from '../globals/EnquiryTypes';
 
 export default function Enquiry(props) {
     const [roleName, setRoleName] = useContext(roleContext);
-
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [enquiryArr, setEnquiryArr] = useState([]);
     const [mainEnquiryArr, setMainEnquiryArr] = useState([]);
 
@@ -37,6 +37,7 @@ export default function Enquiry(props) {
 
     const getYourEnquires = async () => {
         setLoading(true)
+        setIsRefreshing(true)
         try {
             const { data: res } = await getAllEnquiries();
             if (res.success) {
@@ -59,6 +60,7 @@ export default function Enquiry(props) {
             console.error(error)
         }
         setLoading(false)
+        setIsRefreshing(false)
     }
 
 
@@ -154,6 +156,8 @@ export default function Enquiry(props) {
                         ListEmptyComponent={
                             <Text>No Enquiries Found</Text>
                         }
+                        onRefresh={()=> getYourEnquires()}
+                        refreshing={isRefreshing}
                         renderItem={({ item, index }) => {
                             return (
                                 <>

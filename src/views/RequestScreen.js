@@ -12,7 +12,7 @@ import { checkNcreateChatRoom, getAllEnquiryRequests } from '../Services/Enquiry
 
 export default function Requestscreen(props) {
 
-
+    const [isrefreshing, setIsrefreshing] = useState(false);
     const [searchQuery, setSearchQuery] = React.useState('');
 
     const onChangeSearch = query => setSearchQuery(query);
@@ -35,14 +35,15 @@ export default function Requestscreen(props) {
 
     const getRequests = async () => {
         try {
+            setIsrefreshing(true)
             const { data: res } = await getAllEnquiryRequests();
-            console.log(JSON.stringify(res.data, null, 2), null, 2)
             if (res.success) {
-
+                setIsrefreshing(false)
                 setRequestArr(res.data)
             }
         } catch (error) {
             console.error(error)
+            setIsrefreshing(false)
         }
     }
 
@@ -76,6 +77,7 @@ export default function Requestscreen(props) {
             <Searchbar
                 style={styles.searchBar}
                 placeholder="Search"
+                inputStyle={{ fontFamily: 'OpenSans-Regular', fontSize: 14 }}
                 onChangeText={onChangeSearch}
                 value={searchQuery}
             />
@@ -83,7 +85,9 @@ export default function Requestscreen(props) {
             <FlatList
                 data={requestArr}
                 keyExtractor={(item, index) => `${item._id}`}
-                contentContainerStyle={{marginBottom:100}}
+                contentContainerStyle={{marginBottom:100, minHeight:hp(70)}}
+                refreshing={isrefreshing}
+                onRefresh={()=> getRequests()}
                 renderItem={({ item, index }) => {
                     return (
                         <View style={styles.card}>
@@ -115,10 +119,11 @@ export default function Requestscreen(props) {
 }
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: "white"
+        backgroundColor: "white",
+        paddingHorizontal:hp(2)
     },
     searchBar: {
-        width: wp(95),
+        width: '100%',
         display: "flex",
         alignSelf: "center",
         borderRadius: 10,
@@ -135,6 +140,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.18,
         shadowRadius: 1.00,
         elevation: 1,
+        fontFamily: 'OpenSans-Regular'
     },
 
 

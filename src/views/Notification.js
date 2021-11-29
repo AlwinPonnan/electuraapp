@@ -1,4 +1,4 @@
-import React, { useState, useEffect ,useContext} from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { View, Text, StyleSheet, Image, Pressable } from 'react-native'
 import { colorObj } from '../globals/colors'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -13,7 +13,7 @@ import { loadingContext } from '../navigators/stacks/RootStack';
 
 export default function Notification(props) {
 
-
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [notificationArr, setNotificationArr] = useState([]);
 
     const focused = useIsFocused()
@@ -23,15 +23,22 @@ export default function Notification(props) {
 
     const getNotifications = async () => {
         setIsLoading(true)
+        setIsRefreshing(true)
         try {
             const { data: res } = await getAllNotifications()
             if (res.success) {
+                console.log(JSON.stringify(res.data, null,2))
                 setNotificationArr(res.data)
+                setIsRefreshing(false)
+                
             }
         } catch (error) {
             console.error(error)
+            setIsRefreshing(false)
+            setIsLoading(false)
         }
         setIsLoading(false)
+        setIsRefreshing(false)
     }
 
 
@@ -57,14 +64,16 @@ export default function Notification(props) {
 
                     <FlatList
                         data={notificationArr}
+                        refreshing={isRefreshing}
+                        onRefresh={() => getNotifications()}
                         keyExtractor={(item, index) => `${item._id}`}
                         renderItem={({ item, index }) => {
                             return (
 
                                 <View style={styles.notiCard}>
-                                    <View style={[styles.flexRow, { alignItems: 'center',marginHorizontal:5 }]}>
+                                    <View style={[styles.flexRow, { alignItems: 'center', marginHorizontal: 5 }]}>
                                         <View>
-                                            <Image style={{ height: 50, width: 50 }} source={{uri:generateImageUrl(item?.userObj?.profileImage)}} />
+                                            <Image style={{ height: 50, width: 50 }} source={{ uri: generateImageUrl(item?.userObj?.profileImage) }} />
                                         </View>
 
                                         <View style={styles.notificationInnerContainer}>
@@ -72,6 +81,8 @@ export default function Notification(props) {
                                             <Text style={styles.cardData}>{item?.content}</Text>
                                         </View>
                                     </View>
+                                            <Text style={[styles.cardData,{alignSelf:"flex-end", paddingRight:20}]}>{`${new Date(item?.createdAt).getHours()}:${new Date(item?.createdAt).getMinutes()}`}</Text>
+                                            <Text style={[styles.cardData,{alignSelf:"flex-end", paddingRight:20}]}>{`${new Date(item?.createdAt).getDay()}/${new Date(item?.createdAt).getMonth()+1}/${new Date(item?.createdAt).getFullYear()}`}</Text>
                                     {/* <Text style={styles.cardHeading}>Couse Purchased successfully !</Text>
                         <Text style={styles.cardData}>See the message and go to the your deshboard</Text>
                         <Text style={styles.cardTime}>08:20 am</Text> */}

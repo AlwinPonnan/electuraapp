@@ -9,7 +9,7 @@ import { getWishlist } from '../Services/User';
 import { generateImageUrl } from '../globals/utils';
 
 export default function Learnings(props) {
-
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [wishListArr, setWishListArr] = useState([]);
     const focused = useIsFocused()
     const [productsArr, setProductsArr] = useState([
@@ -22,7 +22,7 @@ export default function Learnings(props) {
             description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
             courseEstimatedTime: '1hr 30min',
             active: false,
-            price:100
+            price: 100
 
         },
         {
@@ -33,7 +33,7 @@ export default function Learnings(props) {
             imgUrl: "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
             description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
             courseEstimatedTime: '1hr 30min',
-            price:100,
+            price: 100,
             active: false
         },
         {
@@ -42,8 +42,8 @@ export default function Learnings(props) {
             teacher: "Mr. CBSE",
             teacherImg: "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80",
             imgUrl: "https://images.unsplash.com/photo-1475778057357-d35f37fa89dd?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
-            price:100,
-           
+            price: 100,
+
             description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
             active: false
         },
@@ -54,14 +54,14 @@ export default function Learnings(props) {
             teacherImg: "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80",
             imgUrl: "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
             description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
-            price:100,
-            
+            price: 100,
+
             courseEstimatedTime: '1hr 30min',
             active: false
         },
     ])
 
-  
+
 
     const handleOnit = () => {
         getMyWishList()
@@ -69,22 +69,25 @@ export default function Learnings(props) {
 
     const getMyWishList = async () => {
         try {
+            setIsRefreshing(true)
             const { data: res } = await getWishlist();
-            if(res.success){
+            if (res.success) {
                 let tempArr = res.data;
-               
+
                 let temp = tempArr.map(el => {
                     let obj = {
                         ...el,
-                        imgUrl: el?.thumbnailImage?.url ?  generateImageUrl(el?.thumbnailImage?.url) :"https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
+                        imgUrl: el?.thumbnailImage?.url ? generateImageUrl(el?.thumbnailImage?.url) : "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
 
                     }
                     return obj
                 })
                 console.log(temp)
                 setWishListArr(temp)
+                setIsRefreshing(false)
             }
         } catch (error) {
+            setIsRefreshing(false)
             console.error(error)
         }
     }
@@ -95,7 +98,7 @@ export default function Learnings(props) {
 
     const renderItem = ({ item, index }) => {
         return (
-            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("CourseDetail",{data:item._id})} >
+            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("CourseDetail", { data: item._id })} >
                 <Image style={styles.courseImg} source={{ uri: item?.imgUrl }} />
                 <View style={styles.textCardContainer}>
                     <View>
@@ -128,6 +131,8 @@ export default function Learnings(props) {
 
                 <FlatList
                     horizontal
+                    onRefresh={() => getMyWishList()}
+                    refreshing={isRefreshing}
                     data={productsArr}
                     renderItem={renderItem}
                     showsHorizontalScrollIndicator={false}

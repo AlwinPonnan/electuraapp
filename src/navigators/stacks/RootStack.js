@@ -52,6 +52,7 @@ export default function RootStack() {
 
 
     const CheckAuthorized = async () => {
+        setLoading(true)
         let isLoggedIn = await EncryptedStorage.getItem("AUTH_TOKEN");
         console.log(isLoggedIn)
         if (isLoggedIn) {
@@ -62,6 +63,7 @@ export default function RootStack() {
         else {
             setIsAuthorized(false)
         }
+        setLoading(false)
     }
 
     useEffect(() => {

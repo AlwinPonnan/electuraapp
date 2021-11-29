@@ -69,7 +69,7 @@ export default function WishList(props) {
                 {/* <Text style={[styles.address, { marginTop: 5, color: '#929292' }]}>abc</Text> */}
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5, }}>
                     <Pressable onPress={() => removeProductFromWishList(item?._id)}>
-                        <Text style={[styles.address, { color: '#FFA949' }]}>DELETE</Text>
+                        <Text style={[styles.address, { color: '#FFA949' }]}>REMOVE</Text>
                     </Pressable>
                     {/* <Text style={{ marginHorizontal: 5, color: '#085A4E', fontSize: 12, }}>-</Text><Text style={{ fontSize: 12, fontFamily: "RedHatText-SemiBold", color: '#085A4E' }}>MOVE TO CART</Text> */}
                 </View>
