@@ -166,3 +166,9 @@ export const getAllNotifications = async () => {
     return await axiosApiInstance.get(`${url}/getNotifications/${tokenD?.userId}`)
 }
 
+
+
+export const toggleOnline=()=>{
+    return await axiosApiInstance.get(`${url}/toggleOnline`)
+
+}
