@@ -121,7 +121,7 @@ export default function TeacherProfile(props) {
 
     const renderCourseItem = ({ item, index }) => {
         return (
-            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("CourseStack",{screen:"CourseDetail", params:{ data: item._id }})} >
+            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("CourseDetail", { data: item._id })} >
                 <Image style={styles.courseImg} source={{ uri: item?.imgUrl }} />
                 <View style={styles.textCardContainer}>
                     <View>
