@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj, light_colors } from '../globals/colors';
@@ -7,11 +7,57 @@ import NavBar from '../components/Navbar';
 import { Switch } from 'react-native-paper';
 
 import { roleContext } from '../navigators/stacks/RootStack';
+import { toggleOnline } from '../Services/User';
+import { useIsFocused } from '@react-navigation/core';
+
 export default function Profile(props) {
     const [isSwitchOn, setIsSwitchOn] = React.useState(false);
 
     const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
     const [roleName, setRoleName] = useContext(roleContext);
+
+    const focused = useIsFocused()
+
+
+
+
+
+    const handleToggle = () => {
+        try {
+            let { data: res } = await toggleOnline();
+            if (res.success) {
+                alert(res.message)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+
+
+    const userGet = async () => {
+        try {
+            const { data: res } = await getUser();
+            if (res.success) {
+                if (res.data.onlineToggle) {
+
+                    setIsSwitchOn(res.data.onlineToggle)
+                }
+                else {
+                    setIsSwitchOn(false)
+
+                }
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+
+    useEffect(() => {
+        userGet()
+    }, [focused])
+
     return (
         <View style={styles.container}>
             <NavBar rootProps={props} />
@@ -23,7 +69,7 @@ export default function Profile(props) {
 
                         <View style={styles.flexRow}>
                             <Text style={styles.onlineText}>Online</Text>
-                            <Switch color={colorObj.primarColor} value={isSwitchOn} onValueChange={onToggleSwitch} />
+                            <Switch color={colorObj.primarColor} value={isSwitchOn} onValueChange={()=>handleToggle()} />
                         </View>
                     }
                 </View>
@@ -37,7 +83,7 @@ export default function Profile(props) {
 
                     <Text style={styles.subHeading}>My Wishlist</Text>
                 </Pressable>
-                
+
                 <Pressable onPress={() => props.navigation.navigate('Orders')}>
 
                     <Text style={styles.subHeading}>My Orders</Text>
