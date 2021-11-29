@@ -120,6 +120,7 @@ export default function AccountEdit(props) {
                 console.log(res.message)
                 getUserData()
                 alert(res.message)
+                props.navigation.goBack()
             }
             console.log(res)
         }
@@ -198,6 +199,24 @@ export default function AccountEdit(props) {
         else if (field == "description") {
             setProfileData(prevState => {
                 prevState.enquiryObj.description = val;
+                return { ...prevState }
+            })
+        }
+        else if (field == "youtubeLink") {
+            setProfileData(prevState => {
+                prevState.enquiryObj.youtubeLink = val;
+                return { ...prevState }
+            })
+        }
+        else if (field == "facebookLink") {
+            setProfileData(prevState => {
+                prevState.enquiryObj.facebookLink = val;
+                return { ...prevState }
+            })
+        }
+        else if (field == "instagramLink") {
+            setProfileData(prevState => {
+                prevState.enquiryObj.instagramLink = val;
                 return { ...prevState }
             })
         }
@@ -300,6 +319,21 @@ export default function AccountEdit(props) {
                                 Teaching Experience
                             </Text>
                             <TextInput value={profileData?.enquiryObj?.experience} onChangeText={(e) => handleProfileDataUpdate(e, "experience")} style={styles.txtInput} placeholder="Your Teaching Experience" />
+
+                            <Text style={styles.label}>
+                               Facebook Link
+                            </Text>
+                            <TextInput value={profileData?.enquiryObj?.facebookLink} onChangeText={(e) => handleProfileDataUpdate(e, "facebookLink")} style={styles.txtInput} placeholder="Your Teaching Experience" />
+
+                            <Text style={styles.label}>
+                                Youtube Link
+                            </Text>
+                            <TextInput value={profileData?.enquiryObj?.youtubeLink} onChangeText={(e) => handleProfileDataUpdate(e, "youtubeLink")} style={styles.txtInput} placeholder="Your Teaching Experience" />
+
+                            <Text style={styles.label}>
+                                Instagram Link
+                            </Text>
+                            <TextInput value={profileData?.enquiryObj?.instagramLink} onChangeText={(e) => handleProfileDataUpdate(e, "instagramLink")} style={styles.txtInput} placeholder="Your Teaching Experience" />
                         </>
 
                     }

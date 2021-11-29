@@ -66,6 +66,7 @@ export default function Notification(props) {
                         data={notificationArr}
                         refreshing={isRefreshing}
                         onRefresh={() => getNotifications()}
+                        contentContainerStyle={{paddingBottom:80}}
                         keyExtractor={(item, index) => `${item._id}`}
                         renderItem={({ item, index }) => {
                             return (

@@ -40,6 +40,7 @@ export default function Enquiry(props) {
         setIsRefreshing(true)
         try {
             const { data: res } = await getAllEnquiries();
+            console.log(JSON.stringify(res, null,2))
             if (res.success) {
                 setEnquiryArr(res.data.map(el => {
                     let obj = {
@@ -117,8 +118,13 @@ export default function Enquiry(props) {
     const handleSearch = (value) => {
         let tempStr = value.toLowerCase();
         let tempArr = [...mainEnquiryArr]
-        console.log(JSON.stringify(tempArr,null,2))
-        tempArr = tempArr.filter(el => el.enquiryType.toLowerCase().includes(tempStr))
+        tempArr = tempArr.filter(el => 
+        el?.enquiryType.toLowerCase().includes(tempStr) || 
+        el?.teacherObj?.name.toLowerCase().includes(tempStr) || 
+        el?.teacherObj?.name.toLowerCase().includes(tempStr) || 
+        el?.subjectName.toLowerCase().includes(tempStr) || 
+        el?.topicName.toLowerCase().includes(tempStr) || 
+        el?.className.toLowerCase().includes(tempStr) )
         setEnquiryArr([...tempArr])
     }
 
@@ -161,7 +167,7 @@ export default function Enquiry(props) {
                         renderItem={({ item, index }) => {
                             return (
                                 <>
-                                    <Pressable style={styles.enquiryListHeader} onPress={() => handleEnquirySelection(item._id)} >
+                                    <Pressable style={[styles.enquiryListHeader,{ backgroundColor:item.enquiryType == "ONETOONE" ? "#f7f7f7" : "#fff"}]} onPress={() => handleEnquirySelection(item._id)} >
                                         <View style={[styles.flexRowAlignCenter, { justifyContent: "space-between" }]}>
                                             <View style={styles.flexRow}>
                                                 <Text style={styles.ListHeaderName}>Enquiry {index + 1}</Text>
@@ -181,15 +187,15 @@ export default function Enquiry(props) {
                                             </Pressable>
 
                                         </View>
-                                        <View style={[styles.flexRowAlignCenter, { marginTop: 7, justifyContent: "space-between" }]}>
+                                        <View style={[styles.flexRowAlignCenter, { marginTop: 7, justifyContent: "space-between"}]}>
                                             {
                                                 item?.enquiryType == EnquiryTypes.GENERAL ?
                                                     <Text style={styles.ListHeaderDescription}>
-                                                        {item.className},{item.subjectName},{item.topicName}
+                                                        Class : {item?.className},Subject :{item?.subjectName} , Topic :{item?.topicName}
                                                     </Text>
                                                     :
                                                     <Text style={styles.ListHeaderDescription}>
-                                                        {item.enquiryType}
+                                                        {item?.teacherObj?.name} | {item?.enquiryType}
                                                     </Text>
                                             }
                                             <TouchableOpacity onPress={() => handleEnquirySelection(item._id)}>
@@ -215,7 +221,7 @@ export default function Enquiry(props) {
                                                                 <Image source={{ uri: generateImageUrl(itemX.userObj?.profileImage) }} style={styles.cardImage} />
                                                                 <View style={[styles.flexColumn, { justifyContent: "center" }]}>
                                                                     <Text style={styles.cardHeading}>{itemX?.userObj?.name}</Text>
-                                                                    <Text style={styles.cardSmallData}>{itemX?.message} . {new Date(itemX.createdAt).toDateString()},{new Date(itemX.createdAt).toLocaleTimeString()}</Text>
+                                                                    <Text style={[styles.cardSmallData,{width:wp(60)}]}>{itemX?.message} . {new Date(itemX.createdAt).toDateString()},{new Date(itemX.createdAt).toLocaleTimeString()}</Text>
                                                                 </View>
 
                                                             </View>
@@ -374,6 +380,7 @@ const styles = StyleSheet.create({
     },
     ListHeaderDescription: {
         fontFamily: 'OpenSans-Regular',
+        color:"black",
         fontSize: 10,
     },
     ////////list header ends here 

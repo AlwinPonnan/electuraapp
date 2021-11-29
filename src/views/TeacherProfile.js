@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useContext } from 'react';
-import { View, Text, StyleSheet, Image, Pressable, ImageBackground, TouchableHighlight, FlatList, ScrollView, Modal, TextInput } from 'react-native';
+import { View, Text, StyleSheet, Image, Pressable, ImageBackground, TouchableHighlight, FlatList, ScrollView, Modal, TextInput, Linking } from 'react-native';
 import NavBar from '../components/Navbar';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -83,7 +83,7 @@ export default function TeacherProfile(props) {
             setDecodedObj(decodedTokenObj)
             let userId = props.route.params.data;
             const { data: res } = await getById(userId)
-            console.log(JSON.stringify(res.data, null, 2))
+            console.log(JSON.stringify(res.data.enquiryObj.facebookLink, null, 2), "teacher data")
             if (res.success) {
                 setTeacherObj(res.data)
             }
@@ -98,7 +98,7 @@ export default function TeacherProfile(props) {
         try {
             let userId = props.route.params.data;
             const { data: res } = await getByCoursesUserId(userId)
-            console.log(JSON.stringify(res.data, null, 2))
+            // console.log(JSON.stringify(res.data, null, 2))
             if (res.success) {
                 let tempArr = res.data;
 
@@ -241,9 +241,15 @@ export default function TeacherProfile(props) {
             <ImageBackground resizeMode="cover" source={require('../../assets/images/teacherBackBanner.png')} style={{ width: wp(100), height: hp(15) }}>
 
                 <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(25), position: 'absolute', bottom: 10, right: 20 }]}>
-                    <Icon name="logo-instagram" size={25} color={colorObj.whiteColor} />
-                    <Icon name="logo-facebook" size={25} color={colorObj.whiteColor} />
-                    <Icon name="logo-youtube" size={25} color={colorObj.whiteColor} />
+                    <Pressable onPress={()=> Linking.openURL(teacherObj?.enquiryObj?.instagramLink)}>
+                        <Icon name="logo-instagram" size={25} color={colorObj.whiteColor} />
+                    </Pressable>
+                    <Pressable onPress={()=> Linking.openURL(teacherObj?.enquiryObj?.facebookLink)}>
+                        <Icon name="logo-facebook" size={25} color={colorObj.whiteColor} />
+                    </Pressable>
+                    <Pressable  onPress={()=> Linking.openURL(teacherObj?.enquiryObj?.youtubeLink)}>
+                        <Icon name="logo-youtube" size={25} color={colorObj.whiteColor} />
+                    </Pressable>
                 </View>
 
             </ImageBackground>

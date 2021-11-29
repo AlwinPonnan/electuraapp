@@ -26,7 +26,7 @@ export default function HomeScreen(props) {
     const [selectedSubjectId, setSelectedSubjectId] = useState('');
     const [teachersArr, setTeachersArr] = useState([]);
     const [mainTeachersArr, setMainTeachersArr] = useState([]);
-
+    const [selectedSubject, setSelectedSubject] = useState({});
 
 
     const [subjectWiseTeacherArr, setSubjectWiseTeacherArr] = useState([]);
@@ -56,11 +56,12 @@ export default function HomeScreen(props) {
             console.error(error)
         }
     }
-
+    
     const getTeachers = async () => {
         try {
             const { data: res } = await getAllTeachers();
             if (res.success) {
+                console.log(JSON.stringify(res.data, null,3), "teachers")
 
                 setTeachersArr(res.data)
                 setMainTeachersArr(res.data)
@@ -74,7 +75,6 @@ export default function HomeScreen(props) {
     const handleBookmarkTeacher = async (id) => {
         try {
             const { data: res } = await BookmarkTeacher(id);
-            console.log(res)
             if (res) {
                 alert(res.message)
                 handleOnint()
@@ -91,7 +91,6 @@ export default function HomeScreen(props) {
             if (res.success) {
                 let tempArr = res.data;
                 tempArr = tempArr.filter(el => el.userArr.length >= 1)
-                console.log(JSON.stringify(tempArr, null, 2))
 
                 setSubjectWiseTeacherArr([...tempArr])
             }
@@ -130,12 +129,13 @@ export default function HomeScreen(props) {
 
 
 
-    const handleSubjectSelection = async (id) => {
+    const handleSubjectSelection = async (item) => {
         let tempArr = [...mainTeachersArr];
         console.log(JSON.stringify(tempArr, null, 2))
-        tempArr = tempArr.filter(el => el?.enquiryObj?.classesArr?.some(ele => ele.subjectArr.some(elx => elx.subjectId == id)))
+        tempArr = tempArr.filter(el => el?.enquiryObj?.classesArr?.some(ele => ele.subjectArr.some(elx => elx.subjectId == item._id)))
         setTeachersArr([...tempArr])
-        setSelectedSubjectId(id)
+        setSelectedSubjectId(item._id)
+        setSelectedSubject(item)
     }
 
 
@@ -178,12 +178,11 @@ export default function HomeScreen(props) {
                     <Pressable onPress={() => handleViewAll()}><Text style={styles.viewAllText}>View All</Text></Pressable>
                 </View>
                 <FlatList
-
                     horizontal
                     data={subjectArr}
                     renderItem={({ item, index }) => {
                         return (
-                            <Pressable onPress={() => { handleSubjectSelection(item._id) }} style={[styles.categoryContainer, selectedSubjectId != item._id && { backgroundColor: '#f0faf9' }]}>
+                            <Pressable onPress={() => { handleSubjectSelection(item) }} style={[styles.categoryContainer, selectedSubjectId != item._id && { backgroundColor: '#f0faf9' }]}>
                                 {/* <Icon name="film-outline" size={14} /> */}
                                 <Text style={[styles.categoryName, selectedSubjectId != item._id && { color: '#000' }]}>{item.name}</Text>
                             </Pressable>
@@ -198,7 +197,7 @@ export default function HomeScreen(props) {
                     data={teachersArr}
                     renderItem={renderItem}
                     ListEmptyComponent={
-                        <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>No teachers found</Text>
+                        <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>{selectedSubject.name ?`No teachers found for ${selectedSubject.name}`:"No teachers found"}</Text>
                     }
                     showsHorizontalScrollIndicator={false}
                     keyExtractor={(item, index) => `${index}`}

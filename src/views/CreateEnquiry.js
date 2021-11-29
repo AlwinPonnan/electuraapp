@@ -108,7 +108,7 @@ export default function CreateEnquiry(props) {
     const handleEnquirySubmit = async () => {
         setIsLoading(true)
         try {
-            if (selectedClassId != "" && selectedSubjectId != "" && ClassType != "" && price != "" && gender != "") {
+            if (selectedClassId != "" && selectedSubjectId != "" && ClassType != "" && price != "" && gender != "" && selectedTopicId !="") {
 
                 let obj = {
                     classId: selectedClassId,
@@ -125,6 +125,7 @@ export default function CreateEnquiry(props) {
                     setSuccessAlert(true)
                     setAlertText(res.message)
                     // alert(res.message)
+                    props.navigation.goBack()
                 }
             }
             else {

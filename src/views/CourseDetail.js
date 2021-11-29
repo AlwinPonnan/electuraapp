@@ -27,7 +27,7 @@ export default function CourseDetail(props) {
     const navigation = useNavigation()
     const isFocused = useIsFocused();
 
-
+    const [userId, setUserId] = useState("");
 
 
     const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
@@ -275,8 +275,10 @@ export default function CourseDetail(props) {
 
 
 
-    const handleOnint = () => {
-
+    const handleOnint =async () => {
+        let tokenObj = await getDecodedToken()
+            
+        setUserId(tokenObj?.userId)
         getCourseById()
     }
 
@@ -290,25 +292,22 @@ export default function CourseDetail(props) {
             <View style={[styles.container]}>
                 <NavBar rootProps={props} />
                 <View style={[styles.innerContainer, { flex: 1 }]}>
-
                     <View style={[styles.flexRow, { alignItems: "center", justifyContent: "space-between", }]}>
                         <View style={[styles.flexRow]} >
                             <Text style={styles.pageHeading}>{courseObj?.name}</Text>
                             <View style={[styles.flexRow, { alignItems: "center" }]}>
                                 <Text style={styles.ratingTxt}>4.2</Text>
-
                                 <Icon name="star" size={10} color="rgba(8, 90, 78, 1)" />
                             </View>
                         </View>
                         <Pressable onPress={() => handleAddCourseToWhishlist()}>
-
                             <Icon name="heart-outline" size={20} color="rgba(8, 90, 78, 1)" />
                         </Pressable>
                     </View>
-                    <View style={[styles.flexRow, { alignItems: "center", marginTop: 5 }]}>
+                    <Pressable onPress={()=> props.navigation.navigate("TeacherProfile", {data:userId})} style={[styles.flexRow, { alignItems: "center", marginTop: 5, marginBottom:5 }]}>
                         <Image source={require("../../assets//images/user.png")} style={styles.img} />
                         <Text style={styles.userName}>{courseObj?.teacherName}</Text>
-                    </View>
+                    </Pressable>
                     {
                         watchVideo ?
 
@@ -316,15 +315,12 @@ export default function CourseDetail(props) {
                                 height={300}
                                 play={playing}
                                 videoId={`${youtubeVideoId}`}
-
                                 onChangeState={onStateChange}
                             />
 
                             :
-                            <Pressable onPress={() => { setWatchVideo(true) }}>
-
+                            <Pressable style={{marginTop:5}} onPress={() => { setWatchVideo(true) }}>
                                 <ImageBackground source={{ uri: generateImageUrl(courseObj?.thumbnailImage?.url) }} resizeMode="cover" style={[styles.bannerimg, { display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }]}>
-
                                     <Icon name="play-circle-outline" size={50} color="black" />
                                 </ImageBackground>
                             </Pressable>

@@ -33,8 +33,9 @@ export default function SpecificChat(props) {
         let tempTokenObj = await getDecodedToken();
         setTokenObj(tempTokenObj)
     }
-
+    
     const handleOnint = () => {
+        flatListRef.current.scrollToEnd({animated:false})
         getToken()
         getChatHistory()
         joinRoom(chatRoomId);
@@ -69,7 +70,11 @@ export default function SpecificChat(props) {
     }
 
     const handleChatSend = () => {
-        sendMessage(chatRoomId, messageStr)
+        if (messageStr.length > 0) {
+            sendMessage(chatRoomId, messageStr)
+            setMessageStr("")
+            flatListRef.current.scrollToEnd({animated:false})
+        }
     }
 
 
@@ -106,7 +111,7 @@ export default function SpecificChat(props) {
     return (
 
         <FlatList
-            keyboardShouldPersistTaps="handled"
+            // keyboardShouldPersistTaps="handled"
             ListHeaderComponent={
                 <View style={styles.container}>
                     <View style={styles.innerContainer}>
@@ -130,7 +135,8 @@ export default function SpecificChat(props) {
 
                             <FlatList
                                 data={chatArr}
-
+                                onContentSizeChange={() => flatListRef.current.scrollToEnd({animated: false})}
+                                onLayout={() => flatListRef.current.scrollToEnd({animated: false})}
                                 ref={flatListRef}
 
                                 keyExtractor={(item, index) => `${item._id}`}
@@ -141,7 +147,7 @@ export default function SpecificChat(props) {
 
                             <View style={styles.searchContainer}>
                                 <View style={styles.flexRowAlignCenter}>
-                                    <TextInput style={styles.searchInput} onChangeText={(val) => setMessageStr(val)} placeholder="Message..." placeholderTextColo="#828282" />
+                                    <TextInput style={styles.searchInput} multiline={true} numberOfLines={3} value={messageStr} onChangeText={(val) => setMessageStr(val)} placeholder="Message..." placeholderTextColo="#828282" />
                                 </View>
                                 <Pressable onPress={() => handleChatSend()}>
                                     <Icon name="send-outline" size={20} color="#828282" />
@@ -209,7 +215,10 @@ const styles = StyleSheet.create({
         justifyContent: "space-between"
     },
     searchInput: {
-        width: wp(55)
+        maxHeight:80,
+        width:"95%",
+        borderRightColor:"rgba(0,0,0,0.2)",
+        borderRightWidth:1
     },
     flexRowAlignCenter: {
         display: "flex",
@@ -219,9 +228,11 @@ const styles = StyleSheet.create({
     myChatContainer: {
         backgroundColor: '#F2F2F2',
         alignSelf: 'flex-end',
-        borderRadius: 50,
-        paddingVertical: 5,
-        paddingHorizontal: 10,
+        display:"flex",
+        width:wp(70),
+        borderRadius: 15,
+        paddingVertical: 10,
+        paddingHorizontal: 15,
         marginVertical: 5
     },
     myChatText: {
@@ -231,9 +242,10 @@ const styles = StyleSheet.create({
     othersChatContainer: {
         backgroundColor: colorObj.primarColor,
         alignSelf: 'flex-start',
-        borderRadius: 50,
-        paddingVertical: 5,
-        paddingHorizontal: 10,
+        width:wp(70),
+        borderRadius: 15,
+        paddingVertical: 10,
+        paddingHorizontal: 15,
         marginVertical: 5
     },
     othersChatText: {
