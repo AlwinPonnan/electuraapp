@@ -36,9 +36,9 @@ export default function Requestscreen(props) {
     const getRequests = async () => {
         try {
             const { data: res } = await getAllEnquiryRequests();
-            console.log(JSON.stringify(res.data),null,2)
+            console.log(JSON.stringify(res.data, null, 2), null, 2)
             if (res.success) {
-                
+
                 setRequestArr(res.data)
             }
         } catch (error) {
@@ -83,6 +83,7 @@ export default function Requestscreen(props) {
             <FlatList
                 data={requestArr}
                 keyExtractor={(item, index) => `${item._id}`}
+                contentContainerStyle={{marginBottom:100}}
                 renderItem={({ item, index }) => {
                     return (
                         <View style={styles.card}>
@@ -92,10 +93,11 @@ export default function Requestscreen(props) {
                                     <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(70) }]}>
 
                                         <Text style={styles.cardHeading}>{item?.userObj?.name}</Text>
-                                        <Pressable onPress={() => handleAccept(item._id)}>
+                                        <Pressable onPress={() => handleAccept(item?.userObj?._id)}>
                                             <Text style={styles.acceptStyles}>Accept</Text>
                                         </Pressable>
                                     </View>
+                                    <Text style={{color:'black'}}>{item?.additionalMessage}</Text>
                                     <Text style={styles.cardSmallData}>{new Date(item?.createdAt).toDateString()}</Text>
                                 </View>
 
@@ -146,7 +148,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         alignSelf: "center",
-
+        marginVertical:10,
     },
     cardImage: {
         height: 50,

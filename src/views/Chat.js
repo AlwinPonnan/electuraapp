@@ -61,7 +61,7 @@ export default function Chat(props) {
                                     <Image source={{uri:generateImageUrl(item?.userObj?.profileImage)}} style={styles.cardImage} />
                                     <View style={[styles.flexColumn, { justifyContent: "center" }]}>
                                         <Text style={styles.cardHeading}>{item?.userObj?.name}</Text>
-                                        <Text style={styles.cardSmallData}>The course price will be 600 . 52m ago</Text>
+                                        <Text style={styles.cardSmallData}>Last Message At. 52m ago</Text>
                                     </View>
                                 </View>
                             </Pressable>

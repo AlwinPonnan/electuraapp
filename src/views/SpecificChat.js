@@ -50,7 +50,7 @@ export default function SpecificChat(props) {
     }
 
 
-   
+
     const getChatHistory = async () => {
         try {
             const { data: res } = await getChatHistoryByRoomId(chatRoomId);
@@ -60,7 +60,7 @@ export default function SpecificChat(props) {
                 let decodedToken = await getDecodedToken()
                 console.log(JSON.stringify(res.data.chatRoomObj, null, 2))
                 setChatUserObj(res.data.chatRoomObj.userArr.filter(el => el.userId != decodedToken.userId)[0])
-                
+
 
             }
         } catch (error) {
@@ -104,48 +104,59 @@ export default function SpecificChat(props) {
 
 
     return (
-        <View style={styles.container}>
-            <View style={styles.innerContainer}>
 
-                <View style={[styles.flexRow, { alignItems: 'center', height: hp(5) }]}>
-                    <Pressable onPress={() => props.navigation.goBack()}>
-                        <Icon name="chevron-back-outline" size={20} color="black" />
-                    </Pressable>
-                    <Pressable style={[styles.flexRow, { alignItems: 'center', paddingHorizontal: 20 }]}>
-                        <Avatar.Image size={35} source={{uri: generateImageUrl(chatUserObj.userObj?.profileImage)}} />
-                        <View style={styles.userProfileContainer}>
-                            <Text style={styles.userName}>{chatUserObj?.userObj?.name}</Text>
-                            <View style={[styles.flexRow, { alignItems: 'center' }]}>
-                                <Text style={styles.userStatus}>Active</Text>
-                                <Badge size={8} style={{ marginHorizontal: 5, backgroundColor: colorObj.primarColor }} />
+        <FlatList
+            keyboardShouldPersistTaps="handled"
+            ListHeaderComponent={
+                <View style={styles.container}>
+                    <View style={styles.innerContainer}>
+
+                        <View style={[styles.flexRow, { alignItems: 'center', height: hp(5) }]}>
+                            <Pressable onPress={() => props.navigation.goBack()}>
+                                <Icon name="chevron-back-outline" size={20} color="black" />
+                            </Pressable>
+                            <Pressable style={[styles.flexRow, { alignItems: 'center', paddingHorizontal: 20 }]}>
+                                <Avatar.Image size={35} source={{ uri: generateImageUrl(chatUserObj.userObj?.profileImage) }} />
+                                <View style={styles.userProfileContainer}>
+                                    <Text style={styles.userName}>{chatUserObj?.userObj?.name}</Text>
+                                    <View style={[styles.flexRow, { alignItems: 'center' }]}>
+                                        <Text style={styles.userStatus}>Active</Text>
+                                        <Badge size={8} style={{ marginHorizontal: 5, backgroundColor: colorObj.primarColor }} />
+                                    </View>
+                                </View>
+                            </Pressable>
+                        </View>
+                        <View style={styles.chatContainer}>
+
+                            <FlatList
+                                data={chatArr}
+
+                                ref={flatListRef}
+
+                                keyExtractor={(item, index) => `${item._id}`}
+                                renderItem={renderChats}
+                            />
+                        </View>
+                        <View >
+
+                            <View style={styles.searchContainer}>
+                                <View style={styles.flexRowAlignCenter}>
+                                    <TextInput style={styles.searchInput} onChangeText={(val) => setMessageStr(val)} placeholder="Message..." placeholderTextColo="#828282" />
+                                </View>
+                                <Pressable onPress={() => handleChatSend()}>
+                                    <Icon name="send-outline" size={20} color="#828282" />
+                                </Pressable>
                             </View>
                         </View>
-                    </Pressable>
-                </View>
-                <View style={styles.chatContainer}>
-
-                    <FlatList
-                        data={chatArr}
-
-                        ref={flatListRef}
-
-                        keyExtractor={(item, index) => `${item._id}`}
-                        renderItem={renderChats}
-                    />
-                </View>
-                <View >
-
-                    <View style={styles.searchContainer}>
-                        <View style={styles.flexRowAlignCenter}>
-                            <TextInput style={styles.searchInput} onChangeText={(val) => setMessageStr(val)} placeholder="Message..." placeholderTextColo="#828282" />
-                        </View>
-                        <Pressable onPress={() => handleChatSend()}>
-                            <Icon name="send-outline" size={20} color="#828282" />
-                        </Pressable>
                     </View>
                 </View>
-            </View>
-        </View>
+
+            }
+            data={[]}
+            renderItem={({ item, index }) => null}
+
+        />
+
     )
 }
 
