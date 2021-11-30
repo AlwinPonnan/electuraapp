@@ -40,6 +40,10 @@ export const deliverOrder = async (id) => {
     return await axiosApiInstance.patch(`${url}/deliver/${id}`)
 }
 
+export const deliverByTeacherOrder = async (id) => {
+    return await axiosApiInstance.patch(`${url}/deliverByTeacher/${id}`)
+}
+
 export const getById = async (id) => {
     return await axiosApiInstance.get(`${url}/getById/${id}`)
 }

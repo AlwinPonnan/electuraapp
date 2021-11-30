@@ -46,7 +46,7 @@ export default function Order(props) {
                 <Text style={[styles.address, { marginTop: 5, color: '#FFA949' }]}>SUMMARY</Text>
             </View>
             <View style={[styles.topView, { marginTop: -40 }]}><FontAwesome name="inr" size={12} color={'#085A4E'} />
-                <Text style={[{ color: '#085A4E', marginLeft: 5, fontSize: 14, fontFamily: 'RedHatText-SemiBold', }]}>{item?.courseObj?.price}</Text></View>
+                <Text style={[{ color: '#085A4E', marginLeft: 5, fontSize: 14, fontFamily: 'RedHatText-SemiBold', }]}>{item?.payableAmount}</Text></View>
         </Pressable>
     );
 
@@ -58,8 +58,14 @@ export default function Order(props) {
                     <AntDesign name='arrowleft' size={20} style={{ color: 'black' }} />
                 </Pressable>
                 <Text style={[styles.topText, { flex: 1, marginLeft: 20 }]}>Orders</Text>
-                <AntDesign name='message1' size={20} style={{ color: 'black', marginRight: 20 }} />
-                <Feather name='bell' size={20} style={{ color: 'black' }} />
+                <Pressable onPress={() => props.navigation.navigate('MainTopTab')}>
+
+                    <AntDesign name='message1' size={20} style={{ color: 'black', marginRight: 20 }} />
+                </Pressable>
+                <Pressable onPress={() => props.navigation.navigate('Notification')}>
+
+                    <Feather name='bell' size={20} style={{ color: 'black' }} />
+                </Pressable>
             </View>
 
             <FlatList
@@ -67,7 +73,7 @@ export default function Order(props) {
                 renderItem={renderItem}
                 keyExtractor={(item, index) => `${index}`}
                 ListEmptyComponent={
-                    <View style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
+                    <View style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                         <Image source={require('../../assets/images/Icon.png')} resizeMode="center" />
                         <Text style={{ fontFamily: 'Montserrat-SemiBold', fontSize: 20 }}>No orders found</Text>
                     </View>

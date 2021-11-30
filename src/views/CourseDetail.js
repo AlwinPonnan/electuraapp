@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext, useRef, useCallback } from 'rea
 import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView, Linking, Button, ImageBackground, Modal, TextInput } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj, light_colors } from '../globals/colors';
-import Icon from 'react-native-vector-icons/Ionicons'
 import NavBar from '../components/Navbar';
 import { getById } from '../Services/Course';
 import { useIsFocused } from '@react-navigation/core';
@@ -19,6 +18,8 @@ import RazorpayCheckout from 'react-native-razorpay';
 
 import YoutubePlayer from "react-native-youtube-iframe";
 
+import Icon from 'react-native-vector-icons/Ionicons'
+import { getCouponByCode } from '../Services/Coupons';
 
 export default function CourseDetail(props) {
     const [loading, setLoading] = useContext(loadingContext);
@@ -65,9 +66,12 @@ export default function CourseDetail(props) {
 
     const [youtubeVideoId, setYoutubeVideoId] = useState('');
 
-
+    const [couponObj, setCouponObj] = useState({});
 
     const [couponModal, setCouponModal] = useState(false);
+
+
+    const [discountApplied, setDiscountApplied] = useState(false);
 
 
 
@@ -83,7 +87,7 @@ export default function CourseDetail(props) {
             setYoutubeVideoId(res.data.youtubeLink.split('/')[3])
             if (res.success) {
                 console.log(res.data)
-                setCourseObj(res.data)
+                setCourseObj({ ...res.data, discountPrice: 0 })
             }
         } catch (error) {
             console.error(error)
@@ -98,6 +102,7 @@ export default function CourseDetail(props) {
 
 
     const handleAddCourseToWhishlist = async () => {
+        setLoading(true)
         try {
             let tokenObj = await getDecodedToken()
             let obj = {
@@ -121,10 +126,12 @@ export default function CourseDetail(props) {
                 setAlertText(error.message)
             }
         }
+        setLoading(false)
     }
 
 
     const handleAddCourseToCart = async () => {
+        setLoading(true)
         try {
             let tokenObj = await getDecodedToken()
             let obj = {
@@ -148,6 +155,7 @@ export default function CourseDetail(props) {
                 setAlertText(error.message)
             }
         }
+        setLoading(false)
     }
 
 
@@ -271,13 +279,31 @@ export default function CourseDetail(props) {
     }
 
 
+    const getCouponCode = async () => {
+        setLoading(true)
+        try {
+            const { data: res } = await getCouponByCode(code);
+            if (res.success) {
+                console.log(res.data)
+                setCouponObj(res.data)
+                let tempObj = { ...courseObj }
+                setDiscountApplied(true)
+                tempObj.discountPrice = courseObj?.price * (res.data.amountOff / 100)
+                setCourseObj({ ...tempObj })
+            }
+        } catch (error) {
+            console.error(error)
+        }
+        setLoading(false)
+    }
 
 
 
 
-    const handleOnint =async () => {
+
+    const handleOnint = async () => {
         let tokenObj = await getDecodedToken()
-            
+
         setUserId(tokenObj?.userId)
         getCourseById()
     }
@@ -292,6 +318,7 @@ export default function CourseDetail(props) {
             <View style={[styles.container]}>
                 <NavBar rootProps={props} />
                 <View style={[styles.innerContainer, { flex: 1 }]}>
+
                     <View style={[styles.flexRow, { alignItems: "center", justifyContent: "space-between", }]}>
                         <View style={[styles.flexRow]} >
                             <Text style={styles.pageHeading}>{courseObj?.name}</Text>
@@ -300,51 +327,69 @@ export default function CourseDetail(props) {
                                 <Icon name="star" size={10} color="rgba(8, 90, 78, 1)" />
                             </View>
                         </View>
-                        <Pressable onPress={() => handleAddCourseToWhishlist()}>
+                        {/* <Pressable onPress={() => handleAddCourseToWhishlist()}>
                             <Icon name="heart-outline" size={20} color="rgba(8, 90, 78, 1)" />
-                        </Pressable>
+                        </Pressable> */}
                     </View>
-                    <Pressable onPress={()=> props.navigation.navigate("TeacherProfile", {data:userId})} style={[styles.flexRow, { alignItems: "center", marginTop: 5, marginBottom:5 }]}>
+                    <Pressable onPress={() => props.navigation.navigate("TeacherProfile", { data: userId })} style={[styles.flexRow, { alignItems: "center", marginTop: 5, marginBottom: 5 }]}>
                         <Image source={require("../../assets//images/user.png")} style={styles.img} />
-                        <Text style={styles.userName}>{courseObj?.teacherName}</Text>
+                        <Text style={styles.userName}>Teacher : {courseObj?.teacherName}</Text>
                     </Pressable>
-                    {
-                        watchVideo ?
-
-                            <YoutubePlayer
-                                height={300}
-                                play={playing}
-                                videoId={`${youtubeVideoId}`}
-                                onChangeState={onStateChange}
-                            />
-
-                            :
-                            <Pressable style={{marginTop:5}} onPress={() => { setWatchVideo(true) }}>
-                                <ImageBackground source={{ uri: generateImageUrl(courseObj?.thumbnailImage?.url) }} resizeMode="cover" style={[styles.bannerimg, { display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }]}>
-                                    <Icon name="play-circle-outline" size={50} color="black" />
-                                </ImageBackground>
-                            </Pressable>
-
-                    }
+                    <Pressable style={{ marginTop: 5 }} >
+                        <ImageBackground source={{ uri: generateImageUrl(courseObj?.thumbnailImage?.url) }} resizeMode="cover" style={[styles.bannerimg, { display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }]}>
+                            {/* <Icon name="play-circle-outline" size={50} color="black" /> */}
+                        </ImageBackground>
+                    </Pressable>
+                    {/* <View style={[styles.flexRow, { alignItems: "center" }]}>
+                        <Text style={styles.ratingTxt}>4.2</Text>
+                        <Icon name="star" size={10} color="rgba(8, 90, 78, 1)" />
+                    </View> */}
 
 
-                    <View style={[styles.flexRow, { marginVertical: 15 }]}>
-                        <Text style={styles.dataItem}>4 Enrollments</Text>
-                        <Text style={styles.dataItem}>{courseObj?.hours} Hours</Text>
-                        <Text style={styles.dataItem}>{courseObj?.assignments} Assignments</Text>
+
+
+                    <View style={[styles.flexRow, { marginVertical: 15, justifyContent: 'space-between' }]}>
+                        <Text style={[styles.dataItem, { textTransform: 'capitalize' }]}> <Icon name="tv-outline" size={16} />  {courseObj?.ClassType} Mode</Text>
+                        <Text style={styles.dataItem}><Icon name="time-outline" size={16} />  {courseObj?.hours} Hours</Text>
+                        <Text style={styles.dataItem}><Icon name="clipboard-outline" size={16} /> {courseObj?.assignments} Assignments</Text>
                     </View>
-                    <Text style={styles.description}>
+
+                    <Text style={styles.coursePrice}>Description</Text>
+                    <Text style={[styles.description, { marginVertical: 10 }]}>
+
                         {courseObj?.description}
                     </Text>
+                    <View style={{ marginVertical: 10 }}>
+                        <Text style={[styles.coursePrice, { marginVertical: 10 }]}>Preview Video</Text>
+
+                        <YoutubePlayer
+
+                            height={250}
+                            play={playing}
+                            videoId={`${youtubeVideoId}`}
+                            onChangeState={onStateChange}
+                        />
+                    </View>
+
+                    <Text style={styles.coursePrice}>
+                        ₹ {courseObj?.price}
+                    </Text>
+                    <Pressable style={[styles.btn, { width: wp(90), marginVertical: 10 }]} onPress={() => setCouponModal(true)}>
+                        <Text style={styles.btnText}>Buy Now</Text>
+                    </Pressable>
                     <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90), marginTop: 10, marginBottom: 50, alignSelf: 'center' }]}>
 
-                        <Pressable style={styles.btn} onPress={() => handleAddCourseToCart()}>
-                            <Text style={styles.btnText}>Add to cart</Text>
+                        <Pressable style={[styles.btn, { flex: 1, marginRight: 5, borderColor: colorObj.primarColor, borderWidth: 1, backgroundColor: 'white' }]} onPress={() => handleAddCourseToCart()}>
+                            <Text style={[styles.btnText, { fontSize: 14, color: colorObj.primarColor }]}>Add to cart</Text>
                         </Pressable>
-                        <Pressable style={styles.btn} onPress={() => setCouponModal(true)}>
-                            <Text style={styles.btnText}>Buy Now</Text>
+                        <Pressable style={[styles.btn, { flex: 1, marginLeft: 5, borderColor: colorObj.primarColor, borderWidth: 1, backgroundColor: 'white' }]} onPress={() => handleAddCourseToWhishlist()}>
+                            <Text style={[styles.btnText, { fontSize: 14, color: colorObj.primarColor }]}>Add to wishlist</Text>
                         </Pressable>
                     </View>
+
+
+
+
                     <Modal
                         animationType="slide"
                         transparent={true}
@@ -357,29 +402,65 @@ export default function CourseDetail(props) {
                             <Pressable style={styles.modalView}>
                                 <ScrollView>
 
-                                    <Text style={styles.responseModalHeading}>Order Details</Text>
+                                    <Text style={styles.responseModalHeading}>Order Summary</Text>
+                                    {courseObj?.ClassType == "offline" &&
+
+                                        <>
+                                            <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Address Line 1</Text>
+                                            <TextInput style={[styles.textInput]} value={address} onChangeText={(e) => setAddress(e)} />
+
+                                            <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Address Line 2</Text>
+                                            <TextInput style={[styles.textInput]} value={line2} onChangeText={(e) => setLine2(e)} />
+
+                                            <Text style={[styles.textInputLabel, { marginTop: 10 }]}>City</Text>
+                                            <TextInput style={[styles.textInput]} value={city} onChangeText={(e) => setCity(e)} />
 
 
-                                    <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Address Line 1</Text>
-                                    <TextInput style={[styles.textInput]} value={address} onChangeText={(e) => setAddress(e)} />
-
-                                    <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Address Line 2</Text>
-                                    <TextInput style={[styles.textInput]} value={line2} onChangeText={(e) => setLine2(e)} />
-
-                                    <Text style={[styles.textInputLabel, { marginTop: 10 }]}>City</Text>
-                                    <TextInput style={[styles.textInput]} value={city} onChangeText={(e) => setCity(e)} />
+                                            <Text style={[styles.textInputLabel, { marginTop: 10 }]}>State</Text>
+                                            <TextInput style={[styles.textInput]} value={shippingState} onChangeText={(e) => setShippingState(e)} />
 
 
-                                    <Text style={[styles.textInputLabel, { marginTop: 10 }]}>State</Text>
-                                    <TextInput style={[styles.textInput]} value={shippingState} onChangeText={(e) => setShippingState(e)} />
-
-
-                                    <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Pincode</Text>
-                                    <TextInput style={[styles.textInput]} maxLength={6} keyboardType="numeric" value={pincode} onChangeText={(e) => setPincode(e)} />
+                                            <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Pincode</Text>
+                                            <TextInput style={[styles.textInput]} maxLength={6} keyboardType="numeric" value={pincode} onChangeText={(e) => setPincode(e)} />
+                                        </>
+                                    }
 
                                     <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Enter Coupon Code (if any)</Text>
-                                    <TextInput style={[styles.textInput]} value={code} onChangeText={(e) => setCode(e)} />
-                                    <Pressable style={styles.submitBtn} onPress={() => buyPackage()}>
+                                    <View style={styles.searchContainer}>
+                                        <View style={styles.flexRowAlignCenter}>
+                                            <TextInput style={styles.searchInput} placeholder="Enter Code" onChangeText={(e) => setCode(e)} placeholderTextColor="#828282" />
+                                        </View>
+                                        <Pressable onPress={() => getCouponCode()} style={[styles.flexRow, { alignItems: 'center' }]}>
+
+                                            <Text style={styles.applyText}>Apply</Text>
+                                            <Icon name="checkmark-outline" size={20} color="#828282" />
+                                        </Pressable>
+                                        {/* <Image style={styles.searchImages} source={require('../../assets/images/Filter.png')} /> */}
+                                    </View>
+                                    <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]} >
+
+                                        <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Course Amount :</Text>
+                                        <Text style={[styles.textInputLabel, { marginTop: 10 }]}> ₹ {courseObj?.price}</Text>
+
+                                    </View>
+                                    <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]} >
+
+                                        <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Discount Amount:{discountApplied && "(Applied)"}</Text>
+                                        <Text style={[styles.textInputLabel, { marginTop: 10 }]}> ₹ {courseObj?.discountPrice}</Text>
+
+                                    </View>
+                                    <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]} >
+
+                                        <Text style={[styles.textInputLabel, { marginTop: 10 }]}>final Amount:</Text>
+                                        <Text style={[styles.textInputLabel, { marginTop: 10 }]}> ₹ {courseObj?.price - courseObj?.discountPrice}</Text>
+
+                                    </View>
+                                    {/* <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Discount Amount : ₹ 00.00</Text>
+
+                                    <Text style={[styles.textInputLabel, { marginTop: 10 }]}>FInal Amount : ₹ {courseObj?.price}</Text> */}
+
+
+                                    <Pressable style={[styles.submitBtn, { marginTop: 20 }]} onPress={() => buyPackage()}>
                                         <Text style={styles.submitBtnText}>Submit</Text>
                                     </Pressable>
                                 </ScrollView>
@@ -403,6 +484,7 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         display: "flex",
         marginTop: 15,
+        paddingHorizontal: 10,
         flexDirection: "column",
         // justifyContent: "center",
     },
@@ -445,18 +527,16 @@ const styles = StyleSheet.create({
         fontFamily: 'Montserrat-SemiBold',
         fontSize: 13,
         color: 'grey',
-        marginRight: 20,
-        marginLeft: 7
+        marginVertical: 5
+        // marginRight: 20,
+        // marginLeft: 7
     },
     btn: {
         backgroundColor: colorObj.primarColor,
-        borderRadius: 10,
-        // width: wp(80),
+        borderRadius: 5,
         alignSelf: "center",
         display: "flex",
-        marginTop: 100,
-        // position: "absolute",
-        // bottom: 30,
+
         paddingVertical: 15,
         paddingHorizontal: 30
     },
@@ -465,7 +545,7 @@ const styles = StyleSheet.create({
         color: colorObj.whiteColor,
         alignItems: 'center',
         textAlign: 'center',
-        fontSize: 20,
+        fontSize: 16,
 
     },
     description: { fontFamily: 'Montserrat-Regular', fontSize: 14, color: 'rgba(0,0,0,0.6)', paddingHorizontal: 8 },
@@ -507,7 +587,7 @@ const styles = StyleSheet.create({
     },
     submitBtn: {
         backgroundColor: colorObj.primarColor,
-        borderRadius: 25,
+        borderRadius: 5,
         marginVertical: 10
     },
     submitBtnText: {
@@ -531,4 +611,40 @@ const styles = StyleSheet.create({
         fontFamily: 'OpenSans-Regular'
 
     },
+
+
+    coursePrice: {
+        fontSize: 20,
+        fontFamily: 'Montserrat-SemiBold',
+        color: 'black'
+    },
+    searchContainer: {
+        backgroundColor: "#F5F5F5",
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        paddingVertical: 1,
+        paddingHorizontal: 15,
+        width: wp(73),
+
+        borderRadius: 5,
+        marginRight: 10,
+        justifyContent: "space-between"
+    },
+    searchInput: {
+        width: wp(55)
+    },
+    flexRowAlignCenter: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center"
+    },
+
+    applyText: {
+        fontSize: 12,
+        fontFamily: 'Montserrat-Regular'
+    }
+
+
 })
+

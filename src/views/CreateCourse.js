@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback,useContext } from 'react'
+import React, { useState, useEffect, useCallback, useContext } from 'react'
 import { View, Text, StyleSheet, Image, TextInput, Pressable, KeyboardAvoidingView, ScrollView, Platform, TouchableOpacity, FlatList } from 'react-native'
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -20,11 +20,13 @@ import { getAllClasses } from '../Services/Classses';
 import DocumentPicker from 'react-native-document-picker'
 import { successAlertContext } from '../../App';
 import { loadingContext } from '../navigators/stacks/RootStack';
+import { RadioButton } from 'react-native-paper';
+
 
 export default function CreateCourse(props) {
 
     const [loading, setLoading] = useContext(loadingContext);
-    
+
     const [name, setName] = useState('');
     const [experience, setExperience] = useState('');
     const [description, setDescription] = useState('');
@@ -46,6 +48,9 @@ export default function CreateCourse(props) {
 
 
     const [alertText, setAlertText] = alertTextArr
+
+    const [ClassType, setClassType] = useState("offline");
+
     const handleSubmit = async () => {
         setLoading(true)
         try {
@@ -61,7 +66,7 @@ export default function CreateCourse(props) {
                 }
                 return obj
             })
-            if (courseImg?.name != "" && name!="" && hours!="" && assignments!=""  && description!="" && classesFilteredArr.length>=1) {
+            if (courseImg?.name != "" && name != "" && hours != "" && assignments != "" && description != "" && classesFilteredArr.length >= 1) {
 
                 let userToken = await getDecodedToken()
                 console.log(userToken)
@@ -75,21 +80,22 @@ export default function CreateCourse(props) {
                     youtubeLink,
                     description,
                     userId: userToken?.userId,
+                    ClassType
                 }
                 console.log(obj)
                 const { data: res } = await courseAdd(obj);
                 if (res.success) {
-                    let formData=new FormData()
-                    formData.append('file',courseImg)
+                    let formData = new FormData()
+                    formData.append('file', courseImg)
 
-                    const {data:response}=await uploadCourseImage(res.data._id,formData)
-                    
+                    const { data: response } = await uploadCourseImage(res.data._id, formData)
+
                     setAlertText(res.message)
                     setSuccessAlert(true)
                     props.navigation.goBack()
                 }
             }
-            else{
+            else {
                 setWarningAlert(true)
                 setAlertText("Please fill all the fields")
             }
@@ -220,10 +226,10 @@ export default function CreateCourse(props) {
                         </View>
                         <View style={styles.inputContainer}>
                             <Icon name="person-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} onChangeText={(val) => setName(val)} placeholder="Enter Name" />
+                            <TextInput style={styles.inputStyles} onChangeText={(val) => setName(val)} placeholder="Enter Course Name" />
                         </View>
                         <View style={styles.inputContainer}>
-                            <Icon name="home-outline" size={14} color="black" />
+                            <Icon name="cash-outline" size={14} color="black" />
                             <TextInput style={styles.inputStyles} onChangeText={(val) => setPrice(val)} placeholder="Enter Price" keyboardType="numeric" />
                         </View>
                         <TouchableOpacity style={[styles.inputContainer, { minHeight: 80 }]} onPress={() => pickCourseImg()}>
@@ -250,7 +256,7 @@ export default function CreateCourse(props) {
                                             <TouchableOpacity style={{ width: wp(82), paddingVertical: 5, }} onPress={() => {
                                                 setClassSelected(item._id);
                                             }}>
-                                                <Text>{item.name}</Text>
+                                                <Text style={styles.radioText}>{item.name}</Text>
                                             </TouchableOpacity>
 
                                         </View>
@@ -284,7 +290,7 @@ export default function CreateCourse(props) {
                         />
                         <View style={styles.inputContainer}>
                             <Icon name="library-outline" size={14} color="black" />
-                            <TextInput  keyboardType="numeric" style={styles.inputStyles} onChangeText={(val) => setHours(val)} placeholder="No of Hours" />
+                            <TextInput keyboardType="numeric" style={styles.inputStyles} onChangeText={(val) => setHours(val)} placeholder="No of Hours" />
                         </View>
                         <View style={styles.inputContainer}>
                             <Icon name="library-outline" size={14} color="black" />
@@ -299,7 +305,23 @@ export default function CreateCourse(props) {
                             <Icon name="chatbox-ellipses-outline" size={14} color="black" />
                             <TextInput style={styles.inputStyles} onChangeText={(val) => setYoutubeLink(val)} placeholder="Youtube video link" multiline={true} />
                         </View>
+                        <Text style={[styles.textInputLabel,{paddingHorizontal:20,marginVertical:10}]}>Course Type</Text>
 
+                        <RadioButton.Group onValueChange={newValue => setClassType(newValue)} value={ClassType}>
+                            <View style={[{ marginVertical: 10,paddingHorizontal:20 }]}>
+
+                                <Pressable onPress={() => setClassType("online")} style={[styles.flexRow, { justifyContent: 'space-between' }]}>
+                                    <Text style={styles.radioText}>1. Online</Text>
+                                    <RadioButton color={colorObj.primarColor} value="online" />
+                                </Pressable>
+                                <Pressable onPress={() => setClassType("offline")} style={[styles.flexRow, { justifyContent: 'space-between' }]}>
+
+                                    <Text style={styles.radioText}>2. Offline</Text>
+                                    <RadioButton color={colorObj.primarColor} value="offline" />
+                                </Pressable>
+                                
+                            </View>
+                        </RadioButton.Group>
 
                         <View style={styles.btnContainer}>
                             <Text style={styles.termsText}></Text>
@@ -404,6 +426,11 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
     },
+    flexRow: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
     label: {
         fontFamily: "Montserrat-Regular",
         fontSize: 16,
@@ -411,5 +438,14 @@ const styles = StyleSheet.create({
         marginTop: 20,
         display: "flex",
         alignSelf: "center",
+    },
+    radioText: {
+        fontFamily: 'OpenSans-Regular',
+        fontSize: 14
+    },
+    textInputLabel: {
+        fontFamily: 'OpenSans-SemiBold',
+        fontSize: 16,
+        color: '#000'
     },
 })

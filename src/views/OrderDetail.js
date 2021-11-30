@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, FlatList, Image, Pressable, Modal } from 'react
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
-import { deliverOrder, dispatchImage, dispatchOrder, getById, getMyOrders } from '../Services/Order';
+import { deliverByTeacherOrder, deliverOrder, dispatchImage, dispatchOrder, getById, getMyOrders } from '../Services/Order';
 import { useIsFocused } from '@react-navigation/core';
 import { colorObj } from '../globals/colors';
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -58,7 +58,7 @@ export default function OrderDetail(props) {
                 res.size,
             )
             setDispatchImageFile(res)
-            handleDispatchOrder()
+            handleDispatchOrder(res)
 
 
         } catch (err) {
@@ -114,14 +114,14 @@ export default function OrderDetail(props) {
         }
     }
 
-    const handleDispatchOrder = async () => {
+    const handleDispatchOrder = async (res) => {
         setIsLoading(true)
         try {
 
             const { data: res } = await dispatchOrder(orderObj?._id)
             if (res) {
                 let formData = new FormData()
-                formData.append('file', dispatchImageFile)
+                formData.append('file', res)
                 const { data: response } = await dispatchImage(orderObj?._id, formData)
                 getOrders()
                 setAlertText(res.message)
@@ -144,6 +144,26 @@ export default function OrderDetail(props) {
             if (res) {
                 setAlertText(res.message)
                 setSuccessAlert(true)
+            }
+
+        } catch (error) {
+            console.error(error)
+            setAlertText(error.message)
+            setErrorAlert(true)
+
+        }
+        setIsLoading(false)
+    }
+
+    const handleDeliverByTeacher = async () => {
+        setIsLoading(true)
+        try {
+            const { data: res } = await deliverByTeacherOrder(orderObj?._id)
+            if (res) {
+                setAlertText(res.message)
+                setSuccessAlert(true)
+                getOrders()
+
             }
 
         } catch (error) {
@@ -255,25 +275,33 @@ export default function OrderDetail(props) {
                                     <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Deliver</Text>
                                 </Pressable>
                             } */}
-                            {orderObj?.statusObj?.status == "DELIVERED" &&
-                                <Pressable style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }}>
-                                    <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Delivered</Text>
+                            {orderObj?.statusObj?.status == "DISPATCHED" &&
+                                <Pressable onPress={() => handleDeliverByTeacher()} style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }}>
+                                    <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Deliver</Text>
                                 </Pressable>
                             }
 
+                            {/* {orderObj?.statusObj?.status == "DELIVERED MARKED BY TEACHER" &&
+                                <Pressable style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }}>
+                                    <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Delivered</Text>
+                                </Pressable>
+                            } */}
                         </View>
 
                         :
                         <>
-                            {orderObj?.statusObj?.status == "DISPATCHED" ?
+                            {orderObj?.statusObj?.status == "DISPATCHED" &&
                                 <Pressable style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }} onPress={() => handleDeliverOrder()}>
                                     <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Mark Delivered</Text>
                                 </Pressable>
-                                :
+                            }
+
+                            {/* {
+                                orderObj?.statusObj?.status == "DELIVERED MARKED BY TEACHER" &&
                                 <View style={styles.topView}>
                                     <Text style={[{ color: '#828282', marginLeft: 5, fontSize: 14, fontFamily: 'RedHatText-Regular', }]}>{new Date(orderObj?.createdAt).toDateString()}</Text>
                                 </View>
-                            }
+                            } */}
                         </>
 
                     }
