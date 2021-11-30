@@ -27,10 +27,10 @@ export default function Notification(props) {
         try {
             const { data: res } = await getAllNotifications()
             if (res.success) {
-                console.log(JSON.stringify(res.data, null,2))
+                console.log(JSON.stringify(res.data, null, 2))
                 setNotificationArr(res.data)
                 setIsRefreshing(false)
-                
+
             }
         } catch (error) {
             console.error(error)
@@ -66,7 +66,7 @@ export default function Notification(props) {
                         data={notificationArr}
                         refreshing={isRefreshing}
                         onRefresh={() => getNotifications()}
-                        contentContainerStyle={{paddingBottom:80}}
+                        contentContainerStyle={{ paddingBottom: 80 }}
                         keyExtractor={(item, index) => `${item._id}`}
                         renderItem={({ item, index }) => {
                             return (
@@ -79,14 +79,15 @@ export default function Notification(props) {
 
                                         <View style={styles.notificationInnerContainer}>
                                             <Text style={styles.cardHeading}>{item?.title}</Text>
-                                            <Text style={styles.cardData}>{item?.content}</Text>
+                                            <View>
+
+                                                <Text style={styles.cardData}>{item?.content} </Text>
+                                                <Text style={styles.cardData}>{`${new Date(item?.createdAt).getDay()}/${new Date(item?.createdAt).getMonth() + 1}/${new Date(item?.createdAt).getFullYear()}`}</Text>
+                                            </View>
                                         </View>
                                     </View>
-                                            <Text style={[styles.cardData,{alignSelf:"flex-end", paddingRight:20}]}>{`${new Date(item?.createdAt).getHours()}:${new Date(item?.createdAt).getMinutes()}`}</Text>
-                                            <Text style={[styles.cardData,{alignSelf:"flex-end", paddingRight:20}]}>{`${new Date(item?.createdAt).getDay()}/${new Date(item?.createdAt).getMonth()+1}/${new Date(item?.createdAt).getFullYear()}`}</Text>
-                                    {/* <Text style={styles.cardHeading}>Couse Purchased successfully !</Text>
-                        <Text style={styles.cardData}>See the message and go to the your deshboard</Text>
-                        <Text style={styles.cardTime}>08:20 am</Text> */}
+                                    {/* <Text style={[styles.cardData, { alignSelf: "flex-end", paddingRight: 20 }]}>{`${new Date(item?.createdAt).getHours()}:${new Date(item?.createdAt).getMinutes()}`}</Text> */}
+
                                 </View>
                             )
                         }}
@@ -193,13 +194,13 @@ const styles = StyleSheet.create({
     },
     notiCard: {
         width: wp(100),
-        borderColor: '#BDBDBD',
-        borderWidth: 0.5,
+        borderBottomColor: '#BDBDBD',
+        borderBottomWidth: 0.5,
         display: 'flex',
         alignSelf: 'center',
         marginVertical: 10,
         padding: 15,
-        backgroundColor: '#F5F5F5'
+        // backgroundColor: 'rgba(0,0,0,0.)'
     },
 
 
