@@ -133,9 +133,12 @@ export default function Courses(props) {
     }
 
     useEffect(() => {
-        getSubjects()
-        getCourses()
-        getSubjectWise()
+        if (focused) {
+
+            getSubjects()
+            getCourses()
+            getSubjectWise()
+        }
     }, [focused])
 
     const renderItem = ({ item, index }) => {
@@ -147,12 +150,18 @@ export default function Courses(props) {
 
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                             <Text style={styles.textCardMainHeading}>{item?.name}</Text>
-                            <Icon name="heart" size={14} color={colorObj.primarColor} />
+                            {item.isWishListed ?
+                                <Icon name="heart" size={14} color={colorObj.primarColor} />
+
+                                :
+                                <Icon name="heart-outline" size={14} color={colorObj.primarColor} />
+
+                            }
                         </View>
                         <Text style={styles.textCardMainSubHeading1}>{item?.teacherName}</Text>
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                             <Text style={styles.textCardMainSubHeading2}>₹{item?.price}</Text>
-                            <Text style={styles.textCardMainSubHeading2}><Icon name="star" size={14} color={colorObj.primarColor} />4.2</Text>
+                            <Text style={styles.textCardMainSubHeading2}>{item.rating}<Icon name="star" size={12} color={colorObj.primarColor} /></Text>
                         </View>
                     </View>
 
@@ -164,7 +173,7 @@ export default function Courses(props) {
 
     const handleSubjectSelection = async (id) => {
         let tempArr = [...mainCourseArr];
-        console.log(JSON.stringify(tempArr, null, 2),"asddasdsa")
+        console.log(JSON.stringify(tempArr, null, 2), "asddasdsa")
         tempArr = tempArr.filter(el => el?.classesArr?.some(ele => ele.subjectArr.some(elx => elx.subjectId == id)))
         setCourseArr([...tempArr])
         setSelectedSubjectId(id)
@@ -175,123 +184,110 @@ export default function Courses(props) {
         <View style={styles.container}>
             <NavBar rootProps={props} />
 
-            <ScrollView>
-                <View style={styles.bannerContainer}>
-                    <Image source={require('../../assets/images/Banner.png')} />
-                </View>
-                <FlatList
-
-                    horizontal
-                    data={subjectArr}
-                    renderItem={({ item, index }) => {
-                        return (
-                            <Pressable onPress={() => handleSubjectSelection(item._id)} style={[styles.categoryContainer, selectedSubjectId != item._id && { backgroundColor: '#F7FFFE' }]}>
-                                {/* <Icon name="film-outline" size={14} /> */}
-                                <Text style={[styles.categoryName, selectedSubjectId != item._id && { color: '#828282' }]}>{item.name}</Text>
-                            </Pressable>
-                        )
-                    }}
-                    showsHorizontalScrollIndicator={false}
-                    keyExtractor={(item, index) => `${index}`}
-                />
+            <FlatList scrollEnabled={true} data={[]} renderItem={() => null}
+                ListHeaderComponent={
+                    <>
+                        <View style={styles.bannerContainer}>
+                            <Image source={require('../../assets/images/Banner.png')} />
+                        </View>
 
 
-                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                    <Text style={styles.headingAboveCard}>Recommended Courses</Text>
-                    <Text style={styles.viewAllText}>View All</Text>
-                </View>
+                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                            <Text style={styles.headingAboveCard}>Recommended Courses</Text>
+                            <Text style={styles.viewAllText}>View All</Text>
+                        </View>
+                        <FlatList
 
-                <FlatList
-                    horizontal
-                    data={courseArr}
-                    renderItem={renderItem}
-                    ListEmptyComponent={
-                        <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>No Courses found</Text>
-                    }
-                    showsHorizontalScrollIndicator={false}
-                    keyExtractor={(item, index) => `${index}`}
-                />
+                            horizontal
+                            data={subjectArr}
+                            renderItem={({ item, index }) => {
+                                return (
+                                    <Pressable onPress={() => handleSubjectSelection(item._id)} style={[styles.categoryContainer, selectedSubjectId != item._id && { backgroundColor: '#F7FFFE' }]}>
+                                        {/* <Icon name="film-outline" size={14} /> */}
+                                        <Text style={[styles.categoryName, selectedSubjectId != item._id && { color: '#828282' }]}>{item.name}</Text>
+                                    </Pressable>
+                                )
+                            }}
+                            showsHorizontalScrollIndicator={false}
+                            keyExtractor={(item, index) => `${index}`}
+                        />
 
-                <FlatList
-                    data={subjectWiseCoursesArr}
-                    renderItem={({ item, index }) => {
-                        return (
-                            <View>
-                                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                                    <Text style={styles.headingAboveCard}>{item?.name}</Text>
-                                    <Text style={styles.viewAllText}>View All</Text>
-                                </View>
-                                <FlatList
-                                    data={item?.courseArr}
-                                    keyExtractor={(item, index) => `${item._id}`}
-                                    horizontal
-                                    renderItem={({ item: itemX, index: indexX }) => {
-                                        return (
-                                            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("CourseDetail", { data: itemX._id })} >
-                                                <Image style={styles.courseImg} source={{ uri: generateImageUrl(itemX?.thumbnailImage?.url) }} />
-                                                <View style={styles.textCardContainer}>
-                                                    <View>
+                        <FlatList
+                            horizontal
+                            data={courseArr}
+                            renderItem={renderItem}
+                            ListEmptyComponent={
+                                <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>No Courses found</Text>
+                            }
+                            showsHorizontalScrollIndicator={false}
+                            keyExtractor={(item, index) => `${index}`}
+                        />
 
-                                                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                                                            <Text style={styles.textCardMainHeading}>{itemX?.name}</Text>
-                                                            <Icon name="heart" size={14} color={colorObj.primarColor} />
+                        <FlatList
+                            data={subjectWiseCoursesArr}
+                            renderItem={({ item, index }) => {
+                                return (
+                                    <View>
+                                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                                            <Text style={styles.headingAboveCard}>{item?.name}</Text>
+                                            <Text style={styles.viewAllText}>View All</Text>
+                                        </View>
+                                        <FlatList
+                                            data={item?.courseArr}
+                                            keyExtractor={(item, index) => `${item._id}`}
+                                            horizontal
+                                            renderItem={({ item: itemX, index: indexX }) => {
+                                                return (
+                                                    <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("CourseDetail", { data: itemX._id })} >
+                                                        <Image style={styles.courseImg} source={{ uri: generateImageUrl(itemX?.thumbnailImage?.url) }} />
+                                                        <View style={styles.textCardContainer}>
+                                                            <View>
+
+                                                                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                                                                    <Text style={styles.textCardMainHeading}>{itemX?.name}</Text>
+                                                                    {
+                                                                        itemX?.isWishListed ?
+                                                                            <Icon name="heart" size={14} color={colorObj.primarColor} />
+
+                                                                            :
+                                                                            <Icon name="heart-outline" size={14} color={colorObj.primarColor} />
+
+                                                                    }
+                                                                </View>
+                                                                <Text style={styles.textCardMainSubHeading1}>{itemX?.teacherName}</Text>
+                                                                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                                                                    <Text style={styles.textCardMainSubHeading2}>₹{itemX?.price}</Text>
+                                                                    <Text style={styles.textCardMainSubHeading2}>{itemX.rating}<Icon name="star" size={12} color={colorObj.primarColor} /></Text>
+                                                                </View>
+                                                            </View>
+
                                                         </View>
-                                                        <Text style={styles.textCardMainSubHeading1}>{itemX?.teacherName}</Text>
-                                                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                                                            <Text style={styles.textCardMainSubHeading2}>₹{itemX?.price}</Text>
-                                                            <Text style={styles.textCardMainSubHeading2}><Icon name="star" size={14} color={colorObj.primarColor} />4.2</Text>
-                                                        </View>
-                                                    </View>
+                                                    </Pressable>
+                                                )
+                                            }}
+                                        />
+                                    </View>
+                                )
+                            }}
+                            ListEmptyComponent={
+                                <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>No Courses found</Text>
+                            }
 
-                                                </View>
-                                            </Pressable>
-                                        )
-                                    }}
-                                />
-                            </View>
-                        )
-                    }}
-                    ListEmptyComponent={
-                        <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>No Courses found</Text>
-                    }
-                    // ListHeaderComponent={
-                    //     <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                    //         <Text style={styles.headingAboveCard}>{title}</Text>
-                    //         <Text style={styles.viewAllText}>View All</Text>
-                    //     </View>
-                    // }
-                    showsHorizontalScrollIndicator={false}
-                    keyExtractor={(item, index) => `${index}`}
-                />
+                            showsHorizontalScrollIndicator={false}
+                            keyExtractor={(item, index) => `${index}`}
+                        />
 
 
 
-                {/* <SectionList
-                    sections={subjectWiseCoursesArr}
-                    keyExtractor={(item, index) => `${item._id}`}
-                    // horizontal
-                    renderItem={({ item, index }) => <RenderSectionCourses horizontal item={item} />}
-                    renderSectionHeader={({ section: { title, _id } }) => (
-                        
-                    )}
-                /> */}
-
-
-                {/* <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                    <Text style={styles.headingAboveCard}>Best in Finance</Text>
-                    <Text style={styles.viewAllText}>View All</Text>
-                </View>
-                <FlatList
-                    horizontal
-                    data={productsArr}
-                    renderItem={renderItem}
-                    showsHorizontalScrollIndicator={false}
-                    keyExtractor={(item, index) => `${index}`}
-                /> */}
 
 
 
-            </ScrollView>
+
+                    </>
+                }
+
+            />
+
         </View>
     )
 }

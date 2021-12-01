@@ -37,6 +37,19 @@ export default function OrderSummary(props) {
     const [cartObj, setCartObj] = useState({});
 
     const focused = useIsFocused()
+
+
+
+
+    const [name, setName] = useState('');
+    const [phone, setPhone] = useState('');
+    const [address, setAddress] = useState('');
+    const [line2, setLine2] = useState('');
+    const [city, setCity] = useState('');
+    const [pincode, setPincode] = useState('');
+    const [shippingState, setShippingState] = useState('');
+
+
     const getUserCart = async () => {
         try {
             const { data: res } = await getCart();
@@ -176,7 +189,7 @@ export default function OrderSummary(props) {
             />
             <View style={{ flex: 1, marginLeft: 10 }}>
                 <Text style={[styles.listTitle]}>{item?.courseObj?.name}</Text>
-                <Text style={[styles.address, { color: '#929292' }]}>{item?.courseObj?.description}</Text>
+                <Text style={[styles.address, { color: '#929292' }]}>{item?.courseObj?.description.slice(0,50)}...</Text>
             </View>
             <View style={[styles.topView]}><FontAwesome name="inr" size={12} color={'black'} />
                 <Text style={[styles.address, { color: 'black', marginLeft: 5 }]}>{item?.courseObj?.price}</Text></View>
@@ -184,39 +197,47 @@ export default function OrderSummary(props) {
     );
 
     return (
-        <View style={[styles.container]}>
-            <View style={[styles.topView]}>
-                <AntDesign name="left" size={12} onPress={() => navigation.goBack()} />
-                <Text style={[styles.topTextView, styles.topText]}>Order Summary</Text>
-            </View>
+        <View style={{flex:1,backgroundColor:'white'}}>
 
+            <FlatList data={[]} renderItem={() => null} contentContainerStyle={{backgroundColor:'white'}}
+                ListHeaderComponent={
+                    <View style={[styles.container]}>
+                        <View style={[styles.topView]}>
+                            <AntDesign name="left" size={16} onPress={() => navigation.goBack()} />
+                            <Text style={[styles.topTextView, styles.topText,{fontSize:20}]}>Order Summary</Text>
+                        </View>
 
-            <View style={[styles.addressView]}>
-                <View style={[styles.topView]}><Text style={[styles.address, { color: 'black', marginBottom: 7 }]}>Shipping Address </Text>
-                    <FontAwesome5 name="pen" size={9} style={{ color: '#828282', marginLeft: 5 }} />
-                </View>
-                <Text style={[styles.address, { color: '#929292' }]}>Jelly Sams</Text>
-                <Text style={[styles.address, { color: '#929292' }]}>+91 995-9672-678</Text>
-                <Text style={[styles.address, { color: '#929292' }]}>983  Ranibagh Street (Between jones & Bekianer sweets) Shakurpur, Delhi</Text>
-            </View>
-            <Text style={[styles.topText, { marginTop: 15 }]}>Order  Details</Text>
-            <View>
-                <FlatList
-                    data={cartObj?.courseArr}
-                    renderItem={renderItem}
-                    keyExtractor={(item, index) => `${item?.courseId}`}
+{/* 
+                        <View style={[styles.addressView]}>
+                            <View style={[styles.topView]}><Text style={[styles.address, { color: 'black', marginBottom: 7,fontFamily:'Montserrat-SemiBold',fontSize:14 }]}>Shipping Address </Text>
+                                <FontAwesome5 name="pen" size={12} style={{ color: '#828282', marginLeft: 5 }} />
+                            </View>
+                            <Text style={[styles.address, { color: '#929292' }]}>Jelly Sams</Text>
+                            <Text style={[styles.address, { color: '#929292' }]}>+91 995-9672-678</Text>
+                            <Text style={[styles.address, { color: '#929292' }]}>983  Ranibagh Street (Between jones & Bekianer sweets) Shakurpur, Delhi</Text>
+                        </View> */}
+                        <Text style={[styles.topText, { marginTop: 15,fontSize:18 }]}>Order  Details</Text>
+                        <View>
+                            <FlatList
+                                data={cartObj?.courseArr}
+                                renderItem={renderItem}
+                                keyExtractor={(item, index) => `${item?.courseId}`}
+                                contentContainerStyle={{backgroundColor:'white'}}
+                            />
+                            <View style={{ marginTop: 15, flexDirection: 'row', justifyContent: 'space-between' }}><Text style={[styles.topText]}>Total Price</Text>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}><FontAwesome name="inr" size={12} color={'black'} />
+                                    <Text style={[styles.address, { color: 'black', marginLeft: 5, fontFamily: "Montserrat-Bold", }]}>{cartObj?.courseArr?.reduce((acc, el) => acc + el.courseObj.price, 0)}
+                                    </Text>
+                                </View>
+                            </View>
+                        </View>
 
-                />
-                <View style={{ marginTop: 15, flexDirection: 'row', justifyContent: 'space-between' }}><Text style={[styles.topText]}>Total Price</Text>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}><FontAwesome name="inr" size={12} color={'black'} />
-                        <Text style={[styles.address, { color: 'black', marginLeft: 5, fontFamily: "Montserrat-Bold", }]}>{cartObj?.courseArr?.reduce((acc, el) => acc + el.courseObj.price, 0)}
-                        </Text>
                     </View>
-                </View>
-            </View>
-            <View style={{ justifyContent: 'flex-end', flex: 1 }}>
+                }
+            />
+            <View style={{ justifyContent: 'flex-end', width:wp(80),alignSelf:'center' }}>
                 <Pressable style={styles.submitBtn} onPress={() => buyPackage()}>
-                    <Text style={styles.submitBtnText}>Pay</Text>
+                    <Text style={styles.submitBtnText}>Pay now</Text>
                 </Pressable></View>
 
         </View>
@@ -227,6 +248,7 @@ const styles = StyleSheet.create({
     container: {
         padding: 15,
         flex: 1,
+        backgroundColor: 'white'
     },
     img: {
         width: 50,
@@ -262,7 +284,7 @@ const styles = StyleSheet.create({
     },
     submitBtn: {
         backgroundColor: colorObj.primarColor,
-        borderRadius: 25,
+        borderRadius: 5,
         marginVertical: 10,
     },
     submitBtnText: {

@@ -6,7 +6,7 @@ export const checkValidPhone = (phone) => {
     return regex.test(tempPhone)
 }
 export const generateImageUrl = (profilePhoto) => {
-    console.log(serverUrl, "url")
+    // console.log(serverUrl, "url")
     let imageUrl = `${serverUrl}/uploads/${profilePhoto}`
 
     return imageUrl

@@ -174,122 +174,121 @@ export default function HomeScreen(props) {
     return (
         <View style={styles.container}>
             <NavBar rootProps={props} />
-            <ScrollView>
-                <View style={styles.bannerContainer}>
-                    <Image source={require('../../assets/images/Banner.png')} />
-                </View>
+            <FlatList scrollEnabled={true} data={[]} renderItem={() => null}
+                ListHeaderComponent={
+                    <>
 
-                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                    <Text style={styles.headingAboveCard}>Top Instructors</Text>
-                    <Pressable onPress={() => handleViewAll()}><Text style={styles.viewAllText}>View All</Text></Pressable>
-                </View>
-                <FlatList
-                    horizontal
-                    data={subjectArr}
-                    renderItem={({ item, index }) => {
-                        return (
-                            <Pressable onPress={() => { handleSubjectSelection(item) }} style={[styles.categoryContainer, selectedSubjectId != item._id && { backgroundColor: '#f0faf9' }]}>
-                                {/* <Icon name="film-outline" size={14} /> */}
-                                <Text style={[styles.categoryName, selectedSubjectId != item._id && { color: '#000' }]}>{item.name}</Text>
-                            </Pressable>
-                        )
-                    }}
-                    showsHorizontalScrollIndicator={false}
-                    keyExtractor={(item, index) => `${index}`}
-                />
-                <FlatList
-                    style={{ height: 150 }}
-                    horizontal
-                    data={teachersArr}
-                    renderItem={renderItem}
-                    ListEmptyComponent={
-                        <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>{selectedSubject.name ? `No teachers found for ${selectedSubject.name}` : "No teachers found"}</Text>
-                    }
-                    showsHorizontalScrollIndicator={false}
-                    keyExtractor={(item, index) => `${index}`}
-                />
+                        <View style={styles.bannerContainer}>
+                            <Image source={require('../../assets/images/Banner.png')} />
+                        </View>
 
-
-
-
-
-
-                <FlatList
-                    data={subjectWiseTeacherArr}
-                    renderItem={({ item, index }) => {
-                        return (
-                            <View style={{ marginVertical: 10 }}>
-                                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                                    <Text style={styles.headingAboveCard}>{item?.name} Instructors</Text>
-                                    <Pressable onPress={() => props.navigation.navigate('AllTeacher')}>
-                                        <Text style={styles.viewAllText}>View All</Text>
+                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                            <Text style={styles.headingAboveCard}>Top Instructors</Text>
+                            <Pressable onPress={() => handleViewAll()}><Text style={styles.viewAllText}>View All</Text></Pressable>
+                        </View>
+                        <FlatList
+                            horizontal
+                            data={subjectArr}
+                            renderItem={({ item, index }) => {
+                                return (
+                                    <Pressable onPress={() => { handleSubjectSelection(item) }} style={[styles.categoryContainer, selectedSubjectId != item._id && { backgroundColor: '#f0faf9' }]}>
+                                        {/* <Icon name="film-outline" size={14} /> */}
+                                        <Text style={[styles.categoryName, selectedSubjectId != item._id && { color: '#000' }]}>{item.name}</Text>
                                     </Pressable>
-                                </View>
-                                <FlatList
-                                    data={item?.userArr}
-                                    keyExtractor={(item, index) => `${item._id}`}
-                                    horizontal
-                                    showsHorizontalScrollIndicator={false}
-                                    renderItem={({ item: itemX, index: indexX }) => {
-                                        return (
-                                            <Pressable style={[styles.cardContainer, { marginVertical: 10, paddingVertical: 5 }]} onPress={() => props.navigation.navigate("TeacherProfile", { data: itemX._id })}>
+                                )
+                            }}
+                            showsHorizontalScrollIndicator={false}
+                            keyExtractor={(item, index) => `${index}`}
+                        />
+                        <FlatList
+                            style={{ height: 150 }}
+                            horizontal
+                            data={teachersArr}
+                            renderItem={renderItem}
+                            ListEmptyComponent={
+                                <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>{selectedSubject.name ? `No teachers found for ${selectedSubject.name}` : "No teachers found"}</Text>
+                            }
+                            showsHorizontalScrollIndicator={false}
+                            keyExtractor={(item, index) => `${index}`}
+                        />
 
-                                                <Image style={styles.teacherImg} source={{ uri: itemX?.profileImage ? generateImageUrl(itemX?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
-                                                <View style={styles.textCardContainer}>
-                                                    <View>
-                                                        <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                                                            <Text style={styles.textCardMainHeading}>{itemX?.name}
-                                                            </Text>
-                                                            {
-                                                                itemX.onlineToggle == true &&
-                                                                <Text style={{ height: 8, width: 8, marginLeft: 8, backgroundColor: "#23e615", borderRadius: 50 }}></Text>
-                                                            }
-                                                        </View>
 
-                                                        <Text style={styles.textCardMainSubHeading1}>{itemX?.enquiryObj?.classesArr?.reduce((acc, el) => acc + el.className + ',', '')}</Text>
-                                                        <Text style={styles.textCardMainSubHeading2}>{itemX?.enquiryObj?.experience} Year Experience</Text>
-                                                    </View>
-                                                    <Pressable onPress={() => handleBookmarkTeacher(itemX?._id)} style={{ position: 'absolute', top: 5, right: 10 }} >
-                                                        {itemX?.enquiryObj?.bookmarked ?
-                                                            <Icon name="bookmark" size={16} color={colorObj?.primarColor} />
-                                                            :
-                                                            <Icon name="bookmark-outline" size={16} color={colorObj?.primarColor} />
 
-                                                        }
-                                                    </Pressable>
-                                                </View>
+
+
+
+                        <FlatList
+                            data={subjectWiseTeacherArr}
+                            renderItem={({ item, index }) => {
+                                return (
+                                    <View style={{ marginVertical: 10 }}>
+                                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                                            <Text style={styles.headingAboveCard}>{item?.name} Instructors</Text>
+                                            <Pressable onPress={() => props.navigation.navigate('AllTeacher')}>
+                                                <Text style={styles.viewAllText}>View All</Text>
                                             </Pressable>
-                                        )
-                                    }}
-                                />
-                            </View>
-                        )
-                    }}
-                    ListEmptyComponent={
-                        <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>No Courses found</Text>
-                    }
+                                        </View>
+                                        <FlatList
+                                            data={item?.userArr}
+                                            keyExtractor={(item, index) => `${item._id}`}
+                                            horizontal
+                                            showsHorizontalScrollIndicator={false}
+                                            renderItem={({ item: itemX, index: indexX }) => {
+                                                return (
+                                                    <Pressable style={[styles.cardContainer, { marginVertical: 10, paddingVertical: 5 }]} onPress={() => props.navigation.navigate("TeacherProfile", { data: itemX._id })}>
 
-                    showsHorizontalScrollIndicator={false}
-                    keyExtractor={(item, index) => `${index}`}
-                />
+                                                        <Image style={styles.teacherImg} source={{ uri: itemX?.profileImage ? generateImageUrl(itemX?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
+                                                        <View style={styles.textCardContainer}>
+                                                            <View>
+                                                                <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                                                                    <Text style={styles.textCardMainHeading}>{itemX?.name}
+                                                                    </Text>
+                                                                    {
+                                                                        itemX.onlineToggle == true &&
+                                                                        <Text style={{ height: 8, width: 8, marginLeft: 8, backgroundColor: "#23e615", borderRadius: 50 }}></Text>
+                                                                    }
+                                                                </View>
+
+                                                                <Text style={styles.textCardMainSubHeading1}>{itemX?.enquiryObj?.classesArr?.reduce((acc, el) => acc + el.className + ',', '')}</Text>
+                                                                <Text style={styles.textCardMainSubHeading2}>{itemX?.enquiryObj?.experience} Year Experience</Text>
+                                                            </View>
+                                                            <Pressable onPress={() => handleBookmarkTeacher(itemX?._id)} style={{ position: 'absolute', top: 5, right: 10 }} >
+                                                                {itemX?.enquiryObj?.bookmarked ?
+                                                                    <Icon name="bookmark" size={16} color={colorObj?.primarColor} />
+                                                                    :
+                                                                    <Icon name="bookmark-outline" size={16} color={colorObj?.primarColor} />
+
+                                                                }
+                                                            </Pressable>
+                                                        </View>
+                                                    </Pressable>
+                                                )
+                                            }}
+                                        />
+                                    </View>
+                                )
+                            }}
+                            ListEmptyComponent={
+                                <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>No Courses found</Text>
+                            }
+
+                            showsHorizontalScrollIndicator={false}
+                            keyExtractor={(item, index) => `${index}`}
+                        />
 
 
 
 
 
 
-                {/* <FlatList
-                    style={{ height: 150 }}
-                    horizontal
-                    data={productsArr}
-                    renderItem={renderItem}
-                    showsHorizontalScrollIndicator={false}
-                    keyExtractor={(item, index) => `${index}`}
-                /> */}
+
+                    </>
+                }
+            />
 
 
 
-            </ScrollView>
+
         </View>
     )
 }

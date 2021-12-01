@@ -141,8 +141,8 @@ const App = () => {
 
 
   return (
-    <PaperProvider theme={theme}>
-      <SafeAreaView style={{ backgroundColor: 'white', minHeight: '100%' }}>
+    <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
+      <PaperProvider theme={theme}>
         <successAlertContext.Provider value={{ successAlertArr: [successAlert, setSuccessAlert], warningAlertArr: [warningAlert, setWarningAlert], errorAlertArr: [errorAlert, setErrorAlert], alertTextArr: [alertText, setAlertText] }}>
 
           <RootStack />
@@ -174,8 +174,8 @@ const App = () => {
           </Portal>
 
         </successAlertContext.Provider>
-      </SafeAreaView>
-    </PaperProvider>
+      </PaperProvider>
+    </SafeAreaView>
   );
 };
 

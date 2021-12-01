@@ -19,7 +19,7 @@ export default function PaymentSuccess(props) {
                 <Text style={[styles.title]}>Payment Success</Text>
                 <View style={[styles.contentView]}>
                     <Text style={[styles.content]}>Your payment was succesful!</Text>
-                    <Text style={[styles.content]}>Just wait Java Book arrive at home</Text>
+                    {/* <Text style={[styles.content]}>Just wait Java Book arrive at home</Text> */}
                 </View></View>
             <View style={{ justifyContent: 'flex-end', flex: 1, padding: 20 }}>
                 <Pressable style={[styles.Btn, { backgroundColor: colorObj.primarColor, }]} onPress={() => handleTrackStatus()}>

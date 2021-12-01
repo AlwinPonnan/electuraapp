@@ -278,7 +278,7 @@ export default function TeacherProfile(props) {
                     }
                 </View>
                 <View style={[styles.flexRow, { alignItems: 'center', paddingHorizontal: 20 }]}>
-                    <Text style={{ fontFamily: 'RedHatText-Medium', fontSize: 12, color: '#828282' }}>4.2</Text>
+                    <Text style={{ fontFamily: 'RedHatText-Medium', fontSize: 12, color: '#828282' }}>{teacherObj?.rating}</Text>
                     <Icon name="star" style={{ marginHorizontal: 3 }} size={15} color="orange" />
                 </View>
             </View>

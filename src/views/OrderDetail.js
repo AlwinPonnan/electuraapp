@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, Text, View, FlatList, Image, Pressable, Modal } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Image, Pressable, Modal, TextInput } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+
 import { deliverByTeacherOrder, deliverOrder, dispatchImage, dispatchOrder, getById, getMyOrders } from '../Services/Order';
 import { useIsFocused } from '@react-navigation/core';
 import { colorObj } from '../globals/colors';
@@ -18,7 +20,8 @@ import { successAlertContext } from '../../App';
 
 import { loadingContext } from '../navigators/stacks/RootStack';
 import DocumentPicker from 'react-native-document-picker'
-
+import { Rating, AirbnbRating } from 'react-native-ratings';
+import { newCourseFeedback } from '../Services/CourseFeedback';
 export default function OrderDetail(props) {
     const [isLoading, setIsLoading] = useContext(loadingContext);
     const [orderObj, setOrderObj] = useState({});
@@ -43,8 +46,12 @@ export default function OrderDetail(props) {
 
     const [activeStepper, setActiveStepper] = useState(0);
 
+    const [responseModal, setResponseModal] = useState(false);
 
     const [dispatchImageFile, setDispatchImageFile] = useState();
+    const [responseMessage, setResponseMessage] = useState('');
+    const [rating, setRating] = useState(3);
+
 
     const pickImg = async () => {
         try {
@@ -82,9 +89,10 @@ export default function OrderDetail(props) {
                 if (tempObj?.statusObj?.status == "PLACED") {
                     setActiveStepper(1)
                 }
-                else if (tempObj?.statusObj?.status == "DISPATCHED") {
+                else if (tempObj?.statusObj?.status == "DISPATCHED" || tempObj?.statusObj?.status == "DELIVERED MARKED BY TEACHER") {
                     setActiveStepper(2)
                 }
+
                 else if (tempObj?.statusObj?.status == "DELIVERED") {
                     setActiveStepper(3)
                 }
@@ -114,14 +122,15 @@ export default function OrderDetail(props) {
         }
     }
 
-    const handleDispatchOrder = async (res) => {
+    const handleDispatchOrder = async (image) => {
         setIsLoading(true)
         try {
 
             const { data: res } = await dispatchOrder(orderObj?._id)
             if (res) {
+                // console.log(res)
                 let formData = new FormData()
-                formData.append('file', res)
+                formData.append('file', image)
                 const { data: response } = await dispatchImage(orderObj?._id, formData)
                 getOrders()
                 setAlertText(res.message)
@@ -129,9 +138,18 @@ export default function OrderDetail(props) {
 
             }
         } catch (error) {
+            if(error?.response?.data?.message){
+                setAlertText(error?.response?.data?.message)
+                setErrorAlert(true)
+
+                
+            }
+            else{
+                setAlertText(error.message)
+                setErrorAlert(true)
+
+            }
             console.error(error)
-            setAlertText(error.message)
-            setErrorAlert(true)
 
         }
         setIsLoading(false)
@@ -142,14 +160,24 @@ export default function OrderDetail(props) {
         try {
             const { data: res } = await deliverOrder(orderObj?._id)
             if (res) {
+                getOrders()
+
                 setAlertText(res.message)
                 setSuccessAlert(true)
             }
 
         } catch (error) {
-            console.error(error)
-            setAlertText(error.message)
-            setErrorAlert(true)
+            if(error?.response?.data?.message){
+                setAlertText(error?.response?.data?.message)
+                setErrorAlert(true)
+
+                
+            }
+            else{
+                setAlertText(error.message)
+                setErrorAlert(true)
+
+            }
 
         }
         setIsLoading(false)
@@ -175,6 +203,36 @@ export default function OrderDetail(props) {
         setIsLoading(false)
     }
 
+
+    const handleSubmitFeedBack = async () => {
+        setResponseModal(false)
+        setIsLoading(true)
+        try {
+            let obj = {
+                rating,
+                message: responseMessage,
+                orderId: orderObj._id,
+                courseId: orderObj?.courseObj?._id
+
+            }
+            const { data: res } = await newCourseFeedback(obj)
+            if (res.success) {
+                getOrders()
+                setAlertText(res.message)
+                setSuccessAlert(true)
+            }
+        } catch (error) {
+            if (error.response.data.message) {
+                setErrorAlert(true)
+                setAlertText(error.response.data.message)
+            }
+            else {
+                setErrorAlert(true)
+                setAlertText(error.message)
+            }
+        }
+        setIsLoading(false)
+    }
 
     useEffect(() => {
         getOrders()
@@ -290,18 +348,18 @@ export default function OrderDetail(props) {
 
                         :
                         <>
-                            {orderObj?.statusObj?.status == "DISPATCHED" &&
+                            {(orderObj?.statusObj?.status == "DISPATCHED" || orderObj?.statusObj?.status == "DELIVERED MARKED BY TEACHER")  &&
                                 <Pressable style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }} onPress={() => handleDeliverOrder()}>
                                     <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Mark Delivered</Text>
                                 </Pressable>
                             }
 
-                            {/* {
-                                orderObj?.statusObj?.status == "DELIVERED MARKED BY TEACHER" &&
-                                <View style={styles.topView}>
-                                    <Text style={[{ color: '#828282', marginLeft: 5, fontSize: 14, fontFamily: 'RedHatText-Regular', }]}>{new Date(orderObj?.createdAt).toDateString()}</Text>
-                                </View>
-                            } */}
+                            {
+                                (orderObj?.statusObj?.status == "DELIVERED" && orderObj.feebackSubmitted==false) &&
+                                <Pressable style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }} onPress={() => setResponseModal(true)}>
+                                    <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Review</Text>
+                                </Pressable>
+                            }
                         </>
 
                     }
@@ -347,6 +405,44 @@ export default function OrderDetail(props) {
                 </View>
 
             </View>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={responseModal}
+                onRequestClose={() => {
+                    setResponseModal(false);
+                }}
+            >
+                <Pressable style={styles.centeredView} onPress={() => setResponseModal(false)}>
+                    <Pressable style={styles.modalView}>
+                        <Text style={styles.responseModalHeading}>Feedback</Text>
+
+
+
+                        <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Rating</Text>
+
+                        <Rating
+                            style={{ alignSelf: 'flex-start', marginVertical: 5 }}
+                            type='custom'
+                            startingValue={rating}
+                            onFinishRating={(val) => setRating(val)}
+                            ratingCount={5}
+                            imageSize={25}
+                            showRating
+                            ratingTextColor={colorObj.primarColor}
+                            showRating={false}
+
+                        />
+                        <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Message</Text>
+                        <TextInput style={[styles.textInput]} multiline numberOfLines={4} value={responseMessage} onChangeText={(e) => setResponseMessage(e)} />
+                        <Pressable style={styles.submitBtn} onPress={() => handleSubmitFeedBack()}>
+                            <Text style={styles.submitBtnText}>Submit</Text>
+                        </Pressable>
+
+                    </Pressable>
+                </Pressable>
+            </Modal>
 
         </View>
 
@@ -416,5 +512,70 @@ const styles = StyleSheet.create({
         color: '#4F4F4F',
         fontSize: 12,
         paddingHorizontal: 10
-    }
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        // marginTop: 22,
+        backgroundColor: 'rgba(0,0,0,0.6)'
+
+    },
+    modalView: {
+        margin: 20,
+        width: wp(90),
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+
+    responseModalHeading: {
+        fontFamily: 'Montserrat-SemiBold',
+        fontSize: 20,
+        color: '#000',
+        textAlign: 'left',
+        marginVertical: 10,
+
+        borderBottomWidth: 1,
+        borderBottomColor: '#E0E0E0'
+    },
+
+    //text input styles
+    textInputLabel: {
+        fontFamily: 'RedHatText-SemiBold',
+        fontSize: 16,
+        color: '#000'
+    },
+    textInput: {
+        backgroundColor: '#F5F6FA',
+        borderRadius: 5,
+        marginVertical: 10,
+        width: '100%',
+        fontFamily: 'Montserrat-Regular'
+
+    },
+
+    submitBtn: {
+        backgroundColor: colorObj.primarColor,
+        borderRadius: 25,
+        marginVertical: 10,
+        alignSelf: 'flex-end'
+    },
+    submitBtnText: {
+        fontFamily: 'Montserrat-SemiBold',
+        fontSize: 16,
+        color: colorObj.whiteColor,
+        textAlign: 'center',
+        paddingVertical: 10,
+        paddingHorizontal: 20
+    },
+
 })

@@ -158,6 +158,10 @@ export const addToCart = async (obj) => {
 export const getCart = async () => {
     return await axiosApiInstance.get(`${url}/getCart`)
 }
+export const removeFromCart = async (id) => {
+    return await axiosApiInstance.delete(`${url}/removeFromCart/${id}`)
+}
+
 
 
 export const getAllNotifications = async () => {
