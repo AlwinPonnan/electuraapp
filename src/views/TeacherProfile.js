@@ -69,6 +69,34 @@ export default function TeacherProfile(props) {
     };
 
 
+    const openFaceBook = (name) => {
+        Linking.canOpenURL(`fb://profile/${name}`).then(supported => {
+            if (supported) {
+                return Linking.openURL(`fb://profile/${name}`);
+            } else {
+                return Linking.openURL(`fb://profile/${name}`);
+            }
+        })
+    }
+    const openYoutube = (name) => {
+        Linking.canOpenURL('vnd.youtube://channel/' + name).then(supported => {
+            if (supported) {
+                return Linking.openURL('vnd.youtube://channel/' + name);
+            } else {
+                return Linking.openURL('https://www.youtube.com/channel/' + name);
+            }
+        });
+    }
+
+    const openInsta = (name) => {
+        Linking.canOpenURL(`https://instagram.com/_u/${name}`).then(supported => {
+            if (supported) {
+                return Linking.openURL(`https://instagram.com/_u/${name}`);
+            } else {
+                return Linking.openURL(`https://instagram.com/_u/${name}`);
+            }
+        })
+    }
 
     const handleOnint = () => {
         getTeacher()
@@ -241,13 +269,13 @@ export default function TeacherProfile(props) {
             <ImageBackground resizeMode="cover" source={require('../../assets/images/teacherBackBanner.png')} style={{ width: wp(100), height: hp(15) }}>
 
                 <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(25), position: 'absolute', bottom: 10, right: 20 }]}>
-                    <Pressable onPress={() => Linking.openURL(teacherObj?.enquiryObj?.instagramLink)}>
+                    <Pressable onPress={() => openInsta(teacherObj?.enquiryObj?.instagramLink)}>
                         <Icon name="logo-instagram" size={25} color={colorObj.whiteColor} />
                     </Pressable>
-                    <Pressable onPress={() => Linking.openURL(teacherObj?.enquiryObj?.facebookLink)}>
+                    <Pressable onPress={() => openFaceBook(teacherObj?.enquiryObj?.facebookLink)}>
                         <Icon name="logo-facebook" size={25} color={colorObj.whiteColor} />
                     </Pressable>
-                    <Pressable onPress={() => Linking.openURL(teacherObj?.enquiryObj?.youtubeLink)}>
+                    <Pressable onPress={() => openYoutube(teacherObj?.enquiryObj?.youtubeLink)}>
                         <Icon name="logo-youtube" size={25} color={colorObj.whiteColor} />
                     </Pressable>
                 </View>

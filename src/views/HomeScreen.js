@@ -147,7 +147,7 @@ export default function HomeScreen(props) {
                 <View style={styles.textCardContainer}>
                     <View>
                         <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                            <Text style={styles.textCardMainHeading}>{item?.name}
+                            <Text style={styles.textCardMainHeading}>{item?.name ? item.name :  item?.enquiryObj?.name}
                             </Text>
                             {
                                 item.onlineToggle == true &&
@@ -155,7 +155,7 @@ export default function HomeScreen(props) {
                             }
                         </View>
                         <Text style={styles.textCardMainSubHeading1}>{item?.enquiryObj?.classesArr?.reduce((acc, el) => acc + el.className + ',', '')}</Text>
-                        <Text style={styles.textCardMainSubHeading2}>{item?.enquiryObj?.experience} Year Experience</Text>
+                        <Text style={styles.textCardMainSubHeading2}>{item?.enquiryObj?.experience ? item?.enquiryObj?.experience : 1} Year Experience</Text>
                     </View>
                     <Pressable onPress={() => handleBookmarkTeacher(item?._id)} style={{ position: 'absolute', top: 5, right: 10 }} >
                         {item?.enquiryObj?.bookmarked ?
@@ -241,7 +241,7 @@ export default function HomeScreen(props) {
                                                         <View style={styles.textCardContainer}>
                                                             <View>
                                                                 <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                                                                    <Text style={styles.textCardMainHeading}>{itemX?.name}
+                                                                    <Text style={styles.textCardMainHeading}>{itemX?.name ? itemX.name :  itemX?.enquiryObj?.name}
                                                                     </Text>
                                                                     {
                                                                         itemX.onlineToggle == true &&
@@ -250,7 +250,7 @@ export default function HomeScreen(props) {
                                                                 </View>
 
                                                                 <Text style={styles.textCardMainSubHeading1}>{itemX?.enquiryObj?.classesArr?.reduce((acc, el) => acc + el.className + ',', '')}</Text>
-                                                                <Text style={styles.textCardMainSubHeading2}>{itemX?.enquiryObj?.experience} Year Experience</Text>
+                                                                <Text style={styles.textCardMainSubHeading2}>{item?.enquiryObj?.experience ? item?.enquiryObj?.experience : 1}Year Experience</Text>
                                                             </View>
                                                             <Pressable onPress={() => handleBookmarkTeacher(itemX?._id)} style={{ position: 'absolute', top: 5, right: 10 }} >
                                                                 {itemX?.enquiryObj?.bookmarked ?

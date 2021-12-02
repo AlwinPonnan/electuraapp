@@ -214,27 +214,31 @@ export default function CreateCourse(props) {
 
         <View style={styles.container}>
             <NavBar rootProps={props} />
-            <View style={styles.innerContainer}>
-                <KeyboardAvoidingView
-                    behavior={Platform.OS === "ios" ? "padding" : "height"}
-                    style={styles.container}
-                >
-                    <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+            <FlatList data={[]} renderItem={() => null}
+                ListHeaderComponent={
+                    <>
+
                         <Image source={require('../../assets/images/Banner.png')} style={{ alignSelf: 'center', marginTop: 10 }} />
                         <View style={styles.textContainer}>
                             <Text style={styles.mainHeading}>Create Your Course</Text>
                         </View>
-                        <View style={styles.inputContainer}>
+                        <KeyboardAvoidingView
+                            behavior={Platform.OS === "ios" ? "padding" : "height"}
+                            style={[styles.container, styles.inputContainer]}
+                        >
                             <Icon name="person-outline" size={14} color="black" />
                             <TextInput style={styles.inputStyles} onChangeText={(val) => setName(val)} placeholder="Enter Course Name" />
-                        </View>
-                        <View style={styles.inputContainer}>
+                        </KeyboardAvoidingView>
+                        <KeyboardAvoidingView
+                            behavior={Platform.OS === "ios" ? "padding" : "height"}
+                            style={[styles.container,styles.inputContainer]}
+                        >
                             <Icon name="cash-outline" size={14} color="black" />
                             <TextInput style={styles.inputStyles} onChangeText={(val) => setPrice(val)} placeholder="Enter Price" keyboardType="numeric" />
-                        </View>
+                        </KeyboardAvoidingView>
                         <TouchableOpacity style={[styles.inputContainer, { minHeight: 80 }]} onPress={() => pickCourseImg()}>
                             <Icon name="camera-outline" size={14} color={"#085A4E"} />
-                            <Text style={{ fontFamily: "Montserrat-Thin", fontSize: 14, marginLeft: 10 }}>{courseImg?.name ? courseImg?.name : "Upload An Id Image *"}</Text>
+                            <Text style={{ fontFamily: "Montserrat-Thin", fontSize: 14, marginLeft: 10 }}>{courseImg?.name ? courseImg?.name : "Upload Thumbnail Image *"}</Text>
                         </TouchableOpacity>
 
                         <Text style={styles.label}>Select Classes taught by you *</Text>
@@ -288,27 +292,39 @@ export default function CreateCourse(props) {
                                 )
                             }}
                         />
-                        <View style={styles.inputContainer}>
+                        <KeyboardAvoidingView
+                            behavior={Platform.OS === "ios" ? "padding" : "height"}
+                            style={[styles.container, styles.inputContainer]}
+                        >
                             <Icon name="library-outline" size={14} color="black" />
                             <TextInput keyboardType="numeric" style={styles.inputStyles} onChangeText={(val) => setHours(val)} placeholder="No of Hours" />
-                        </View>
-                        <View style={styles.inputContainer}>
+                        </KeyboardAvoidingView>
+                        <KeyboardAvoidingView
+                            behavior={Platform.OS === "ios" ? "padding" : "height"}
+                            style={[styles.container, styles.inputContainer]}
+                        >
                             <Icon name="library-outline" size={14} color="black" />
                             <TextInput keyboardType="numeric" style={styles.inputStyles} onChangeText={(val) => setAssignments(val)} placeholder="No Of assignments" />
-                        </View>
-                        <View style={[styles.inputContainer, { minHeight: 80 }]}>
+                        </KeyboardAvoidingView>
+                        <KeyboardAvoidingView
+                            behavior={Platform.OS === "ios" ? "padding" : "height"}
+                            style={[styles.container, styles.inputContainer]}
+                        >
                             <Icon name="chatbox-ellipses-outline" size={14} color="black" />
                             <TextInput style={styles.inputStyles} onChangeText={(val) => setDescription(val)} placeholder="Enter Description" multiline={true} />
-                        </View>
+                        </KeyboardAvoidingView>
 
-                        <View style={[styles.inputContainer, { minHeight: 80 }]}>
+                        <KeyboardAvoidingView
+                            behavior={Platform.OS === "ios" ? "padding" : "height"}
+                            style={[styles.container, styles.inputContainer]}
+                        >
                             <Icon name="chatbox-ellipses-outline" size={14} color="black" />
                             <TextInput style={styles.inputStyles} onChangeText={(val) => setYoutubeLink(val)} placeholder="Youtube video link" multiline={true} />
-                        </View>
-                        <Text style={[styles.textInputLabel,{paddingHorizontal:20,marginVertical:10}]}>Course Type</Text>
+                        </KeyboardAvoidingView>
+                        <Text style={[styles.textInputLabel, { paddingHorizontal: 20, marginVertical: 10 }]}>Course Type</Text>
 
                         <RadioButton.Group onValueChange={newValue => setClassType(newValue)} value={ClassType}>
-                            <View style={[{ marginVertical: 10,paddingHorizontal:20 }]}>
+                            <View style={[{ marginVertical: 10, paddingHorizontal: 20 }]}>
 
                                 <Pressable onPress={() => setClassType("online")} style={[styles.flexRow, { justifyContent: 'space-between' }]}>
                                     <Text style={styles.radioText}>1. Online</Text>
@@ -319,7 +335,7 @@ export default function CreateCourse(props) {
                                     <Text style={styles.radioText}>2. Offline</Text>
                                     <RadioButton color={colorObj.primarColor} value="offline" />
                                 </Pressable>
-                                
+
                             </View>
                         </RadioButton.Group>
 
@@ -329,9 +345,13 @@ export default function CreateCourse(props) {
                                 <Text style={styles.btnText}>Create</Text>
                             </Pressable>
                         </View>
-                    </ScrollView>
-                </KeyboardAvoidingView>
-            </View>
+
+                    </>
+
+                }
+                contentContainerStyle={{ paddingBottom: 100, backgroundColor: 'white' }} />
+
+
         </View>
     )
 }
@@ -384,6 +404,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         elevation: 3,
         marginTop: 20,
+        minHeight:60,
         borderColor: 'transparent',
         backgroundColor: colorObj.whiteColor
     },
@@ -422,7 +443,7 @@ const styles = StyleSheet.create({
     },
     flexRowAlignCenter: {
         display: "flex",
-        marginVertical: 15,
+        marginVertical: 5,
         flexDirection: "row",
         alignItems: "center",
     },

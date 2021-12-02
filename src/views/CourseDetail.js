@@ -324,8 +324,12 @@ export default function CourseDetail(props) {
                         <View style={[styles.flexRow]} >
                             <Text style={styles.pageHeading}>{courseObj?.name}</Text>
                             <View style={[styles.flexRow, { alignItems: "center" }]}>
-                                <Text style={styles.ratingTxt}>{courseObj?.rating}</Text>
-                                <Icon name="star" size={10} color="rgba(8, 90, 78, 1)" />
+                                {courseObj?.rating &&
+                                    <>
+                                        <Text style={styles.ratingTxt}>{courseObj?.rating}</Text>
+                                        <Icon name="star" size={10} color="rgba(8, 90, 78, 1)" />
+                                    </>
+                                }
                             </View>
                         </View>
                         {/* <Pressable onPress={() => handleAddCourseToWhishlist()}>
@@ -364,7 +368,7 @@ export default function CourseDetail(props) {
                         <Text style={[styles.coursePrice, { marginVertical: 10 }]}>Preview Video</Text>
 
                         <YoutubePlayer
-                            webViewProps={{androidHardwareAccelerationDisabled:true}}
+                            webViewProps={{ androidHardwareAccelerationDisabled: true }}
                             height={250}
                             play={playing}
                             videoId={`${youtubeVideoId}`}
@@ -384,7 +388,7 @@ export default function CourseDetail(props) {
                             <Text style={[styles.btnText, { fontSize: 14, color: colorObj.primarColor }]}>Add to cart</Text>
                         </Pressable>
                         <Pressable style={[styles.btn, { flex: 1, marginLeft: 5, borderColor: colorObj.primarColor, borderWidth: 1, backgroundColor: 'white' }]} onPress={() => handleAddCourseToWhishlist()}>
-                            <Text style={[styles.btnText, { fontSize: 14, color: colorObj.primarColor }]}> {courseObj?.isWishListed ? "Remove From Wishlist" : "Add to wishlist" } </Text>
+                            <Text style={[styles.btnText, { fontSize: 14, color: colorObj.primarColor }]}> {courseObj?.isWishListed ? "Wishlisted" : "Add to wishlist"} </Text>
                         </Pressable>
                     </View>
 

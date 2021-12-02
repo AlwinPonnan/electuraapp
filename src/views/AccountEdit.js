@@ -103,7 +103,7 @@ export default function AccountEdit(props) {
     }
 
 
-
+ 
 
     const handleProfileUpdate = async () => {
         try {
@@ -321,19 +321,19 @@ export default function AccountEdit(props) {
                             <TextInput value={profileData?.enquiryObj?.experience} onChangeText={(e) => handleProfileDataUpdate(e, "experience")} style={styles.txtInput} placeholder="Your Teaching Experience" />
 
                             <Text style={styles.label}>
-                               Facebook Link
+                                Facebook Profile name
                             </Text>
-                            <TextInput value={profileData?.enquiryObj?.facebookLink} onChangeText={(e) => handleProfileDataUpdate(e, "facebookLink")} style={styles.txtInput} placeholder="Your Teaching Experience" />
+                            <TextInput value={profileData?.enquiryObj?.facebookLink} onChangeText={(e) => handleProfileDataUpdate(e, "facebookLink")} style={styles.txtInput} placeholder="Facebook profile name" />
 
                             <Text style={styles.label}>
-                                Youtube Link
+                                Youtube Channel Name
                             </Text>
-                            <TextInput value={profileData?.enquiryObj?.youtubeLink} onChangeText={(e) => handleProfileDataUpdate(e, "youtubeLink")} style={styles.txtInput} placeholder="Your Teaching Experience" />
+                            <TextInput value={profileData?.enquiryObj?.youtubeLink} onChangeText={(e) => handleProfileDataUpdate(e, "youtubeLink")} style={styles.txtInput} placeholder="Youtube channel name" />
 
                             <Text style={styles.label}>
-                                Instagram Link
+                                Instagram Profile Name
                             </Text>
-                            <TextInput value={profileData?.enquiryObj?.instagramLink} onChangeText={(e) => handleProfileDataUpdate(e, "instagramLink")} style={styles.txtInput} placeholder="Your Teaching Experience" />
+                            <TextInput value={profileData?.enquiryObj?.instagramLink} onChangeText={(e) => handleProfileDataUpdate(e, "instagramLink")} style={styles.txtInput} placeholder="Instagram profile name" />
                         </>
 
                     }
