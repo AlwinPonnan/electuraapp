@@ -14,6 +14,8 @@ import messaging from '@react-native-firebase/messaging';
 import { saveTokenToDatabase } from '../Services/User';
 import AllTeacher from './AllTeacher';
 import { useNavigation } from '@react-navigation/core';
+
+
 export default function HomeScreen(props) {
 
 
@@ -38,6 +40,10 @@ export default function HomeScreen(props) {
     const handleViewAll = () => {
         navigation.navigate(AllTeacher)
     }
+
+
+
+    
     const getSubjects = async () => {
         try {
             const { data: res } = await getAllSubjects();

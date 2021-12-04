@@ -70,32 +70,50 @@ export default function TeacherProfile(props) {
 
 
     const openFaceBook = (name) => {
-        Linking.canOpenURL(`fb://profile/${name}`).then(supported => {
-            if (supported) {
-                return Linking.openURL(`fb://profile/${name}`);
-            } else {
-                return Linking.openURL(`fb://profile/${name}`);
-            }
-        })
+        if (name != "") {
+
+            Linking.canOpenURL(`fb://profile/${name}`).then(supported => {
+                if (supported) {
+                    return Linking.openURL(`fb://profile/${name}`);
+                } else {
+                    return Linking.openURL(`fb://profile/${name}`);
+                }
+            })
+        }
+        else if (name == "" && teacherObj?.role == "TEACHER" && teacherObj?._id == decodedObj?.userId) {
+            props.navigation.navigate('AccountEdit')
+        }
     }
     const openYoutube = (name) => {
-        Linking.canOpenURL('vnd.youtube://channel/' + name).then(supported => {
-            if (supported) {
-                return Linking.openURL('vnd.youtube://channel/' + name);
-            } else {
-                return Linking.openURL('https://www.youtube.com/channel/' + name);
-            }
-        });
+        if (name != "") {
+
+            Linking.canOpenURL('vnd.youtube://channel/' + name).then(supported => {
+                if (supported) {
+                    return Linking.openURL('vnd.youtube://channel/' + name);
+                } else {
+                    return Linking.openURL('https://www.youtube.com/channel/' + name);
+                }
+            });
+        }
+        else if (name == "" && teacherObj?.role == "TEACHER" && teacherObj?._id == decodedObj?.userId) {
+            props.navigation.navigate('AccountEdit')
+        }
     }
 
     const openInsta = (name) => {
-        Linking.canOpenURL(`https://instagram.com/_u/${name}`).then(supported => {
-            if (supported) {
-                return Linking.openURL(`https://instagram.com/_u/${name}`);
-            } else {
-                return Linking.openURL(`https://instagram.com/_u/${name}`);
-            }
-        })
+        if (name != "") {
+
+            Linking.canOpenURL(`https://instagram.com/_u/${name}`).then(supported => {
+                if (supported) {
+                    return Linking.openURL(`https://instagram.com/_u/${name}`);
+                } else {
+                    return Linking.openURL(`https://instagram.com/_u/${name}`);
+                }
+            })
+        }
+        else if (name == "" && teacherObj?.role == "TEACHER" && teacherObj?._id == decodedObj?.userId) {
+            props.navigation.navigate('AccountEdit')
+        }
     }
 
     const handleOnint = () => {
@@ -156,12 +174,12 @@ export default function TeacherProfile(props) {
 
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                             <Text style={styles.textCardMainHeading}>{item?.name}</Text>
-                            <Icon name="heart" size={14} color={colorObj.primarColor} />
+                            <Icon name="heart-outline" size={14} color={colorObj.primarColor} />
                         </View>
                         <Text style={styles.textCardMainSubHeading1}>{item?.teacherName}</Text>
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                             <Text style={styles.textCardMainSubHeading2}>₹{item?.price}</Text>
-                            <Text style={styles.textCardMainSubHeading2}><Icon name="star" size={14} color={colorObj.primarColor} />4.2</Text>
+                            <Text style={styles.textCardMainSubHeading2}><Icon name="star" size={14} color={colorObj.primarColor} />{item?.rating ?item?.rating :3 }</Text>
                         </View>
                     </View>
 
