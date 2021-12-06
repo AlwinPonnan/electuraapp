@@ -58,7 +58,7 @@ export const getUser = async () => {
 }
 
 export const referalSubmit = async (obj) => {
-    return await axios.post(`${url}/referalCodeSubmit`, obj)
+    return await axiosApiInstance.post(`${url}/referalCodeSubmit`, obj)
 }
 
 export const updateProfile = async (obj) => {
