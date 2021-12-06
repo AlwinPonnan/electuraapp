@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView } from 'react-native'
+import React, { useState, useEffect, useContext } from 'react'
+import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView, Modal, TextInput } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj, light_colors } from '../globals/colors';
 import Icon from 'react-native-vector-icons/Ionicons'
 import NavBar from '../components/Navbar';
 import { getAllCategory } from '../Services/Category';
 import { useIsFocused } from '@react-navigation/core';
-import { BookmarkTeacher, getAllTeachers, getAllTeachersSubjectWise } from '../Services/User';
+import { BookmarkTeacher, getAllTeachers, getAllTeachersSubjectWise, getUser, referalSubmit } from '../Services/User';
 import { imageObj } from '../globals/images';
 import { getAllSubjects } from '../Services/Subjects';
 import { generateImageUrl } from '../globals/utils';
@@ -15,7 +15,7 @@ import { saveTokenToDatabase } from '../Services/User';
 import AllTeacher from './AllTeacher';
 import { useNavigation } from '@react-navigation/core';
 
-
+import { loadingContext } from '../navigators/stacks/RootStack';
 export default function HomeScreen(props) {
 
 
@@ -29,13 +29,17 @@ export default function HomeScreen(props) {
     const [teachersArr, setTeachersArr] = useState([]);
     const [mainTeachersArr, setMainTeachersArr] = useState([]);
     const [selectedSubject, setSelectedSubject] = useState({});
-
+    const [referalCode, setReferalCode] = useState('');
 
     const [subjectWiseTeacherArr, setSubjectWiseTeacherArr] = useState([]);
 
-
+    const [userObj, setUserObj] = useState({});
 
     const [categoryArr, setCategoryArr] = useState([]);
+
+    const [isLoading, setIsLoading] = useContext(loadingContext);
+
+    const [showReferalModal, setShowReferalModal] = useState(false);
 
     const handleViewAll = () => {
         navigation.navigate(AllTeacher)
@@ -43,7 +47,7 @@ export default function HomeScreen(props) {
 
 
 
-    
+
     const getSubjects = async () => {
         try {
             const { data: res } = await getAllSubjects();
@@ -63,7 +67,27 @@ export default function HomeScreen(props) {
         }
     }
 
+
+    const getLoggedInUser = async () => {
+        setIsLoading(true)
+        try {
+
+            const { data: res } = await getUser();
+            if (res.success) {
+                let tempObj = res.data;
+                if (!tempObj.referalResponseRecorded) {
+                    setShowReferalModal(true)
+                }
+                setUserObj(res.data)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+        setIsLoading(false)
+    }
+
     const getTeachers = async () => {
+
         try {
             const { data: res } = await getAllTeachers();
             if (res.success) {
@@ -111,7 +135,23 @@ export default function HomeScreen(props) {
         await messaging().registerDeviceForRemoteMessages();
     }
 
-
+    const handleSubmit = async (val) => {
+        setShowReferalModal(false)
+        setIsLoading(true)
+        try {
+            let obj = {
+                referalCode,
+                isSkipped: val == 0 ? false : true
+            }
+            const { data: res } = await referalSubmit(obj);
+            if (res.success) {
+                setShowReferalModal(false)
+            }
+        } catch (error) {
+            console.error()
+        }
+        setIsLoading(false)
+    }
 
     useEffect(() => {
         messaging()
@@ -124,6 +164,7 @@ export default function HomeScreen(props) {
 
 
     const handleOnint = () => {
+        getLoggedInUser()
         getSubjects()
         getTeachers()
         getSubjectWise()
@@ -153,7 +194,7 @@ export default function HomeScreen(props) {
                 <View style={styles.textCardContainer}>
                     <View>
                         <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                            <Text style={styles.textCardMainHeading}>{item?.name ? item.name :  item?.enquiryObj?.name}
+                            <Text style={styles.textCardMainHeading}>{item?.name ? item.name : item?.enquiryObj?.name}
                             </Text>
                             {
                                 item.onlineToggle == true &&
@@ -247,7 +288,7 @@ export default function HomeScreen(props) {
                                                         <View style={styles.textCardContainer}>
                                                             <View>
                                                                 <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                                                                    <Text style={styles.textCardMainHeading}>{itemX?.name ? itemX.name :  itemX?.enquiryObj?.name}
+                                                                    <Text style={styles.textCardMainHeading}>{itemX?.name ? itemX.name : itemX?.enquiryObj?.name}
                                                                     </Text>
                                                                     {
                                                                         itemX.onlineToggle == true &&
@@ -292,7 +333,29 @@ export default function HomeScreen(props) {
                 }
             />
 
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={showReferalModal}
+                onRequestClose={() => {
+                    setShowReferalModal(false);
+                }}
+            >
+                <Pressable style={styles.centeredView}>
+                    <Pressable style={styles.modalView}>
+                        <Text style={styles.responseModalHeading}>Welcome To Electura</Text>
+                        <Text style={[styles.textInputLabel, { marginTop: 20 }]}>Enter Referal Code (if any)</Text>
+                        <TextInput style={[styles.textInput]} maxLength={6} value={referalCode} onChangeText={(e) => setReferalCode(e)} />
+                        <Pressable style={styles.submitBtn} onPress={() => handleSubmit(0)}>
+                            <Text style={styles.submitBtnText}>Submit</Text>
+                        </Pressable>
+                        <Pressable style={[styles.submitBtn, { backgroundColor: 'white', borderWidth: 1, borderColor: colorObj.primarColor }]} onPress={() => handleSubmit(1)}>
+                            <Text style={[styles.submitBtnText, { color: 'black' }]}>Skip</Text>
+                        </Pressable>
 
+                    </Pressable>
+                </Pressable>
+            </Modal>
 
 
         </View>
@@ -409,6 +472,68 @@ const styles = StyleSheet.create({
     flexRow: {
         flexDirection: 'row',
         display: 'flex'
-    }
+    },
+
+    //modal styles
+
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        // marginTop: 22,
+        backgroundColor: 'rgba(0,0,0,0.6)'
+
+    },
+    modalView: {
+        margin: 20,
+        width: wp(80),
+        backgroundColor: "white",
+        borderRadius: 5,
+        padding: 35,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+
+    submitBtn: {
+        backgroundColor: colorObj.primarColor,
+        borderRadius: 5,
+        marginVertical: 10
+    },
+    submitBtnText: {
+        fontFamily: 'OpenSans-SemiBold',
+        fontSize: 16,
+        color: colorObj.whiteColor,
+        textAlign: 'center',
+        paddingVertical: 10,
+    },
+
+    responseModalHeading: {
+        fontFamily: 'OpenSans-SemiBold',
+        fontSize: 20,
+        color: '#000',
+        textAlign: 'center',
+        marginVertical: 10
+    },
+
+    //text input styles
+    textInputLabel: {
+        fontFamily: 'OpenSans-SemiBold',
+        fontSize: 16,
+        color: '#000'
+    },
+    textInput: {
+        backgroundColor: '#F5F6FA',
+        borderRadius: 5,
+        marginVertical: 10,
+        width: '100%',
+        fontFamily: 'OpenSans-Regular'
+
+    },
 
 })

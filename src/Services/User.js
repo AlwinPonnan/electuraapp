@@ -57,6 +57,10 @@ export const getUser = async () => {
     }
 }
 
+export const referalSubmit = async (obj) => {
+    return await axios.post(`${url}/referalCodeSubmit`, obj)
+}
+
 export const updateProfile = async (obj) => {
     try {
         let token = await getDecodedToken()
@@ -138,7 +142,7 @@ export const getById = async (id) => {
     return await axiosApiInstance.get(`${url}/getById/${id}`)
 }
 export const addTOWishList = async (obj) => {
-    return await axiosApiInstance.post(`${url}/addToWishlist`,obj)
+    return await axiosApiInstance.post(`${url}/addToWishlist`, obj)
 }
 export const getWishlist = async () => {
     return await axiosApiInstance.get(`${url}/getWishlist`)
@@ -153,7 +157,7 @@ export const BookmarkTeacher = async (id) => {
 
 
 export const addToCart = async (obj) => {
-    return await axiosApiInstance.post(`${url}/addToCart`,obj)
+    return await axiosApiInstance.post(`${url}/addToCart`, obj)
 }
 export const getCart = async () => {
     return await axiosApiInstance.get(`${url}/getCart`)
@@ -172,7 +176,7 @@ export const getAllNotifications = async () => {
 
 
 
-export const toggleOnline=async()=>{
+export const toggleOnline = async () => {
     return await axiosApiInstance.patch(`${url}/toggleOnline`)
 
 }
