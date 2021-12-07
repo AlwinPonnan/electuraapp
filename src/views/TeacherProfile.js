@@ -179,7 +179,7 @@ export default function TeacherProfile(props) {
                         <Text style={styles.textCardMainSubHeading1}>{item?.teacherName}</Text>
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                             <Text style={styles.textCardMainSubHeading2}>₹{item?.price}</Text>
-                            <Text style={styles.textCardMainSubHeading2}><Icon name="star" size={14} color={colorObj.primarColor} />{item?.rating ?item?.rating :3 }</Text>
+                            <Text style={styles.textCardMainSubHeading2}><Icon name="star" size={14} color={colorObj.primarColor} />{item?.rating ? item?.rating : 3}</Text>
                         </View>
                     </View>
 
@@ -303,10 +303,14 @@ export default function TeacherProfile(props) {
                 <Image source={{ uri: teacherObj?.profileImage ? generateImageUrl(teacherObj?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} style={{ width: 100, height: 100, position: "relative", top: -40, borderRadius: 50 }} resizeMode="cover" />
                 {
                     (teacherObj?.role == "TEACHER" && teacherObj?._id == decodedObj?.userId) ?
-
-                        <Pressable style={styles.btn} onPress={() => props.navigation.navigate('AccountEdit')}>
-                            <Text style={styles.btnTxt}>Edit</Text>
-                        </Pressable>
+                        <View style={{display:"flex", justifyContent:"flex-end", flexDirection:"row"}}>
+                            <Pressable style={styles.btn2} onPress={() => props.navigation.navigate('TeacherSlots')}>
+                                <Icon name="calendar-outline" size={25} color={colorObj.primarColor} />
+                            </Pressable>
+                            <Pressable style={styles.btn} onPress={() => props.navigation.navigate('AccountEdit')}>
+                                <Text style={styles.btnTxt}>Edit</Text>
+                            </Pressable>
+                        </View>
                         :
 
                         <Pressable style={styles.btn} onPress={() => refRBSheet.current.open()}>
@@ -579,7 +583,7 @@ const styles = StyleSheet.create({
         height: 40,
         // paddingVertical: 10,
         marginVertical: 10,
-        marginLeft: 40,
+        marginLeft: 15,
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
@@ -593,6 +597,12 @@ const styles = StyleSheet.create({
         shadowRadius: 1.00,
 
         elevation: 1,
+    },
+    btn2: {
+        backgroundColor: "transparent",
+        height: 40,
+        paddingTop:5,
+        marginVertical: 10,
     },
 
 

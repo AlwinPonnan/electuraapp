@@ -11,3 +11,676 @@ export const generateImageUrl = (profilePhoto) => {
 
     return imageUrl
 }
+export const getSlotArr = () => {
+
+    let slotArr = [
+        {
+            day: "Monday",
+            slotsArr: [
+                {
+                    time: "7AM-8AM",
+                    startTime: new Date(new Date().setHours(7, 0, 0)),
+                    endTime: new Date(new Date().setHours(8, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "8AM-9AM",
+                    startTime: new Date(new Date().setHours(8, 0, 0)),
+                    endTime: new Date(new Date().setHours(9, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "9AM-10AM",
+                    startTime: new Date(new Date().setHours(9, 0, 0)),
+                    endTime: new Date(new Date().setHours(10, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "10AM-11AM",
+                    startTime: new Date(new Date().setHours(10, 0, 0)),
+                    endTime: new Date(new Date().setHours(11, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "11AM-12PM",
+                    startTime: new Date(new Date().setHours(11, 0, 0)),
+                    endTime: new Date(new Date().setHours(12, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "12PM-1PM",
+                    startTime: new Date(new Date().setHours(12, 0, 0)),
+                    endTime: new Date(new Date().setHours(13, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "1PM-2PM",
+                    startTime: new Date(new Date().setHours(13, 0, 0)),
+                    endTime: new Date(new Date().setHours(14, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "2PM-3PM",
+                    startTime: new Date(new Date().setHours(14, 0, 0)),
+                    endTime: new Date(new Date().setHours(15, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "3PM-4PM",
+                    startTime: new Date(new Date().setHours(15, 0, 0)),
+                    endTime: new Date(new Date().setHours(16, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "4PM-5PM",
+                    startTime: new Date(new Date().setHours(16, 0, 0)),
+                    endTime: new Date(new Date().setHours(17, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "5PM-6PM",
+                    startTime: new Date(new Date().setHours(17, 0, 0)),
+                    endTime: new Date(new Date().setHours(18, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "6PM-7PM",
+                    startTime: new Date(new Date().setHours(18, 0, 0)),
+                    endTime: new Date(new Date().setHours(19, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "7PM-8PM",
+                    startTime: new Date(new Date().setHours(19, 0, 0)),
+                    endTime: new Date(new Date().setHours(20, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "8PM-9PM",
+                    startTime: new Date(new Date().setHours(20, 0, 0)),
+                    endTime: new Date(new Date().setHours(21, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "9PM-10PM",
+                    startTime: new Date(new Date().setHours(21, 0, 0)),
+                    endTime: new Date(new Date().setHours(22, 0, 0)),
+                    checked: false
+                },
+            ],
+        },
+        {
+            day: "Tuesday",
+            slotsArr: [
+                {
+                    time: "7AM-8AM",
+                    startTime: new Date(new Date().setHours(7, 0, 0)),
+                    endTime: new Date(new Date().setHours(8, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "8AM-9AM",
+                    startTime: new Date(new Date().setHours(8, 0, 0)),
+                    endTime: new Date(new Date().setHours(9, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "9AM-10AM",
+                    startTime: new Date(new Date().setHours(9, 0, 0)),
+                    endTime: new Date(new Date().setHours(10, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "10AM-11AM",
+                    startTime: new Date(new Date().setHours(10, 0, 0)),
+                    endTime: new Date(new Date().setHours(11, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "11AM-12PM",
+                    startTime: new Date(new Date().setHours(11, 0, 0)),
+                    endTime: new Date(new Date().setHours(12, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "12PM-1PM",
+                    startTime: new Date(new Date().setHours(12, 0, 0)),
+                    endTime: new Date(new Date().setHours(13, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "1PM-2PM",
+                    startTime: new Date(new Date().setHours(13, 0, 0)),
+                    endTime: new Date(new Date().setHours(14, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "2PM-3PM",
+                    startTime: new Date(new Date().setHours(14, 0, 0)),
+                    endTime: new Date(new Date().setHours(15, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "3PM-4PM",
+                    startTime: new Date(new Date().setHours(15, 0, 0)),
+                    endTime: new Date(new Date().setHours(16, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "4PM-5PM",
+                    startTime: new Date(new Date().setHours(16, 0, 0)),
+                    endTime: new Date(new Date().setHours(17, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "5PM-6PM",
+                    startTime: new Date(new Date().setHours(17, 0, 0)),
+                    endTime: new Date(new Date().setHours(18, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "6PM-7PM",
+                    startTime: new Date(new Date().setHours(18, 0, 0)),
+                    endTime: new Date(new Date().setHours(19, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "7PM-8PM",
+                    startTime: new Date(new Date().setHours(19, 0, 0)),
+                    endTime: new Date(new Date().setHours(20, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "8PM-9PM",
+                    startTime: new Date(new Date().setHours(20, 0, 0)),
+                    endTime: new Date(new Date().setHours(21, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "9PM-10PM",
+                    startTime: new Date(new Date().setHours(21, 0, 0)),
+                    endTime: new Date(new Date().setHours(22, 0, 0)),
+                    checked: false
+                },
+            ],
+        },
+        {
+            day: "Wednesday",
+            slotsArr: [
+                {
+                    time: "7AM-8AM",
+                    startTime: new Date(new Date().setHours(7, 0, 0)),
+                    endTime: new Date(new Date().setHours(8, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "8AM-9AM",
+                    startTime: new Date(new Date().setHours(8, 0, 0)),
+                    endTime: new Date(new Date().setHours(9, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "9AM-10AM",
+                    startTime: new Date(new Date().setHours(9, 0, 0)),
+                    endTime: new Date(new Date().setHours(10, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "10AM-11AM",
+                    startTime: new Date(new Date().setHours(10, 0, 0)),
+                    endTime: new Date(new Date().setHours(11, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "11AM-12PM",
+                    startTime: new Date(new Date().setHours(11, 0, 0)),
+                    endTime: new Date(new Date().setHours(12, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "12PM-1PM",
+                    startTime: new Date(new Date().setHours(12, 0, 0)),
+                    endTime: new Date(new Date().setHours(13, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "1PM-2PM",
+                    startTime: new Date(new Date().setHours(13, 0, 0)),
+                    endTime: new Date(new Date().setHours(14, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "2PM-3PM",
+                    startTime: new Date(new Date().setHours(14, 0, 0)),
+                    endTime: new Date(new Date().setHours(15, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "3PM-4PM",
+                    startTime: new Date(new Date().setHours(15, 0, 0)),
+                    endTime: new Date(new Date().setHours(16, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "4PM-5PM",
+                    startTime: new Date(new Date().setHours(16, 0, 0)),
+                    endTime: new Date(new Date().setHours(17, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "5PM-6PM",
+                    startTime: new Date(new Date().setHours(17, 0, 0)),
+                    endTime: new Date(new Date().setHours(18, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "6PM-7PM",
+                    startTime: new Date(new Date().setHours(18, 0, 0)),
+                    endTime: new Date(new Date().setHours(19, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "7PM-8PM",
+                    startTime: new Date(new Date().setHours(19, 0, 0)),
+                    endTime: new Date(new Date().setHours(20, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "8PM-9PM",
+                    startTime: new Date(new Date().setHours(20, 0, 0)),
+                    endTime: new Date(new Date().setHours(21, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "9PM-10PM",
+                    startTime: new Date(new Date().setHours(21, 0, 0)),
+                    endTime: new Date(new Date().setHours(22, 0, 0)),
+                    checked: false
+                },
+            ],
+        },
+        {
+            day: "Thursday",
+            slotsArr: [
+                {
+                    time: "7AM-8AM",
+                    startTime: new Date(new Date().setHours(7, 0, 0)),
+                    endTime: new Date(new Date().setHours(8, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "8AM-9AM",
+                    startTime: new Date(new Date().setHours(8, 0, 0)),
+                    endTime: new Date(new Date().setHours(9, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "9AM-10AM",
+                    startTime: new Date(new Date().setHours(9, 0, 0)),
+                    endTime: new Date(new Date().setHours(10, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "10AM-11AM",
+                    startTime: new Date(new Date().setHours(10, 0, 0)),
+                    endTime: new Date(new Date().setHours(11, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "11AM-12PM",
+                    startTime: new Date(new Date().setHours(11, 0, 0)),
+                    endTime: new Date(new Date().setHours(12, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "12PM-1PM",
+                    startTime: new Date(new Date().setHours(12, 0, 0)),
+                    endTime: new Date(new Date().setHours(13, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "1PM-2PM",
+                    startTime: new Date(new Date().setHours(13, 0, 0)),
+                    endTime: new Date(new Date().setHours(14, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "2PM-3PM",
+                    startTime: new Date(new Date().setHours(14, 0, 0)),
+                    endTime: new Date(new Date().setHours(15, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "3PM-4PM",
+                    startTime: new Date(new Date().setHours(15, 0, 0)),
+                    endTime: new Date(new Date().setHours(16, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "4PM-5PM",
+                    startTime: new Date(new Date().setHours(16, 0, 0)),
+                    endTime: new Date(new Date().setHours(17, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "5PM-6PM",
+                    startTime: new Date(new Date().setHours(17, 0, 0)),
+                    endTime: new Date(new Date().setHours(18, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "6PM-7PM",
+                    startTime: new Date(new Date().setHours(18, 0, 0)),
+                    endTime: new Date(new Date().setHours(19, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "7PM-8PM",
+                    startTime: new Date(new Date().setHours(19, 0, 0)),
+                    endTime: new Date(new Date().setHours(20, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "8PM-9PM",
+                    startTime: new Date(new Date().setHours(20, 0, 0)),
+                    endTime: new Date(new Date().setHours(21, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "9PM-10PM",
+                    startTime: new Date(new Date().setHours(21, 0, 0)),
+                    endTime: new Date(new Date().setHours(22, 0, 0)),
+                    checked: false
+                },
+            ],
+        },
+        {
+            day: "Friday",
+            slotsArr: [
+                {
+                    time: "7AM-8AM",
+                    startTime: new Date(new Date().setHours(7, 0, 0)),
+                    endTime: new Date(new Date().setHours(8, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "8AM-9AM",
+                    startTime: new Date(new Date().setHours(8, 0, 0)),
+                    endTime: new Date(new Date().setHours(9, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "9AM-10AM",
+                    startTime: new Date(new Date().setHours(9, 0, 0)),
+                    endTime: new Date(new Date().setHours(10, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "10AM-11AM",
+                    startTime: new Date(new Date().setHours(10, 0, 0)),
+                    endTime: new Date(new Date().setHours(11, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "11AM-12PM",
+                    startTime: new Date(new Date().setHours(11, 0, 0)),
+                    endTime: new Date(new Date().setHours(12, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "12PM-1PM",
+                    startTime: new Date(new Date().setHours(12, 0, 0)),
+                    endTime: new Date(new Date().setHours(13, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "1PM-2PM",
+                    startTime: new Date(new Date().setHours(13, 0, 0)),
+                    endTime: new Date(new Date().setHours(14, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "2PM-3PM",
+                    startTime: new Date(new Date().setHours(14, 0, 0)),
+                    endTime: new Date(new Date().setHours(15, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "3PM-4PM",
+                    startTime: new Date(new Date().setHours(15, 0, 0)),
+                    endTime: new Date(new Date().setHours(16, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "4PM-5PM",
+                    startTime: new Date(new Date().setHours(16, 0, 0)),
+                    endTime: new Date(new Date().setHours(17, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "5PM-6PM",
+                    startTime: new Date(new Date().setHours(17, 0, 0)),
+                    endTime: new Date(new Date().setHours(18, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "6PM-7PM",
+                    startTime: new Date(new Date().setHours(18, 0, 0)),
+                    endTime: new Date(new Date().setHours(19, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "7PM-8PM",
+                    startTime: new Date(new Date().setHours(19, 0, 0)),
+                    endTime: new Date(new Date().setHours(20, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "8PM-9PM",
+                    startTime: new Date(new Date().setHours(20, 0, 0)),
+                    endTime: new Date(new Date().setHours(21, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "9PM-10PM",
+                    startTime: new Date(new Date().setHours(21, 0, 0)),
+                    endTime: new Date(new Date().setHours(22, 0, 0)),
+                    checked: false
+                },
+            ],
+        },
+        {
+            day: "Saturday",
+            slotsArr: [
+                {
+                    time: "7AM-8AM",
+                    startTime: new Date(new Date().setHours(7, 0, 0)),
+                    endTime: new Date(new Date().setHours(8, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "8AM-9AM",
+                    startTime: new Date(new Date().setHours(8, 0, 0)),
+                    endTime: new Date(new Date().setHours(9, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "9AM-10AM",
+                    startTime: new Date(new Date().setHours(9, 0, 0)),
+                    endTime: new Date(new Date().setHours(10, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "10AM-11AM",
+                    startTime: new Date(new Date().setHours(10, 0, 0)),
+                    endTime: new Date(new Date().setHours(11, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "11AM-12PM",
+                    startTime: new Date(new Date().setHours(11, 0, 0)),
+                    endTime: new Date(new Date().setHours(12, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "12PM-1PM",
+                    startTime: new Date(new Date().setHours(12, 0, 0)),
+                    endTime: new Date(new Date().setHours(13, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "1PM-2PM",
+                    startTime: new Date(new Date().setHours(13, 0, 0)),
+                    endTime: new Date(new Date().setHours(14, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "2PM-3PM",
+                    startTime: new Date(new Date().setHours(14, 0, 0)),
+                    endTime: new Date(new Date().setHours(15, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "3PM-4PM",
+                    startTime: new Date(new Date().setHours(15, 0, 0)),
+                    endTime: new Date(new Date().setHours(16, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "4PM-5PM",
+                    startTime: new Date(new Date().setHours(16, 0, 0)),
+                    endTime: new Date(new Date().setHours(17, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "5PM-6PM",
+                    startTime: new Date(new Date().setHours(17, 0, 0)),
+                    endTime: new Date(new Date().setHours(18, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "6PM-7PM",
+                    startTime: new Date(new Date().setHours(18, 0, 0)),
+                    endTime: new Date(new Date().setHours(19, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "7PM-8PM",
+                    startTime: new Date(new Date().setHours(19, 0, 0)),
+                    endTime: new Date(new Date().setHours(20, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "8PM-9PM",
+                    startTime: new Date(new Date().setHours(20, 0, 0)),
+                    endTime: new Date(new Date().setHours(21, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "9PM-10PM",
+                    startTime: new Date(new Date().setHours(21, 0, 0)),
+                    endTime: new Date(new Date().setHours(22, 0, 0)),
+                    checked: false
+                },
+            ],
+        },
+        {
+            day: "Sunday",
+            slotsArr: [
+                {
+                    time: "7AM-8AM",
+                    startTime: new Date(new Date().setHours(7, 0, 0)),
+                    endTime: new Date(new Date().setHours(8, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "8AM-9AM",
+                    startTime: new Date(new Date().setHours(8, 0, 0)),
+                    endTime: new Date(new Date().setHours(9, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "9AM-10AM",
+                    startTime: new Date(new Date().setHours(9, 0, 0)),
+                    endTime: new Date(new Date().setHours(10, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "10AM-11AM",
+                    startTime: new Date(new Date().setHours(10, 0, 0)),
+                    endTime: new Date(new Date().setHours(11, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "11AM-12PM",
+                    startTime: new Date(new Date().setHours(11, 0, 0)),
+                    endTime: new Date(new Date().setHours(12, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "12PM-1PM",
+                    startTime: new Date(new Date().setHours(12, 0, 0)),
+                    endTime: new Date(new Date().setHours(13, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "1PM-2PM",
+                    startTime: new Date(new Date().setHours(13, 0, 0)),
+                    endTime: new Date(new Date().setHours(14, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "2PM-3PM",
+                    startTime: new Date(new Date().setHours(14, 0, 0)),
+                    endTime: new Date(new Date().setHours(15, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "3PM-4PM",
+                    startTime: new Date(new Date().setHours(15, 0, 0)),
+                    endTime: new Date(new Date().setHours(16, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "4PM-5PM",
+                    startTime: new Date(new Date().setHours(16, 0, 0)),
+                    endTime: new Date(new Date().setHours(17, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "5PM-6PM",
+                    startTime: new Date(new Date().setHours(17, 0, 0)),
+                    endTime: new Date(new Date().setHours(18, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "6PM-7PM",
+                    startTime: new Date(new Date().setHours(18, 0, 0)),
+                    endTime: new Date(new Date().setHours(19, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "7PM-8PM",
+                    startTime: new Date(new Date().setHours(19, 0, 0)),
+                    endTime: new Date(new Date().setHours(20, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "8PM-9PM",
+                    startTime: new Date(new Date().setHours(20, 0, 0)),
+                    endTime: new Date(new Date().setHours(21, 0, 0)),
+                    checked: false
+                },
+                {
+                    time: "9PM-10PM",
+                    startTime: new Date(new Date().setHours(21, 0, 0)),
+                    endTime: new Date(new Date().setHours(22, 0, 0)),
+                    checked: false
+                },
+            ],
+        },
+    ]
+
+
+    return slotArr
+}
