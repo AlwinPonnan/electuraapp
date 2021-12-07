@@ -7,7 +7,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import { useIsFocused } from '@react-navigation/core';
 import { getAllTeachers } from '../Services/User';
-import { generateImageUrl } from '../globals/utils';
+import { generateImageUrl, sortByText } from '../globals/utils';
 import RBSheet from "react-native-raw-bottom-sheet";
 import { NewEnquiry } from '../Services/Enquiry';
 
@@ -19,7 +19,6 @@ import { getAllSubjects } from '../Services/Subjects';
 import { Checkbox } from 'react-native-paper';
 import { getAllClasses } from '../Services/Classses';
 import { getAllTopics } from '../Services/Topic';
-
 import MultiSlider from '@ptomasroos/react-native-multi-slider'
 export default function AllTeacher(props) {
 
@@ -45,6 +44,7 @@ export default function AllTeacher(props) {
 
     const [multiSliderValue, setMultiSliderValue] = useState([10, 250]);
 
+    const [sortBy, setSortBy] = useState(sortByText.popularity);
 
     const [isScrollEnabled, setIsScrollEnabled] = useState(true);
 
@@ -149,7 +149,7 @@ export default function AllTeacher(props) {
         handleOnint()
     }, [focused])
 
-    const multiSliderValuesChange = values => {console.log(values);setMultiSliderValue(values)};
+    const multiSliderValuesChange = values => { console.log(values); setMultiSliderValue(values) };
 
 
 
@@ -210,7 +210,7 @@ export default function AllTeacher(props) {
         handleTopicFilter()
     }
 
-    const handleTopicSelection=(id)=>{
+    const handleTopicSelection = (id) => {
         setTopicArr(prevState => {
             let tempIndex = prevState.findIndex(el => el._id == id);
             if (tempIndex != -1)
@@ -288,6 +288,19 @@ export default function AllTeacher(props) {
         )
     }
 
+
+    const handleShowFilterResults = () => {
+        // filterBottomSheetRef.current.close()
+
+        let filteredClassesArr = [...classesArr.filter(el => el.checked)]
+        let filteredSubjectArr = [...subjectArr.filter(el => el.checked)]
+        let tempArr = [...MainTeachersArr];
+        tempArr = tempArr.filter(el => el?.enquiryObj?.classesArr?.some(elx => filteredClassesArr.some(ely => ely._id == elx.classId) || elx.subjectArr.some(elz => filteredSubjectArr.some(elm => elm._id == elz.subjectId))))
+
+        setTeachersArr([...tempArr])
+        filterBottomSheetRef.current.close()
+    }
+
     const handleSearch = (e) => {
         let tempArr = [...MainTeachersArr]
         let query = e.toLowerCase()
@@ -299,10 +312,21 @@ export default function AllTeacher(props) {
     return (
         <View style={[styles.container]}>
             <View style={{ flexDirection: 'row' }}>
-                <AntDesign name='left' size={20} style={[styles.topIcons, { flex: 1 }]} />
-                <AntDesign name='search1' size={20} style={[styles.topIcons, { marginRight: 25 }]} />
-                <AntDesign name='message1' size={20} style={[styles.topIcons, { marginRight: 25 }]} />
-                <Feather name='bell' size={20} style={[styles.topIcons]} />
+                <Pressable style={[{ flex: 1 }]} onPress={() => props.navigation.goBack()}>
+                    <AntDesign name='left' size={20} style={[styles.topIcons]} />
+                </Pressable>
+                {/* <Pressable onPress={() => props.navigation.navigate('')}>
+
+                    <AntDesign name='search1' size={20} style={[styles.topIcons, { marginRight: 25 }]} />
+                </Pressable> */}
+                <Pressable onPress={() => props.navigation.navigate('MainTopTab')}>
+
+                    <AntDesign name='message1' size={20} style={[styles.topIcons, { marginRight: 25 }]} />
+                </Pressable>
+                <Pressable onPress={() => props.navigation.navigate("Notification")}>
+
+                    <Feather name='bell' size={20} style={[styles.topIcons]} />
+                </Pressable>
             </View>
 
             <View style={[styles.searchInputView]}>
@@ -326,6 +350,9 @@ export default function AllTeacher(props) {
                     renderItem={renderItem}
                     showsHorizontalScrollIndicator={false}
                     keyExtractor={(item, index) => `${index}`}
+                    ListEmptyComponent={
+                        <Text style={{ textAlign: 'center', fontFamily: 'Montserrat-SemiBold', fontSize: 16, width: wp(90), marginTop: 40 }}>No Teachers Found</Text>
+                    }
                 />
             </View>
             <Text style={[styles.title, { marginVertical: 10 }]}>Instructors Online</Text>
@@ -334,6 +361,9 @@ export default function AllTeacher(props) {
                 data={TeachersArr.filter(el => el.onlineToggle)}
                 renderItem={renderTeacherItem}
                 keyExtractor={(item, index) => `${index}`}
+                ListEmptyComponent={
+                    <Text style={{ textAlign: 'center', fontFamily: 'Montserrat-SemiBold', fontSize: 16, width: wp(90), marginTop: 40 }}>No Teachers Found</Text>
+                }
             />
             {/* bottom  sheet */}
             <RBSheet
@@ -516,25 +546,57 @@ export default function AllTeacher(props) {
 
 
 
-                                <View style={{paddingHorizontal:20}}>
+                                <View >
+
+                                    <Text style={[styles.bottomSheetHeading, { fontSize: 14, marginVertical: 10, marginBottom: 50 }]}>Price Range</Text>
+                                    <View style={{ paddingHorizontal: 20 }}>
+                                        <MultiSlider
+                                            values={[multiSliderValue[0], multiSliderValue[1]]}
+                                            sliderLength={330}
+                                            onValuesChange={multiSliderValuesChange}
+                                            min={0}
+                                            max={10000}
+                                            step={50}
+                                            // allowOverlap
+                                            // snapped
+                                            enableLabel
+                                            //  customLabel={CustomLabel}
+                                            onValuesChangeStart={() => setIsScrollEnabled(false)}
+                                            onValuesChangeFinish={() => setIsScrollEnabled(true)}
+                                        />
+                                    </View>
 
 
-                                    <MultiSlider
-                                         values={[multiSliderValue[0], multiSliderValue[1]]}
-                                        //  sliderLength={250}
-                                         onValuesChange={multiSliderValuesChange}
-                                         min={0}
-                                         max={1000}
-                                         step={50}
-                                         allowOverlap
-                                         snapped
-                                        //  customLabel={CustomLabel}
-                                    onValuesChangeStart={()=>setIsScrollEnabled(false)}
-                                    onValuesChangeFinish={()=>setIsScrollEnabled(true)}
-                                    />
                                 </View>
 
-                                <Pressable style={styles.btn} >
+                                <Text style={[styles.filterSubHeading, { textAlign: 'center' }]}>Sort By</Text>
+
+
+                                <RadioButton.Group onValueChange={newValue => setSortBy(newValue)} value={sortBy}>
+                                    <View style={[{ marginVertical: 10 }, styles.flexColumn, { justifyContent: 'space-between' }]}>
+
+                                        <Pressable onPress={() => setSortBy(sortByText.popularity)} style={[styles.flexRow, { justifyContent: 'space-between', alignItems: 'center' }]}>
+                                            <Text style={styles.radioText}>Popularity</Text>
+                                            <RadioButton color={colorObj.primarColor} value={sortByText.popularity} />
+                                        </Pressable>
+                                        <Pressable onPress={() => setSortBy(sortByText.priceLowToHigh)} style={[styles.flexRow, { justifyContent: 'space-between', alignItems: 'center' }]}>
+
+                                            <Text style={styles.radioText}>Price low to high</Text>
+                                            <RadioButton color={colorObj.primarColor} value={sortByText.priceLowToHigh} />
+                                        </Pressable>
+                                        <Pressable onPress={() => setSortBy(sortByText.priceHighToLow)} style={[styles.flexRow, { justifyContent: 'space-between', alignItems: 'center' }]}>
+                                            <Text style={styles.radioText}>Price High to low</Text>
+                                            <RadioButton color={colorObj.primarColor} value={sortByText.priceHighToLow} />
+                                        </Pressable>
+                                        <Pressable onPress={() => setSortBy(sortByText.customerRating)} style={[styles.flexRow, { justifyContent: 'space-between', alignItems: 'center' }]}>
+                                            <Text style={styles.radioText}>Customer Rating</Text>
+                                            <RadioButton color={colorObj.primarColor} value={sortByText.customerRating} />
+                                        </Pressable>
+                                    </View>
+                                </RadioButton.Group>
+
+
+                                <Pressable style={styles.btn} onPress={() => handleShowFilterResults()} >
                                     <Text style={styles.btnTxt}>Show Results</Text>
                                 </Pressable>
                             </View>
@@ -694,6 +756,10 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
     },
+    radioText: {
+        fontFamily: 'OpenSans-Regular',
+        fontSize: 14
+    },
     flexColumn: {
         display: "flex",
         flexDirection: "column",
@@ -701,12 +767,12 @@ const styles = StyleSheet.create({
     btn: {
         backgroundColor: colorObj.primarColor,
         borderRadius: 50,
-        // width: wp(20),
-        paddingHorizontal: 25,
+        // paddingHorizontal: 25,
         height: 40,
-        // paddingVertical: 10,
         marginVertical: 10,
-        marginLeft: 40,
+        // marginLeft: 40,
+        width: wp(80),
+        alignSelf: 'center',
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',

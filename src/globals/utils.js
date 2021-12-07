@@ -11,6 +11,13 @@ export const generateImageUrl = (profilePhoto) => {
 
     return imageUrl
 }
+
+export const sortByText={
+    popularity:"Popularity",
+    priceLowToHigh:"price low to high",
+    priceHighToLow:"price high to low",
+    customerRating:"Customer Rating"
+}
 export const getSlotArr = () => {
 
     let slotArr = [
