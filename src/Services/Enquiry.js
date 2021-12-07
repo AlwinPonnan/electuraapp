@@ -47,7 +47,7 @@ export const updateEnquiryStatusById = async (id, obj) => {
 }
 
 
-export const checkNcreateChatRoom = async (teacherId) => {
-    return axiosApiInstance.post(`${url}/checkNcreateChatRoom/${teacherId}`)
+export const checkNcreateChatRoom = async (teacherId,enquiryId) => {
+    return axiosApiInstance.post(`${url}/checkNcreateChatRoom/${teacherId}/${enquiryId}`)
 }
 

@@ -171,7 +171,9 @@ export default function HomeScreen(props) {
     }
 
     useEffect(() => {
-        handleOnint()
+        if (isFocused) {
+            handleOnint()
+        }
     }, [isFocused])
 
 

@@ -47,10 +47,10 @@ export default function Requestscreen(props) {
         }
     }
 
-    const handleAccept = async (id) => {
+    const handleAccept = async (id,enquiryId) => {
         setLoading(true)
         try {
-            const { data: res } = await checkNcreateChatRoom(id);
+            const { data: res } = await checkNcreateChatRoom(id,enquiryId);
             if (res.success) {
                 setAlertText("Request Successfully Accepted")
                 setSuccessAlert(true)
@@ -97,11 +97,14 @@ export default function Requestscreen(props) {
                                     <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(70) }]}>
 
                                         <Text style={styles.cardHeading}>{item?.userObj?.name}</Text>
-                                        <Pressable onPress={() => handleAccept(item?.userObj?._id)}>
+                                        <Pressable onPress={() => handleAccept(item?.userObj?._id,item?._id)}>
                                             <Text style={styles.acceptStyles}>Accept</Text>
                                         </Pressable>
                                     </View>
-                                    <Text style={{color:'black'}}>{item?.additionalMessage}</Text>
+                                    <Text style={{color:'black',fontFamily:'Montserrat-Regular',fontSize:12}}>{item?.additionalMessage}</Text>
+                                    <Text style={{color:'black',fontFamily:'Montserrat-Regular',fontSize:12}}>{item?.slotObj?.day} {item?.slotObj?.timeSlotObj?.time}</Text>
+
+
                                     <Text style={styles.cardSmallData}>{new Date(item?.createdAt).toDateString()}</Text>
                                 </View>
 

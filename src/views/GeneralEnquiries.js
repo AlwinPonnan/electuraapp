@@ -54,7 +54,7 @@ export default function GeneralEnquiries(props) {
                                 <Icon name="search-outline" size={20} color="#828282" />
                                 <TextInput style={styles.searchInput} placeholder="Search enquiries" placeholderTextColo="#828282" />
                             </View>
-                            <Icon name="options-outline" size={20} color="#828282" />
+                            {/* <Icon name="options-outline" size={20} color="#828282" /> */}
                             {/* <Image style={styles.searchImages} source={require('../../assets/images/Filter.png')} /> */}
                         </View>
 

@@ -7,10 +7,11 @@ import NavBar from '../components/Navbar';
 import { useIsFocused } from '@react-navigation/core';
 import { getWishlist } from '../Services/User';
 import { generateImageUrl } from '../globals/utils';
+import { getByUser } from '../Services/LiveClass';
 
 export default function Learnings(props) {
     const [isRefreshing, setIsRefreshing] = useState(false);
-    const [wishListArr, setWishListArr] = useState([]);
+    const [liveClassArr, setLiveClassArr] = useState([]);
     const focused = useIsFocused()
     const [productsArr, setProductsArr] = useState([
         {
@@ -64,26 +65,26 @@ export default function Learnings(props) {
 
 
     const handleOnit = () => {
-        getMyWishList()
+        getLiveClass()
     }
 
-    const getMyWishList = async () => {
+    const getLiveClass = async () => {
         try {
             setIsRefreshing(true)
-            const { data: res } = await getWishlist();
+            const { data: res } = await getByUser();
             if (res.success) {
                 let tempArr = res.data;
 
                 let temp = tempArr.map(el => {
                     let obj = {
                         ...el,
-                        imgUrl: el?.thumbnailImage?.url ? generateImageUrl(el?.thumbnailImage?.url) : "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
+                        imgUrl: "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
 
                     }
                     return obj
                 })
-                console.log(temp)
-                setWishListArr(temp)
+                console.log(temp,"asd")
+                setLiveClassArr(temp)
                 setIsRefreshing(false)
             }
         } catch (error) {
@@ -104,13 +105,15 @@ export default function Learnings(props) {
                     <View>
 
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                            <Text style={styles.textCardMainHeading}>{item?.name}</Text>
-                            <Icon name="heart" size={14} color={colorObj.primarColor} />
+                            <Text style={styles.textCardMainHeading}>{item?.userObj?.name}</Text>
+                            <Pressable style={styles.btn}>
+                                <Text style={styles.btnTxt}>Join</Text>
+                            </Pressable>
                         </View>
-                        <Text style={styles.textCardMainSubHeading1}>{item?.teacherName}</Text>
+                        <Text style={styles.textCardMainSubHeading1}>{item?.teacherObj?.name}</Text>
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                            <Text style={styles.textCardMainSubHeading2}>₹{item?.price}</Text>
-                            <Text style={styles.textCardMainSubHeading2}><Icon name="star" size={14} color={colorObj.primarColor} />4.2</Text>
+                            <Text style={styles.textCardMainSubHeading2}>{item?.day} {item?.timeslotObj?.time}</Text>
+                            {/* <Text style={styles.textCardMainSubHeading2}><Icon name="star" size={14} color={colorObj.primarColor} />4.2</Text> */}
                         </View>
                     </View>
 
@@ -126,30 +129,24 @@ export default function Learnings(props) {
             <ScrollView>
 
                 <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }]}>
-                    <Text style={styles.headingAboveCard}>My Courses</Text>
+                    <Text style={styles.headingAboveCard}>My Classes</Text>
                 </View>
 
                 <FlatList
                     horizontal
-                    onRefresh={() => getMyWishList()}
+                    onRefresh={() => getLiveClass()}
                     refreshing={isRefreshing}
-                    data={productsArr}
+                    data={liveClassArr}
                     renderItem={renderItem}
                     showsHorizontalScrollIndicator={false}
                     keyExtractor={(item, index) => `${index}`}
+                    ListEmptyComponent={
+                        <Text>No Classes Found</Text>
+                    }
                 />
 
 
-                {/* <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                    <Text style={styles.headingAboveCard}>Wishlist</Text>
-                </View>
-                <FlatList
-                    horizontal
-                    data={wishListArr}
-                    renderItem={renderItem}
-                    showsHorizontalScrollIndicator={false}
-                    keyExtractor={(item, index) => `${index}`}
-                /> */}
+               
 
 
 
@@ -164,7 +161,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     cardContainer: {
-        width: wp(45),
+        width: wp(55),
         backgroundColor: 'white',
         shadowColor: "#000",
         shadowOffset: {
@@ -198,7 +195,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Montserrat-Regular', fontSize: 12, color: '#7E7E7E', marginTop: 2
     },
     textCardMainSubHeading2: {
-        fontFamily: 'Montserrat-Regular', fontSize: 12, color: colorObj.primarColor, marginTop: 15
+        fontFamily: 'Montserrat-Regular', fontSize: 12, color: '#000', marginTop: 15
     },
     headingAboveCard: {
         fontSize: 16, fontFamily: 'RedHatText-SemiBold', color: '#303030', paddingLeft: 13, marginTop: 10
@@ -247,6 +244,36 @@ const styles = StyleSheet.create({
     flexRow: {
         flexDirection: 'row',
         display: 'flex'
-    }
+    },
+    btn: {
+        backgroundColor: colorObj.primarColor,
+        borderRadius: 5,
+        // width: wp(20),
+        paddingHorizontal: 10,
+        // height: 40,
+        paddingVertical: 5,
+        marginVertical: 10,
+        marginLeft: 15,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.18,
+        shadowRadius: 1.00,
+
+        elevation: 1,
+    },
+    btnTxt: {
+        fontFamily: 'Montserrat-SemiBold',
+        fontSize: 13,
+        color: "white",
+        // marginTop: 15
+    },
+   
 
 })
