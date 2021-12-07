@@ -42,7 +42,6 @@ export default function MainDrawer() {
     ////////////////////custom user drawer 
     function CustomDrawerContent(props) {
 
-
         const handleLogout = async () => {
             await EncryptedStorage.removeItem('AUTH_TOKEN')
             await EncryptedStorage.removeItem('AUTH_REFRESH_TOKEN')
@@ -57,11 +56,7 @@ export default function MainDrawer() {
                     <Text style={styles.userName}>+91-{profileData.phone} </Text>
                 </View>
 
-
-
-
                 <View style={{ marginBottom: 20, display: "flex", flexDirection: "column" }}>
-
 
                     <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate("MainBottomTab")}><Icon name="home-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Home</Text></TouchableOpacity>
 
@@ -77,15 +72,10 @@ export default function MainDrawer() {
 
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="pencil-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Blogs</Text></TouchableOpacity>
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="information-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> About Us</Text></TouchableOpacity>
-
-                    {/* <TouchableOpacity style={styles.DrawerItem}><Icon name="person-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Update Profile</Text></TouchableOpacity> */}
-
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="help-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Support</Text></TouchableOpacity>
-                    {/* <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate('TeacherProfile')}><Icon name="user-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Teacher Profile</Text></TouchableOpacity> */}
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="help-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> FAQs</Text></TouchableOpacity>
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="document-text-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Policies</Text></TouchableOpacity>
                     <TouchableOpacity onPress={() => { handleLogout() }} style={styles.DrawerItem}><Icon name="log-out-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Logout</Text></TouchableOpacity>
-
                 </View>
                 {
                     roleName === "USER" &&
@@ -128,7 +118,6 @@ export default function MainDrawer() {
             <Drawer.Screen name="AccountEdit" component={AccountEdit} />
             <Drawer.Screen name="CreateCourse" component={CreateCourse} />
             <Drawer.Screen name="TeacherCoupons" component={TeacherCoupons} />
-
             <Drawer.Screen name="RegisterTeacher" component={RegisterTeacher} />
         </Drawer.Navigator>
     )
