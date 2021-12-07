@@ -24,7 +24,7 @@ export default function HomeStack() {
             {/* <Stack.Screen name="Notification" component={Notification} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} /> */}
             <Stack.Screen name="TeacherProfile" component={TeacherProfile} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} />
             <Stack.Screen name="AllTeacher" component={AllTeacher} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} />
-            <Stack.Screen name="AllCourses" component={AllCourses} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} />
+            {/* <Stack.Screen name="AllCourses" component={AllCourses} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} /> */}
             <Stack.Screen name="TestZoom" component={Testzoom} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} />
 
             {/* <Stack.Screen name="MainTopTab" component={MainTopTab} options={{
