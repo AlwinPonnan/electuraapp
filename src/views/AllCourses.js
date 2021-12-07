@@ -190,7 +190,7 @@ export default function AllCourses() {
         let filteredClassesArr = [...classesArr.filter(el => el.checked)]
         let filteredSubjectArr = [...subjectArr.filter(el => el.checked)]
         let tempArr = [...mainCourseArr];
-        tempArr = tempArr.filter(el => el?.classesArr?.some(elx => filteredClassesArr.some(ely => ely._id == elx.classId) || elx.subjectArr.some(elz => filteredSubjectArr.some(elm => elm._id == elz.subjectId))))
+        tempArr = tempArr.filter(el => el?.classesArr?.some(elx => filteredClassesArr.some(ely => ely._id == elx.classId) || elx.subjectArr.some(elz => filteredSubjectArr.some(elm => elm._id == elz.subjectId))) || (el.price>=multiSliderValue[0] && el.price<=multiSliderValue[1] ) )
 
         setCourseArr([...tempArr])
         filterBottomSheetRef.current.close()
