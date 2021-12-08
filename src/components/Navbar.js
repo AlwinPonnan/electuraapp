@@ -8,6 +8,8 @@ import ImageUrls from '../globals/images';
 import { DrawerActions, useIsFocused } from '@react-navigation/native';
 import { Badge } from 'react-native-paper';
 import { getCart } from '../Services/User';
+import { getAllEnquiryRequests } from '../Services/Enquiry';
+
 export default function NavBar(props) {
 
 
@@ -16,7 +18,7 @@ export default function NavBar(props) {
   }
 
   const [cartObj, setCartObj] = useState({});
-
+  const [requestArr, setRequestArr] = useState([]);
   const focused = useIsFocused()
   const getUserCart = async () => {
     try {
@@ -29,9 +31,20 @@ export default function NavBar(props) {
       console.error(error)
     }
   }
+  const getRequests = async () => {
+    try {
+        const { data: res } = await getAllEnquiryRequests();
+        if (res.success) {
+            setRequestArr(res.data)
+        }
+    } catch (error) {
+        console.error(error)
+    }
+}
 
   useEffect(() => {
     getUserCart()
+    getRequests()
   }, [focused])
 
   return (
@@ -47,15 +60,20 @@ export default function NavBar(props) {
         <Pressable onPress={() => props.rootProps.navigation.navigate("ShoppingCart")} android_ripple={{ color: '#ddd' }} style={[styles.iconButton, { flexDirection: 'row' }]}>
           <Icon name="cart-outline" size={20} style={styles.icon} />
           {cartObj?.courseArr?.length > 0 &&
-            <Badge size={14}>{cartObj?.courseArr?.length}</Badge>
+            <Badge size={12}>{cartObj?.courseArr?.length}</Badge>
           }
         </Pressable>
         <Pressable onPress={() => props.rootProps.navigation.navigate("SearchScreen")} android_ripple={{ color: '#ddd' }} style={styles.iconButton}>
           <Icon name="search-outline" size={20} style={styles.icon} />
         </Pressable>
-        <Pressable onPress={() => props.rootProps.navigation.navigate("MainTopTab")} android_ripple={{ color: '#ddd' }} style={styles.iconButton}>
+
+        <Pressable onPress={() => props.rootProps.navigation.navigate("MainTopTab")} android_ripple={{ color: '#ddd' }} style={[styles.iconButton,{flexDirection:'row',alignItems:'center'}]}>
           <Icon name="chatbubble-ellipses-outline" size={20} style={styles.icon} />
+          {requestArr?.length > 0 &&
+            <Badge size={12}>{requestArr?.length}</Badge>
+          }
         </Pressable>
+
         <Pressable onPress={() => props.rootProps.navigation.navigate("Notification")} android_ripple={{ color: '#ddd' }} style={styles.iconButton}>
           <Icon name="notifications-outline" size={22} style={styles.icon} />
         </Pressable>

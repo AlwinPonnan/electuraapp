@@ -83,7 +83,7 @@ export default function Learnings(props) {
                     }
                     return obj
                 })
-                console.log(temp,"asd")
+                console.log(temp, "asd")
                 setLiveClassArr(temp)
                 setIsRefreshing(false)
             }
@@ -99,7 +99,7 @@ export default function Learnings(props) {
 
     const renderItem = ({ item, index }) => {
         return (
-            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("CourseDetail", { data: item._id })} >
+            <Pressable style={styles.cardContainer} onPress={() => { console.log("Clicked"); props.navigation.navigate("TestZoom") }} >
                 <Image style={styles.courseImg} source={{ uri: item?.imgUrl }} />
                 <View style={styles.textCardContainer}>
                     <View>
@@ -111,10 +111,20 @@ export default function Learnings(props) {
                             </Pressable>
                         </View>
                         <Text style={styles.textCardMainSubHeading1}>{item?.teacherObj?.name}</Text>
-                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                            <Text style={styles.textCardMainSubHeading2}>{item?.day} {item?.timeslotObj?.time}</Text>
-                            {/* <Text style={styles.textCardMainSubHeading2}><Icon name="star" size={14} color={colorObj.primarColor} />4.2</Text> */}
-                        </View>
+                        {
+                            item?.day ?
+                                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                                    <Text style={styles.textCardMainSubHeading2}>{item?.day} {item?.timeslotObj?.time}</Text>
+                                    {/* <Text style={styles.textCardMainSubHeading2}><Icon name="star" size={14} color={colorObj.primarColor} />4.2</Text> */}
+                                </View>
+
+                                :
+                                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                                    <Text style={styles.textCardMainSubHeading2}>Connect Now</Text>
+                                    {/* <Text style={styles.textCardMainSubHeading2}><Icon name="star" size={14} color={colorObj.primarColor} />4.2</Text> */}
+                                </View>
+
+                        }
                     </View>
 
                 </View>
@@ -126,31 +136,32 @@ export default function Learnings(props) {
         <View style={styles.container}>
             <NavBar rootProps={props} />
 
-            <ScrollView>
+            {/* <ScrollView> */}
 
-                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }]}>
-                    <Text style={styles.headingAboveCard}>My Classes</Text>
-                </View>
+            <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }]}>
+                <Text style={styles.headingAboveCard}>Live Sessions</Text>
+            </View>
 
-                <FlatList
-                    horizontal
-                    onRefresh={() => getLiveClass()}
-                    refreshing={isRefreshing}
-                    data={liveClassArr}
-                    renderItem={renderItem}
-                    showsHorizontalScrollIndicator={false}
-                    keyExtractor={(item, index) => `${index}`}
-                    ListEmptyComponent={
-                        <Text>No Classes Found</Text>
-                    }
-                />
-
-
-               
+            <FlatList
+                // horizontal
+                onRefresh={() => getLiveClass()}
+                refreshing={isRefreshing}
+                data={liveClassArr}
+                renderItem={renderItem}
+                numColumns={2}
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={(item, index) => `${index}`}
+                ListEmptyComponent={
+                    <Text>No Classes Found</Text>
+                }
+            />
 
 
 
-            </ScrollView>
+
+
+
+            {/* </ScrollView> */}
         </View>
     )
 }
@@ -161,7 +172,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     cardContainer: {
-        width: wp(55),
+        width: wp(45),
         backgroundColor: 'white',
         shadowColor: "#000",
         shadowOffset: {
@@ -274,6 +285,6 @@ const styles = StyleSheet.create({
         color: "white",
         // marginTop: 15
     },
-   
+
 
 })

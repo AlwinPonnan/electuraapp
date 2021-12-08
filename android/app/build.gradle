@@ -80,6 +80,8 @@ import com.android.build.OutputFile
 
 project.ext.react = [
     enableHermes: false,  // clean and rebuild if changing
+     entryFile: "index.js",
+    bundleAssetName: "app.bundle",
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -125,7 +127,10 @@ android {
     ndkVersion rootProject.ext.ndkVersion
 
     compileSdkVersion rootProject.ext.compileSdkVersion
-
+dexOptions {
+   incremental true
+   javaMaxHeapSize "4g"
+}
  
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -133,6 +138,17 @@ android {
     }
    
 
+packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude("META-INF/*.kotlin_module") 
+      } 
     defaultConfig {
         applicationId "com.electura"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -198,12 +214,12 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
-
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
-implementation platform('com.google.firebase:firebase-bom:28.4.2')
-implementation project(':lottie-react-native')
-implementation 'com.google.firebase:firebase-analytics:17.3.0'
- implementation project(':react-native-push-notification')
+    implementation platform('com.google.firebase:firebase-bom:28.4.2')
+    implementation project(':lottie-react-native')
+    implementation 'com.google.firebase:firebase-analytics:17.3.0'
+    implementation project(':react-native-push-notification')
+    
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
     }

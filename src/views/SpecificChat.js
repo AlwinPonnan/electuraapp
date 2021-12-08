@@ -33,9 +33,9 @@ export default function SpecificChat(props) {
         let tempTokenObj = await getDecodedToken();
         setTokenObj(tempTokenObj)
     }
-    
+
     const handleOnint = () => {
-        flatListRef.current.scrollToEnd({animated:false})
+        flatListRef.current.scrollToEnd({ animated: false })
         getToken()
         getChatHistory()
         joinRoom(chatRoomId);
@@ -73,7 +73,7 @@ export default function SpecificChat(props) {
         if (messageStr.length > 0) {
             sendMessage(chatRoomId, messageStr)
             setMessageStr("")
-            flatListRef.current.scrollToEnd({animated:false})
+            flatListRef.current.scrollToEnd({ animated: false })
         }
     }
 
@@ -124,10 +124,12 @@ export default function SpecificChat(props) {
                                 <Avatar.Image size={35} source={{ uri: generateImageUrl(chatUserObj.userObj?.profileImage) }} />
                                 <View style={styles.userProfileContainer}>
                                     <Text style={styles.userName}>{chatUserObj?.userObj?.name}</Text>
-                                    <View style={[styles.flexRow, { alignItems: 'center' }]}>
-                                        <Text style={styles.userStatus}>Active</Text>
-                                        <Badge size={8} style={{ marginHorizontal: 5, backgroundColor: colorObj.primarColor }} />
-                                    </View>
+                                    {chatUserObj?.userObj?.onlineToggle &&
+                                        <View style={[styles.flexRow, { alignItems: 'center' }]}>
+                                            <Text style={styles.userStatus}>Active</Text>
+                                            <Badge size={8} style={{ marginHorizontal: 5, backgroundColor: colorObj.primarColor }} />
+                                        </View>
+                                    }
                                 </View>
                             </Pressable>
                         </View>
@@ -135,8 +137,8 @@ export default function SpecificChat(props) {
 
                             <FlatList
                                 data={chatArr}
-                                onContentSizeChange={() => flatListRef.current.scrollToEnd({animated: false})}
-                                onLayout={() => flatListRef.current.scrollToEnd({animated: false})}
+                                onContentSizeChange={() => flatListRef.current.scrollToEnd({ animated: false })}
+                                onLayout={() => flatListRef.current.scrollToEnd({ animated: false })}
                                 ref={flatListRef}
 
                                 keyExtractor={(item, index) => `${item._id}`}
@@ -215,10 +217,10 @@ const styles = StyleSheet.create({
         justifyContent: "space-between"
     },
     searchInput: {
-        maxHeight:80,
-        width:"95%",
-        borderRightColor:"rgba(0,0,0,0.2)",
-        borderRightWidth:1
+        maxHeight: 80,
+        width: "95%",
+        borderRightColor: "rgba(0,0,0,0.2)",
+        borderRightWidth: 1
     },
     flexRowAlignCenter: {
         display: "flex",
@@ -228,8 +230,8 @@ const styles = StyleSheet.create({
     myChatContainer: {
         backgroundColor: '#F2F2F2',
         alignSelf: 'flex-end',
-        display:"flex",
-        width:wp(70),
+        display: "flex",
+        width: wp(70),
         borderRadius: 15,
         paddingVertical: 10,
         paddingHorizontal: 15,
@@ -242,7 +244,7 @@ const styles = StyleSheet.create({
     othersChatContainer: {
         backgroundColor: colorObj.primarColor,
         alignSelf: 'flex-start',
-        width:wp(70),
+        width: wp(70),
         borderRadius: 15,
         paddingVertical: 10,
         paddingHorizontal: 15,

@@ -59,8 +59,9 @@ export default function Enquiry(props) {
         setIsRefreshing(true)
         try {
             const { data: res } = await getAllEnquiries();
-            console.log(JSON.stringify(res, null, 2))
             if (res.success) {
+                console.log("asdsada")
+                console.log(JSON.stringify(res.data, null, 2))
                 setEnquiryArr(res.data.map(el => {
                     let obj = {
                         ...el,

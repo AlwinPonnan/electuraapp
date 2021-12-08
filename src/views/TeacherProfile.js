@@ -496,7 +496,7 @@ export default function TeacherProfile(props) {
 
                     </Pressable>
 
-                    <Pressable onPress={() => setChecked(EnquiryTypes.SLOT)} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
+                    <Pressable disabled={teacherObj?.enquiryObj?.timeslots.length == 0} onPress={() => setChecked(EnquiryTypes.SLOT)} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
                         <Text style={styles.bottomSheetOptionText}>Slot Booking</Text>
                         <RadioButton
                             value={EnquiryTypes.SLOT}

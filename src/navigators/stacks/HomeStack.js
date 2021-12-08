@@ -26,7 +26,7 @@ export default function HomeStack() {
             <Stack.Screen name="TeacherSlots" component={TeacherSlots} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} />
             <Stack.Screen name="AllTeacher" component={AllTeacher} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} />
             {/* <Stack.Screen name="AllCourses" component={AllCourses} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} /> */}
-            <Stack.Screen name="TestZoom" component={Testzoom} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} />
+            {/* <Stack.Screen name="TestZoom" component={Testzoom} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} /> */}
         </Stack.Navigator>
     )
 }

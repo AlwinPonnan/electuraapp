@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 
 import RootStack from './src/navigators/stacks/RootStack'
+import JitsiMeet, { JitsiMeetView } from 'react-native-jitsi-meet';
 
 import { DefaultTheme, Provider as PaperProvider, Modal, Portal } from 'react-native-paper';
 import { light_colors, dark_colors } from './src/globals/colors';

@@ -106,7 +106,7 @@ export default function HomeScreen(props) {
         try {
             const { data: res } = await BookmarkTeacher(id);
             if (res) {
-                alert(res.message)
+                // alert(res.message)
                 handleOnint()
             }
 
@@ -190,7 +190,10 @@ export default function HomeScreen(props) {
 
     const renderItem = ({ item, index }) => {
         return (
-            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("TeacherProfile", { data: item._id })}>
+            <Pressable style={styles.cardContainer} onPress={() => {
+                props.navigation.navigate("TeacherProfile", { data: item._id })
+                setIsLoading(true)
+            }}>
 
                 <Image style={styles.teacherImg} source={{ uri: item?.profileImage ? generateImageUrl(item?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
                 <View style={styles.textCardContainer}>
