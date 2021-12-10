@@ -310,12 +310,6 @@ export default function CourseDetail(props) {
     useEffect(() => {
         handleOnint()
     }, [isFocused])
-    return (
-        <WebView
-            style={{ flex:1 }}
-            source={{ uri: 'https://www.google.com/' }}
-        />
-    )
 
     return (
         <ScrollView style={{ flex: 1, backgroundColor: colorObj.whiteColor }}>
@@ -371,8 +365,12 @@ export default function CourseDetail(props) {
                     <View style={{ marginVertical: 10 }}>
                         <Text style={[styles.coursePrice, { marginVertical: 10 }]}>Preview Video</Text>
 
-
-
+                        <View style={{ flex: 1 }}>
+                            <WebView
+                                style={{height:250,width:wp(100)}}
+                                source={{ uri: 'https://www.youtube.com/embed/' + youtubeVideoId }}
+                            />
+                        </View>
 
                     </View>
 

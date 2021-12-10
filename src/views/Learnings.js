@@ -99,14 +99,14 @@ export default function Learnings(props) {
 
     const renderItem = ({ item, index }) => {
         return (
-            <Pressable style={styles.cardContainer} onPress={() => { console.log("Clicked"); props.navigation.navigate("TestZoom") }} >
+            <Pressable style={styles.cardContainer}  >
                 <Image style={styles.courseImg} source={{ uri: item?.imgUrl }} />
                 <View style={styles.textCardContainer}>
                     <View>
 
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                             <Text style={styles.textCardMainHeading}>{item?.userObj?.name}</Text>
-                            <Pressable style={styles.btn}>
+                            <Pressable style={styles.btn} onPress={() => { console.log("Clicked"); props.navigation.navigate("TestZoom") }}>
                                 <Text style={styles.btnTxt}>Join</Text>
                             </Pressable>
                         </View>
