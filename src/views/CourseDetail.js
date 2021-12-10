@@ -12,9 +12,9 @@ import { successAlertContext } from '../../App';
 import { loadingContext } from '../navigators/stacks/RootStack';
 import { generateImageUrl } from '../globals/utils';
 import { createSingleOrder, paymentCallBack } from '../Services/Order';
-
+import { WebView } from 'react-native-webview';
 import RazorpayCheckout from 'react-native-razorpay';
-
+// import YouTube from 'react-native-youtube';
 
 import YoutubePlayer from "react-native-youtube-iframe";
 
@@ -366,7 +366,7 @@ export default function CourseDetail(props) {
                     </Text>
                     <View style={{ marginVertical: 10 }}>
                         <Text style={[styles.coursePrice, { marginVertical: 10 }]}>Preview Video</Text>
-
+                        {/* <WebView source={{ uri: courseObj?.youtubeLink }} /> */}
                         <YoutubePlayer
                             webViewProps={{ androidHardwareAccelerationDisabled: true }}
                             height={250}
@@ -374,6 +374,17 @@ export default function CourseDetail(props) {
                             videoId={`${youtubeVideoId}`}
                             onChangeState={onStateChange}
                         />
+                        {/* <YouTube
+                            videoId={`${youtubeVideoId}`} // The YouTube video ID
+                            play // control playback of video with true/false
+                            fullscreen // control whether the video should play in fullscreen or inline
+                            loop // control whether the video should loop when ended
+                            onReady={e => this.setState({ isReady: true })}
+                            onChangeState={e => this.setState({ status: e.state })}
+                            onChangeQuality={e => this.setState({ quality: e.quality })}
+                            onError={e => this.setState({ error: e.error })}
+                            style={{ alignSelf: 'stretch', height: 300 }}
+                        /> */}
                     </View>
 
                     <Text style={styles.coursePrice}>

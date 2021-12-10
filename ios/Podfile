@@ -16,6 +16,7 @@ target 'Electura' do
 
   pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
 
+
   target 'ElecturaTests' do
     inherit! :complete
     # Pods for testing

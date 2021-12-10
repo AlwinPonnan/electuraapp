@@ -26,9 +26,14 @@ export default function TeacherSlots(props) {
 
     const focused = useIsFocused()
 
+    const [allSlotArr, setAllSlotArr] = useState([]);
+
+    const [slotsToggle, setSlotsToggle] = useState('all');
+
     const handleOnint = () => {
         getTeacher()
     }
+
 
 
     const getTeacher = async () => {
@@ -56,32 +61,89 @@ export default function TeacherSlots(props) {
                 })
                 setSlotsArr([...tempTimeSlotsArr])
                 setTeacherObj(res.data)
+                setAllSlotArr([{
+                    day:"All Days",
+                    slotsArr: [...tempTimeSlotsArr[0].slotsArr.map(el => {
+                        let obj = {
+                            ...el,
+                            checked: false
+                        }
+                        return obj
+                    })]
+                }])
             }
         } catch (error) {
             console.error(error)
         }
         setLoading(false)
     }
-    const handleSlotSelection = (index1, index2) => {
-        let tempArr = slotsArr.map((el, index) => {
-            if (index1 == index) {
-                el.slotsArr.map((ele, indexX) => {
-                    if (indexX == index2) {
-                        ele.checked = !ele.checked;
+    const handleSlotSelection = (index1, index2, value) => {
+        console.log(index1)
+        console.log(index2)
+        if(slotsToggle == "all"){
+            let tempArr = allSlotArr.map((el, index) => {
+                if (index1 == index) {
+                    el.slotsArr.map((ele, indexX) => {
+                        if (indexX == index2) {
+                            ele.checked = !ele.checked;
+                            return ele
+                        }
+                        else {
+                            return ele
+                        }
+                    })
+                    return el
+                }
+                else {
+                    return el
+                }
+            })
+            console.log(JSON.stringify(tempArr, null, 2))
+            setAllSlotArr(tempArr);
+            let tempDailyArr = slotsArr.map((el,index)=> {
+                el.slotsArr.map((ele,indexX)=> {
+                    if(indexX == index2){
+                        ele.checked = value
                         return ele
                     }
-                    else {
-                        return ele
+                    else{
+                       return ele
                     }
                 })
                 return el
-            }
-            else {
-                return el
-            }
+            })
+            console.log(JSON.stringify(tempDailyArr, null, 2), "all days arr")
+            setSlotsArr(tempDailyArr)
+        }
+        else{
+            let tempArr = slotsArr.map((el, index) => {
+                if (index1 == index) {
+                    el.slotsArr.map((ele, indexX) => {
+                        if (indexX == index2) {
+                            ele.checked = !ele.checked;
+                            return ele
+                        }
+                        else {
+                            return ele
+                        }
+                    })
+                    return el
+                }
+                else {
+                    return el
+                }
+            })
+            console.log(JSON.stringify(tempArr, null, 2))
+            setSlotsArr(tempArr)
+        }
+    }
+
+    const handleAllSlotSelection = (index) => {
+
+        setAllSlotArr(prevState => {
+            prevState[index].checked = !prevState[index].checked
+            return [...prevState]
         })
-        console.log(JSON.stringify(tempArr, null, 2))
-        setSlotsArr(tempArr)
     }
 
 
@@ -131,9 +193,18 @@ export default function TeacherSlots(props) {
                         data={item.slotsArr}
                         ListHeaderComponent={
                             <>
-                                <Text style={styles.textCardMainHeading}>
-                                    {item?.day}
-                                </Text>
+                                {
+
+                                    slotsToggle == "all"
+                                        ?
+                                        <Text style={styles.textCardMainHeading}>
+                                            All Days
+                                        </Text>
+                                        :
+                                        <Text style={styles.textCardMainHeading}>
+                                            {item?.day}
+                                        </Text>
+                                }
                             </>
                         }
                         scrollEnabled={false}
@@ -142,7 +213,7 @@ export default function TeacherSlots(props) {
                         renderItem={(itemX, indexX) => {
                             return (
                                 <>
-                                    <Pressable onPress={() => handleSlotSelection(index, itemX.index)} style={[styles.slotItem, { backgroundColor: itemX?.item?.checked ? colorObj.primarColor : "white" }]}>
+                                    <Pressable onPress={() => handleSlotSelection(index, itemX.index,!itemX?.item?.checked )} style={[styles.slotItem, { backgroundColor: itemX?.item?.checked ? colorObj.primarColor : "white" }]}>
                                         <Text style={itemX?.item?.checked ? styles.slotItemCheckedText : styles.slotItemText} >
                                             {itemX?.item?.time}
                                         </Text>
@@ -152,6 +223,21 @@ export default function TeacherSlots(props) {
                         }}
                     />
                 }
+            </View>
+        )
+    }
+    const renderAllSlots = ({ item, index }) => {
+        return (
+            <View style={[styles.slotContainer, { width: wp(30, ali) }]}>
+
+
+                <Pressable onPress={() => handleAllSlotSelection(index)} style={[styles.slotItem, { backgroundColor: item?.checked ? colorObj.primarColor : "white" }]}>
+                    <Text style={item?.checked ? styles.slotItemCheckedText : styles.slotItemText} >
+                        {item?.time}
+                    </Text>
+                </Pressable>
+
+
             </View>
         )
     }
@@ -172,18 +258,29 @@ export default function TeacherSlots(props) {
                             </Text>
                         </Pressable>
                     </View>
+                    <View style={{ display: "flex", flexDirection: "row", alignItems: "center", paddingVertical: 15 }}>
+                        <Pressable onPress={() => { setSlotsToggle('individual') }} style={[styles.categoryContainer, slotsToggle != 'individual' && { backgroundColor: '#f0faf9' }]}>
+                            {/* <Icon name="film-outline" size={14} /> */}
+                            <Text style={[styles.categoryName, slotsToggle != "individual" && { color: '#000' }]}>Individual</Text>
+                        </Pressable>
+                        <Pressable onPress={() => { setSlotsToggle('all') }} style={[styles.categoryContainer, slotsToggle != 'all' && { backgroundColor: '#f0faf9' }]}>
+                            {/* <Icon name="film-outline" size={14} /> */}
+                            <Text style={[styles.categoryName, slotsToggle != "all" && { color: '#000' }]}>All</Text>
+                        </Pressable>
+                    </View>
                 </>
-                <FlatList
-                    data={slotsArr}
-                    scrollEnabled={true}
-                    contentContainerStyle={{ paddingTop: 10, paddingBottom: 60 }}
 
+                <FlatList
+                    data={slotsToggle == "individual" ? slotsArr : allSlotArr}
+                    scrollEnabled={true}
+                    contentContainerStyle={{ paddingTop: 10, paddingBottom: 250 }}
                     ListFooterComponent={
                         <></>
                     }
                     keyExtractor={(item, index) => index}
                     renderItem={renderSlots}
                 />
+
             </View>
         </>
     )
@@ -223,5 +320,34 @@ const styles = StyleSheet.create({
     },
     textCardMainSubHeading2: {
         fontFamily: 'Montserrat-Regular', fontSize: 12, color: colorObj.primarColor, marginTop: 15
+    },
+
+    ///
+    categoryContainer: {
+        backgroundColor: colorObj.primarColor,
+        borderRadius: 26,
+        paddingVertical: 10,
+        marginVertical: 10,
+        marginHorizontal: 10,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.18,
+        shadowRadius: 1.00,
+
+        elevation: 1,
+    },
+
+    categoryName: {
+        color: colorObj.whiteColor,
+        textAlign: 'center',
+        fontFamily: 'Montserrat-Regular',
+        paddingHorizontal: 20
     },
 })
