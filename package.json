@@ -33,7 +33,6 @@
     "react-native-document-picker": "^7.1.0",
     "react-native-encrypted-storage": "^4.0.2",
     "react-native-gesture-handler": "^1.10.3",
-    "react-native-jitsi-meet": "^2.1.2",
     "react-native-linear-gradient": "^2.5.6",
     "react-native-multiple-select": "^0.5.7",
     "react-native-pager-view": "^5.4.6",
@@ -53,8 +52,7 @@
     "react-native-tab-view": "^3.1.1",
     "react-native-uuid": "^2.0.1",
     "react-native-vector-icons": "^8.1.0",
-    "react-native-webview": "^11.14.3",
-    "react-native-youtube-iframe": "^2.2.1",
+    "react-native-webview": "^11.15.0",
     "rn-range-slider": "^2.1.1",
     "socket.io-client": "^4.3.2"
   },

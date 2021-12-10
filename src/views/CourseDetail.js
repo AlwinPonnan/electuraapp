@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef, useCallback } from 'react'
-import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView, Linking, Button, ImageBackground, Modal, TextInput } from 'react-native'
+import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView, Linking, Button, ImageBackground, Modal, TextInput, Platform } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj, light_colors } from '../globals/colors';
 import NavBar from '../components/Navbar';
@@ -14,9 +14,7 @@ import { generateImageUrl } from '../globals/utils';
 import { createSingleOrder, paymentCallBack } from '../Services/Order';
 import { WebView } from 'react-native-webview';
 import RazorpayCheckout from 'react-native-razorpay';
-// import YouTube from 'react-native-youtube';
 
-import YoutubePlayer from "react-native-youtube-iframe";
 
 import Icon from 'react-native-vector-icons/Ionicons'
 import { getCouponByCode } from '../Services/Coupons';
@@ -312,6 +310,12 @@ export default function CourseDetail(props) {
     useEffect(() => {
         handleOnint()
     }, [isFocused])
+    return (
+        <WebView
+            style={{ flex:1 }}
+            source={{ uri: 'https://www.google.com/' }}
+        />
+    )
 
     return (
         <ScrollView style={{ flex: 1, backgroundColor: colorObj.whiteColor }}>
@@ -366,25 +370,10 @@ export default function CourseDetail(props) {
                     </Text>
                     <View style={{ marginVertical: 10 }}>
                         <Text style={[styles.coursePrice, { marginVertical: 10 }]}>Preview Video</Text>
-                        {/* <WebView source={{ uri: courseObj?.youtubeLink }} /> */}
-                        <YoutubePlayer
-                            webViewProps={{ androidHardwareAccelerationDisabled: true }}
-                            height={250}
-                            play={playing}
-                            videoId={`${youtubeVideoId}`}
-                            onChangeState={onStateChange}
-                        />
-                        {/* <YouTube
-                            videoId={`${youtubeVideoId}`} // The YouTube video ID
-                            play // control playback of video with true/false
-                            fullscreen // control whether the video should play in fullscreen or inline
-                            loop // control whether the video should loop when ended
-                            onReady={e => this.setState({ isReady: true })}
-                            onChangeState={e => this.setState({ status: e.state })}
-                            onChangeQuality={e => this.setState({ quality: e.quality })}
-                            onError={e => this.setState({ error: e.error })}
-                            style={{ alignSelf: 'stretch', height: 300 }}
-                        /> */}
+
+
+
+
                     </View>
 
                     <Text style={styles.coursePrice}>
