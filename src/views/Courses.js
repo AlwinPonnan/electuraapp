@@ -17,6 +17,7 @@ export default function Courses(props) {
     const focused = useIsFocused()
     const [subjectArr, setSubjectArr] = useState([]);
     const [selectedSubjectId, setSelectedSubjectId] = useState('');
+    const [isrefreshing, setIsrefreshing] = useState(false);
 
     const [subjectWiseCoursesArr, setSubjectWiseCoursesArr] = useState([]);
     const [mainCourseArr, setMainCourseArr] = useState([]);
@@ -77,6 +78,7 @@ export default function Courses(props) {
 
     const getSubjects = async () => {
         try {
+            setIsrefreshing(true)
             const { data: res } = await getAllSubjects();
             if (res.success) {
                 let tempArr = res.data;
@@ -88,14 +90,20 @@ export default function Courses(props) {
                     return obj
                 })
                 setSubjectArr([...tempArr])
+                setIsrefreshing(false)
+                
             }
         } catch (error) {
             console.error(error)
+            setIsrefreshing(false)
+            
         }
     }
 
     const getCourses = async () => {
         try {
+            setIsrefreshing(true)
+          
             const { data: res } = await getAllForUsersHomePage();
             if (res.success) {
                 let tempArr = res.data;
@@ -111,14 +119,18 @@ export default function Courses(props) {
                 console.log(temp)
                 setCourseArr(temp)
                 setMainCourseArr(temp)
+                setIsrefreshing(false)
             }
         } catch (error) {
             console.error(error)
+            setIsrefreshing(false)
+
         }
     }
 
     const getSubjectWise = async () => {
         try {
+            setIsrefreshing(true)
             const { data: res } = await getAllCoursesSubjectWise();
             if (res.success) {
                 let tempArr = res.data;
@@ -126,18 +138,25 @@ export default function Courses(props) {
                 console.log(JSON.stringify(tempArr, null, 2))
 
                 setSubjectWiseCoursesArr([...tempArr])
+                setIsrefreshing(false)
             }
         } catch (error) {
             console.error(error)
+            setIsrefreshing(false)
         }
     }
 
+    const getDataOnInit = async () => {
+        getSubjects()
+        getCourses()
+        getSubjectWise()
+    }
+
+
+
     useEffect(() => {
         if (focused) {
-
-            getSubjects()
-            getCourses()
-            getSubjectWise()
+            getDataOnInit()
         }
     }, [focused])
 
@@ -184,7 +203,11 @@ export default function Courses(props) {
         <View style={styles.container}>
             <NavBar rootProps={props} />
 
-            <FlatList scrollEnabled={true} data={[]} renderItem={() => null}
+            <FlatList
+                refreshing={isrefreshing}
+
+                onRefresh={() => getDataOnInit()}
+                scrollEnabled={true} data={[]} renderItem={() => null}
                 ListHeaderComponent={
                     <>
                         <View style={styles.bannerContainer}>

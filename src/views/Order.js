@@ -11,17 +11,20 @@ import { widthPercentageToDP } from 'react-native-responsive-screen';
 export default function Order(props) {
 
     const [ordersArr, setOrdersArr] = useState([]);
-
+    const [isrefreshing, setIsrefreshing] = useState(false);
     const focused = useIsFocused()
 
     const getOrders = async () => {
         try {
+            setIsrefreshing(true)
             const { data: res } = await getMyOrders();
             if (res) {
                 setOrdersArr(res.data)
+                setIsrefreshing(false)
             }
         } catch (error) {
             console.error(error)
+            setIsrefreshing(false)
         }
     }
 
@@ -63,28 +66,26 @@ export default function Order(props) {
                     <AntDesign name='message1' size={20} style={{ color: 'black', marginRight: 20 }} />
                 </Pressable>
                 <Pressable onPress={() => props.navigation.navigate('Notification')}>
-
                     <Feather name='bell' size={20} style={{ color: 'black' }} />
                 </Pressable>
             </View>
 
             <FlatList
                 data={ordersArr}
+                refreshing={isrefreshing}
+                onRefresh={()=> getOrders()}
                 renderItem={renderItem}
                 keyExtractor={(item, index) => `${index}`}
                 ListEmptyComponent={
-                    <View style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                        <Image source={require('../../assets/images/Icon.png')} resizeMode="center" />
+                    <View style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop:"25%" }}>
+                        <Image source={require('../../assets/images/cart.png')} style={{ height: 200, width: 200, marginBottom: 30, }} resizeMethod='scale' resizeMode="cover" />
                         <Text style={{ fontFamily: 'Montserrat-SemiBold', fontSize: 20 }}>No orders found</Text>
                     </View>
                 }
 
             />
 
-
             {/* <Pressable onPress={() => handleFilter()} style={{ justifyContent: 'flex-end', flex: 1, flexDirection: 'row' }}><AntDesign name='menu-unfold' size={30} style={{ color: '#fff', alignSelf: 'flex-end', backgroundColor: '#085A4E', padding: 15, borderRadius: 30 }} /></Pressable> */}
-
-
 
         </View>
 

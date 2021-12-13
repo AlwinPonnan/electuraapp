@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
     innerContainer: {
         minHeight: hp(100),
         minWidth: wp(100),
+        paddingBottom:100,
         backgroundColor: colorObj.whiteColor
     },
     textContainer: {
@@ -136,12 +137,14 @@ const styles = StyleSheet.create({
         fontFamily: 'Montserrat-Regular',
         width: '100%',
         color: "black",
+        // flex:1,
         paddingLeft: 10,
     },
     btn: {
         backgroundColor: colorObj.primarColor,
         borderRadius: 61,
         width: wp(80),
+        marginTop:10,
         paddingVertical: 15
     },
     btnText: {

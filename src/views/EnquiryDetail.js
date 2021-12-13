@@ -46,7 +46,7 @@ export default function EnquiryDetail(props) {
 
         setLoading(true)
         try {
-
+            
             let obj = {
                 enquiryId: enquiryObj?._id,
                 message: responseMessage
@@ -55,12 +55,22 @@ export default function EnquiryDetail(props) {
             if (res.success) {
                 setAlertText(res.message)
                 setSuccessAlert(true)
+                setResponseMessage("")
                 props.navigation.goBack()
                 
             }
         } catch (error) {
             setErrorAlert(true)
-            setAlertText("Unable To Respond")
+            console.log(error.response.data.message)
+            if(error?.response?.data?.message)
+            {
+                setResponseMessage("")
+                setAlertText(`${error.response.data.message}`)
+            }
+            else{
+                setResponseMessage("")
+                setAlertText(`Could not respond`)
+            }
 
         }
         setLoading(false)

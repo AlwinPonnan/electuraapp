@@ -45,7 +45,7 @@ export default function Coupons() {
                 <View style={styles.inputView}>
                     <TextInput
                         style={styles.input}
-                        placeholder="Enter coupon code"
+                        placeholder="Search coupon code"
                         keyboardType="numeric"
                     />
                     <Pressable>

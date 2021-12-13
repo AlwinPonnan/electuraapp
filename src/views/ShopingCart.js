@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, Text, View, FlatList, Image, Pressable, Modal, ScrollView,TextInput } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Image, Pressable, Modal, ScrollView, TextInput } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
@@ -30,6 +30,7 @@ export default function ShoppingCart(props) {
 
 
     const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
+    const [isrefreshing, setIsrefreshing] = useState(false);
 
 
     const [successAlert, setSuccessAlert] = successAlertArr
@@ -52,15 +53,18 @@ export default function ShoppingCart(props) {
 
 
     const getUserCart = async () => {
+        setIsrefreshing(true)
         setIsLoading(true)
         try {
             const { data: res } = await getCart();
             if (res.success) {
                 console.log(res.data)
                 setCartObj(res.data)
+                setIsrefreshing(false)
             }
         } catch (error) {
             console.error(error)
+            setIsrefreshing(false)
         }
         setIsLoading(false)
     }
@@ -110,7 +114,7 @@ export default function ShoppingCart(props) {
 
 
     const handleOrderCheckForAddress = () => {
-        console.log(JSON.stringify(cartObj.courseArr,null,2))
+        console.log(JSON.stringify(cartObj.courseArr, null, 2))
         if (cartObj?.courseArr?.some(el => el?.courseObj?.ClassType == "offline")) {
             setCouponModal(true)
         }
@@ -247,14 +251,17 @@ export default function ShoppingCart(props) {
             {cartObj?.courseArr?.length == 0
                 ?
                 <View style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', backgroundColor: 'white' }}>
-                    <Image source={require('../../assets/images/Icon.png')} resizeMode="center" />
+                    <Image source={require('../../assets/images/cart.png')} style={{ height: 200, width: 200, marginBottom: 30, }} resizeMethod='scale' resizeMode="cover" />
                     <Text style={{ fontFamily: 'Montserrat-SemiBold', fontSize: 20 }}>Your Cart is empty</Text>
                 </View>
                 :
                 <>
-                    <FlatList data={[]} renderItem={() => null}
+                    <FlatList data={[]}
+                        refreshing={isrefreshing}
+                        onRefresh={() => getUserCart()}
+                        renderItem={() => null}
                         scrollEnabled={true}
-                        contentContainerStyle={{ backgroundColor: 'white' }}
+                        contentContainerStyle={{ backgroundColor: 'red' }}
                         ListHeaderComponent={
 
                             <View style={[styles.container]}>

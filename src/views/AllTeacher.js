@@ -239,8 +239,10 @@ export default function AllTeacher(props) {
         return (
             <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("TeacherProfile", { data: item._id })}>
 
-                <Image style={styles.teacherImg} source={{ uri: item?.profileImage ? generateImageUrl(item?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
                 <View style={styles.textCardContainer}>
+                    <View style={styles.teacherImgContainer}>
+                        <Image style={styles.teacherImg} source={{ uri: item?.profileImage ? generateImageUrl(item?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
+                    </View>
                     <View>
                         <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                             <Text style={styles.textCardMainHeading}>{item?.name}
@@ -420,7 +422,7 @@ export default function AllTeacher(props) {
                     }
                 }}
             >
-                <View style={[styles.bottomSheetInnerContainer,{paddingHorizontal:20}]}>
+                <View style={[styles.bottomSheetInnerContainer, { paddingHorizontal: 20 }]}>
 
                     <Text style={styles.bottomSheetHeading}>Enquiry Options</Text>
                     <Pressable onPress={() => setChecked('specific')} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
@@ -706,16 +708,26 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         paddingHorizontal: 20,
         paddingVertical: 15,
-        height: 100,
+        // height: 100,
         position: 'relative',
         marginHorizontal: 20,
         marginTop: 20
     },
+    teacherImgContainer: {
+        borderRadius: 50,
+        height: 100,
+        width: 100,
+        left: -30,
+        opacity: 1,
+        backgroundColor: "white",
+        borderColor:"rgba(0,0,0,0.1)",
+        borderWidth:1,
+        position: "absolute",
+    },
     teacherImg: {
         height: 100,
         width: 100,
-        left: -10,
-        top: 15,
+        left: 0,
         position: "absolute",
         borderRadius: 100
     },

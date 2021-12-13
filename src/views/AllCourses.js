@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext,useRef } from 'react'
+import React, { useState, useEffect, useContext, useRef } from 'react'
 import { View, Text, StyleSheet, TextInput, FlatList, Pressable, Image } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -22,16 +22,16 @@ import MultiSlider from '@ptomasroos/react-native-multi-slider'
 
 import { Checkbox } from 'react-native-paper';
 
-export default function AllCourses() {
-    
+export default function AllCourses(props) {
+
     const [loading, setLoading] = useContext(loadingContext);
-    
+    const [isrefreshing, setIsrefreshing] = useState(false);
     const [courseArr, setCourseArr] = useState([]);
     const [mainCourseArr, setMainCourseArr] = useState([]);
-    
+
     const [activeFilterContainer, setActiveFilterContainer] = useState('subject');      ///subject,class,topic,price ,sortby
     ////price range picker
-    
+
     const [maxFees, setMaxFees] = useState(0);
     const [minFees, setMinFees] = useState(0);
 
@@ -61,6 +61,7 @@ export default function AllCourses() {
 
     const getCourses = async () => {
         try {
+            setIsrefreshing(true)
             const { data: res } = await getAllForUsersHomePage();
             if (res.success) {
                 let tempArr = res.data;
@@ -86,18 +87,22 @@ export default function AllCourses() {
                 })]
                 setMaxFees(maxCount)
                 setMinFees(minCount)
-                console.log(JSON.stringify (temp,null,2))
+                console.log(JSON.stringify(temp, null, 2))
                 setCourseArr(temp)
                 setMainCourseArr(temp)
+                setIsrefreshing(false)
+
             }
         } catch (error) {
             console.error(error)
+            setIsrefreshing(false)
         }
     }
 
 
     const getSubjects = async () => {
         try {
+            setIsrefreshing(true)
             const { data: res } = await getAllSubjects();
             if (res.success) {
                 setSubjectArr([...res.data.map(el => {
@@ -107,13 +112,17 @@ export default function AllCourses() {
                     }
                     return obj
                 })])
+                setIsrefreshing(false)
             }
+
         } catch (error) {
             console.error(error)
+            setIsrefreshing(false)
         }
     }
     const getClasses = async () => {
         try {
+            setIsrefreshing(true)
             const { data: res } = await getAllClasses();
             if (res.success) {
                 setClassesArr([...res.data.map(el => {
@@ -123,9 +132,11 @@ export default function AllCourses() {
                     }
                     return obj
                 })])
+                setIsrefreshing(false)
             }
         } catch (error) {
             console.error(error)
+            setIsrefreshing(false)
         }
     }
 
@@ -169,6 +180,7 @@ export default function AllCourses() {
 
     const getTopics = async () => {
         try {
+            setIsrefreshing(true)
             const { data: res } = await getAllTopics();
             if (res.success) {
                 setTopicArr([...res.data.map(el => {
@@ -185,9 +197,11 @@ export default function AllCourses() {
                     }
                     return obj
                 })])
+                setIsrefreshing(false)
             }
         } catch (error) {
             console.error(error)
+            setIsrefreshing(false)
         }
     }
 
@@ -206,10 +220,10 @@ export default function AllCourses() {
 
         let filteredClassesArr = [...classesArr.filter(el => el.checked)]
         let filteredSubjectArr = [...subjectArr.filter(el => el.checked)]
-        
-        
+
+
         let tempArr = [...mainCourseArr];
-        
+
         if (filteredClassesArr.length > 0) {
             console.log("class filter")
 
@@ -229,10 +243,10 @@ export default function AllCourses() {
         else if (sortBy == sortByText.priceHighToLow) {
             tempArr = tempArr.sort((a, b) => b.price - a.price)
         }
-        else if(sortBy==sortByText.customerRating){
+        else if (sortBy == sortByText.customerRating) {
             tempArr = tempArr.sort((a, b) => b.rating - a.rating)
         }
-        
+
         // tempArr = tempArr.filter(el => el?.classesArr?.some(elx => filteredClassesArr.some(ely => ely._id == elx.classId) || elx.subjectArr.some(elz => filteredSubjectArr.some(elm => elm._id == elz.subjectId))) || (el.price>=multiSliderValue[0] && el.price<=multiSliderValue[1] ) )
 
         setCourseArr([...tempArr])
@@ -366,21 +380,28 @@ export default function AllCourses() {
                     <Feather name='align-right' size={20} style={[styles.topIcons, { marginRight: 10 }]} />
                 </Pressable>
             </View>
-            <Text style={[styles.title]}>Recommended Courses</Text>
-            <FlatList
-                horizontal
-                data={courseArr}
-                renderItem={renderItem}
-                showsHorizontalScrollIndicator={false}
-                keyExtractor={(item, index) => `${index}`}
-                ListEmptyComponent={
-                    <Text style={{ textAlign: 'center', fontFamily: 'Montserrat-SemiBold', fontSize: 16, width: wp(90), marginTop: 40 }}>No Courses Found</Text>
-                }
-            />
 
-            <Text style={[styles.title]}>New Courses</Text>
             <FlatList
-                style={{ height: 300 }}
+                ListHeaderComponent={
+                    <>
+                        <Text style={[styles.title]}>Recommended Courses</Text>
+                        <FlatList
+                            horizontal
+                            data={courseArr}
+                            renderItem={renderItem}
+                            showsHorizontalScrollIndicator={false}
+                            keyExtractor={(item, index) => `${index}`}
+                            ListEmptyComponent={
+                                <Text style={{ textAlign: 'center', fontFamily: 'Montserrat-SemiBold', fontSize: 16, width: wp(90), marginTop: 40 }}>No Courses Found</Text>
+                            }
+                        />
+
+                        <Text style={[styles.title]}>New Courses</Text>
+                    </>
+                }
+                refreshing={isrefreshing}
+                onRefresh={()=> handleOnint()}
+                contentContainerStyle={{ paddingBottom:50 }}
                 data={courseArr}
                 renderItem={renderTeacherItem}
                 keyExtractor={(item, index) => `${index}`}

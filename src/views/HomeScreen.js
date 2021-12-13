@@ -21,6 +21,7 @@ export default function HomeScreen(props) {
 
 
 
+    const [isrefreshing, setIsrefreshing] = useState(false);
 
     const navigation = useNavigation()
     const isFocused = useIsFocused()
@@ -64,6 +65,7 @@ export default function HomeScreen(props) {
 
     const getSubjects = async () => {
         try {
+            setIsrefreshing(true)
             const { data: res } = await getAllSubjects();
             if (res.success) {
                 let tempArr = res.data;
@@ -75,15 +77,18 @@ export default function HomeScreen(props) {
                     return obj
                 })
                 setSubjectArr([...tempArr])
+                setIsrefreshing(false)
             }
         } catch (error) {
             console.error(error)
+            setIsrefreshing(false)
         }
     }
 
 
     const getLoggedInUser = async () => {
         setIsLoading(true)
+        setIsrefreshing(true)
         try {
 
             const { data: res } = await getUser();
@@ -93,9 +98,12 @@ export default function HomeScreen(props) {
                     setShowReferalModal(true)
                 }
                 setUserObj(res.data)
+                setIsrefreshing(false)
             }
         } catch (error) {
             console.error(error)
+            setIsrefreshing(false)
+
         }
         setIsLoading(false)
     }
@@ -103,44 +111,53 @@ export default function HomeScreen(props) {
     const getTeachers = async () => {
 
         try {
+        setIsrefreshing(true)
             const { data: res } = await getAllTeachers();
             if (res.success) {
                 console.log(JSON.stringify(res.data, null, 3), "teachers")
-
+                
                 setTeachersArr(res.data)
                 setMainTeachersArr(res.data)
+                setIsrefreshing(false)
             }
 
         } catch (error) {
             console.error(error)
+            setIsrefreshing(false)
         }
     }
 
     const handleBookmarkTeacher = async (id) => {
         try {
+            setIsrefreshing(true)
             const { data: res } = await BookmarkTeacher(id);
             if (res) {
                 setSuccessAlert(true)
                 setAlertText(`${res.message}`)
                 handleOnint()
+                setIsrefreshing(false)
             }
 
         } catch (error) {
             console.error(error)
+            setIsrefreshing(false)
         }
     }
 
     const getSubjectWise = async () => {
         try {
+            setIsrefreshing(true)
             const { data: res } = await getAllTeachersSubjectWise();
             if (res.success) {
                 let tempArr = res.data;
                 tempArr = tempArr.filter(el => el.userArr.length >= 1)
 
                 setSubjectWiseTeacherArr([...tempArr])
+                setIsrefreshing(false)
             }
         } catch (error) {
             console.error(error)
+            setIsrefreshing(false)
         }
     }
 
@@ -210,8 +227,10 @@ export default function HomeScreen(props) {
                 setIsLoading(true)
             }}>
 
-                <Image style={styles.teacherImg} source={{ uri: item?.profileImage ? generateImageUrl(item?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
                 <View style={styles.textCardContainer}>
+                    <View style={styles.teacherImgContainer}>
+                        <Image style={styles.teacherImg} source={{ uri: item?.profileImage ? generateImageUrl(item?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
+                    </View>
                     <View>
                         <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                             <Text style={styles.textCardMainHeading}>{item?.name ? item.name : item?.enquiryObj?.name}
@@ -241,7 +260,11 @@ export default function HomeScreen(props) {
     return (
         <View style={styles.container}>
             <NavBar rootProps={props} />
-            <FlatList scrollEnabled={true} data={[]} renderItem={() => null}
+            <FlatList
+                refreshing={isrefreshing}
+                onRefresh={() => handleOnint()}
+
+                scrollEnabled={true} data={[]} renderItem={() => null}
                 ListHeaderComponent={
                     <>
 
@@ -303,9 +326,10 @@ export default function HomeScreen(props) {
                                             renderItem={({ item: itemX, index: indexX }) => {
                                                 return (
                                                     <Pressable style={[styles.cardContainer, { marginVertical: 10, paddingVertical: 5 }]} onPress={() => props.navigation.navigate("TeacherProfile", { data: itemX._id })}>
-
-                                                        <Image style={styles.teacherImg} source={{ uri: itemX?.profileImage ? generateImageUrl(itemX?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
                                                         <View style={styles.textCardContainer}>
+                                                            <View style={styles.teacherImgContainer}>
+                                                                <Image style={styles.teacherImg} source={{ uri: itemX?.profileImage ? generateImageUrl(itemX?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
+                                                            </View>
                                                             <View>
                                                                 <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                                                                     <Text style={styles.textCardMainHeading}>{itemX?.name ? itemX.name : itemX?.enquiryObj?.name}
@@ -391,10 +415,11 @@ const styles = StyleSheet.create({
         display: 'flex',
         width: wp(65),
         flexDirection: 'row',
+        // justifyContent:"center",
+        alignItems: "center",
         backgroundColor: 'white',
         paddingHorizontal: 20,
         paddingVertical: 15,
-        height: 100,
         position: 'relative',
         marginHorizontal: 20
 
@@ -466,11 +491,21 @@ const styles = StyleSheet.create({
         fontFamily: 'Montserrat-Regular',
         paddingHorizontal: 20
     },
+    teacherImgContainer: {
+        borderRadius: 50,
+        height: 100,
+        width: 100,
+        left: -30,
+        opacity: 1,
+        backgroundColor: "white",
+        borderColor: "rgba(0,0,0,0.1)",
+        borderWidth: 1,
+        position: "absolute",
+    },
     teacherImg: {
         height: 100,
         width: 100,
-        left: -10,
-        top: 15,
+        left: 0,
         position: "absolute",
         borderRadius: 100
     },

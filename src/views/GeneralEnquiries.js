@@ -16,6 +16,7 @@ export default function GeneralEnquiries(props) {
             setIsRefreshing(true)
             const { data: res } = await getAllGeneralEnquiriesForTeacher();
             if (res.success) {
+                console.log(JSON.stringify(res.data,null,2),"asd")
                 setEnquiryArr(res.data.map(el => {
                     let obj = {
                         ...el,
@@ -75,7 +76,7 @@ export default function GeneralEnquiries(props) {
                         renderItem={({ item, index }) => {
                             return (
                                 <>
-                                    <Pressable style={styles.enquiryListHeader} onPress={() => props.navigation.navigate('EnquiryDetail', { enquiryId: item._id })} >
+                                    <Pressable style={styles.enquiryListHeader} onPress={() => item.enquiryStatus != "CLOSED" && props.navigation.navigate('EnquiryDetail', { enquiryId: item._id })} >
                                         <View style={[styles.flexRowAlignCenter, { justifyContent: "space-between" }]}>
                                             <View style={styles.flexRow}>
                                                 <Text style={styles.ListHeaderName}>Enquiry {index + 1}</Text>

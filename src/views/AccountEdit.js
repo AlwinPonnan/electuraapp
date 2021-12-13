@@ -119,6 +119,7 @@ export default function AccountEdit(props) {
 
     const handleProfileUpdate = async () => {
         try {
+            setIsLoading(true)
             let obj = {
                 name,
                 email,
@@ -135,11 +136,14 @@ export default function AccountEdit(props) {
                 setAlertText(`${res.message}`)
                 // alert(res.message)
                 props.navigation.goBack()
+                setIsLoading(false)
             }
             console.log(res)
         }
         catch (err) {
             console.error(err)
+            setIsLoading(false)
+            
         }
     }
 
@@ -353,7 +357,7 @@ export default function AccountEdit(props) {
                             <Text style={styles.label}>
                                 Teaching Experience
                             </Text>
-                            <TextInput value={profileData?.enquiryObj?.experience} onChangeText={(e) => handleProfileDataUpdate(e, "experience")} style={styles.txtInput} placeholder="Your Teaching Experience" />
+                            <TextInput value={profileData?.enquiryObj?.experience} onChangeText={(e) => handleProfileDataUpdate(e, "experience")} style={styles.txtInput} keyboardType="number-pad" placeholder="Your Teaching Experience" />
 
                             <Text style={styles.label}>
                                 Facebook Profile name

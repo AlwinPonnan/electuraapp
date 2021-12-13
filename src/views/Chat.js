@@ -12,18 +12,22 @@ export default function Chat(props) {
 
     const onChangeSearch = query => setSearchQuery(query);
     const [chatArr, setChatArr] = useState([]);
+    const [isrefreshing, setIsrefreshing] = useState(false);
 
 
     const focused = useIsFocused()
 
     const getChats = async () => {
         try {
+            setIsrefreshing(true)
             const { data: res } = await getAllChats();
             if (res.success) {
+                setIsrefreshing(false)
                 console.log(JSON.stringify(res.data, null, 2))
                 setChatArr(res.data)
             }
         } catch (error) {
+            setIsrefreshing(false)
             console.error(error)
         }
     }
@@ -53,20 +57,26 @@ export default function Chat(props) {
 
                 <FlatList
                     data={chatArr}
+                    refreshing={isrefreshing}
+
+                    onRefresh={() => getChats()}
+                    contentContainerStyle={{ paddingBottom: 120, minHeight: hp(50) }}
                     keyExtractor={(item, index) => `${index}`}
                     renderItem={({ item, index }) => {
                         return (
-                            <Pressable onPress={() => props.navigation.navigate('SpecificChat', { chatRoomId: item.chatRoomId })} style={styles.card}>
-                                <View style={styles.flexRow}>
-                                    <Image source={{ uri: generateImageUrl(item?.userObj?.profileImage) }} style={styles.cardImage} />
-                                    <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                                        <Text style={styles.cardHeading}>{item?.userObj?.name}</Text>
-                                        
-                                            <Text style={styles.cardSmallData}>{item?.lastMessage ?item?.lastMessage : ""}</Text>
-                                        
+                            <>
+                                <Pressable onPress={() => props.navigation.navigate('SpecificChat', { chatRoomId: item.chatRoomId })} style={styles.card}>
+                                    <View style={styles.flexRow}>
+                                        <Image source={{ uri: generateImageUrl(item?.userObj?.profileImage) }} style={styles.cardImage} />
+                                        <View style={[styles.flexColumn, { justifyContent: "center" }]}>
+                                            <Text style={styles.cardHeading}>{item?.userObj?.name}</Text>
+
+                                            <Text style={styles.cardSmallData}>{item?.lastMessage ? item?.lastMessage : ""}</Text>
+
+                                        </View>
                                     </View>
-                                </View>
-                            </Pressable>
+                                </Pressable>
+                            </>
                         )
                     }}
                 />

@@ -10,6 +10,7 @@ import {
     Text,
     Image,
     TouchableOpacity, Linking
+    ,Share
 } from 'react-native';
 import 'react-native-gesture-handler';
 import MainBottomTab from '../tabs/MainBottomTab';
@@ -38,7 +39,25 @@ export default function MainDrawer() {
     const [isAuthorized, setIsAuthorized] = useContext(AuthContext);
     const [roleName, setRoleName] = useContext(roleContext);
 
-
+    const onShare = async () => {
+        try {
+          const result = await Share.share({
+            message:
+            `Referal code from ${profileData?.name} is ${profileData.referalCode}`,
+          });
+          if (result.action === Share.sharedAction) {
+            if (result.activityType) {
+              // shared with activity type of result.activityType
+            } else {
+              // shared
+            }
+          } else if (result.action === Share.dismissedAction) {
+            // dismissed
+          }
+        } catch (error) {
+          alert(error.message);
+        }
+      };
     ////////////////////custom user drawer 
     function CustomDrawerContent(props) {
 
@@ -53,7 +72,12 @@ export default function MainDrawer() {
             <DrawerContentScrollView {...props}>
                 <View style={styles.profilePicContainer}>
                     <Image source={profileData.profileImage ? { uri: generateImageUrl(profileData.profileImage) } : require('../../../assets/images/user.png')} style={styles.profilePic} />
-                    <Text style={styles.userName}>+91-{profileData.phone} </Text>
+                    {
+                         profileData.name == "" ?
+                        <Text style={styles.userName}>+91-{profileData.phone} </Text>
+                        :
+                        <Text style={styles.userName}>{profileData.name} </Text>
+                    }
                 </View>
 
                 <View style={{ marginBottom: 20, display: "flex", flexDirection: "column" }}>
@@ -75,8 +99,11 @@ export default function MainDrawer() {
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="help-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Support</Text></TouchableOpacity>
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="help-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> FAQs</Text></TouchableOpacity>
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="document-text-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Policies</Text></TouchableOpacity>
+        
+                    <TouchableOpacity style={styles.DrawerItem} onPress={()=> onShare()}><Icon name="link-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Referal Code is <Text style={{fontFamily: "OpenSans-Bold",}}> {profileData?.referalCode} </Text></Text></TouchableOpacity>
                     <TouchableOpacity onPress={() => { handleLogout() }} style={styles.DrawerItem}><Icon name="log-out-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Logout</Text></TouchableOpacity>
                 </View>
+
                 {
                     roleName === "USER" &&
                     <View style={styles.teacherContainer} >
@@ -97,7 +124,7 @@ export default function MainDrawer() {
             let { data: res, status: statusCode } = await getUser();
             console.log(statusCode)
             if (statusCode == 200 || statusCode == 304) {
-                console.log(JSON.stringify(res.data, null, 2))
+                console.log(JSON.stringify(res.data.name, null, 2), "user")
                 setProfileData(res.data)
                 setRoleName(res.data.role)
             }
@@ -112,6 +139,8 @@ export default function MainDrawer() {
     }, [focused])
 
 
+
+   
     return (
         <Drawer.Navigator screenOptions={{ headerShown: false }} drawerContent={props => <CustomDrawerContent {...props} />}>
             <Drawer.Screen name="MainBottomTab" component={MainBottomTab} />

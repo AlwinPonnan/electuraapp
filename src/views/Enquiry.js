@@ -162,10 +162,11 @@ export default function Enquiry(props) {
     }
 
 
-    const handleChatButtonClick = async (id) => {
+    const handleChatButtonClick = async (id, id2) => {
         setLoading(true)
         try {
-            const { data: res } = await checkNcreateChatRoom(id);
+            console.log(id);
+            const { data: res } = await checkNcreateChatRoom(id, id2);
             if (res.success) {
                 props.navigation.navigate("MainTopTab")
             }
@@ -361,7 +362,7 @@ export default function Enquiry(props) {
                         data={enquiryArr}
                         keyExtractor={(item, index) => `${index}`}
                         ListEmptyComponent={
-                            <Text>No Enquiries Found</Text>
+                            <Text style={{marginTop:20,}}>No Enquiries yet !</Text>
                         }
                         onRefresh={() => getYourEnquires()}
                         refreshing={isRefreshing}
@@ -412,7 +413,7 @@ export default function Enquiry(props) {
                                                 keyExtractor={(item, index) => `${item._id}`}
                                                 ListEmptyComponent={
                                                     <View style={styles.card}>
-                                                        <Text style={styles.cardHeading}>No Response Found</Text>
+                                                        <Text style={[styles.cardHeading,{marginTop:5}]}>You do not have any responses yet !</Text>
                                                     </View>
                                                 }
                                                 renderItem={({ item: itemX, index: indexX }) => {
@@ -426,8 +427,7 @@ export default function Enquiry(props) {
                                                                 </View>
 
                                                             </View>
-                                                            <Pressable onPress={() => handleChatButtonClick(itemX?.teacherId)}>
-
+                                                            <Pressable onPress={() => handleChatButtonClick(itemX?.teacherId, item._id)}>
                                                                 <Icon name="chatbubble-ellipses-outline" size={20} color={"black"} />
                                                             </Pressable>
                                                         </View>

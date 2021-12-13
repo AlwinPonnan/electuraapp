@@ -96,7 +96,7 @@ export default function RegisterTeacher(props) {
             })
             // let categoryFilteredArr = categoryArr.filter(el => el.checked == true).map(el => { return { categoryId: el._id } })
             console.log(JSON.stringify(classesFilteredArr, null, 2))
-            if (validId?.name != "" && name != "" && classesFilteredArr.length > 0) {
+            if (validId && validId?.name != "" && name != "" && classesFilteredArr.length > 0) {
                 let userToken = await getDecodedToken()
                 let obj = {
                     name,
@@ -161,7 +161,14 @@ export default function RegisterTeacher(props) {
             let { data: res, status: statusCode } = await getUser();
             console.log(statusCode)
             if (statusCode == 200 || statusCode == 304) {
-                console.log(JSON.stringify(res.data, null, 2))
+                console.log("***********************************************************************************************************************TeacherData")
+                console.log(JSON.stringify(res.data.onlineToggle, null, 2), "TeacherData")
+                console.log("***********************************************************************************************************************TeacherData")
+                if(res.data.role == "TEACHER"){
+                    setWarningAlert(true)
+                    setAlertText("You are Already a Teacher")
+                    // props.navigation.goBack()
+                }
                 setName(res.data.name)
                 setEmail(res.data.email)
                 setPhone(res.data.phone)

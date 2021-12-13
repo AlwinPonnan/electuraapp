@@ -139,7 +139,7 @@ export default function TeacherProfile(props) {
             if (res.success) {
                 let tempObj = res.data;
                 tempObj.enquiryObj.timeslots = tempObj?.enquiryObj?.timeslots?.filter(el => el.slotArr.length > 0)
-                console.log(tempObj.enquiryObj.timeslots)
+                // console.log(tempObj.enquiryObj.timeslots)
                 setTeacherObj({ ...tempObj })
             }
         } catch (error) {
@@ -165,7 +165,7 @@ export default function TeacherProfile(props) {
                     }
                     return obj
                 })
-                console.log(temp)
+                // console.log(temp)
                 setCoursesArr(temp)
             }
         } catch (error) {
@@ -238,7 +238,7 @@ export default function TeacherProfile(props) {
         try {
             let userId = props.route.params.data;
             const { data: res } = await getAllFeedBacksByTeacherId(userId);
-            console.log(JSON.stringify(res.data, null, 2))
+            // console.log(JSON.stringify(res.data, null, 2))
             if (res.success) {
                 let tempArr = res.data;
                 tempArr = tempArr.map(el => {
@@ -273,18 +273,19 @@ export default function TeacherProfile(props) {
                     price: '',
                     slotObj: {
                         day: selectedSlotDay,
-                        timeSlotObj: slotsArr.find(el=>el.time==selectedTimeSlot)
+                        timeSlotObj: slotsArr.find(el => el.time == selectedTimeSlot)
                     },
                     specificRequirement: '',
                     enquiryType: checked,
                     teacherId: teacherObj?._id,
                     additionalMessage
                 }
-                console.log(obj)
+                // console.log(obj)
                 let { data: res } = await NewEnquiry(obj);
                 if (res.success) {
                     setSuccessAlert(true)
                     setAlertText(res.message)
+                    setAdditionalMessage("")
                     // alert(res.message)
                 }
             }
@@ -306,19 +307,19 @@ export default function TeacherProfile(props) {
                 if (res.success) {
                     setSuccessAlert(true)
                     setAlertText(res.message)
+                    setAdditionalMessage("")
                     // alert(res.message)
                 }
             }
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             setErrorAlert(true)
             setAlertText(error.message)
 
         }
         setIsLoading(false)
     }
-
 
     useEffect(() => {
         handleOnint()
@@ -416,17 +417,22 @@ export default function TeacherProfile(props) {
 
 
             <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                <Text style={styles.headingAboveCard}>Feedback ({feedBackArr.length})</Text>
-                <Pressable onPress={() => setResponseModal(true)}>
-                    <Text style={[styles.viewAllText, { color: colorObj.primarColor, textDecorationLine: 'underline' }]}>Add Feedback</Text>
-                </Pressable>
+                <Text style={styles.headingAboveCard}>{feedBackArr.length > 1 ? "Feedbacks" : "Feedback"} ({feedBackArr.length})</Text>
+                {
+                    ( teacherObj?._id != decodedObj?.userId) &&
+                    <Pressable onPress={() => setResponseModal(true)}>
+                        <Text style={[styles.viewAllText, { color: colorObj.primarColor, textDecorationLine: 'underline' }]}>Add Feedback</Text>
+                    </Pressable>
+                }
             </View>
 
             <FlatList
                 horizontal
                 data={feedBackArr}
                 ListEmptyComponent={
-                    <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>No FeedBacks found</Text>
+                    <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>
+                        {feedBackArr.length > 1 ? "No FeedBacks found" : "No FeedBack found"}
+                    </Text>
                 }
                 showsHorizontalScrollIndicator={false}
                 keyExtractor={(item, index) => `${index}`}
@@ -754,10 +760,9 @@ const styles = StyleSheet.create({
             width: 0,
             height: 1,
         },
-        height: hp(25),
+        // height: hp(25),
         shadowOpacity: 0.20,
         shadowRadius: 1.41,
-
         elevation: 2,
         borderRadius: 14,
         marginHorizontal: 10,
