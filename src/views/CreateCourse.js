@@ -53,7 +53,6 @@ export default function CreateCourse(props) {
 
     const handleSubmit = async () => {
         setLoading(true)
-        alert("WORKINg")
         try {
 
             let classesFilteredArr = classesArr.filter(el => el.checked == true).map(el => {
@@ -340,9 +339,9 @@ export default function CreateCourse(props) {
                             </View>
                         </RadioButton.Group>
 
-                        <Pressable style={styles.btnContainer} onPress={() => { alert("asdsda");handleSubmit()}}>
+                        <Pressable style={styles.btnContainer} onPress={() => {handleSubmit()}}>
                             <Text style={styles.termsText}></Text>
-                            <Pressable style={styles.btn} onPress={() => { alert("asdsda");handleSubmit()}}>
+                            <Pressable style={styles.btn} onPress={() => {handleSubmit()}}>
                                 <Text style={styles.btnText}>Create</Text>
                             </Pressable>
                         </Pressable>
