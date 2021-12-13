@@ -339,12 +339,12 @@ export default function CreateCourse(props) {
                             </View>
                         </RadioButton.Group>
 
-                        <View style={styles.btnContainer}>
+                        <Pressable style={styles.btnContainer} onPress={() => {handleSubmit()}}>
                             <Text style={styles.termsText}></Text>
-                            <Pressable style={styles.btn} onPress={() => handleSubmit()}>
+                            <Pressable style={styles.btn} onPress={() => {handleSubmit()}}>
                                 <Text style={styles.btnText}>Create</Text>
                             </Pressable>
-                        </View>
+                        </Pressable>
 
                     </>
 

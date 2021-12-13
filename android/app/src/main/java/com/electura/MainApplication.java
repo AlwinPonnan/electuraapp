@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.react.ReactInstanceManager;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage; 
 import com.airbnb.android.react.lottie.LottiePackage;
+import androidx.annotation.Nullable;
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost =
@@ -37,6 +39,11 @@ public class MainApplication extends Application implements ReactApplication {
         protected String getJSMainModuleName() {
           return "index";
         }
+        @Override
+        protected @Nullable String getBundleAssetName() {
+          return "app.bundle";
+        }
+    
       };
 
   @Override

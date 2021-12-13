@@ -194,7 +194,7 @@ export default function Courses(props) {
 
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                             <Text style={styles.headingAboveCard}>Recommended Courses</Text>
-                            <Pressable onPress={()=>props.navigation.navigate("AllCourses")}>
+                            <Pressable onPress={() => props.navigation.navigate("AllCourses")}>
                                 <Text style={styles.viewAllText}>View All</Text>
                             </Pressable>
                         </View>

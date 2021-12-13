@@ -28,7 +28,7 @@ export default function Profile(props) {
 
 
 
-    const handleToggle =async () => {
+    const handleToggle = async () => {
         try {
             let { data: res } = await toggleOnline();
             if (res.success) {
@@ -41,9 +41,9 @@ export default function Profile(props) {
             console.error(error)
         }
     }
-    
-    
-    
+
+
+
     const userGet = async () => {
         try {
             const { data: res } = await getUser();
@@ -51,7 +51,7 @@ export default function Profile(props) {
                 console.log(res.data.onlineToggle)
                 setIsSwitchOn(res.data.onlineToggle)
                 // if (res.data.onlineToggle) {
-                    // }
+                // }
                 // userGet()
             }
         } catch (error) {
@@ -75,11 +75,14 @@ export default function Profile(props) {
 
                         <View style={styles.flexRow}>
                             <Text style={styles.onlineText}>Online</Text>
-                            <Switch color={colorObj.primarColor} value={isSwitchOn} onValueChange={()=>handleToggle()} />
+                            <Switch color={colorObj.primarColor} value={isSwitchOn} onValueChange={() => handleToggle()} />
                         </View>
                     }
                 </View>
-                <Text style={styles.subHeading}>My Courses</Text>
+                <Pressable onPress={() => props.navigation.navigate('Learnings')}>
+
+                    <Text style={styles.subHeading}>My Courses</Text>
+                </Pressable>
 
                 <Pressable onPress={() => props.navigation.navigate('ShoppingCart')}>
 
@@ -102,16 +105,22 @@ export default function Profile(props) {
                         </Pressable>
                     </>
                 }
-                <Text style={styles.subHeading}>My Enquires</Text>
+                <Pressable onPress={() => props.navigation.navigate('Enquiry')}>
 
-                <Text style={styles.subHeading}>My Teachers</Text>
+                    <Text style={styles.subHeading}>My Enquires</Text>
+                </Pressable>
+
+                {/* <Text style={styles.subHeading}>My Teachers</Text> */}
                 <Text style={styles.subHeading}>Feedbacks</Text>
                 {
                     roleName == "USER" &&
                     <>
-                        <Text style={[styles.subHeading, { fontFamily: 'RedHatText-SemiBold', color: "#085A4E" }]}>Become a Teacher</Text>
+                        <Pressable onPress={()=>props.navigation.navigate('RegisterTeacher')}>
 
-                        <Text style={[styles.subHeading, { fontFamily: 'RedHatText-SemiBold', color: "#085A4E" }]}>Create Your Course</Text>
+                            <Text style={[styles.subHeading, { fontFamily: 'RedHatText-SemiBold', color: "#085A4E" }]}>Become a Teacher</Text>
+                        </Pressable>
+                        
+                        {/* <Text style={[styles.subHeading, { fontFamily: 'RedHatText-SemiBold', color: "#085A4E" }]}>Create Your Course</Text> */}
                     </>
                 }
                 <View style={styles.flexRow}>

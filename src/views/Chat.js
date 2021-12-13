@@ -5,7 +5,7 @@ import { Searchbar } from 'react-native-paper';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { getAllChats } from '../Services/Chat';
-import {generateImageUrl} from '../globals/utils'
+import { generateImageUrl } from '../globals/utils'
 export default function Chat(props) {
 
     const [searchQuery, setSearchQuery] = React.useState('');
@@ -20,7 +20,7 @@ export default function Chat(props) {
         try {
             const { data: res } = await getAllChats();
             if (res.success) {
-                console.log(JSON.stringify(res.data,null,2))
+                console.log(JSON.stringify(res.data, null, 2))
                 setChatArr(res.data)
             }
         } catch (error) {
@@ -53,15 +53,17 @@ export default function Chat(props) {
 
                 <FlatList
                     data={chatArr}
-                    keyExtractor={(item, index) => `${item._id}`}
+                    keyExtractor={(item, index) => `${index}`}
                     renderItem={({ item, index }) => {
                         return (
-                            <Pressable onPress={()=>props.navigation.navigate('SpecificChat',{chatRoomId:item.chatRoomId})} style={styles.card}>
+                            <Pressable onPress={() => props.navigation.navigate('SpecificChat', { chatRoomId: item.chatRoomId })} style={styles.card}>
                                 <View style={styles.flexRow}>
-                                    <Image source={{uri:generateImageUrl(item?.userObj?.profileImage)}} style={styles.cardImage} />
+                                    <Image source={{ uri: generateImageUrl(item?.userObj?.profileImage) }} style={styles.cardImage} />
                                     <View style={[styles.flexColumn, { justifyContent: "center" }]}>
                                         <Text style={styles.cardHeading}>{item?.userObj?.name}</Text>
-                                        <Text style={styles.cardSmallData}>Last Message At. 52m ago</Text>
+                                        
+                                            <Text style={styles.cardSmallData}>{item?.lastMessage ?item?.lastMessage : ""}</Text>
+                                        
                                     </View>
                                 </View>
                             </Pressable>

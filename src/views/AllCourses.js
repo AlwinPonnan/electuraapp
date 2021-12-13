@@ -22,14 +22,18 @@ import MultiSlider from '@ptomasroos/react-native-multi-slider'
 
 import { Checkbox } from 'react-native-paper';
 
-
 export default function AllCourses() {
-
+    
     const [loading, setLoading] = useContext(loadingContext);
-
+    
     const [courseArr, setCourseArr] = useState([]);
     const [mainCourseArr, setMainCourseArr] = useState([]);
-
+    
+    const [activeFilterContainer, setActiveFilterContainer] = useState('subject');      ///subject,class,topic,price ,sortby
+    ////price range picker
+    
+    const [maxFees, setMaxFees] = useState(0);
+    const [minFees, setMinFees] = useState(0);
 
     const focused = useIsFocused()
     const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
@@ -41,7 +45,7 @@ export default function AllCourses() {
     const [topicArr, setTopicArr] = useState([]);
     const [mainTopicArr, setMainTopicArr] = useState([]);
 
-    const [multiSliderValue, setMultiSliderValue] = useState([10, 250]);
+    const [multiSliderValue, setMultiSliderValue] = useState([10, 550]);
 
     const [sortBy, setSortBy] = useState(sortByText.popularity);
 
@@ -69,6 +73,19 @@ export default function AllCourses() {
                     }
                     return obj
                 })
+                let maxCount = 0;
+                let minCount = res?.data[0]?.price ? res?.data[0]?.price : 0;
+                let tempCourseArr = [...res.data.map(el => {
+
+                    if (el?.price > maxCount) {
+                        maxCount = el?.price
+                    }
+                    if (el?.price < minCount)
+                        minCount = el?.price
+                    return el
+                })]
+                setMaxFees(maxCount)
+                setMinFees(minCount)
                 console.log(JSON.stringify (temp,null,2))
                 setCourseArr(temp)
                 setMainCourseArr(temp)
@@ -189,8 +206,34 @@ export default function AllCourses() {
 
         let filteredClassesArr = [...classesArr.filter(el => el.checked)]
         let filteredSubjectArr = [...subjectArr.filter(el => el.checked)]
+        
+        
         let tempArr = [...mainCourseArr];
-        tempArr = tempArr.filter(el => el?.classesArr?.some(elx => filteredClassesArr.some(ely => ely._id == elx.classId) || elx.subjectArr.some(elz => filteredSubjectArr.some(elm => elm._id == elz.subjectId))) || (el.price>=multiSliderValue[0] && el.price<=multiSliderValue[1] ) )
+        
+        if (filteredClassesArr.length > 0) {
+            console.log("class filter")
+
+            tempArr = tempArr.filter(el => el?.classesArr?.some(elx => filteredClassesArr.some(ely => ely._id == elx.classId)))
+
+        }
+        if (filteredSubjectArr.length > 0) {
+            console.log("subject filter")
+            tempArr = tempArr.filter(el => el?.classesArr?.some(elx => elx.subjectArr.some(elz => filteredSubjectArr.some(elm => elm._id == elz.subjectId))))
+        }
+
+        tempArr = tempArr.filter(el => el.price >= parseInt(multiSliderValue[0]) || el.price <= parseInt(multiSliderValue[1]))
+
+        if (sortBy == sortByText.priceLowToHigh) {
+            tempArr = tempArr.sort((a, b) => a.price - b.price)
+        }
+        else if (sortBy == sortByText.priceHighToLow) {
+            tempArr = tempArr.sort((a, b) => b.price - a.price)
+        }
+        else if(sortBy==sortByText.customerRating){
+            tempArr = tempArr.sort((a, b) => b.rating - a.rating)
+        }
+        
+        // tempArr = tempArr.filter(el => el?.classesArr?.some(elx => filteredClassesArr.some(ely => ely._id == elx.classId) || elx.subjectArr.some(elz => filteredSubjectArr.some(elm => elm._id == elz.subjectId))) || (el.price>=multiSliderValue[0] && el.price<=multiSliderValue[1] ) )
 
         setCourseArr([...tempArr])
         filterBottomSheetRef.current.close()
@@ -357,171 +400,199 @@ export default function AllCourses() {
                         backgroundColor: "rgba(0,0,0,0.5)",
                     },
                     container: {
-                        height: hp(80)
+                        height: hp(100)
                     },
                     draggableIcon: {
-                        backgroundColor: "#000"
+                        backgroundColor: "#fff"
                     }
                 }}
             >
                 <>
-                    <FlatList scrollEnabled={isScrollEnabled} data={[]} renderItem={() => null}
-                        ListHeaderComponent={
 
-                            <View style={styles.bottomSheetInnerContainer}>
 
-                                <Text style={[styles.filterSubHeading, { textAlign: 'center' }]}>Filter</Text>
+                    <View style={styles.bottomSheetInnerContainer}>
+                        <View style={[styles.flexRowAlignCenter, { justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: colorObj.greyColor, paddingBottom: 10 }]}>
+                            <Text style={[styles.filterSubHeading, { paddingHorizontal: 10 }]}>Filter</Text>
+                            <Text style={[styles.filterSubHeading, { color: colorObj.primarColor, fontSize: 14, paddingHorizontal: 10 }]}>Clear All</Text>
+                        </View>
+                        <View style={[styles.flexRowAlignCenter]}>
 
-                                <Text style={[styles.bottomSheetHeading, { fontSize: 14 }]}>Subjects</Text>
-                                <FlatList
-                                    data={subjectArr}
-                                    keyExtractor={(item, index) => `${item._id}`}
-                                    scrollEnabled={false}
+                            <View style={[styles.flexColumn, { height: hp(90), width: wp(30), backgroundColor: '#fafafa' }]}>
+                                <Pressable onPress={() => setActiveFilterContainer('subject')} style={[styles.customFilterHeadingBox, activeFilterContainer == "subject" && { backgroundColor: 'white' }]}>
 
-                                    renderItem={({ item, index }) => {
-                                        return (
-                                            <View>
-                                                <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 10, justifyContent: 'space-between', width: wp(90) }]}>
-                                                    <Pressable onPress={() => handleSubjectSelection(item._id)} style={{ paddingVertical: 5, }} >
-                                                        <Text style={styles.checkBoxText}>{index + 1}. {item.name}</Text>
-                                                    </Pressable>
-                                                    <Checkbox
-                                                        color={colorObj.primarColor}
-                                                        status={item.checked ? "checked" : "unchecked"}
-                                                        onPress={() => handleSubjectSelection(item._id)}
-                                                    />
+                                    <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Subject</Text>
+                                </Pressable>
+                                <Pressable onPress={() => setActiveFilterContainer('class')} style={[styles.customFilterHeadingBox, activeFilterContainer == "class" && { backgroundColor: 'white' }]}>
 
-                                                </View>
+                                    <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Class</Text>
+                                </Pressable>
+                                <Pressable onPress={() => setActiveFilterContainer('topic')} style={[styles.customFilterHeadingBox, activeFilterContainer == "topic" && { backgroundColor: 'white' }]}>
 
-                                            </View>
-                                        )
-                                    }}
-                                    ListFooterComponent={
-                                        <FlatList
-                                            data={classesArr}
-                                            keyExtractor={(item, index) => `${item._id}`}
-                                            scrollEnabled={false}
-                                            ListHeaderComponent={
-                                                <Text style={[styles.bottomSheetHeading, { fontSize: 14 }]}>Classes</Text>
+                                    <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Topic</Text>
+                                </Pressable>
+                                <Pressable onPress={() => setActiveFilterContainer('price')} style={[styles.customFilterHeadingBox, activeFilterContainer == "price" && { backgroundColor: 'white' }]}>
 
-                                            }
-                                            renderItem={({ item, index }) => {
-                                                return (
-                                                    <View>
-                                                        <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 10, justifyContent: 'space-between', width: wp(90) }]}>
-                                                            <Pressable onPress={() => handleClassSelection(item._id)} style={{ paddingVertical: 5, }} >
-                                                                <Text style={styles.checkBoxText}>{index + 1}. {item.name}</Text>
-                                                            </Pressable>
-                                                            <Checkbox
-                                                                color={colorObj.primarColor}
-                                                                status={item.checked ? "checked" : "unchecked"}
-                                                                onPress={() => handleClassSelection(item._id)}
-                                                            />
+                                    <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Price Range</Text>
+                                </Pressable>
+                                <Pressable onPress={() => setActiveFilterContainer('sortBy')} style={[styles.customFilterHeadingBox, activeFilterContainer == "sortBy" && { backgroundColor: 'white' }]}>
 
-                                                        </View>
+                                    <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Sort By</Text>
+                                </Pressable>
+                            </View>
+                            <View style={[styles.flexColumn, { height: hp(90) }]}>
+                                {activeFilterContainer == "subject" &&
+
+                                    <FlatList
+                                        data={subjectArr}
+                                        keyExtractor={(item, index) => `${index}`}
+                                        scrollEnabled={true}
+                                        contentContainerStyle={{ paddingBottom: 100, marginTop: 20 }}
+                                        ListEmptyComponent={
+                                            <Text>No data found</Text>
+                                        }
+                                        renderItem={({ item, index }) => {
+                                            return (
+                                                <View>
+                                                    <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 10, justifyContent: 'space-between', }]}>
+                                                        <Checkbox
+                                                            color={colorObj.primarColor}
+                                                            status={item.checked ? "checked" : "unchecked"}
+                                                            onPress={() => handleSubjectSelection(item._id)}
+                                                        />
+                                                        <Pressable onPress={() => handleSubjectSelection(item._id)} style={{ paddingVertical: 5, width: '100%' }} >
+                                                            <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>{item.name}</Text>
+                                                        </Pressable>
 
                                                     </View>
-                                                )
-                                            }}
-                                            ListFooterComponent={
-                                                <>
-                                                    {(classesArr.some(el => el.checked) || subjectArr.some(el => el.checked)) &&
 
+                                                </View>
+                                            )
+                                        }}
 
-                                                        <FlatList
-                                                            data={topicArr}
-                                                            keyExtractor={(item, index) => `${item._id}`}
-                                                            scrollEnabled={false}
-                                                            ListHeaderComponent={
-                                                                <Text style={[styles.bottomSheetHeading, { fontSize: 14 }]}>Topics</Text>
+                                    />
+                                }
+                                {activeFilterContainer == "class" &&
 
-                                                            }
-                                                            renderItem={({ item, index }) => {
-                                                                return (
-                                                                    <View>
-                                                                        <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 10, justifyContent: 'space-between', width: wp(90) }]}>
-                                                                            <Pressable onPress={() => handleTopicSelection(item._id)} style={{ paddingVertical: 5, }} >
-                                                                                <Text style={styles.checkBoxText}>{index + 1}. {item.name}</Text>
-                                                                            </Pressable>
-                                                                            <Checkbox
-                                                                                color={colorObj.primarColor}
-                                                                                status={item.checked ? "checked" : "unchecked"}
-                                                                                onPress={() => handleTopicSelection(item._id)}
-                                                                            />
+                                    <FlatList
+                                        data={classesArr}
+                                        keyExtractor={(item, index) => `${item._id}`}
+                                        scrollEnabled={true}
+                                        contentContainerStyle={{ paddingBottom: 100, marginTop: 20 }}
 
-                                                                        </View>
-
-                                                                    </View>
-                                                                )
-                                                            }}
-
-
+                                        renderItem={({ item, index }) => {
+                                            return (
+                                                <View>
+                                                    <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 10, justifyContent: 'space-between', }]}>
+                                                        <Checkbox
+                                                            color={colorObj.primarColor}
+                                                            status={item.checked ? "checked" : "unchecked"}
+                                                            onPress={() => handleClassSelection(item._id)}
                                                         />
-                                                    }
-                                                </>
-                                            }
-                                        />
-                                    }
-                                />
+                                                        <Pressable onPress={() => handleClassSelection(item._id)} style={{ paddingVertical: 5, width: '100%' }} >
+                                                            <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>{item.name}</Text>
+
+                                                        </Pressable>
+
+                                                    </View>
+
+                                                </View>
+                                            )
+                                        }}
+
+                                    />
+                                }
+                                {activeFilterContainer == "topic" &&
+
+                                    <FlatList
+                                        data={topicArr}
+                                        keyExtractor={(item, index) => `${item._id}`}
+                                        scrollEnabled={true}
+                                        contentContainerStyle={{ paddingBottom: 100, marginTop: 20 }}
+
+                                        renderItem={({ item, index }) => {
+                                            return (
+                                                <View>
+                                                    <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 10, justifyContent: 'space-between', }]}>
+                                                        <Checkbox
+                                                            color={colorObj.primarColor}
+                                                            status={item.checked ? "checked" : "unchecked"}
+                                                            onPress={() => handleTopicSelection(item._id)}
+                                                        />
+                                                        <Pressable onPress={() => handleTopicSelection(item._id)} style={{ paddingVertical: 5, width: '100%' }} >
+                                                            <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>{item.name}</Text>
+
+                                                        </Pressable>
+
+                                                    </View>
+
+                                                </View>
+                                            )
+                                        }}
 
 
-
-                                <View >
-
-                                    <Text style={[styles.bottomSheetHeading, { fontSize: 14, marginVertical: 10, marginBottom: 50 }]}>Price Range</Text>
-                                    <View style={{ paddingHorizontal: 20 }}>
+                                    />
+                                }
+                                {activeFilterContainer == "price" &&
+                                    <View style={{ paddingHorizontal: 20, marginTop: 50 }}>
+                                        <Text style={[styles.bottomSheetHeading, { fontSize: 16 }]}>Selected Price Range</Text>
+                                        <Text style={[styles.bottomSheetHeading, { fontSize: 14 }]}>₹ {multiSliderValue[0]} - ₹ {multiSliderValue[1]} </Text>
                                         <MultiSlider
                                             values={[multiSliderValue[0], multiSliderValue[1]]}
-                                            sliderLength={330}
+                                            sliderLength={250}
                                             onValuesChange={multiSliderValuesChange}
-                                            min={0}
-                                            max={10000}
+                                            min={minFees}
+                                            max={maxFees}
                                             step={50}
                                             // allowOverlap
                                             // snapped
-                                            enableLabel
+                                            // enableLabel
                                             //  customLabel={CustomLabel}
                                             onValuesChangeStart={() => setIsScrollEnabled(false)}
                                             onValuesChangeFinish={() => setIsScrollEnabled(true)}
                                         />
                                     </View>
+                                }
+                                {activeFilterContainer == "sortBy" &&
+                                    <View style={{ paddingHorizontal: 20, marginTop: 50, width: wp(50) }}>
 
+                                        <RadioButton.Group onValueChange={newValue => setSortBy(newValue)} value={sortBy}>
+                                            <View style={[{ marginVertical: 10 }, styles.flexColumn, { justifyContent: 'space-between' }]}>
 
-                                </View>
+                                                <Pressable onPress={() => setSortBy(sortByText.popularity)} style={[styles.flexRow, { alignItems: 'center' }]}>
+                                                    <RadioButton color={colorObj.primarColor} value={sortByText.popularity} />
+                                                    <Text style={styles.radioText}>Popularity</Text>
+                                                </Pressable>
+                                                <Pressable onPress={() => setSortBy(sortByText.priceLowToHigh)} style={[styles.flexRow, { alignItems: 'center' }]}>
 
-                                <Text style={[styles.filterSubHeading, { textAlign: 'center' }]}>Sort By</Text>
-
-
-                                <RadioButton.Group onValueChange={newValue => setSortBy(newValue)} value={sortBy}>
-                                    <View style={[{ marginVertical: 10 }, styles.flexColumn, { justifyContent: 'space-between' }]}>
-
-                                        <Pressable onPress={() => setSortBy(sortByText.popularity)} style={[styles.flexRow, { justifyContent: 'space-between', alignItems: 'center' }]}>
-                                            <Text style={styles.radioText}>Popularity</Text>
-                                            <RadioButton color={colorObj.primarColor} value={sortByText.popularity} />
-                                        </Pressable>
-                                        <Pressable onPress={() => setSortBy(sortByText.priceLowToHigh)} style={[styles.flexRow, { justifyContent: 'space-between', alignItems: 'center' }]}>
-
-                                            <Text style={styles.radioText}>Price low to high</Text>
-                                            <RadioButton color={colorObj.primarColor} value={sortByText.priceLowToHigh} />
-                                        </Pressable>
-                                        <Pressable onPress={() => setSortBy(sortByText.priceHighToLow)} style={[styles.flexRow, { justifyContent: 'space-between', alignItems: 'center' }]}>
-                                            <Text style={styles.radioText}>Price High to low</Text>
-                                            <RadioButton color={colorObj.primarColor} value={sortByText.priceHighToLow} />
-                                        </Pressable>
-                                        <Pressable onPress={() => setSortBy(sortByText.customerRating)} style={[styles.flexRow, { justifyContent: 'space-between', alignItems: 'center' }]}>
-                                            <Text style={styles.radioText}>Customer Rating</Text>
-                                            <RadioButton color={colorObj.primarColor} value={sortByText.customerRating} />
-                                        </Pressable>
+                                                    <RadioButton color={colorObj.primarColor} value={sortByText.priceLowToHigh} />
+                                                    <Text style={styles.radioText}>Price low to high</Text>
+                                                </Pressable>
+                                                <Pressable onPress={() => setSortBy(sortByText.priceHighToLow)} style={[styles.flexRow, { alignItems: 'center' }]}>
+                                                    <RadioButton color={colorObj.primarColor} value={sortByText.priceHighToLow} />
+                                                    <Text style={styles.radioText}>Price High to low</Text>
+                                                </Pressable>
+                                                <Pressable onPress={() => setSortBy(sortByText.customerRating)} style={[styles.flexRow, { alignItems: 'center' }]}>
+                                                    <RadioButton color={colorObj.primarColor} value={sortByText.customerRating} />
+                                                    <Text style={styles.radioText}>Customer Rating</Text>
+                                                </Pressable>
+                                            </View>
+                                        </RadioButton.Group>
                                     </View>
-                                </RadioButton.Group>
+                                }
 
-
-                                <Pressable style={styles.btn} onPress={() => handleShowFilterResults()} >
-                                    <Text style={styles.btnTxt}>Show Results</Text>
-                                </Pressable>
                             </View>
-                        }
-                    />
+                        </View>
+
+                    </View>
+
+                    <View style={[styles.flexRowAlignCenter, { justifyContent: 'space-evenly', width: wp(100), position: 'absolute', bottom: 0, backgroundColor: 'white' }]}>
+                        <Pressable style={styles.btn} onPress={() => filterBottomSheetRef.current.close()} >
+                            <Text style={styles.btnTxt}>Close</Text>
+                        </Pressable>
+                        <Pressable style={styles.btn} onPress={() => handleShowFilterResults()} >
+                            <Text style={styles.btnTxt}>Apply</Text>
+                        </Pressable>
+                    </View>
                 </>
 
             </RBSheet>
@@ -705,7 +776,7 @@ const styles = StyleSheet.create({
     },
     bottomSheetInnerContainer: {
         width: wp(100),
-        paddingHorizontal: 20
+        // paddingHorizontal: 20
     },
     bottomSheetOptionText: {
         color: '#333333',
@@ -726,41 +797,43 @@ const styles = StyleSheet.create({
         flexDirection: "column",
     },
     btn: {
-        backgroundColor: colorObj.primarColor,
-        borderRadius: 50,
+        // backgroundColor: colorObj.primarColor,
+        borderRadius: 5,
         // paddingHorizontal: 25,
         height: 40,
+        borderColor: colorObj.primarColor,
+        borderWidth: 1,
         marginVertical: 10,
         // marginLeft: 40,
-        width: wp(80),
+        width: wp(40),
         alignSelf: 'center',
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.18,
-        shadowRadius: 1.00,
+        // shadowColor: "#000",
+        // shadowOffset: {
+        //     width: 0,
+        //     height: 1,
+        // },
+        // shadowOpacity: 0.18,
+        // shadowRadius: 1.00,
 
-        elevation: 1,
+        // elevation: 1,
     },
 
     btnTxt: {
         fontFamily: 'Montserrat-SemiBold',
         fontSize: 13,
-        color: "white",
+        color: colorObj.primarColor,
         // marginTop: 15
     },
 
 
 
 
-    ///filter
 
+    ///filter
     filterSubHeading: {
         fontFamily: 'Montserrat-SemiBold',
         fontSize: 20,
@@ -805,6 +878,11 @@ const styles = StyleSheet.create({
         fontFamily: 'Montserrat-Regular',
         fontSize: 14,
         color: '#000'
+    },
+
+
+    customFilterHeadingBox: {
+        paddingVertical: 10
     }
 
 })

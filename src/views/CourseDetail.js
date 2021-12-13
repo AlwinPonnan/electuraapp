@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef, useCallback } from 'react'
-import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView, Linking, Button, ImageBackground, Modal, TextInput } from 'react-native'
+import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView, Linking, Button, ImageBackground, Modal, TextInput, Platform } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj, light_colors } from '../globals/colors';
 import NavBar from '../components/Navbar';
@@ -12,11 +12,9 @@ import { successAlertContext } from '../../App';
 import { loadingContext } from '../navigators/stacks/RootStack';
 import { generateImageUrl } from '../globals/utils';
 import { createSingleOrder, paymentCallBack } from '../Services/Order';
-
+import { WebView } from 'react-native-webview';
 import RazorpayCheckout from 'react-native-razorpay';
 
-
-import YoutubePlayer from "react-native-youtube-iframe";
 
 import Icon from 'react-native-vector-icons/Ionicons'
 import { getCouponByCode } from '../Services/Coupons';
@@ -368,13 +366,13 @@ export default function CourseDetail(props) {
                     <View style={{ marginVertical: 10 }}>
                         <Text style={[styles.coursePrice, { marginVertical: 10 }]}>Preview Video</Text>
 
-                        <YoutubePlayer
-                            webViewProps={{ androidHardwareAccelerationDisabled: true }}
-                            height={250}
-                            play={playing}
-                            videoId={`${youtubeVideoId}`}
-                            onChangeState={onStateChange}
-                        />
+                        <View style={{ flex: 1 }}>
+                            <WebView
+                                style={{height:250,width:wp(100)}}
+                                source={{ uri: 'https://www.youtube.com/embed/' + youtubeVideoId }}
+                            />
+                        </View>
+
                     </View>
 
                     <Text style={styles.coursePrice}>

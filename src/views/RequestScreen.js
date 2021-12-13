@@ -6,6 +6,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import Icon from 'react-native-vector-icons/Ionicons';
 import { successAlertContext } from '../../App';
 import { colorObj } from '../globals/colors';
+import EnquiryTypes from '../globals/EnquiryTypes';
 import { generateImageUrl } from '../globals/utils';
 import { loadingContext } from '../navigators/stacks/RootStack';
 import { checkNcreateChatRoom, getAllEnquiryRequests } from '../Services/Enquiry';
@@ -47,10 +48,10 @@ export default function Requestscreen(props) {
         }
     }
 
-    const handleAccept = async (id) => {
+    const handleAccept = async (id, enquiryId) => {
         setLoading(true)
         try {
-            const { data: res } = await checkNcreateChatRoom(id);
+            const { data: res } = await checkNcreateChatRoom(id, enquiryId);
             if (res.success) {
                 setAlertText("Request Successfully Accepted")
                 setSuccessAlert(true)
@@ -74,20 +75,29 @@ export default function Requestscreen(props) {
 
     return (
         <View style={styles.container}>
-            <Searchbar
-                style={styles.searchBar}
-                placeholder="Search"
-                inputStyle={{ fontFamily: 'OpenSans-Regular', fontSize: 14 }}
-                onChangeText={onChangeSearch}
-                value={searchQuery}
-            />
+            {
+                requestArr.length > 0 &&
+                <Searchbar
+                    style={styles.searchBar}
+                    placeholder="Search"
+                    inputStyle={{ fontFamily: 'OpenSans-Regular', fontSize: 14 }}
+                    onChangeText={onChangeSearch}
+                    value={searchQuery}
+                />
+            }
 
             <FlatList
                 data={requestArr}
                 keyExtractor={(item, index) => `${item._id}`}
-                contentContainerStyle={{marginBottom:100, minHeight:hp(70)}}
+                contentContainerStyle={{ marginBottom: 100, minHeight: hp(70) }}
                 refreshing={isrefreshing}
-                onRefresh={()=> getRequests()}
+                onRefresh={() => getRequests()}
+                ListEmptyComponent={
+                    <View style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                        <Image source={require('../../assets/images/Icon.png')} resizeMode="center" />
+                        <Text style={{ fontFamily: 'Montserrat-SemiBold', fontSize: 20 }}>No Request found</Text>
+                    </View>
+                }
                 renderItem={({ item, index }) => {
                     return (
                         <View style={styles.card}>
@@ -95,13 +105,22 @@ export default function Requestscreen(props) {
                                 <Image source={{ uri: generateImageUrl(item?.userObj?.profileImage) }} style={styles.cardImage} />
                                 <View style={[styles.flexColumn, { justifyContent: "center" }]}>
                                     <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(70) }]}>
-
                                         <Text style={styles.cardHeading}>{item?.userObj?.name}</Text>
-                                        <Pressable onPress={() => handleAccept(item?.userObj?._id)}>
+                                        <Pressable onPress={() => handleAccept(item?.userObj?._id, item?._id)}>
                                             <Text style={styles.acceptStyles}>Accept</Text>
                                         </Pressable>
                                     </View>
-                                    <Text style={{color:'black'}}>{item?.additionalMessage}</Text>
+                                    <Text style={{ color: 'black', fontFamily: 'Montserrat-Regular', fontSize: 12 }}>{item?.additionalMessage}</Text>
+                                    {
+                                        item?.enquiryType == EnquiryTypes.SLOT ?
+
+                                        <Text style={{ color: 'black', fontFamily: 'Montserrat-Regular', fontSize: 12 }}>{item?.slotObj?.day} {item?.slotObj?.timeSlotObj?.time}</Text>
+                                        :
+                                        <Text style={{ color: 'black', fontFamily: 'Montserrat-Regular', fontSize: 12 }}>{item?.enquiryType}</Text>
+
+                                    }
+
+
                                     <Text style={styles.cardSmallData}>{new Date(item?.createdAt).toDateString()}</Text>
                                 </View>
 
@@ -120,7 +139,7 @@ export default function Requestscreen(props) {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: "white",
-        paddingHorizontal:hp(2)
+        paddingHorizontal: hp(2)
     },
     searchBar: {
         width: '100%',
@@ -154,7 +173,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         alignSelf: "center",
-        marginVertical:10,
+        marginVertical: 10,
     },
     cardImage: {
         height: 50,

@@ -34,7 +34,7 @@ export default function CreateEnquiry(props) {
     const [topicArr, setTopicArr] = useState([]);
     const [selectedTopicId, setSelectedTopicId] = useState('');
 
-
+    const [subjectStepper, setSubjectStepper] = useState(0);
 
     const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
 
@@ -66,6 +66,7 @@ export default function CreateEnquiry(props) {
         setSelectedSubjectId(item._id)
         getClassBySubjectId(item._id)
         setSubject(item.name)
+        setSubjectStepper(1)
 
     }
 
@@ -78,9 +79,15 @@ export default function CreateEnquiry(props) {
     }
 
     const handleClassSelection = async (id) => {
-        setSelectedClassId(id)
-        console.log("Adsad")
-        getTopics(id, selectedSubjectId)
+        if (id != "") {
+
+            setSelectedClassId(id)
+            console.log("Adsad")
+            getTopics(id, selectedSubjectId)
+        }
+        else {
+            setSelectedClassId('')
+        }
     }
 
     const getTopics = async (classId, subjectId) => {
@@ -97,6 +104,7 @@ export default function CreateEnquiry(props) {
         tempArr = tempArr.filter(el => el.name.toLowerCase().includes(e.toLowerCase()))
         setSubjectArr([...tempArr])
         setSubject(e)
+        setSubjectStepper(0)
     }
 
     const handleOnint = () => {
@@ -108,7 +116,7 @@ export default function CreateEnquiry(props) {
     const handleEnquirySubmit = async () => {
         setIsLoading(true)
         try {
-            if (selectedClassId != "" && selectedSubjectId != "" && ClassType != "" && price != "" && gender != "" && selectedTopicId !="") {
+            if (selectedClassId != "" && selectedSubjectId != "" && ClassType != "" && price != "" && gender != "" && selectedTopicId != "") {
 
                 let obj = {
                     classId: selectedClassId,
@@ -154,7 +162,7 @@ export default function CreateEnquiry(props) {
 
                 <Text style={styles.textInputLabel}>What do you want to study</Text>
                 <TextInput style={styles.textInput} value={subject} onChangeText={(e) => handleSubjectFilter(e)} />
-                {subject != "" &&
+                {(subject != "" && subjectStepper==0) &&
                     <View style={styles.ListBackground}>
                         <FlatList
                             data={subjectArr}
@@ -162,7 +170,7 @@ export default function CreateEnquiry(props) {
                                 return (
                                     <Pressable onPress={() => { handleSubjectSelection(item) }}>
 
-                                        <Text style={[styles.radioText, { paddingHorizontal: 10, paddingVertical: 4 }]}>{index + 1}. {item.name}</Text>
+                                        <Text style={[styles.radioText, { paddingHorizontal: 10, paddingVertical: 4 }]}>{item.name}</Text>
                                     </Pressable>
                                 )
                             }}
@@ -173,43 +181,65 @@ export default function CreateEnquiry(props) {
                         />
                     </View>
                 }
-                <Text style={styles.textInputLabel}>Class</Text>
-                <Picker
-                    style={styles.textInput}
-                    selectedValue={selectedClassId}
-                    onValueChange={(itemValue, itemIndex) =>
-                        handleClassSelection(itemValue)
-                    }>
-                    {
+                {
+                    classArr.length > 0 &&
+                    <>
 
-                        classArr.map(el => {
-                            return (
+                        <Text style={styles.textInputLabel}>Class</Text>
+                        <Picker
+                            style={styles.textInput}
+                            selectedValue={selectedClassId}
+                            onValueChange={(itemValue, itemIndex) =>
+                                handleClassSelection(itemValue)
+                            }>
+                            <Picker label="Please Select Class" value="" />
+                            {
 
-                                <Picker.Item key={el._id} label={el.name} value={el._id} />
-                            )
+                                classArr.map(el => {
+                                    return (
 
-                        })
-                    }
-                </Picker>
+                                        <Picker.Item key={el._id} label={el.name} value={el._id} />
+                                    )
 
-                <Text style={styles.textInputLabel}>Topic</Text>
-                <Picker
-                    style={styles.textInput}
-                    selectedValue={selectedTopicId}
-                    onValueChange={(itemValue, itemIndex) =>
-                        setSelectedTopicId(itemValue)
-                    }>
-                    {
+                                })
+                            }
+                        </Picker>
+                    </>
+                }
 
-                        topicArr.map(el => {
-                            return (
+                {
+                    topicArr.length > 0 &&
+                    <>
 
-                                <Picker.Item key={el._id} label={el.name} value={el._id} />
-                            )
 
-                        })
-                    }
-                </Picker>
+                        <Text style={styles.textInputLabel}>Topic</Text>
+                        <Picker
+                            style={styles.textInput}
+                            selectedValue={selectedTopicId}
+                            onValueChange={(itemValue, itemIndex) => {
+
+                                if (itemValue != "") {
+                                    setSelectedTopicId(itemValue)
+                                }
+                                else {
+                                    setSelectedTopicId('')
+                                }
+                            }
+                            }>
+                            <Picker value="" label="Please Select Topic" />
+                            {
+
+                                topicArr.map(el => {
+                                    return (
+
+                                        <Picker.Item key={el._id} label={el.name} value={el._id} />
+                                    )
+
+                                })
+                            }
+                        </Picker>
+                    </>
+                }
 
                 <Text style={styles.textInputLabel}>Any Specific Requirment (optional)</Text>
                 <TextInput style={styles.textInput} value={specificRequirement} onChangeText={(e) => setSpecificRequirement(e)} />

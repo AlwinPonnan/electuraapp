@@ -72,6 +72,7 @@ export const updateProfile = async (obj) => {
     }
 }
 
+
 export const updateBackgroundProfile = async (obj) => {
     let token = await getDecodedToken()
     let res = axiosApiInstance.patch(`${url}/updateById/${token?.userId}`, obj)
@@ -113,6 +114,9 @@ export const CheckValidOtp = async (sessionId, otp) => {
     }
 }
 
+export const updateTeacherSlots=async(obj)=>{
+    return axiosApiInstance.patch(`${url}/updateTeacherSlots`,obj)
+}
 
 export const getAllTeachers = async () => {
     try {
@@ -173,6 +177,8 @@ export const getAllNotifications = async () => {
 
     return await axiosApiInstance.get(`${url}/getNotifications/${tokenD?.userId}`)
 }
+
+
 
 
 

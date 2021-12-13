@@ -45,6 +45,7 @@ export default function AccountEdit(props) {
 
     const focused = useIsFocused()
 
+    
     const [isLoading, setIsLoading] = useContext(loadingContext);
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener(
@@ -114,7 +115,7 @@ export default function AccountEdit(props) {
     }
 
 
- 
+
 
     const handleProfileUpdate = async () => {
         try {
@@ -233,6 +234,18 @@ export default function AccountEdit(props) {
                 return { ...prevState }
             })
         }
+        else if(field=="minFees"){
+            setProfileData(prevState => {
+                prevState.enquiryObj.feesObj.minFees = val;
+                return { ...prevState }
+            })
+        }
+        else if(field=="maxFees"){
+            setProfileData(prevState => {
+                prevState.enquiryObj.feesObj.maxFees = val;
+                return { ...prevState }
+            })
+        }
     }
 
 
@@ -328,6 +341,15 @@ export default function AccountEdit(props) {
                                 </View>
                             </View>
 
+                            <Text style={styles.label}>
+                                Fees Range (In Rupees)
+                            </Text>
+                            <View style={[styles.flexRow, { alignItems: 'center' }]}>
+                                <TextInput value={`${profileData?.enquiryObj?.feesObj?.minFees}`} keyboardType="numeric" onChangeText={(e) => handleProfileDataUpdate(e, "minFees")} style={[styles.txtInput,{width:wp(40)}]} placeholder="Min" />
+                                <Icon name="remove-outline" size={20} color="black"/>
+                                <TextInput value={`${profileData?.enquiryObj?.feesObj?.maxFees}`} keyboardType="numeric" onChangeText={(e) => handleProfileDataUpdate(e, "maxFees")} style={[styles.txtInput,{width:wp(40)}]} placeholder="Max" />
+
+                            </View>
                             <Text style={styles.label}>
                                 Teaching Experience
                             </Text>

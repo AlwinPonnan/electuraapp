@@ -186,7 +186,9 @@ export default function HomeScreen(props) {
     }
 
     useEffect(() => {
-        handleOnint()
+        if (isFocused) {
+            handleOnint()
+        }
     }, [isFocused])
 
 
@@ -203,7 +205,10 @@ export default function HomeScreen(props) {
 
     const renderItem = ({ item, index }) => {
         return (
-            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("TeacherProfile", { data: item._id })}>
+            <Pressable style={styles.cardContainer} onPress={() => {
+                props.navigation.navigate("TeacherProfile", { data: item._id })
+                setIsLoading(true)
+            }}>
 
                 <Image style={styles.teacherImg} source={{ uri: item?.profileImage ? generateImageUrl(item?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
                 <View style={styles.textCardContainer}>

@@ -35,6 +35,7 @@ import IncomingOrders from '../../views/IncomingOrders';
 import AddCoupons from '../../views/AddCoupons';
 import WishList from '../../views/WishList';
 import CourseDetail from '../../views/CourseDetail';
+import Testzoom from '../../views/Testzoom';
 const Stack = createNativeStackNavigator();
 
 export const AuthContext = createContext()
@@ -170,6 +171,7 @@ export default function RootStack() {
                                         <Stack.Screen name="AddCoupons" component={AddCoupons} options={{ headerShown: false }} />
                                         <Stack.Screen name="wishlist" component={WishList} options={{ headerShown: false }} />
                                         <Stack.Screen name="CourseDetail" component={CourseDetail} options={{ headerShown: false }} />
+                                        <Stack.Screen name="TestZoom" component={Testzoom} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} />
 
                                     </>
 
