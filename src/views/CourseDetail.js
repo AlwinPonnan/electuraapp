@@ -56,7 +56,8 @@ export default function CourseDetail(props) {
     const onStateChange = useCallback((state) => {
         if (state === "ended") {
             setPlaying(false);
-            Alert.alert("video has finished playing!");
+            setSuccessAlert(true)
+            setAlertText("video has finished playing!")
         }
     }, []);
 

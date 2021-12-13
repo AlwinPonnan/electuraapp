@@ -15,11 +15,22 @@ import { Button, Paragraph, Dialog, Portal, Provider } from 'react-native-paper'
 import { useIsFocused } from '@react-navigation/core';
 
 import { loadingContext } from '../navigators/stacks/RootStack';
+import { successAlertContext } from '../../App';
 export default function AccountEdit(props) {
     const [modalVisible, setModalVisible] = useState(false);
     const [profileData, setProfileData] = useContext(profileContext);
     const [roleName, setRoleName] = useContext(roleContext);
     const [weekScheduleIsVisible, setWeekScheduleIsVisible] = useState(false);
+    const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
+    
+    const [successAlert, setSuccessAlert] = successAlertArr
+    const [warningAlert, setWarningAlert] = warningAlertArr
+    const [errorAlert, setErrorAlert] = errorAlertArr
+
+
+    const [alertText, setAlertText] = alertTextArr
+
+
 
     const [QualificationArr, setQualificationArr] = useState([{ qualificationName: "" }]);
     const [name, setName] = useState("");
@@ -119,7 +130,9 @@ export default function AccountEdit(props) {
             if (statusCode == 200 || statusCode == 304) {
                 console.log(res.message)
                 getUserData()
-                alert(res.message)
+                setSuccessAlert(true)
+                setAlertText(`${res.message}`)
+                // alert(res.message)
                 props.navigation.goBack()
             }
             console.log(res)

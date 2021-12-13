@@ -16,6 +16,7 @@ import AllTeacher from './AllTeacher';
 import { useNavigation } from '@react-navigation/core';
 
 import { loadingContext } from '../navigators/stacks/RootStack';
+import { successAlertContext } from '../../App';
 export default function HomeScreen(props) {
 
 
@@ -32,6 +33,19 @@ export default function HomeScreen(props) {
     const [referalCode, setReferalCode] = useState('');
 
     const [subjectWiseTeacherArr, setSubjectWiseTeacherArr] = useState([]);
+
+    const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
+
+
+    const [successAlert, setSuccessAlert] = successAlertArr
+    const [warningAlert, setWarningAlert] = warningAlertArr
+    const [errorAlert, setErrorAlert] = errorAlertArr
+
+
+    const [alertText, setAlertText] = alertTextArr
+
+
+
 
     const [userObj, setUserObj] = useState({});
 
@@ -106,7 +120,8 @@ export default function HomeScreen(props) {
         try {
             const { data: res } = await BookmarkTeacher(id);
             if (res) {
-                alert(res.message)
+                setSuccessAlert(true)
+                setAlertText(`${res.message}`)
                 handleOnint()
             }
 

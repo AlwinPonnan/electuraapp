@@ -14,6 +14,7 @@ import EnquiryStatuses from '../globals/EnquiryStatus';
 
 import { loadingContext, roleContext } from '../navigators/stacks/RootStack';
 import EnquiryTypes from '../globals/EnquiryTypes';
+import { successAlertContext } from '../../App';
 
 export default function Enquiry(props) {
     const [roleName, setRoleName] = useContext(roleContext);
@@ -29,6 +30,18 @@ export default function Enquiry(props) {
 
     const [selectedEnquiryStatus, setSelectedEnquiryStatus] = useState(EnquiryStatuses.OPEN);
 
+
+    const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
+
+
+    const [successAlert, setSuccessAlert] = successAlertArr
+    const [warningAlert, setWarningAlert] = warningAlertArr
+    const [errorAlert, setErrorAlert] = errorAlertArr
+
+
+    const [alertText, setAlertText] = alertTextArr
+
+
     const [loading, setLoading] = useContext(loadingContext);
 
 
@@ -40,7 +53,7 @@ export default function Enquiry(props) {
         setIsRefreshing(true)
         try {
             const { data: res } = await getAllEnquiries();
-            console.log(JSON.stringify(res, null,2))
+            console.log(JSON.stringify(res, null, 2))
             if (res.success) {
                 setEnquiryArr(res.data.map(el => {
                     let obj = {
@@ -72,7 +85,9 @@ export default function Enquiry(props) {
             if (res.success) {
                 handleOnint()
                 setOptionsModal(false)
-                alert(res.message)
+                setSuccessAlert(true)
+                setAlertText(`${res.message}`)
+
             }
         } catch (error) {
             console.error(error)
@@ -118,13 +133,13 @@ export default function Enquiry(props) {
     const handleSearch = (value) => {
         let tempStr = value.toLowerCase();
         let tempArr = [...mainEnquiryArr]
-        tempArr = tempArr.filter(el => 
-        el?.enquiryType.toLowerCase().includes(tempStr) || 
-        el?.teacherObj?.name.toLowerCase().includes(tempStr) || 
-        el?.teacherObj?.name.toLowerCase().includes(tempStr) || 
-        el?.subjectName.toLowerCase().includes(tempStr) || 
-        el?.topicName.toLowerCase().includes(tempStr) || 
-        el?.className.toLowerCase().includes(tempStr) )
+        tempArr = tempArr.filter(el =>
+            el?.enquiryType.toLowerCase().includes(tempStr) ||
+            el?.teacherObj?.name.toLowerCase().includes(tempStr) ||
+            el?.teacherObj?.name.toLowerCase().includes(tempStr) ||
+            el?.subjectName.toLowerCase().includes(tempStr) ||
+            el?.topicName.toLowerCase().includes(tempStr) ||
+            el?.className.toLowerCase().includes(tempStr))
         setEnquiryArr([...tempArr])
     }
 
@@ -144,7 +159,7 @@ export default function Enquiry(props) {
                         <View style={styles.searchContainer}>
                             <View style={styles.flexRowAlignCenter}>
                                 <Icon name="search-outline" size={20} color="#828282" />
-                                <TextInput style={styles.searchInput} placeholder="Search enquiries" onChangeText={(e)=>handleSearch(e)} placeholderTextColor="#828282" />
+                                <TextInput style={styles.searchInput} placeholder="Search enquiries" onChangeText={(e) => handleSearch(e)} placeholderTextColor="#828282" />
                             </View>
                             <Icon name="options-outline" size={20} color="#828282" />
                             {/* <Image style={styles.searchImages} source={require('../../assets/images/Filter.png')} /> */}
@@ -162,12 +177,12 @@ export default function Enquiry(props) {
                         ListEmptyComponent={
                             <Text>No Enquiries Found</Text>
                         }
-                        onRefresh={()=> getYourEnquires()}
+                        onRefresh={() => getYourEnquires()}
                         refreshing={isRefreshing}
                         renderItem={({ item, index }) => {
                             return (
                                 <>
-                                    <Pressable style={[styles.enquiryListHeader,{ backgroundColor:item.enquiryType == "ONETOONE" ? "#f7f7f7" : "#fff"}]} onPress={() => handleEnquirySelection(item._id)} >
+                                    <Pressable style={[styles.enquiryListHeader, { backgroundColor: item.enquiryType == "ONETOONE" ? "#f7f7f7" : "#fff" }]} onPress={() => handleEnquirySelection(item._id)} >
                                         <View style={[styles.flexRowAlignCenter, { justifyContent: "space-between" }]}>
                                             <View style={styles.flexRow}>
                                                 <Text style={styles.ListHeaderName}>Enquiry {index + 1}</Text>
@@ -187,7 +202,7 @@ export default function Enquiry(props) {
                                             </Pressable>
 
                                         </View>
-                                        <View style={[styles.flexRowAlignCenter, { marginTop: 7, justifyContent: "space-between"}]}>
+                                        <View style={[styles.flexRowAlignCenter, { marginTop: 7, justifyContent: "space-between" }]}>
                                             {
                                                 item?.enquiryType == EnquiryTypes.GENERAL ?
                                                     <Text style={styles.ListHeaderDescription}>
@@ -221,7 +236,7 @@ export default function Enquiry(props) {
                                                                 <Image source={{ uri: generateImageUrl(itemX.userObj?.profileImage) }} style={styles.cardImage} />
                                                                 <View style={[styles.flexColumn, { justifyContent: "center" }]}>
                                                                     <Text style={styles.cardHeading}>{itemX?.userObj?.name}</Text>
-                                                                    <Text style={[styles.cardSmallData,{width:wp(60)}]}>{itemX?.message} . {new Date(itemX.createdAt).toDateString()},{new Date(itemX.createdAt).toLocaleTimeString()}</Text>
+                                                                    <Text style={[styles.cardSmallData, { width: wp(60) }]}>{itemX?.message} . {new Date(itemX.createdAt).toDateString()},{new Date(itemX.createdAt).toLocaleTimeString()}</Text>
                                                                 </View>
 
                                                             </View>
@@ -380,7 +395,7 @@ const styles = StyleSheet.create({
     },
     ListHeaderDescription: {
         fontFamily: 'OpenSans-Regular',
-        color:"black",
+        color: "black",
         fontSize: 10,
     },
     ////////list header ends here 

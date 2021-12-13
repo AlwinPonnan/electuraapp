@@ -12,6 +12,7 @@ import { AuthContext, loadingContext, roleContext } from '../navigators/stacks/R
 import LoadingContainer from './LoadingContainer';
 import OTPInputView from '@twotalltotems/react-native-otp-input'
 import Clipboard from '@react-native-community/clipboard';
+import { successAlertContext } from '../../App';
 export default function VerifyOtp(props) {
     
     const [isAuthorized, setIsAuthorized] = useContext(AuthContext);
@@ -31,6 +32,20 @@ export default function VerifyOtp(props) {
     const input4 = useRef();
     const input5 = useRef();
     const input6 = useRef();
+
+
+    const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
+
+
+    const [successAlert, setSuccessAlert] = successAlertArr
+    const [warningAlert, setWarningAlert] = warningAlertArr
+    const [errorAlert, setErrorAlert] = errorAlertArr
+
+
+    const [alertText, setAlertText] = alertTextArr
+
+
+
 
     const [otpCode, setOtpCode] = useState();
 
@@ -60,7 +75,8 @@ export default function VerifyOtp(props) {
         }
         catch (error) {
             setLoading(false)
-            alert("Invalid OTP")
+            setErrorAlert(true)
+            setAlertText("Invalid OTP")
             console.error(JSON.stringify(error, null, 2), "error in Otp verification")
         }
     }
@@ -71,12 +87,15 @@ export default function VerifyOtp(props) {
         try {
             const { data: res } = await SendOtp(props.route.params.data)
             if (res.Status) {
-                alert(`OTP sent successfully on ${props.route.params.data} , Do not share Otp with anyone.`)
+                setSuccessAlert(true)
+                setAlertText(`OTP sent successfully on ${props.route.params.data} , Do not share Otp with anyone.`)
                 await EncryptedStorage.setItem("sessionIdOtp", res.Details)
             }
         } catch (error) {
             console.error(error)
-            alert("Unable to send otp")
+            setErrorAlert(true)
+                setAlertText("Unable to send otp")
+            // alert()
         }
         setLoading(false)
     }

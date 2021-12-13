@@ -9,6 +9,7 @@ import { Switch } from 'react-native-paper';
 import { roleContext } from '../navigators/stacks/RootStack';
 import { getUser, toggleOnline } from '../Services/User';
 import { useIsFocused } from '@react-navigation/core';
+import { successAlertContext } from '../../App';
 
 export default function Profile(props) {
     const [isSwitchOn, setIsSwitchOn] = React.useState(false);
@@ -18,7 +19,12 @@ export default function Profile(props) {
 
     const focused = useIsFocused()
 
+    const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
 
+
+    const [successAlert, setSuccessAlert] = successAlertArr
+    const [warningAlert, setWarningAlert] = warningAlertArr
+    const [errorAlert, setErrorAlert] = errorAlertArr
 
 
 
@@ -26,7 +32,9 @@ export default function Profile(props) {
         try {
             let { data: res } = await toggleOnline();
             if (res.success) {
-                alert(res.message)
+                setSuccessAlert(true)
+                setAlertText(`${res.message}`)
+                // alert(res.message)
                 userGet()
             }
         } catch (error) {
