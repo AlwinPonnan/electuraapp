@@ -55,7 +55,6 @@ export default function login(props) {
         }
     }
     return (
-        <View style={styles.container}>
 
             <ScrollView contentContainerStyle={styles.innerContainer}>
                 <Image source={imageObj.loginImage} style={{ alignSelf: 'center', marginTop: 10 }} />
@@ -78,7 +77,6 @@ export default function login(props) {
                     </Pressable>
                 </View>
             </ScrollView>
-        </View>
     )
 }
 
@@ -116,10 +114,10 @@ const styles = StyleSheet.create({
         width: wp(90),
         alignSelf: 'center',
         display: 'flex',
+        position:"relative",
         flexDirection: 'row',
         alignItems: 'center',
         borderRadius: 50,
-
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
@@ -164,8 +162,8 @@ const styles = StyleSheet.create({
     btnContainer: {
         width: wp(90),
         paddingHorizontal: 20,
-        position: 'absolute',
-        bottom: 50,
+        // position: 'relative',
+        // bottom: 50,
         // backgroundColor:'red',
         left: 20
     }

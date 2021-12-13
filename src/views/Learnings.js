@@ -8,11 +8,15 @@ import { useIsFocused } from '@react-navigation/core';
 import { getWishlist } from '../Services/User';
 import { generateImageUrl } from '../globals/utils';
 import { getByUser } from '../Services/LiveClass';
+import { getMyOrders } from '../Services/Order';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Feather from 'react-native-vector-icons/Feather';
 
 export default function Learnings(props) {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [liveClassArr, setLiveClassArr] = useState([]);
     const focused = useIsFocused()
+    const [ordersArr, setOrdersArr] = useState([]);
     const [productsArr, setProductsArr] = useState([
         {
             name: "Lorem Course",
@@ -66,7 +70,26 @@ export default function Learnings(props) {
 
     const handleOnit = () => {
         getLiveClass()
+        getOrders()
     }
+
+    const getOrders = async () => {
+        try {
+            setIsRefreshing(true)
+            const { data: res } = await getMyOrders();
+            if (res) {
+                console.log(res.data,"adad")
+                setOrdersArr(res.data)
+                setIsRefreshing(false)
+            }
+        } catch (error) {
+            console.error(error)
+            setIsRefreshing(false)
+        }
+    }
+
+
+
 
     const getLiveClass = async () => {
         try {
@@ -132,34 +155,109 @@ export default function Learnings(props) {
         )
     }
 
+
+
+    const renderItem2 = ({ item, index }) => (
+        <Pressable style={styles.cardContainer}  >
+                <Image style={styles.courseImg} source={{ uri: generateImageUrl(item?.courseObj?.thumbnailImage?.url)}} />
+                <View style={styles.textCardContainer}>
+                    <View>
+
+                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                            <Text style={styles.textCardMainHeading}>{item?.courseObj?.name}</Text>
+                        </View>
+                        
+                                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                                    <Text style={styles.textCardMainSubHeading2}>₹{item?.payableAmount}</Text>
+                                    {/* <Text style={styles.textCardMainSubHeading2}><Icon name="star" size={14} color={colorObj.primarColor} />4.2</Text> */}
+                                </View>
+
+                        
+                    </View>
+
+                </View>
+            </Pressable>
+        // <Pressable style={[styles.topView2]}>
+        //     <Image
+        //         style={[styles.img2]}
+        //         source={{
+        //             uri:
+        //                 generateImageUrl(item?.courseObj?.thumbnailImage?.url)
+        //         }}
+        //     />
+        //     <View style={{ flex: 1, marginLeft: 10 }}>
+        //         <Text style={[styles.listTitle2]}>{item?.courseObj?.name}</Text>
+        //         {/* <Text style={[styles.address, { marginTop: 5, color: '#929292', }]}>{item.content}</Text> */}
+        //         {/* <Text style={[styles.address, { marginTop: 5, color: '#929292' }]}>abc</Text> */}
+        //         <Text style={[styles.address2, { marginTop: 5, color: '#FFA949' }]}>SUMMARY</Text>
+        //     </View>
+        //     <View style={[styles.topView2, { marginTop: -40 }]}><FontAwesome name="inr" size={12} color={'#085A4E'} />
+        //         <Text style={[{ color: '#085A4E', marginLeft: 5, fontSize: 14, fontFamily: 'RedHatText-SemiBold', }]}>{item?.payableAmount}</Text></View>
+        // </Pressable>
+    );
+
+
     return (
         <View style={styles.container}>
             <NavBar rootProps={props} />
 
             {/* <ScrollView> */}
 
-            <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }]}>
-                <Text style={styles.headingAboveCard}>Live Sessions</Text>
-            </View>
+
 
             <FlatList
-                // horizontal
-                onRefresh={() => getLiveClass()}
-                refreshing={isRefreshing}
-                data={liveClassArr}
-                renderItem={renderItem}
-                numColumns={2}
-                showsHorizontalScrollIndicator={false}
-                keyExtractor={(item, index) => `${index}`}
-                ListEmptyComponent={
-                    <Text>No Classes Found</Text>
+                data={[]}
+                contentContainerStyle={{paddingBottom:50}}
+                renderItem={() => null}
+                ListFooterComponent={
+                    <>
+                        <FlatList
+                            // horizontal
+                            scrollEnabled={false}
+                            ListHeaderComponent={
+                                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }]}>
+                                    <Text style={styles.headingAboveCard}>Live Sessions</Text>
+                                </View>
+                            }
+                            onRefresh={() => getLiveClass()}
+                            refreshing={isRefreshing}
+                            data={liveClassArr}
+                            renderItem={renderItem}
+                            numColumns={2}
+                            showsHorizontalScrollIndicator={false}
+                            keyExtractor={(item, index) => `${index}`}
+                            ListEmptyComponent={
+                                <Text>No Classes Found</Text>
+                            }
+                        />
+
+
+
+                        <FlatList
+                            scrollEnabled={false}
+                            data={ordersArr}
+                            ListHeaderComponent={
+                                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }]}>
+                                    <Text style={styles.headingAboveCard}>Courses Bought</Text>
+                                </View>
+                            }
+                            refreshing={isRefreshing}
+                            onRefresh={() => getOrders()}
+                            renderItem={renderItem2}
+                            keyExtractor={(item, index) => `${index}`}
+                            ListEmptyComponent={
+                                <View style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: "25%" }}>
+                                    <Image source={require('../../assets/images/cart.png')} style={{ height: 200, width: 200, marginBottom: 30, }} resizeMethod='scale' resizeMode="cover" />
+                                    <Text style={{ fontFamily: 'Montserrat-SemiBold', fontSize: 20, textAlign:"center" }}>You havn't bought any courses yet !!</Text>
+                                </View>
+                            }
+
+                        />
+
+
+                    </>
                 }
             />
-
-
-
-
-
 
             {/* </ScrollView> */}
         </View>
@@ -167,6 +265,40 @@ export default function Learnings(props) {
 }
 
 const styles = StyleSheet.create({
+    container2: {
+        backgroundColor: '#fff',
+        flex: 1,
+        padding: 20
+    },
+
+    topText2: {
+        fontSize: 18,
+        fontFamily: 'RedHatText-SemiBold',
+        //fontWeight:'500',
+    },
+    topView2: {
+        flexDirection: 'row',
+        alignItems: 'center',
+
+    },
+    img2: {
+        width: 100,
+        height: 140,
+        resizeMode: 'contain',
+        borderRadius: 5
+    },
+    listTitle2: {
+        fontSize: 15,
+        // fontWeight:'500',
+        color: 'black',
+        fontFamily: 'RedHatText-SemiBold',
+    },
+    address2: {
+        fontSize: 12,
+        // fontWeight:'400',
+        color: '#828282',
+        fontFamily: "RedHatText-Regular",
+    },
     container: {
         backgroundColor: '#FEFEFE',
         flex: 1,
@@ -206,7 +338,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Montserrat-Regular', fontSize: 12, color: '#7E7E7E', marginTop: 2
     },
     textCardMainSubHeading2: {
-        fontFamily: 'Montserrat-Regular', fontSize: 12, color: '#000', marginTop: 15
+        fontFamily: 'Montserrat-SemiBold', fontSize: 12, color: '#000', marginTop: 15
     },
     headingAboveCard: {
         fontSize: 16, fontFamily: 'RedHatText-SemiBold', color: '#303030', paddingLeft: 13, marginTop: 10
