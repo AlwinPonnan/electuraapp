@@ -14,6 +14,9 @@ import { NewEnquiry } from '../Services/Enquiry';
 import { successAlertContext } from '../../App';
 
 import { loadingContext } from '../navigators/stacks/RootStack';
+import { getAllStates } from '../Services/state';
+import { getByStateId } from '../Services/city';
+import { getByCityId } from '../Services/area';
 export default function CreateEnquiry(props) {
 
 
@@ -46,9 +49,13 @@ export default function CreateEnquiry(props) {
 
     const [alertText, setAlertText] = alertTextArr
 
+    const [stateArr, setStateArr] = useState([]);
+    const [cityArr, setCityArr] = useState([]);
+    const [areaArr, setAreaArr] = useState([]);
 
-
-
+    const [selectedStateId, setSelectedStateId] = useState('');
+    const [selectedCityId, setSelectedCityId] = useState('');
+    const [selectedAreaId, setSelectedAreaId] = useState('');
 
     const getSubjects = async () => {
         try {
@@ -109,6 +116,43 @@ export default function CreateEnquiry(props) {
 
     const handleOnint = () => {
         getSubjects()
+        getStates()
+    }
+
+
+
+    const getStates = async () => {
+        try {
+            const { data: res } = await getAllStates();
+            if (res.success) {
+                setStateArr(res.data)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const getCity = async (stateId) => {
+        try {
+            const { data: res } = await getByStateId(stateId);
+            console.log(res.data)
+            if (res.success) {
+                setCityArr(res.data)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const getArea = async (cityId) => {
+        try {
+            const { data: res } = await getByCityId(cityId);
+            if (res.success) {
+                setAreaArr(res.data)
+            }
+        } catch (error) {
+            console.error(error)
+        }
     }
 
 
@@ -122,7 +166,7 @@ export default function CreateEnquiry(props) {
                     classId: selectedClassId,
                     subjectId: selectedSubjectId,
                     topicId: selectedTopicId,
-                    region,
+                    region:selectedAreaId,
                     ClassType,
                     gender,
                     price,
@@ -150,6 +194,8 @@ export default function CreateEnquiry(props) {
     }
 
 
+
+
     useEffect(() => {
         handleOnint()
     }, [focused])
@@ -162,7 +208,7 @@ export default function CreateEnquiry(props) {
 
                 <Text style={styles.textInputLabel}>What do you want to study</Text>
                 <TextInput style={styles.textInput} value={subject} onChangeText={(e) => handleSubjectFilter(e)} />
-                {(subject != "" && subjectStepper==0) &&
+                {(subject != "" && subjectStepper == 0) &&
                     <View style={styles.ListBackground}>
                         <FlatList
                             data={subjectArr}
@@ -237,6 +283,7 @@ export default function CreateEnquiry(props) {
 
                                 })
                             }
+
                         </Picker>
                     </>
                 }
@@ -266,8 +313,98 @@ export default function CreateEnquiry(props) {
                     </View>
                 </RadioButton.Group>
 
-                <Text style={styles.textInputLabel}>Region</Text>
-                <TextInput style={styles.textInput} onChangeText={(e) => setRegion(e)} />
+                <Text style={styles.textInputLabel}>State</Text>
+                <Picker
+                    style={[styles.textInput]}
+
+                    selectedValue={selectedStateId}
+                    onValueChange={(itemValue, itemIndex) => {
+
+                        if (itemValue != "") {
+                            setSelectedStateId(itemValue)
+                            getCity(itemValue)
+                        }
+                        else {
+                            setSelectedStateId('')
+                            setCityArr([])
+                            setAreaArr([])
+                        }
+                    }
+                    }>
+                    <Picker value="" label="Please Select State" />
+                    {
+
+                        stateArr.map(el => {
+                            return (
+                                <Picker.Item key={el._id} label={el.name} value={el._id} />
+                            )
+
+                        })
+                    }
+                </Picker>
+                {
+                    cityArr.length > 0 &&
+                    <>
+                        <Text style={styles.textInputLabel}>City</Text>
+                        <Picker
+                            style={[styles.textInput]}
+                            selectedValue={selectedCityId}
+                            onValueChange={(itemValue, itemIndex) => {
+
+                                if (itemValue != "") {
+                                    setSelectedCityId(itemValue)
+                                    getArea(itemValue)
+
+                                }
+                                else {
+                                    setSelectedCityId('')
+                                    setAreaArr([])
+                                }
+                            }
+                            }>
+                            <Picker value="" label="Please Select City" />
+                            {
+
+                                cityArr.map(el => {
+                                    return (
+                                        <Picker.Item key={el._id} label={el.name} value={el._id} />
+                                    )
+
+                                })
+                            }
+                        </Picker>
+                    </>
+                }
+                {areaArr.length > 0 &&
+                    <>
+                        <Text style={styles.textInputLabel}>Region</Text>
+                        <Picker
+                            style={[styles.textInput]}
+                            selectedValue={selectedAreaId}
+                            onValueChange={(itemValue, itemIndex) => {
+
+                                if (itemValue != "") {
+                                    setSelectedAreaId(itemValue)
+                                }
+                                else {
+                                    setSelectedAreaId('')
+                                }
+                            }
+                            }>
+                            <Picker value="" label="Please Select Area" />
+                            {
+
+                                areaArr.map(el => {
+                                    return (
+                                        <Picker.Item key={el._id} label={el.name} value={el._id} />
+                                    )
+
+                                })
+                            }
+                        </Picker>
+                    </>
+                }
+                {/* <TextInput style={styles.textInput} onChangeText={(e) => setRegion(e)} /> */}
 
                 <Text style={styles.textInputLabel}>How much you want to pay per hour?</Text>
                 <TextInput style={styles.textInput} keyboardType="number-pad" value={price} onChangeText={(e) => setPrice(e)} />
