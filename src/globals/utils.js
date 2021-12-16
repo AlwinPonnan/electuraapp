@@ -12,12 +12,23 @@ export const generateImageUrl = (profilePhoto) => {
     return imageUrl
 }
 
-export const sortByText={
-    popularity:"Popularity",
-    priceLowToHigh:"price low to high",
-    priceHighToLow:"price high to low",
-    customerRating:"Customer Rating"
+export const sortByText = {
+    popularity: "Popularity",
+    priceLowToHigh: "price low to high",
+    priceHighToLow: "price high to low",
+    customerRating: "Customer Rating"
 }
+
+export const getQueryParams = (url) => {
+    let regex = /[?&]([^=#]+)=([^&#]*)/g,
+        params = {},
+        match;
+    while (match = regex.exec(url)) {
+        params[match[1]] = match[2];
+    }
+    return params
+}
+
 export const getSlotArr = () => {
 
     let slotArr = [

@@ -22,14 +22,15 @@ import { NewEnquiry } from '../Services/Enquiry';
 
 import RBSheet from "react-native-raw-bottom-sheet";
 import { Picker } from '@react-native-picker/picker';
-
+import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
+import { createZoomMeeting } from '../Services/ZoomMeeting';
 export default function TeacherProfile(props) {
 
 
     const [isLoading, setIsLoading] = useContext(loadingContext);
     const refRBSheet = useRef();
 
-    const [checked, setChecked] = useState(EnquiryTypes.ONETOONE);
+    const [checked, setChecked] = useState(EnquiryTypes.SLOT);
 
     const focused = useIsFocused()
 
@@ -66,6 +67,8 @@ export default function TeacherProfile(props) {
     const [selectedDayId, setSelectedDayId] = useState('');
     const [selectedTimeSlotObj, setSelectedTimeSlotObj] = useState({});
     const [slotsArr, setSlotsArr] = useState([]);
+    const initialDate = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`
+    const [selectedDate, setSelectedDate] = useState(initialDate);
     const leftContent = () => {
         return (
             <Pressable style={styles.btn} >
@@ -141,6 +144,8 @@ export default function TeacherProfile(props) {
                 tempObj.enquiryObj.timeslots = tempObj?.enquiryObj?.timeslots?.filter(el => el.slotArr.length > 0)
                 // console.log(tempObj.enquiryObj.timeslots)
                 setTeacherObj({ ...tempObj })
+                handleDaySelectOnint(new Date(initialDate).getDay(), tempObj.enquiryObj.timeslots)
+
             }
         } catch (error) {
             console.error(error)
@@ -226,11 +231,24 @@ export default function TeacherProfile(props) {
         setIsLoading(false)
     }
 
-    const handleDaySelect = (day) => {
+    const handleDaySelect = (tempdayIndex) => {
+        console.log(tempdayIndex)
         let tempArr = [...teacherObj.enquiryObj.timeslots];
-        let dayIndex = tempArr.findIndex(el => el.day == day);
+        let dayIndex = tempArr.findIndex((el, i) => i == tempdayIndex);
+        console.log(dayIndex)
         if (dayIndex != -1) {
             setSlotsArr([...tempArr[dayIndex].slotArr])
+            setSelectedSlotDay(tempArr[dayIndex].day)
+        }
+    }
+    const handleDaySelectOnint = (tempdayIndex, arr) => {
+        console.log(tempdayIndex)
+        let tempArr = [...arr];
+        let dayIndex = tempArr.findIndex((el, i) => i == tempdayIndex);
+        console.log(dayIndex)
+        if (dayIndex != -1) {
+            setSlotsArr([...tempArr[dayIndex].slotArr])
+            setSelectedSlotDay(tempArr[dayIndex].day)
         }
     }
 
@@ -273,6 +291,7 @@ export default function TeacherProfile(props) {
                     price: '',
                     slotObj: {
                         day: selectedSlotDay,
+                        meetingDate: selectedDate,
                         timeSlotObj: slotsArr.find(el => el.time == selectedTimeSlot)
                     },
                     specificRequirement: '',
@@ -321,6 +340,16 @@ export default function TeacherProfile(props) {
         setIsLoading(false)
     }
 
+    const onDayPress = day => {
+        // console.log(day)
+        console.log(selectedDate)
+        let tempDate = day.dateString;
+        console.log(tempDate)
+        setSelectedDate(day.dateString)
+        // setSelectedSlotDay(new Date(tempDate).getDay())
+        handleDaySelect(new Date(tempDate).getDay())
+        // setSelected(day.dateString);
+    };
     useEffect(() => {
         handleOnint()
     }, [focused])
@@ -419,7 +448,7 @@ export default function TeacherProfile(props) {
             <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                 <Text style={styles.headingAboveCard}>{feedBackArr.length > 1 ? "Feedbacks" : "Feedback"} ({feedBackArr.length})</Text>
                 {
-                    ( teacherObj?._id != decodedObj?.userId) &&
+                    (teacherObj?._id != decodedObj?.userId) &&
                     <Pressable onPress={() => setResponseModal(true)}>
                         <Text style={[styles.viewAllText, { color: colorObj.primarColor, textDecorationLine: 'underline' }]}>Add Feedback</Text>
                     </Pressable>
@@ -475,22 +504,24 @@ export default function TeacherProfile(props) {
                 ref={refRBSheet}
                 closeOnDragDown={true}
                 closeOnPressMask={false}
+                dragFromTopOnly={true}
+
                 animationType="slide"
                 customStyles={{
                     wrapper: {
                         backgroundColor: "rgba(0,0,0,0.5)",
                     },
                     container: {
-                        height: hp(70)
+                        height: hp(100)
                     },
                     draggableIcon: {
-                        backgroundColor: "#000"
+                        backgroundColor: "#fff"
                     }
                 }}
             >
                 <View style={styles.bottomSheetInnerContainer}>
 
-                    <Text style={styles.bottomSheetHeading}>Enquiry Options</Text>
+                    <Text style={[styles.bottomSheetHeading, { fontFamily: 'Montserrat-SemiBold' }]}>Enquiry Options</Text>
                     <Pressable onPress={() => setChecked(EnquiryTypes.ONETOONE)} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
                         <Text style={styles.bottomSheetOptionText}>Specific Enquriy</Text>
                         <RadioButton
@@ -515,7 +546,22 @@ export default function TeacherProfile(props) {
                     {
                         checked == EnquiryTypes.SLOT &&
                         <>
-                            <Picker
+                            <Calendar
+                                enableSwipeMonths
+                                current={selectedDate}
+                                style={[styles.calendar, { width: wp(90), marginVertical: 10 }]}
+                                onDayPress={onDayPress}
+                                // state={selectedDate}
+                                markedDates={{
+                                    [selectedDate]: {
+                                        selected: true,
+                                        disableTouchEvent: true,
+                                        selectedColor: colorObj.primarColor,
+                                        selectedTextColor: 'white'
+                                    }
+                                }}
+                            />
+                            {/* <Picker
                                 selectedValue={selectedSlotDay}
                                 style={[styles.textInput, { width: wp(90), fontFamily: 'Montserrat-SemiBold' }]}
 
@@ -543,7 +589,7 @@ export default function TeacherProfile(props) {
                                         <Picker.Item style={{ fontFamily: 'Montserrat-Regular' }} key={el._id} label={el.day} value={el.day} />
                                     )
                                 })}
-                            </Picker>
+                            </Picker> */}
                             {slotsArr.length > 0 &&
                                 <Picker
                                     selectedValue={selectedTimeSlot}
@@ -585,10 +631,16 @@ export default function TeacherProfile(props) {
                     </Pressable>
                     <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Message</Text>
 
-                    <TextInput style={[styles.textInput, { width: wp(90) }]} multiline numberOfLines={2} value={additionalMessage} onChangeText={(e) => setAdditionalMessage(e)} />
+                    <TextInput style={[styles.textInput, { width: wp(90), textAlignVertical: 'top' }]} multiline numberOfLines={4} value={additionalMessage} onChangeText={(e) => setAdditionalMessage(e)} />
 
-                    <Pressable style={styles.btn} onPress={() => handleEnquireNow()}>
-                        <Text style={styles.btnTxt}>Enquire</Text>
+
+                </View>
+                <View style={[styles.flexRow, { justifyContent: 'space-evenly', width: wp(100), position: 'absolute', bottom: 20, backgroundColor: 'white' }]}>
+                    <Pressable style={styles.RBSheetbtn} onPress={() => refRBSheet.current.close()} >
+                        <Text style={styles.RBSheetbtnTxt}>Close</Text>
+                    </Pressable>
+                    <Pressable style={styles.RBSheetbtn} onPress={() => handleEnquireNow()} >
+                        <Text style={styles.RBSheetbtnTxt}>Enquire</Text>
                     </Pressable>
                 </View>
             </RBSheet>
@@ -855,6 +907,40 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         paddingVertical: 10,
         paddingHorizontal: 20
+    },
+
+
+    RBSheetbtn: {
+        // backgroundColor: colorObj.primarColor,
+        borderRadius: 5,
+        // paddingHorizontal: 25,
+        height: 40,
+        borderColor: colorObj.primarColor,
+        borderWidth: 1,
+        marginVertical: 10,
+        // marginLeft: 40,
+        width: wp(40),
+        alignSelf: 'center',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        // shadowColor: "#000",
+        // shadowOffset: {
+        //     width: 0,
+        //     height: 1,
+        // },
+        // shadowOpacity: 0.18,
+        // shadowRadius: 1.00,
+
+        // elevation: 1,
+    },
+
+    RBSheetbtnTxt: {
+        fontFamily: 'Montserrat-SemiBold',
+        fontSize: 13,
+        color: colorObj.primarColor,
+        // marginTop: 15
     },
 
 })

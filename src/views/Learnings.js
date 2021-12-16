@@ -1,22 +1,39 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj, light_colors } from '../globals/colors';
 import Icon from 'react-native-vector-icons/Ionicons'
 import NavBar from '../components/Navbar';
 import { useIsFocused } from '@react-navigation/core';
-import { getWishlist } from '../Services/User';
+import { getDecodedToken, getWishlist } from '../Services/User';
 import { generateImageUrl } from '../globals/utils';
 import { getByUser } from '../Services/LiveClass';
 import { getMyOrders } from '../Services/Order';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
+import { checkAndStartMeeting } from '../Services/Enquiry';
+import { loadingContext } from '../navigators/stacks/RootStack';
+import { successAlertContext } from '../../App';
+
+import { WebView } from 'react-native-webview';
 
 export default function Learnings(props) {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [liveClassArr, setLiveClassArr] = useState([]);
     const focused = useIsFocused()
     const [ordersArr, setOrdersArr] = useState([]);
+    const [decodedObj, setDecodedObj] = useState({});
+
+    const [isLoading, setIsLoading] = useContext(loadingContext);
+
+    const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
+
+
+    const [successAlert, setSuccessAlert] = successAlertArr
+    const [warningAlert, setWarningAlert] = warningAlertArr
+    const [errorAlert, setErrorAlert] = errorAlertArr
+    const [alertText, setAlertText] = alertTextArr
+
     const [productsArr, setProductsArr] = useState([
         {
             name: "Lorem Course",
@@ -78,7 +95,7 @@ export default function Learnings(props) {
             setIsRefreshing(true)
             const { data: res } = await getMyOrders();
             if (res) {
-                console.log(res.data,"adad")
+                // console.log(JSON.stringify(res.data,null,2),"adad")
                 setOrdersArr(res.data)
                 setIsRefreshing(false)
             }
@@ -94,6 +111,8 @@ export default function Learnings(props) {
     const getLiveClass = async () => {
         try {
             setIsRefreshing(true)
+            let decodedTokenObj = await getDecodedToken();
+            setDecodedObj(decodedTokenObj)
             const { data: res } = await getByUser();
             if (res.success) {
                 let tempArr = res.data;
@@ -106,7 +125,8 @@ export default function Learnings(props) {
                     }
                     return obj
                 })
-                console.log(temp, "asd")
+                // console.log(JSON.stringify(temp,null,2),"adad")
+
                 setLiveClassArr(temp)
                 setIsRefreshing(false)
             }
@@ -115,6 +135,50 @@ export default function Learnings(props) {
             console.error(error)
         }
     }
+
+    const handleMeetingStart = async (id) => {
+        setIsLoading(true)
+        try {
+
+
+            const { data: res } = await checkAndStartMeeting(id);
+            if (res.success) {
+                if (res?.data?.isZoomEnabled) {
+                    props.navigation.navigate('zoomMeeting', { data: res.data, isUser: false })
+                }
+                else {
+                    props.navigation.navigate('TestZoom')
+
+                }
+            }
+        } catch (error) {
+            console.error(error)
+        }
+        setIsLoading(false)
+    }
+    const handleMeetingJoin = async (obj) => {
+        try {
+            if (!obj?.enquiryObj?.slotObj?.meetingStarted) {
+                if (obj?.enquiryObj?.slotObj?.isZoomEnabled) {
+                    props.navigation.navigate('zoomMeeting', { data: obj, isUser: true })
+                }
+                else {
+                    setIsLoading(true)
+                    // handle jitsi here   
+                    props.navigation.navigate('TestZoom')
+                }
+            }
+            else {
+                setAlertText("Meeting Not Started Yet!")
+                setErrorAlert(true)
+            }
+
+
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
 
     useEffect(() => {
         handleOnit()
@@ -126,13 +190,22 @@ export default function Learnings(props) {
                 <Image style={styles.courseImg} source={{ uri: item?.imgUrl }} />
                 <View style={styles.textCardContainer}>
                     <View>
+                        {decodedObj?.userId == item?.teacherId ?
+                            <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                                <Text style={styles.textCardMainHeading}>{item?.userObj?.name}</Text>
+                                <Pressable style={styles.btn} onPress={() => { handleMeetingStart(item?.enquiryId) }}>
+                                    <Text style={styles.btnTxt}>Start</Text>
+                                </Pressable>
+                            </View>
+                            :
+                            <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                                <Text style={styles.textCardMainHeading}>{item?.userObj?.name}</Text>
+                                <Pressable style={styles.btn} onPress={() => { handleMeetingJoin(item) }}>
+                                    <Text style={styles.btnTxt}>Join</Text>
+                                </Pressable>
+                            </View>
+                        }
 
-                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                            <Text style={styles.textCardMainHeading}>{item?.userObj?.name}</Text>
-                            <Pressable style={styles.btn} onPress={() => { console.log("Clicked"); props.navigation.navigate("TestZoom") }}>
-                                <Text style={styles.btnTxt}>Join</Text>
-                            </Pressable>
-                        </View>
                         <Text style={styles.textCardMainSubHeading1}>{item?.teacherObj?.name}</Text>
                         {
                             item?.day ?
@@ -159,41 +232,25 @@ export default function Learnings(props) {
 
     const renderItem2 = ({ item, index }) => (
         <Pressable style={styles.cardContainer}  >
-                <Image style={styles.courseImg} source={{ uri: generateImageUrl(item?.courseObj?.thumbnailImage?.url)}} />
-                <View style={styles.textCardContainer}>
-                    <View>
+            <Image style={styles.courseImg} source={{ uri: generateImageUrl(item?.courseObj?.thumbnailImage?.url) }} />
+            <View style={styles.textCardContainer}>
+                <View>
 
-                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                            <Text style={styles.textCardMainHeading}>{item?.courseObj?.name}</Text>
-                        </View>
-                        
-                                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                                    <Text style={styles.textCardMainSubHeading2}>₹{item?.payableAmount}</Text>
-                                    {/* <Text style={styles.textCardMainSubHeading2}><Icon name="star" size={14} color={colorObj.primarColor} />4.2</Text> */}
-                                </View>
-
-                        
+                    <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                        <Text style={styles.textCardMainHeading}>{item?.courseObj?.name}</Text>
                     </View>
 
+                    <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                        <Text style={styles.textCardMainSubHeading2}>₹{item?.payableAmount}</Text>
+                        {/* <Text style={styles.textCardMainSubHeading2}><Icon name="star" size={14} color={colorObj.primarColor} />4.2</Text> */}
+                    </View>
+
+
                 </View>
-            </Pressable>
-        // <Pressable style={[styles.topView2]}>
-        //     <Image
-        //         style={[styles.img2]}
-        //         source={{
-        //             uri:
-        //                 generateImageUrl(item?.courseObj?.thumbnailImage?.url)
-        //         }}
-        //     />
-        //     <View style={{ flex: 1, marginLeft: 10 }}>
-        //         <Text style={[styles.listTitle2]}>{item?.courseObj?.name}</Text>
-        //         {/* <Text style={[styles.address, { marginTop: 5, color: '#929292', }]}>{item.content}</Text> */}
-        //         {/* <Text style={[styles.address, { marginTop: 5, color: '#929292' }]}>abc</Text> */}
-        //         <Text style={[styles.address2, { marginTop: 5, color: '#FFA949' }]}>SUMMARY</Text>
-        //     </View>
-        //     <View style={[styles.topView2, { marginTop: -40 }]}><FontAwesome name="inr" size={12} color={'#085A4E'} />
-        //         <Text style={[{ color: '#085A4E', marginLeft: 5, fontSize: 14, fontFamily: 'RedHatText-SemiBold', }]}>{item?.payableAmount}</Text></View>
-        // </Pressable>
+
+            </View>
+        </Pressable>
+
     );
 
 
@@ -207,7 +264,7 @@ export default function Learnings(props) {
 
             <FlatList
                 data={[]}
-                contentContainerStyle={{paddingBottom:50}}
+                contentContainerStyle={{ paddingBottom: 50 }}
                 renderItem={() => null}
                 ListFooterComponent={
                     <>
@@ -244,11 +301,11 @@ export default function Learnings(props) {
                             refreshing={isRefreshing}
                             onRefresh={() => getOrders()}
                             renderItem={renderItem2}
+                            numColumns={2}
                             keyExtractor={(item, index) => `${index}`}
                             ListEmptyComponent={
                                 <View style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: "25%" }}>
-                                    <Image source={require('../../assets/images/cart.png')} style={{ height: 200, width: 200, marginBottom: 30, }} resizeMethod='scale' resizeMode="cover" />
-                                    <Text style={{ fontFamily: 'Montserrat-SemiBold', fontSize: 20, textAlign:"center" }}>You havn't bought any courses yet !!</Text>
+                                    <Text style={{ fontFamily: 'Montserrat-SemiBold', fontSize: 20, textAlign: "center" }}>You havn't bought any courses yet !!</Text>
                                 </View>
                             }
 

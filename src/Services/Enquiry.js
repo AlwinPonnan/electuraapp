@@ -51,3 +51,7 @@ export const checkNcreateChatRoom = async (teacherId,enquiryId) => {
     return axiosApiInstance.post(`${url}/checkNcreateChatRoom/${teacherId}/${enquiryId}`)
 }
 
+export const checkAndStartMeeting = async (enquiryId) => {
+    return axiosApiInstance.post(`${url}/startEnquiryMeeting/${enquiryId}`)
+}
+
