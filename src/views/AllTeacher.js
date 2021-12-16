@@ -287,13 +287,17 @@ export default function AllTeacher(props) {
                         <Text style={[styles.subject]}>{item?.enquiryObj?.experience ? item?.enquiryObj?.experience : 1}+ Year Experience</Text>
                     </View>
                     <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
-                        <Pressable onPress={() => props.navigation.navigate("TeacherProfile", { data: item._id })}>
+                        {/* <Pressable onPress={() => props.navigation.navigate("TeacherProfile", { data: item._id })}>
 
                             <Text style={[styles.button, { color: '#828282', marginRight: 25 }]}>View Profile</Text>
-                        </Pressable>
-                        <Pressable onPress={() => { setSelectedTeacherObj(item._id); refRBSheet.current.open() }}>
+                        </Pressable> */}
+                        {/* <Pressable onPress={() => { setSelectedTeacherObj(item._id); refRBSheet.current.open() }}>
 
                             <Text style={[styles.button, { backgroundColor: '#085A4E', color: '#fff', paddingHorizontal: 15, paddingVertical: 3, borderRadius: 5 }]}>Enquire</Text>
+                        </Pressable> */}
+                        <Pressable onPress={() => props.navigation.navigate("TeacherProfile", { data: item._id })}>
+
+                            <Text style={[styles.button, { backgroundColor: '#085A4E', color: '#fff', paddingHorizontal: 15, paddingVertical: 3, borderRadius: 5 }]}>View Profile</Text>
                         </Pressable>
                     </View>
                 </View>

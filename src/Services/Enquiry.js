@@ -47,11 +47,14 @@ export const updateEnquiryStatusById = async (id, obj) => {
 }
 
 
-export const checkNcreateChatRoom = async (teacherId,enquiryId) => {
+export const checkNcreateChatRoom = async (teacherId, enquiryId) => {
     return axiosApiInstance.post(`${url}/checkNcreateChatRoom/${teacherId}/${enquiryId}`)
 }
 
 export const checkAndStartMeeting = async (enquiryId) => {
     return axiosApiInstance.post(`${url}/startEnquiryMeeting/${enquiryId}`)
+}
+export const checkExistingMeeting = async (enquiryId) => {
+    return axiosApiInstance.get(`${url}/checkExistingMeeting/${enquiryId}`)
 }
 

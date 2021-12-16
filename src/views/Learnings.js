@@ -11,7 +11,7 @@ import { getByUser } from '../Services/LiveClass';
 import { getMyOrders } from '../Services/Order';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
-import { checkAndStartMeeting } from '../Services/Enquiry';
+import { checkAndStartMeeting, checkExistingMeeting } from '../Services/Enquiry';
 import { loadingContext } from '../navigators/stacks/RootStack';
 import { successAlertContext } from '../../App';
 
@@ -153,14 +153,25 @@ export default function Learnings(props) {
             }
         } catch (error) {
             console.error(error)
+            setIsLoading(false)
         }
-        setIsLoading(false)
     }
     const handleMeetingJoin = async (obj) => {
+        setIsLoading(true)
         try {
-            if (!obj?.enquiryObj?.slotObj?.meetingStarted) {
+
+            let { data: res } = await checkExistingMeeting(obj?.enquiryObj?._id)
+            if (res.success) {
+                let finalObj = res.data
+
                 if (obj?.enquiryObj?.slotObj?.isZoomEnabled) {
-                    props.navigation.navigate('zoomMeeting', { data: obj, isUser: true })
+                    if (!finalObj?.isWaiting) {
+                        props.navigation.navigate('zoomMeeting', { data: obj, isUser: true })
+                    }
+                    else {
+                        setAlertText("Meeting Not Started Yet!")
+                        setErrorAlert(true)
+                    }
                 }
                 else {
                     setIsLoading(true)
@@ -168,15 +179,12 @@ export default function Learnings(props) {
                     props.navigation.navigate('TestZoom')
                 }
             }
-            else {
-                setAlertText("Meeting Not Started Yet!")
-                setErrorAlert(true)
-            }
 
 
         } catch (error) {
             console.error(error)
         }
+        setIsLoading(false)
     }
 
 
