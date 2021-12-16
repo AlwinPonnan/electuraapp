@@ -147,7 +147,9 @@ export default function Learnings(props) {
                     props.navigation.navigate('zoomMeeting', { data: res.data, isUser: false })
                 }
                 else {
-                    props.navigation.navigate('TestZoom')
+                    setIsLoading(true)
+                    // handle jitsi here   
+                    props.navigation.navigate('TestZoom',{data:res.enquiryObj})
 
                 }
             }
@@ -163,9 +165,14 @@ export default function Learnings(props) {
             let { data: res } = await checkExistingMeeting(obj?.enquiryObj?._id)
             if (res.success) {
                 let finalObj = res.data
+                
+                console.log(JSON.stringify(finalObj,null,2))
+                // let finalObj = res.data
 
-                if (obj?.enquiryObj?.slotObj?.isZoomEnabled) {
+                if (!obj?.enquiryObj?.slotObj?.isZoomEnabled) {
                     if (!finalObj?.isWaiting) {
+                    setIsLoading(true)
+
                         props.navigation.navigate('zoomMeeting', { data: obj, isUser: true })
                     }
                     else {
@@ -176,7 +183,7 @@ export default function Learnings(props) {
                 else {
                     setIsLoading(true)
                     // handle jitsi here   
-                    props.navigation.navigate('TestZoom')
+                    props.navigation.navigate('TestZoom',{data:finalObj})
                 }
             }
 

@@ -45,15 +45,7 @@ export default function Testzoom(props) {
 
     useEffect(() => {
         if (focused) {
-            // you can remove
-            // setTimeout(() => {
-
-            //     const url = 'https://meet.jit.si/deneme'; // can also be only room name and will connect to jitsi meet servers
-            //     const userInfo = { displayName: 'User', email: 'user@example.com', avatar: 'https:/gravatar.com/avatar/abc123' };
-            //     JitsiMeet.call(url, userInfo,);
-            //     /* You can also use JitsiMeet.audioCall(url) for audio only call */
-            //     /* You can programmatically end the call with JitsiMeet.endCall() */
-            // }, 1000)
+            setIsLoading(true)
         }
         else {
             setCount(0)
@@ -65,10 +57,11 @@ export default function Testzoom(props) {
         if (count == 2) {
             setIsLoading(false)
         }
+        
     }, [count])
     const handleNavigationStateChange = (e) => {
         setCount(prev => prev + 1)
-
+        console.log(count)
         console.log(e)
         if (e.url == "https://meet.jit.si/static/close3.html") {
             props.navigation.goBack()
@@ -83,7 +76,7 @@ export default function Testzoom(props) {
                 style={{ height: heightPercentageToDP(100), width: widthPercentageToDP(100) }}
                 onNavigationStateChange={(e) => handleNavigationStateChange(e)}
                 injectedJavaScript={`[...document.querySelectorAll('button')].find(elx=>elx.textContent=="Launch in web")?.click()`}
-                source={{ uri: 'https://meet.jit.si/deneme' }}
+                source={{ uri: `https://meet.jit.si/${props.route.params.data._id}` }}
             />
 
         </View>
