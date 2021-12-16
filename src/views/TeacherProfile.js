@@ -408,11 +408,11 @@ export default function TeacherProfile(props) {
             <View style={[styles.flexRow, { width: wp(90), alignSelf: "center", marginVertical: 10 }]}>
                 <View style={[styles.flexRow, { width: "33%" }]}>
                     <Image source={require("../../assets/images/office.png")} />
-                    <Text style={styles.smallTxt}>{teacherObj?.address ? teacherObj?.address : "Delhi"}</Text>
+                    <Text style={styles.smallTxt}>{teacherObj?.enquiryObj?.address ? teacherObj?.enquiryObj?.address : "Delhi"}</Text>
                 </View>
                 <View style={[styles.flexRow, { width: "33%" }]}>
                     <Image source={require("../../assets/images/medal.png")} />
-                    <Text style={styles.smallTxt}>{teacherObj?.enquiryObj?.educationObj?.degree ? item?.enquiryObj?.educationObj?.degree : "PGT"}</Text>
+                    <Text style={styles.smallTxt}>{teacherObj?.enquiryObj?.educationObj?.degree ? teacherObj?.enquiryObj?.educationObj?.degree : "PGT"}</Text>
 
                 </View>
                 <View style={[styles.flexRow, { width: "33%" }]}>

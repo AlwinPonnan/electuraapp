@@ -125,7 +125,7 @@ export default function AccountEdit(props) {
                 email,
                 phone: mobile,
                 gender: genderIsSelected ? "Male" : "Female",
-                enquiryObj: profileData.enquiryObj
+                enquiryObj: {...profileData.enquiryObj,educationObj:{degree}}
             }
             console.log(obj)
             let { data: res, status: statusCode } = await updateProfile(obj)
@@ -250,6 +250,12 @@ export default function AccountEdit(props) {
                 return { ...prevState }
             })
         }
+        else if(field=="degree"){
+            setProfileData(prevState => {
+                prevState.enquiryObj.educationObj.degree = val;
+                return { ...prevState }
+            })
+        }
     }
 
 
@@ -354,6 +360,11 @@ export default function AccountEdit(props) {
                                 <TextInput value={`${profileData?.enquiryObj?.feesObj?.maxFees}`} keyboardType="numeric" onChangeText={(e) => handleProfileDataUpdate(e, "maxFees")} style={[styles.txtInput,{width:wp(40)}]} placeholder="Max" />
 
                             </View>
+                            <Text style={styles.label}>
+                                Qualification
+                            </Text>
+                            <TextInput value={degree} onChangeText={(e) => setDegree(e)} style={styles.txtInput} placeholder="Your Qualification" />
+                            
                             <Text style={styles.label}>
                                 Teaching Experience
                             </Text>
