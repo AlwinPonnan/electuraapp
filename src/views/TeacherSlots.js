@@ -11,7 +11,7 @@ import { successAlertContext } from '../../App';
 
 export default function TeacherSlots(props) {
     const [slotsArr, setSlotsArr] = useState([]);
-    const [loading, setLoading] = useState(loadingContext);
+    const [isLoading, setIsLoading] = useState(loadingContext);
 
     const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
 
@@ -37,11 +37,11 @@ export default function TeacherSlots(props) {
 
 
     const getTeacher = async () => {
-        setLoading(true)
+        setIsLoading(true)
         try {
             let decodedTokenObj = await getDecodedToken();
             const { data: res } = await getById(decodedTokenObj.userId)
-            console.log(JSON.stringify(res.data.enquiryObj.facebookLink, null, 2), "teacher data")
+            console.log(JSON.stringify(res.data.enquiryObj, null, 2), "teacher data")
             if (res.success) {
                 let tempTimeSlotsArr = getSlotArr();
                 // if(res.data.enquiryObj)
@@ -51,7 +51,7 @@ export default function TeacherSlots(props) {
                         slotsArr: el.slotsArr.map(ely => {
                             let innerObj = {
                                 ...ely,
-                                checked: res?.data?.enquiryObj?.timeslots[i]?.slotArr?.some(elz => elz.time == ely.time)
+                                checked:res?.data?.enquiryObj?.timeslots?.length && res?.data?.enquiryObj?.timeslots[i]?.slotArr?.some(elz => elz.time == ely.time)
                             }
                             return innerObj
                         })
@@ -66,7 +66,7 @@ export default function TeacherSlots(props) {
                     slotsArr: [...tempTimeSlotsArr[0].slotsArr.map(el => {
                         let obj = {
                             ...el,
-                            checked: false
+                            checked: res?.data?.enquiryObj?.timeslots?.length && res?.data?.enquiryObj?.timeslots.every(elx=>elx?.slotArr?.some(elz => elz.time == el.time)),
                         }
                         return obj
                     })]
@@ -75,7 +75,7 @@ export default function TeacherSlots(props) {
         } catch (error) {
             console.error(error)
         }
-        setLoading(false)
+        setIsLoading(false)
     }
     const handleSlotSelection = (index1, index2, value) => {
         console.log(index1)
@@ -86,6 +86,7 @@ export default function TeacherSlots(props) {
                     el.slotsArr.map((ele, indexX) => {
                         if (indexX == index2) {
                             ele.checked = !ele.checked;
+                            
                             return ele
                         }
                         else {
@@ -138,18 +139,18 @@ export default function TeacherSlots(props) {
         }
     }
 
-    const handleAllSlotSelection = (index) => {
+    // const handleAllSlotSelection = (index) => {
 
-        setAllSlotArr(prevState => {
-            prevState[index].checked = !prevState[index].checked
-            return [...prevState]
-        })
-    }
+    //     setAllSlotArr(prevState => {
+    //         prevState[index].checked = !prevState[index].checked
+    //         return [...prevState]
+    //     })
+    // }
 
 
 
     const handleSubmit = async () => {
-        setLoading(true)
+        setIsLoading(true)
         try {
             console.log(slotsArr)
             let tempArr = slotsArr.map(el => {
@@ -161,6 +162,7 @@ export default function TeacherSlots(props) {
             })
             const { data: res } = await updateTeacherSlots({ timeslotArr: tempArr });
             if (res.success) {
+                props.navigation.goBack()
                 setAlertText(res.message)
                 setSuccessAlert(true)
             }
@@ -176,7 +178,7 @@ export default function TeacherSlots(props) {
                 setAlertText(error.message)
             }
         }
-        setLoading(false)
+        setIsLoading(false)
     }
 
     useEffect(() => {
@@ -226,21 +228,21 @@ export default function TeacherSlots(props) {
             </View>
         )
     }
-    const renderAllSlots = ({ item, index }) => {
-        return (
-            <View style={[styles.slotContainer, { width: wp(30, ali) }]}>
+    // const renderAllSlots = ({ item, index }) => {
+    //     return (
+    //         <View style={[styles.slotContainer, { width: wp(30, ali) }]}>
 
 
-                <Pressable onPress={() => handleAllSlotSelection(index)} style={[styles.slotItem, { backgroundColor: item?.checked ? colorObj.primarColor : "white" }]}>
-                    <Text style={item?.checked ? styles.slotItemCheckedText : styles.slotItemText} >
-                        {item?.time}
-                    </Text>
-                </Pressable>
+    //             <Pressable onPress={() => handleAllSlotSelection(index)} style={[styles.slotItem, { backgroundColor: item?.checked ? colorObj.primarColor : "white" }]}>
+    //                 <Text style={item?.checked ? styles.slotItemCheckedText : styles.slotItemText} >
+    //                     {item?.time}
+    //                 </Text>
+    //             </Pressable>
 
 
-            </View>
-        )
-    }
+    //         </View>
+    //     )
+    // }
 
     return (
         <>

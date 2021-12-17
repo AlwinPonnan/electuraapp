@@ -43,7 +43,8 @@ export default function Notification(props) {
 
 
     useEffect(() => {
-        getNotifications()
+        if (focused)
+            getNotifications()
     }, [focused])
     return (
         <>

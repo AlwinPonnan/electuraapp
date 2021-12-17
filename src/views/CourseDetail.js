@@ -309,7 +309,8 @@ export default function CourseDetail(props) {
     }
 
     useEffect(() => {
-        handleOnint()
+        if (isFocused)
+            handleOnint()
     }, [isFocused])
 
     return (
@@ -367,10 +368,13 @@ export default function CourseDetail(props) {
                         <Text style={[styles.coursePrice, { marginVertical: 10 }]}>Preview Video</Text>
 
                         <View style={{ flex: 1 }}>
-                            <WebView
-                                style={{height:250,width:wp(100)}}
-                                source={{ uri: 'https://www.youtube.com/embed/' + youtubeVideoId }}
-                            />
+                            {
+                                isFocused &&
+                                <WebView
+                                    style={{ height: 250, width: wp(100) }}
+                                    source={{ uri: 'https://www.youtube.com/embed/' + youtubeVideoId }}
+                                />
+                            }
                         </View>
 
                     </View>

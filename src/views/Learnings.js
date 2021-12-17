@@ -124,6 +124,19 @@ export default function Learnings(props) {
 
                     }
                     return obj
+                }).filter(el => {
+                    if (el?.enquiryObj?.slotObj?.timeSlotObj?.startTime) {
+                        console.log(new Date(el?.enquiryObj?.slotObj?.timeSlotObj?.startTime).toDateString())
+                        if (new Date(el?.enquiryObj?.slotObj?.timeSlotObj?.startTime).getTime() <= new Date().getTime() && new Date(el?.enquiryObj?.slotObj?.timeSlotObj?.endTime).getTime() >= new Date().getTime()) {
+                            return true
+                        }
+                        else {
+                            return false
+                        }
+                    }
+                    else {
+                        return true
+                    }
                 })
                 // console.log(JSON.stringify(temp,null,2),"adad")
 
@@ -149,7 +162,7 @@ export default function Learnings(props) {
                 else {
                     setIsLoading(true)
                     // handle jitsi here   
-                    props.navigation.navigate('TestZoom',{data:res.enquiryObj})
+                    props.navigation.navigate('TestZoom', { data: res.enquiryObj })
 
                 }
             }
@@ -165,25 +178,31 @@ export default function Learnings(props) {
             let { data: res } = await checkExistingMeeting(obj?.enquiryObj?._id)
             if (res.success) {
                 let finalObj = res.data
-                
-                console.log(JSON.stringify(finalObj,null,2))
+
+                console.log(JSON.stringify(finalObj, null, 2))
                 // let finalObj = res.data
+                if (finalObj?.slotObj?.meetingStarted) {
 
-                if (!obj?.enquiryObj?.slotObj?.isZoomEnabled) {
-                    if (!finalObj?.isWaiting) {
-                    setIsLoading(true)
+                    if (finalObj?.slotObj?.isZoomEnabled) {
+                        if (!finalObj?.isWaiting) {
+                            setIsLoading(true)
 
-                        props.navigation.navigate('zoomMeeting', { data: obj, isUser: true })
+                            props.navigation.navigate('zoomMeeting', { data: obj, isUser: true })
+                        }
+                        else {
+                            setAlertText("Meeting Not Started Yet!")
+                            setErrorAlert(true)
+                        }
                     }
                     else {
-                        setAlertText("Meeting Not Started Yet!")
-                        setErrorAlert(true)
+                        setIsLoading(true)
+                        // handle jitsi here   
+                        props.navigation.navigate('TestZoom', { data: obj })
                     }
                 }
                 else {
-                    setIsLoading(true)
-                    // handle jitsi here   
-                    props.navigation.navigate('TestZoom',{data:finalObj})
+                    setAlertText("Meeting Not Started Yet!")
+                    setErrorAlert(true)
                 }
             }
 
@@ -196,7 +215,8 @@ export default function Learnings(props) {
 
 
     useEffect(() => {
-        handleOnit()
+        if (focused)
+            handleOnit()
     }, [focused])
 
     const renderItem = ({ item, index }) => {
@@ -223,7 +243,7 @@ export default function Learnings(props) {
 
                         <Text style={styles.textCardMainSubHeading1}>{item?.teacherObj?.name}</Text>
                         {
-                            item?.day ?
+                            item?.enquiryObj?.enquiryType != "connect" ?
                                 <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                                     <Text style={styles.textCardMainSubHeading2}>{item?.day} {item?.timeslotObj?.time}</Text>
                                     {/* <Text style={styles.textCardMainSubHeading2}><Icon name="star" size={14} color={colorObj.primarColor} />4.2</Text> */}
@@ -288,7 +308,7 @@ export default function Learnings(props) {
                             scrollEnabled={false}
                             ListHeaderComponent={
                                 <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }]}>
-                                    <Text style={styles.headingAboveCard}>Live Sessions</Text>
+                                    <Text style={styles.headingAboveCard}>Upcoming Live Sessions</Text>
                                 </View>
                             }
                             onRefresh={() => getLiveClass()}

@@ -56,6 +56,9 @@ export default function Coupons() {
 
             <FlatList
                 data={couponsArr}
+                ListEmptyComponent={
+                    <Text style={{fontFamily:'Montserrat-SemiBold',fontSize:18,color:'black'}}>No Coupons Found</Text>
+                }
                 renderItem={({ item, index }) => {
                     return (
                         <View style={{ backgroundColor: '#F9F9F9', padding: 20 }}>

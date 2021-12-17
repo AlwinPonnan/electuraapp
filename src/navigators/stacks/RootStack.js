@@ -37,6 +37,7 @@ import WishList from '../../views/WishList';
 import CourseDetail from '../../views/CourseDetail';
 import Testzoom from '../../views/Testzoom';
 import zoomMeeting from '../../views/zoomMeeting';
+import linking from '../../globals/Linking';
 const Stack = createNativeStackNavigator();
 
 export const AuthContext = createContext()
@@ -50,7 +51,7 @@ export default function RootStack() {
     const [roleName, setRoleName] = useState('USER');
     const [isAuthorized, setIsAuthorized] = useState(false);
     const [profileData, setProfileData] = useState({});
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useContext(loadingContext);
 
 
 
@@ -146,9 +147,8 @@ export default function RootStack() {
         <AuthContext.Provider value={[isAuthorized, setIsAuthorized]}>
             <roleContext.Provider value={[roleName, setRoleName]}>
                 <profileContext.Provider value={[profileData, setProfileData]}>
-                    <loadingContext.Provider value={[loading, setLoading]}>
 
-                        <NavigationContainer>
+                        <NavigationContainer linking={linking}>
                             <Stack.Navigator initialRouteName="Login">
                                 {isAuthorized ?
                                     <>
@@ -194,7 +194,6 @@ export default function RootStack() {
                         {loading &&
                             <LoadingContainer />
                         }
-                    </loadingContext.Provider>
                 </profileContext.Provider>
             </roleContext.Provider>
         </AuthContext.Provider>

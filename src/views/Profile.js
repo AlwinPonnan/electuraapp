@@ -25,6 +25,7 @@ export default function Profile(props) {
     const [successAlert, setSuccessAlert] = successAlertArr
     const [warningAlert, setWarningAlert] = warningAlertArr
     const [errorAlert, setErrorAlert] = errorAlertArr
+    const [alertText, setAlertText] = alertTextArr
 
 
 

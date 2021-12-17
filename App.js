@@ -1,8 +1,8 @@
-import React, { useState, useEffect, createContext } from 'react';
+import React, { useState, useEffect, createContext, useContext, } from 'react';
 import {
   SafeAreaView,
   useColorScheme,
-  Text, StyleSheet
+  Text, StyleSheet, Linking
 } from 'react-native';
 
 import RootStack from './src/navigators/stacks/RootStack'
@@ -14,9 +14,12 @@ var PushNotification = require("react-native-push-notification");
 import LottieView from 'lottie-react-native';
 import { heightPercentageToDP, widthPercentageToDP } from 'react-native-responsive-screen';
 import axios from 'axios';
+import { loadingContext } from './src/navigators/stacks/RootStack';
 export const successAlertContext = createContext()
 
 export const axiosApiInstance = axios.create();
+
+
 
 const App = () => {
 
@@ -29,6 +32,7 @@ const App = () => {
 
   const [alertText, setAlertText] = useState('Success');
 
+  const [loading, setLoading] = useState(false);
 
 
 
@@ -45,6 +49,38 @@ const App = () => {
       background: isDarkMode ? dark_colors.backgroundColor : light_colors.backgroundColor,
     },
   };
+
+
+
+  PushNotification.configure({
+    // (optional) Called when Token is generated (iOS and Android)
+
+
+    // (required) Called when a remote is received or opened, or local notification is opened
+    onNotification: function (notification) {
+      // console.log("NOTIFICATION:", notification);
+      console.log("NOTIFICATION:", JSON.stringify(notification,null,2));
+      setLoading(true)
+      setTimeout(() => {
+        setLoading(false);
+        Linking.openURL(notification?.data?.remoteMessage?.data?.redirectTo)
+      }, 2000)
+
+
+    },
+
+    // (optional) Called when Registered Action is pressed and invokeApp is false, if true onNotification will be called (Android)
+    onAction: function (notification) {
+      console.log("ACTION:", notification.action);
+
+      // process the action
+    },
+
+
+
+  });
+
+
 
 
   const notifyChannel = () => {
@@ -67,7 +103,7 @@ const App = () => {
     // Geocoder.init("AIzaSyCtkZzuFSZ94CSPnDArwvPMqxkk58Fzfno")
 
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-
+      // console.log(remoteMessage)
       PushNotification.localNotification({
         /* Android Only Properties */
         channelId: "Electura", // (required) channelId, if the channel doesn't exist, it will be created with options passed above (importance, vibration, sound). Once the channel is created, the channel will not be update. Make sure your channelId is different if you change these options. If you have created a custom channel, it will apply options of the channel.
@@ -114,7 +150,7 @@ const App = () => {
         soundName: "default", // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
         number: 10, // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
         // repeatType: "day", // (optional) Repeating interval. Check 'Repeating Notifications' section for more info.
-
+        data:{remoteMessage}
       });
     });
 
@@ -141,41 +177,46 @@ const App = () => {
 
 
   return (
-    <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
-      <PaperProvider theme={theme}>
-        <successAlertContext.Provider value={{ successAlertArr: [successAlert, setSuccessAlert], warningAlertArr: [warningAlert, setWarningAlert], errorAlertArr: [errorAlert, setErrorAlert], alertTextArr: [alertText, setAlertText] }}>
+    <loadingContext.Provider value={[loading, setLoading]}>
 
-          <RootStack />
+      <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
+        <PaperProvider theme={theme}>
+          <successAlertContext.Provider value={{ successAlertArr: [successAlert, setSuccessAlert], warningAlertArr: [warningAlert, setWarningAlert], errorAlertArr: [errorAlert, setErrorAlert], alertTextArr: [alertText, setAlertText] }}>
 
-          {/* Success Modal */}
 
-          <Portal>
-            <Modal visible={successAlert} onDismiss={() => { setSuccessAlert(false); setAlertText('Success') }} contentContainerStyle={styles.containerStyle}>
-              <LottieView source={require('./assets/images/success.json')} autoSize resizeMode="cover" autoPlay loop={false} style={styles.lottieStyle} />
-              <Text style={styles.alertText}>{alertText}</Text>
-            </Modal>
-          </Portal>
+            <RootStack />
 
-          {/* Warning Modal */}
+            {/* Success Modal */}
 
-          <Portal>
-            <Modal visible={warningAlert} onDismiss={() => { setWarningAlert(false); setAlertText('Warning') }} contentContainerStyle={styles.containerStyle}>
-              <LottieView source={require('./assets/images/warning.json')} autoSize resizeMode="cover" autoPlay loop={false} style={styles.lottieStyle} />
-              <Text style={styles.alertText}>{alertText}</Text>
-            </Modal>
-          </Portal>
+            <Portal>
+              <Modal visible={successAlert} onDismiss={() => { setSuccessAlert(false); setAlertText('Success') }} contentContainerStyle={styles.containerStyle}>
+                <LottieView source={require('./assets/images/success.json')} autoSize resizeMode="cover" autoPlay loop={false} style={styles.lottieStyle} />
+                <Text style={styles.alertText}>{alertText}</Text>
+              </Modal>
+            </Portal>
 
-          {/* Error Modal */}
-          <Portal>
-            <Modal visible={errorAlert} onDismiss={() => { setErrorAlert(false); setAlertText('Error') }} contentContainerStyle={styles.containerStyle}>
-              <LottieView source={require('./assets/images/error.json')} autoSize resizeMode="cover" autoPlay loop={false} style={styles.lottieStyle} />
-              <Text style={styles.alertText}>{alertText}</Text>
-            </Modal>
-          </Portal>
+            {/* Warning Modal */}
 
-        </successAlertContext.Provider>
-      </PaperProvider>
-    </SafeAreaView>
+            <Portal>
+              <Modal visible={warningAlert} onDismiss={() => { setWarningAlert(false); setAlertText('Warning') }} contentContainerStyle={styles.containerStyle}>
+                <LottieView source={require('./assets/images/warning.json')} autoSize resizeMode="cover" autoPlay loop={false} style={styles.lottieStyle} />
+                <Text style={styles.alertText}>{alertText}</Text>
+              </Modal>
+            </Portal>
+
+            {/* Error Modal */}
+            <Portal>
+              <Modal visible={errorAlert} onDismiss={() => { setErrorAlert(false); setAlertText('Error') }} contentContainerStyle={styles.containerStyle}>
+                <LottieView source={require('./assets/images/error.json')} autoSize resizeMode="cover" autoPlay loop={false} style={styles.lottieStyle} />
+                <Text style={styles.alertText}>{alertText}</Text>
+              </Modal>
+            </Portal>
+
+          </successAlertContext.Provider>
+        </PaperProvider>
+      </SafeAreaView>
+    </loadingContext.Provider>
+
   );
 };
 

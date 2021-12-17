@@ -30,7 +30,7 @@ export default function TeacherCoupons(props) {
     const focused = useIsFocused()
 
     const [couponArr, setCouponArr] = useState([]);
-
+    const [mainCouponArr, setMainCouponArr] = useState([]);
 
     const getCoupons = async () => {
         setIsLoading(true)
@@ -38,6 +38,7 @@ export default function TeacherCoupons(props) {
             let { data: res } = await getCouponsByTeacherId();
             if (res.success) {
                 setCouponArr(res.data)
+                setMainCouponArr(res.data)
             }
         } catch (error) {
             console.error(error)
@@ -48,6 +49,12 @@ export default function TeacherCoupons(props) {
 
     const handleOnInit = () => {
         getCoupons()
+    }
+
+    const searchCouponCode=(val)=>{
+        let tempArr=[...mainCouponArr]
+        tempArr=tempArr.filter(el=>el.code.toLowerCase().includes(val.toLowerCase()))
+        setCouponArr()
     }
 
 
@@ -67,8 +74,8 @@ export default function TeacherCoupons(props) {
                 <View style={styles.inputView}>
                     <TextInput
                         style={styles.input}
-                        placeholder="Enter coupon code"
-                        keyboardType="numeric"
+                        placeholder="Search coupon code"
+                        onChangeText={(e)=>searchCouponCode(e)}
                     />
 
                 </View>
@@ -93,6 +100,9 @@ export default function TeacherCoupons(props) {
                     )
                 }}
                 keyExtractor={(item, index) => `${item._id}`}
+                ListEmptyComponent={
+                    <Text style={{fontFamily:'Montserrat-SemiBold',fontSize:18,color:'black',textAlign:'center'}}>No Coupons Found</Text>
+                }
 
             />
             <FAB

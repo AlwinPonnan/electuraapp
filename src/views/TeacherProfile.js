@@ -9,7 +9,7 @@ import { RadioButton } from 'react-native-paper';
 import Swipeable from 'react-native-swipeable';
 import { useIsFocused } from '@react-navigation/core';
 import { getById, getDecodedToken } from '../Services/User';
-import { generateImageUrl } from '../globals/utils';
+import { dayArr, generateImageUrl } from '../globals/utils';
 import { getByCoursesUserId } from '../Services/Course';
 
 import { Rating, AirbnbRating } from 'react-native-ratings';
@@ -24,13 +24,15 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import { Picker } from '@react-native-picker/picker';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import { createZoomMeeting } from '../Services/ZoomMeeting';
+import * as Progress from 'react-native-progress';
+
 export default function TeacherProfile(props) {
 
 
     const [isLoading, setIsLoading] = useContext(loadingContext);
     const refRBSheet = useRef();
 
-    const [checked, setChecked] = useState(EnquiryTypes.SLOT);
+    const [checked, setChecked] = useState(EnquiryTypes.ONETOONE);
 
     const focused = useIsFocused()
 
@@ -69,6 +71,7 @@ export default function TeacherProfile(props) {
     const [slotsArr, setSlotsArr] = useState([]);
     const initialDate = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`
     const [selectedDate, setSelectedDate] = useState(initialDate);
+
     const leftContent = () => {
         return (
             <Pressable style={styles.btn} >
@@ -308,6 +311,35 @@ export default function TeacherProfile(props) {
                     // alert(res.message)
                 }
             }
+            else if (checked == "connect") {
+                // console.log()
+                let obj = {
+                    classId: '',
+                    subjectId: '',
+                    topicId: '',
+                    region: '',
+                    ClassType: '',
+                    gender: '',
+                    price: '',
+                    slotObj: {
+                        day: dayArr[new Date().getDay()].day,
+                        meetingDate: new Date(),
+                        // timeSlotObj: slotsArr.find(el => el.time == selectedTimeSlot)
+                    },
+                    specificRequirement: '',
+                    enquiryType: checked,
+                    teacherId: teacherObj?._id,
+                    additionalMessage
+                }
+                // console.log(obj)
+                let { data: res } = await NewEnquiry(obj);
+                if (res.success) {
+                    setSuccessAlert(true)
+                    setAlertText(res.message)
+                    setAdditionalMessage("")
+                    // alert(res.message)
+                }
+            }
             else {
                 let obj = {
                     classId: '',
@@ -421,6 +453,13 @@ export default function TeacherProfile(props) {
                 </View>
             </View>
 
+            {/* <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                <Text style={styles.headingAboveCard}>Profile Progress </Text>
+            </View>
+            <View style={[styles.flexColumn, { width: wp(90), alignSelf: "center", marginTop: 20, }]}>
+                <Progress.Bar progress={0.4} width={wp(90)} color={colorObj.primarColor} />
+
+            </View> */}
 
             <View style={[styles.flexColumn, { width: wp(90), alignSelf: "center", marginTop: 20, }]}>
                 <Text style={styles.description}>{teacherObj?.enquiryObj?.description ? teacherObj?.enquiryObj?.description : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,"}</Text>
