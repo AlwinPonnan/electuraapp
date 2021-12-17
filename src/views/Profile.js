@@ -112,7 +112,7 @@ export default function Profile(props) {
                 </Pressable>
 
                 {/* <Text style={styles.subHeading}>My Teachers</Text> */}
-                <Text style={styles.subHeading}>Feedbacks</Text>
+                {/* <Text style={styles.subHeading}>Feedbacks</Text> */}
                 {
                     roleName == "USER" &&
                     <>

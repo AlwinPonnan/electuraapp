@@ -8,7 +8,7 @@ import { RadioButton } from 'react-native-paper';
 
 import Swipeable from 'react-native-swipeable';
 import { useIsFocused } from '@react-navigation/core';
-import { getById, getDecodedToken } from '../Services/User';
+import { getById, getDecodedToken, updateProfileVisit } from '../Services/User';
 import { dayArr, generateImageUrl } from '../globals/utils';
 import { getByCoursesUserId } from '../Services/Course';
 
@@ -25,6 +25,8 @@ import { Picker } from '@react-native-picker/picker';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import { createZoomMeeting } from '../Services/ZoomMeeting';
 import * as Progress from 'react-native-progress';
+import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
+import { getByUser } from '../Services/LiveClass';
 
 export default function TeacherProfile(props) {
 
@@ -72,6 +74,9 @@ export default function TeacherProfile(props) {
     const initialDate = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`
     const [selectedDate, setSelectedDate] = useState(initialDate);
 
+    const [profileProgress, setProfileProgress] = useState(0);
+
+    const [liveClassArr, setLiveClassArr] = useState([]);
     const leftContent = () => {
         return (
             <Pressable style={styles.btn} >
@@ -132,6 +137,8 @@ export default function TeacherProfile(props) {
         getTeacher()
         getCourses()
         getAllFeedBacks()
+        getLiveClass()
+        handleProfileVisit()
     }
 
     const getTeacher = async () => {
@@ -148,7 +155,17 @@ export default function TeacherProfile(props) {
                 // console.log(tempObj.enquiryObj.timeslots)
                 setTeacherObj({ ...tempObj })
                 handleDaySelectOnint(new Date(initialDate).getDay(), tempObj.enquiryObj.timeslots)
+                if (tempObj?.enquiryObj?.timeslots?.length > 0) {
+                    setProfileProgress(prevState => prevState + 0.3)
+                }
+                if (tempObj?.role == "TEACHER") {
+                    setProfileProgress(prevState => prevState + 0.3)
 
+                }
+                if (tempObj?.enquiryObj?.facebookLink != "" && tempObj?.enquiryObj?.instagramLink != "" && tempObj?.enquiryObj?.youtubeLink != "") {
+                    setProfileProgress(prevState => prevState + 0.4)
+
+                }
             }
         } catch (error) {
             console.error(error)
@@ -252,6 +269,15 @@ export default function TeacherProfile(props) {
         if (dayIndex != -1) {
             setSlotsArr([...tempArr[dayIndex].slotArr])
             setSelectedSlotDay(tempArr[dayIndex].day)
+        }
+    }
+
+    const handleProfileVisit = async () => {
+        try {
+            await updateProfileVisit();
+
+        } catch (error) {
+            console.error(error)
         }
     }
 
@@ -372,6 +398,41 @@ export default function TeacherProfile(props) {
         setIsLoading(false)
     }
 
+    const getLiveClass = async () => {
+        try {
+            const { data: res } = await getByUser();
+            if (res.success) {
+                let tempArr = res.data;
+
+                let temp = tempArr.map(el => {
+                    let obj = {
+                        ...el,
+                        imgUrl: "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
+
+                    }
+                    return obj
+                }).filter(el => {
+                    if (el?.enquiryObj?.slotObj?.timeSlotObj?.startTime) {
+                        console.log(new Date(el?.enquiryObj?.slotObj?.timeSlotObj?.startTime).toDateString())
+                        if (new Date(el?.enquiryObj?.slotObj?.timeSlotObj?.startTime).getTime() <= new Date().getTime() && new Date(el?.enquiryObj?.slotObj?.timeSlotObj?.endTime).getTime() >= new Date().getTime()) {
+                            return true
+                        }
+                        else {
+                            return false
+                        }
+                    }
+                    else {
+                        return true
+                    }
+                })
+                // console.log(JSON.stringify(temp,null,2),"adad")
+
+                setLiveClassArr(temp)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
     const onDayPress = day => {
         // console.log(day)
         console.log(selectedDate)
@@ -453,13 +514,26 @@ export default function TeacherProfile(props) {
                 </View>
             </View>
 
-            {/* <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                <Text style={styles.headingAboveCard}>Profile Progress </Text>
+            <View style={[{ backgroundColor: '#F5F5F5', width: wp(90), alignSelf: 'center', borderRadius: 5, padding: 10 }]}>
+                <Text style={styles.dashboardHeading}>My Dashboard </Text>
+                <View style={[styles.flexColumn, { width: wp(90), alignItems: 'center', alignSelf: "center", marginTop: 20 }]}>
+                    <Progress.Bar progress={profileProgress} width={wp(70)} color={colorObj.primarColor} />
+                </View>
+                <View style={[styles.flexRow, { width: '80%', alignItems: 'center', alignSelf: 'center', justifyContent: 'space-between', backgroundColor: 'white', marginVertical: 20, paddingVertical: 10, borderRadius: 5 }]}>
+                    <View style={[{ borderRightWidth: 1, paddingHorizontal: 10, borderRightColor: '#F2F2F2' }]}>
+                        <Text style={styles.dashboardTextMain}>{teacherObj?.profileVisit}</Text>
+                        <Text style={styles.dashboardTextSub}>Profile Visits</Text>
+                    </View>
+                    <View style={[{ borderRightWidth: 1, paddingHorizontal: 10, borderRightColor: '#F2F2F2' }]}>
+                        <Text style={styles.dashboardTextMain}>{teacherObj?.totalBookmarks ? teacherObj?.totalBookmarks : 0}</Text>
+                        <Text style={styles.dashboardTextSub}>Students</Text>
+                    </View>
+                    <View style={[{ paddingHorizontal: 10 }]}>
+                        <Text style={styles.dashboardTextMain}>{liveClassArr.length}</Text>
+                        <Text style={styles.dashboardTextSub}>Live Sessions</Text>
+                    </View>
+                </View>
             </View>
-            <View style={[styles.flexColumn, { width: wp(90), alignSelf: "center", marginTop: 20, }]}>
-                <Progress.Bar progress={0.4} width={wp(90)} color={colorObj.primarColor} />
-
-            </View> */}
 
             <View style={[styles.flexColumn, { width: wp(90), alignSelf: "center", marginTop: 20, }]}>
                 <Text style={styles.description}>{teacherObj?.enquiryObj?.description ? teacherObj?.enquiryObj?.description : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,"}</Text>
@@ -732,6 +806,24 @@ export default function TeacherProfile(props) {
     )
 }
 const styles = StyleSheet.create({
+    dashboardTextMain: {
+        color: colorObj.primarColor,
+        fontSize: 18,
+        textAlign: 'center',
+        fontFamily: 'RedHatText-SemiBold'
+    },
+    dashboardTextSub: {
+        color: '#828282',
+        fontSize: 12,
+        textAlign: 'center',
+
+        fontFamily: 'RedHatText-Regular'
+    },
+    dashboardHeading: {
+        fontFamily: 'RedHatText-SemiBold',
+        fontSize: 16,
+        color: 'black'
+    },
     contentContainer: {
         flex: 1,
         alignItems: 'center',
