@@ -85,11 +85,13 @@ export default function MainDrawer() {
                     <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate("MainBottomTab")}><Icon name="home-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Home</Text></TouchableOpacity>
 
                     <TouchableOpacity style={styles.DrawerItem} onPress={() => profileData?.role == "TEACHER" ? props.navigation.navigate('TeacherProfile', { data: profileData?._id }) : props.navigation.navigate('AccountEdit')}><Icon name="settings-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Account Settings</Text></TouchableOpacity>
+                    
                     {
                         roleName == "TEACHER" &&
                         <>
                             <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate('CreateCourse')}><Icon name="desktop-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Create Your Course</Text></TouchableOpacity>
-                            <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate('TeacherCoupons')}><Icon name="desktop-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Coupons</Text></TouchableOpacity>
+                            <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate('TeacherCoupons')}><Icon name="barcode-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Coupons</Text></TouchableOpacity>
+                            <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate('TeacherSlots')}><Icon name="calendar-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Create your Slots</Text></TouchableOpacity>
 
                         </>
                     }

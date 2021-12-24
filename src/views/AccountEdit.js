@@ -368,7 +368,7 @@ export default function AccountEdit(props) {
                             <Text style={styles.label}>
                                 Teaching Experience
                             </Text>
-                            <TextInput value={profileData?.enquiryObj?.experience} onChangeText={(e) => handleProfileDataUpdate(e, "experience")} style={styles.txtInput} keyboardType="number-pad" placeholder="Your Teaching Experience" />
+                            <TextInput value={profileData?.enquiryObj?.experience} onChangeText={(e) => handleProfileDataUpdate(e, "experience")} style={styles.txtInput} keyboardType="number-pad" placeholder="Your Teaching Experience (in years)" />
 
                             <Text style={styles.label}>
                                 Facebook Profile name

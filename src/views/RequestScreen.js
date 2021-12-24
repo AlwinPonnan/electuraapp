@@ -89,13 +89,13 @@ export default function Requestscreen(props) {
             <FlatList
                 data={requestArr}
                 keyExtractor={(item, index) => `${item._id}`}
-                contentContainerStyle={{ marginBottom: 100, minHeight: hp(70) }}
+                contentContainerStyle={{ paddingHorizontal:100 }}
                 refreshing={isrefreshing}
                 onRefresh={() => getRequests()}
                 ListEmptyComponent={
                     <View style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                         <Image source={require('../../assets/images/Icon.png')} resizeMode="center" />
-                        <Text style={{ fontFamily: 'Montserrat-SemiBold', fontSize: 20 }}>No Request found</Text>
+                        <Text style={{ fontFamily: 'Montserrat-SemiBold', fontSize: 20,textAlign:'center' }}>No Request found</Text>
                     </View>
                 }
                 renderItem={({ item, index }) => {
@@ -139,7 +139,8 @@ export default function Requestscreen(props) {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: "white",
-        paddingHorizontal: hp(2)
+        paddingHorizontal: hp(2),
+        flex:1
     },
     searchBar: {
         width: '100%',

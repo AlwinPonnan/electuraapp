@@ -111,7 +111,7 @@ export default function SpecificChat(props) {
     return (
 
         <FlatList
-            // keyboardShouldPersistTaps="handled"
+            keyboardShouldPersistTaps="always"
             ListHeaderComponent={
                 <View style={styles.container}>
                     <View style={styles.innerContainer}>
@@ -149,7 +149,7 @@ export default function SpecificChat(props) {
 
                             <View style={styles.searchContainer}>
                                 <View style={styles.flexRowAlignCenter}>
-                                    <TextInput style={styles.searchInput} multiline={true} numberOfLines={3} value={messageStr} onChangeText={(val) => setMessageStr(val)} placeholder="Message..." placeholderTextColo="#828282" />
+                                    <TextInput  style={styles.searchInput} multiline={true} numberOfLines={3} value={messageStr} onChangeText={(val) => setMessageStr(val)} placeholder="Message..." placeholderTextColo="#828282" />
                                 </View>
                                 <Pressable onPress={() => handleChatSend()}>
                                     <Icon name="send-outline" size={20} color="#828282" />

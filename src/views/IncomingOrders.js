@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import { StyleSheet, Text, View, FlatList, Image, Pressable, Modal } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -6,6 +6,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import { getIncomingOrders, getMyOrders } from '../Services/Order';
 import { useIsFocused } from '@react-navigation/core';
 import { generateImageUrl } from '../globals/utils';
+import { loadingContext } from '../navigators/stacks/RootStack';
 
 export default function IncomingOrders(props) {
     const [isrefreshing, setIsrefreshing] = useState(false);
@@ -14,7 +15,10 @@ export default function IncomingOrders(props) {
 
     const focused = useIsFocused()
 
+    const [isLoading, setIsLoading] = useContext(loadingContext);
+
     const getOrders = async () => {
+        setIsLoading(true)
         try {
             setIsrefreshing(true)
             const { data: res } = await getIncomingOrders();
@@ -27,6 +31,7 @@ export default function IncomingOrders(props) {
             console.error(error)
             setIsrefreshing(false)
         }
+        setIsLoading(false)
     }
 
 

@@ -160,7 +160,7 @@ export default function CreateEnquiry(props) {
     const handleEnquirySubmit = async () => {
         setIsLoading(true)
         try {
-            if (selectedClassId != "" && selectedSubjectId != "" && ClassType != "" && price != "" && gender != "" && selectedTopicId != "") {
+            if (selectedClassId != "" && selectedSubjectId != "" && ClassType != "" && price != "" && gender != "" ) {
 
                 let obj = {
                     classId: selectedClassId,

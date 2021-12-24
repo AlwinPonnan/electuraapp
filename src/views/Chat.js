@@ -1,35 +1,45 @@
 import { useIsFocused } from '@react-navigation/core';
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { View, Text, StyleSheet, Image, FlatList, Pressable } from 'react-native'
 import { Searchbar } from 'react-native-paper';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { getAllChats } from '../Services/Chat';
 import { generateImageUrl } from '../globals/utils'
+import { loadingContext } from '../navigators/stacks/RootStack';
+import { chatRefreshContext } from '../../App';
+
+
+
 export default function Chat(props) {
 
     const [searchQuery, setSearchQuery] = React.useState('');
 
-    const onChangeSearch = query => setSearchQuery(query);
     const [chatArr, setChatArr] = useState([]);
     const [isrefreshing, setIsrefreshing] = useState(false);
 
-
+    const [isLoading, setIsLoading] = useContext(loadingContext);
+    const [chatRefresh, setChatRefresh] = useContext(chatRefreshContext);
+    const [mainChatArr, setMainChatArr] = useState([]);
     const focused = useIsFocused()
 
     const getChats = async () => {
+        setIsLoading(true)
         try {
+
             setIsrefreshing(true)
             const { data: res } = await getAllChats();
             if (res.success) {
                 setIsrefreshing(false)
                 console.log(JSON.stringify(res.data, null, 2))
                 setChatArr(res.data)
+                setMainChatArr(res.data)
             }
         } catch (error) {
             setIsrefreshing(false)
             console.error(error)
         }
+        setIsLoading(false)
     }
 
 
@@ -37,9 +47,15 @@ export default function Chat(props) {
         getChats()
     }
 
+    const onChangeSearch = query => {
+        let tempArr=[...mainChatArr]
+        tempArr=tempArr.filter(el=>el.userObj.name.toLowerCase().includes(query.toLowerCase()))
+        setChatArr([...tempArr])
+        setSearchQuery(query)
+    };
     useEffect(() => {
         handleOnint()
-    }, [focused])
+    }, [focused, chatRefresh])
 
 
 
@@ -69,7 +85,7 @@ export default function Chat(props) {
                                     <View style={styles.flexRow}>
                                         <Image source={{ uri: generateImageUrl(item?.userObj?.profileImage) }} style={styles.cardImage} />
                                         <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                                            <Text style={styles.cardHeading}>{item?.userObj?.name}</Text>
+                                            <Text style={styles.cardHeading}>{item?.userObj?.name ? item?.userObj?.name : `User-${item?.userObj?._id}`} </Text>
 
                                             <Text style={styles.cardSmallData}>{item?.lastMessage ? item?.lastMessage : ""}</Text>
 

@@ -195,9 +195,16 @@ export default function OrderDetail(props) {
             }
 
         } catch (error) {
+            if(error?.response?.data?.message){
+                setAlertText(error?.response?.data?.message)
+                setErrorAlert(true) 
+            }
+            else{
+                
+                setAlertText(error.message)
+                setErrorAlert(true)
+            }
             console.error(error)
-            setAlertText(error.message)
-            setErrorAlert(true)
 
         }
         setIsLoading(false)

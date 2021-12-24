@@ -91,19 +91,19 @@ export default function Courses(props) {
                 })
                 setSubjectArr([...tempArr])
                 setIsrefreshing(false)
-                
+
             }
         } catch (error) {
             console.error(error)
             setIsrefreshing(false)
-            
+
         }
     }
 
     const getCourses = async () => {
         try {
             setIsrefreshing(true)
-          
+
             const { data: res } = await getAllForUsersHomePage();
             if (res.success) {
                 let tempArr = res.data;
@@ -255,7 +255,9 @@ export default function Courses(props) {
                                     <View>
                                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                                             <Text style={styles.headingAboveCard}>{item?.name}</Text>
-                                            <Text style={styles.viewAllText}>View All</Text>
+                                            <Pressable onPress={() => props.navigation.navigate("AllCourses")}>
+                                                <Text style={styles.viewAllText}>View All</Text>
+                                            </Pressable>
                                         </View>
                                         <FlatList
                                             data={item?.courseArr}

@@ -266,7 +266,7 @@ export default function Learnings(props) {
 
 
     const renderItem2 = ({ item, index }) => (
-        <Pressable style={styles.cardContainer}  >
+        <Pressable style={styles.cardContainer} onPress={()=>props.navigation.navigate("CourseDetail", { data: item?.courseObj?.courseId })} >
             <Image style={styles.courseImg} source={{ uri: generateImageUrl(item?.courseObj?.thumbnailImage?.url) }} />
             <View style={styles.textCardContainer}>
                 <View>
@@ -340,7 +340,7 @@ export default function Learnings(props) {
                             keyExtractor={(item, index) => `${index}`}
                             ListEmptyComponent={
                                 <View style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: "25%" }}>
-                                    <Text style={{ fontFamily: 'Montserrat-SemiBold', fontSize: 20, textAlign: "center" }}>You havn't bought any courses yet !!</Text>
+                                    <Text style={{ fontFamily: 'Montserrat-SemiBold', fontSize: 16, textAlign: "center" }}>You havn't bought any courses yet !!</Text>
                                 </View>
                             }
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { View, Text, StyleSheet, Image, Pressable } from 'react-native'
+import { View, Text, StyleSheet, Image, Pressable, Linking } from 'react-native'
 import { colorObj } from '../globals/colors'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -28,7 +28,7 @@ export default function Notification(props) {
             const { data: res } = await getAllNotifications()
             if (res.success) {
                 console.log(JSON.stringify(res.data, null, 2))
-                setNotificationArr(res.data)
+                setNotificationArr(res.data.reverse())
                 setIsRefreshing(false)
 
             }
@@ -39,6 +39,16 @@ export default function Notification(props) {
         }
         setIsLoading(false)
         setIsRefreshing(false)
+    }
+
+    const handleNotificationRedirect = (item) => {
+        if(item.redirectTo){
+
+            if (item.redirectTo != "") {
+                setIsLoading(true)
+                Linking.openURL(item.redirectTo)
+            }
+        }
     }
 
 
@@ -72,7 +82,7 @@ export default function Notification(props) {
                         renderItem={({ item, index }) => {
                             return (
 
-                                <View style={styles.notiCard}>
+                                <Pressable style={styles.notiCard} onPress={() => handleNotificationRedirect(item)}>
                                     <View style={[styles.flexRow, { alignItems: 'center', marginHorizontal: 5 }]}>
                                         <View>
                                             <Image style={{ height: 50, width: 50 }} source={{ uri: generateImageUrl(item?.userObj?.profileImage) }} />
@@ -83,13 +93,13 @@ export default function Notification(props) {
                                             <View>
 
                                                 <Text style={styles.cardData}>{item?.content} </Text>
-                                                <Text style={styles.cardData}>{`${new Date(item?.createdAt).getDay()}/${new Date(item?.createdAt).getMonth() + 1}/${new Date(item?.createdAt).getFullYear()}`}</Text>
+                                                <Text style={styles.cardData}>{`${new Date(item?.createdAt).getDate()}/${new Date(item?.createdAt).getMonth() + 1}/${new Date(item?.createdAt).getFullYear()}`}</Text>
                                             </View>
                                         </View>
                                     </View>
                                     {/* <Text style={[styles.cardData, { alignSelf: "flex-end", paddingRight: 20 }]}>{`${new Date(item?.createdAt).getHours()}:${new Date(item?.createdAt).getMinutes()}`}</Text> */}
 
-                                </View>
+                                </Pressable>
                             )
                         }}
                     />

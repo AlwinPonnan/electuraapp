@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import { StyleSheet, Text, View, FlatList, Image, Pressable, Modal } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -8,14 +8,20 @@ import { useIsFocused } from '@react-navigation/core';
 import { generateImageUrl } from '../globals/utils';
 import { widthPercentageToDP } from 'react-native-responsive-screen';
 
+import { loadingContext } from '../navigators/stacks/RootStack';
 export default function Order(props) {
 
     const [ordersArr, setOrdersArr] = useState([]);
     const [isrefreshing, setIsrefreshing] = useState(false);
     const focused = useIsFocused()
 
+
+    const [isLoading, setIsLoading] = useContext(loadingContext);
+
     const getOrders = async () => {
+        setIsLoading(true)
         try {
+            
             setIsrefreshing(true)
             const { data: res } = await getMyOrders();
             if (res) {
@@ -26,6 +32,7 @@ export default function Order(props) {
             console.error(error)
             setIsrefreshing(false)
         }
+        setIsLoading(false)
     }
 
 

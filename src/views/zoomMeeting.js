@@ -14,12 +14,13 @@ export default function zoomMeeting(props) {
     const [propsObj, setPropsObj] = useState(props.route.params.data);
     const [isUser, setIsUser] = useState(props.route.params.isUser);
 
-
+    const [MeetingText, setMeetingText] = useState("Please Wait ...");
     const [isLoading, setIsLoading] = useContext(loadingContext);
 
     useEffect(() => {
         (async () => {
             try {
+                setTimeout(()=>{setMeetingText("Meeting Ended")},5000)
                 console.log(propsObj)
                 if (isUser) {
                     const initializeResult = await ZoomUs.initialize({
@@ -43,7 +44,7 @@ export default function zoomMeeting(props) {
                     );
                     console.log({ initializeResult });
                     await ZoomUs.startMeeting({
-                        userName: 'Johny',
+                        userName: 'Teacher',
                         meetingNumber: propsObj?.zoomMeetingObj?.id,
                         userId: propsObj?.zoomMeetingObj?.host_email,
                         zoomAccessToken: queryParams?.zak,
@@ -69,7 +70,7 @@ export default function zoomMeeting(props) {
     return (
         <View style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             <Image source={require('../../assets/images/Icon.png')} style={{  marginBottom: 30,maxWidth:'90%',padding:'5%' }}  resizeMode="contain" />
-            <Text style={{ fontFamily: 'Montserrat-SemiBold', fontSize: 20 }}>Meeting Ended</Text>
+            <Text style={{ fontFamily: 'Montserrat-SemiBold', fontSize: 20 }}>{MeetingText}</Text>
             <Pressable style={styles.btn} onPress={()=>props.navigation.goBack()}> 
                 <Text style={styles.btnTxt}>Go Back</Text>
             </Pressable>

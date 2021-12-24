@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, useContext, } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
 import {
   SafeAreaView,
   useColorScheme,
@@ -19,7 +19,7 @@ export const successAlertContext = createContext()
 
 export const axiosApiInstance = axios.create();
 
-
+export const chatRefreshContext = createContext()
 
 const App = () => {
 
@@ -34,6 +34,7 @@ const App = () => {
 
   const [loading, setLoading] = useState(false);
 
+  const [chatRefresh, setChatRefresh] = useState(false);
 
 
   useEffect(() => {
@@ -59,7 +60,7 @@ const App = () => {
     // (required) Called when a remote is received or opened, or local notification is opened
     onNotification: function (notification) {
       // console.log("NOTIFICATION:", notification);
-      console.log("NOTIFICATION:", JSON.stringify(notification,null,2));
+      console.log("NOTIFICATION:", JSON.stringify(notification, null, 2));
       setLoading(true)
       setTimeout(() => {
         setLoading(false);
@@ -101,8 +102,10 @@ const App = () => {
   useEffect(() => {
     notifyChannel();
     // Geocoder.init("AIzaSyCtkZzuFSZ94CSPnDArwvPMqxkk58Fzfno")
-
     const unsubscribe = messaging().onMessage(async remoteMessage => {
+      if (remoteMessage?.data?.remoteMessage?.data?.redirectTo == "demo://app/Chat") {
+        setChatRefresh(!chatRefresh)
+      }
       // console.log(remoteMessage)
       PushNotification.localNotification({
         /* Android Only Properties */
@@ -150,7 +153,7 @@ const App = () => {
         soundName: "default", // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
         number: 10, // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
         // repeatType: "day", // (optional) Repeating interval. Check 'Repeating Notifications' section for more info.
-        data:{remoteMessage}
+        data: { remoteMessage }
       });
     });
 
@@ -178,43 +181,46 @@ const App = () => {
 
   return (
     <loadingContext.Provider value={[loading, setLoading]}>
+      <chatRefreshContext.Provider value={[chatRefresh, setChatRefresh]}>
 
-      <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
-        <PaperProvider theme={theme}>
-          <successAlertContext.Provider value={{ successAlertArr: [successAlert, setSuccessAlert], warningAlertArr: [warningAlert, setWarningAlert], errorAlertArr: [errorAlert, setErrorAlert], alertTextArr: [alertText, setAlertText] }}>
+        <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
+          <PaperProvider theme={theme}>
+            <successAlertContext.Provider value={{ successAlertArr: [successAlert, setSuccessAlert], warningAlertArr: [warningAlert, setWarningAlert], errorAlertArr: [errorAlert, setErrorAlert], alertTextArr: [alertText, setAlertText] }}>
 
 
-            <RootStack />
+              <RootStack />
 
-            {/* Success Modal */}
+              {/* Success Modal */}
 
-            <Portal>
-              <Modal visible={successAlert} onDismiss={() => { setSuccessAlert(false); setAlertText('Success') }} contentContainerStyle={styles.containerStyle}>
-                <LottieView source={require('./assets/images/success.json')} autoSize resizeMode="cover" autoPlay loop={false} style={styles.lottieStyle} />
-                <Text style={styles.alertText}>{alertText}</Text>
-              </Modal>
-            </Portal>
+              <Portal>
+                <Modal visible={successAlert} onDismiss={() => { setSuccessAlert(false); setAlertText('Success') }} contentContainerStyle={styles.containerStyle}>
+                  <LottieView source={require('./assets/images/success.json')} autoSize resizeMode="cover" autoPlay loop={false} style={styles.lottieStyle} />
+                  <Text style={styles.alertText}>{alertText}</Text>
+                </Modal>
+              </Portal>
 
-            {/* Warning Modal */}
+              {/* Warning Modal */}
 
-            <Portal>
-              <Modal visible={warningAlert} onDismiss={() => { setWarningAlert(false); setAlertText('Warning') }} contentContainerStyle={styles.containerStyle}>
-                <LottieView source={require('./assets/images/warning.json')} autoSize resizeMode="cover" autoPlay loop={false} style={styles.lottieStyle} />
-                <Text style={styles.alertText}>{alertText}</Text>
-              </Modal>
-            </Portal>
+              <Portal>
+                <Modal visible={warningAlert} onDismiss={() => { setWarningAlert(false); setAlertText('Warning') }} contentContainerStyle={styles.containerStyle}>
+                  <LottieView source={require('./assets/images/warning.json')} autoSize resizeMode="cover" autoPlay loop={false} style={styles.lottieStyle} />
+                  <Text style={styles.alertText}>{alertText}</Text>
+                </Modal>
+              </Portal>
 
-            {/* Error Modal */}
-            <Portal>
-              <Modal visible={errorAlert} onDismiss={() => { setErrorAlert(false); setAlertText('Error') }} contentContainerStyle={styles.containerStyle}>
-                <LottieView source={require('./assets/images/error.json')} autoSize resizeMode="cover" autoPlay loop={false} style={styles.lottieStyle} />
-                <Text style={styles.alertText}>{alertText}</Text>
-              </Modal>
-            </Portal>
+              {/* Error Modal */}
+              <Portal>
+                <Modal visible={errorAlert} onDismiss={() => { setErrorAlert(false); setAlertText('Error') }} contentContainerStyle={styles.containerStyle}>
+                  <LottieView source={require('./assets/images/error.json')} autoSize resizeMode="cover" autoPlay loop={false} style={styles.lottieStyle} />
+                  <Text style={styles.alertText}>{alertText}</Text>
+                </Modal>
+              </Portal>
 
-          </successAlertContext.Provider>
-        </PaperProvider>
-      </SafeAreaView>
+            </successAlertContext.Provider>
+          </PaperProvider>
+        </SafeAreaView>
+      </chatRefreshContext.Provider>
+
     </loadingContext.Provider>
 
   );
