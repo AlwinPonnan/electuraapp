@@ -32,8 +32,20 @@ export default function Chat(props) {
             if (res.success) {
                 setIsrefreshing(false)
                 console.log(JSON.stringify(res.data, null, 2))
-                setChatArr(res.data)
-                setMainChatArr(res.data)
+                setChatArr(res.data.map(el => {
+                    let obj = {
+                        ...el,
+                        image: el?.userObj?.profileImage ? generateImageUrl(el?.userObj?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80"
+                    }
+                    return obj
+                }))
+                setMainChatArr(res.data.map(el => {
+                    let obj = {
+                        ...el,
+                        image: el?.userObj?.profileImage ? generateImageUrl(el?.userObj?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80"
+                    }
+                    return obj
+                }))
             }
         } catch (error) {
             setIsrefreshing(false)
@@ -48,8 +60,8 @@ export default function Chat(props) {
     }
 
     const onChangeSearch = query => {
-        let tempArr=[...mainChatArr]
-        tempArr=tempArr.filter(el=>el.userObj.name.toLowerCase().includes(query.toLowerCase()))
+        let tempArr = [...mainChatArr]
+        tempArr = tempArr.filter(el => el.userObj.name.toLowerCase().includes(query.toLowerCase()))
         setChatArr([...tempArr])
         setSearchQuery(query)
     };
@@ -83,12 +95,10 @@ export default function Chat(props) {
                             <>
                                 <Pressable onPress={() => props.navigation.navigate('SpecificChat', { chatRoomId: item.chatRoomId })} style={styles.card}>
                                     <View style={styles.flexRow}>
-                                        <Image source={{ uri: generateImageUrl(item?.userObj?.profileImage) }} style={styles.cardImage} />
+                                        <Image source={{uri:item?.image}} style={styles.cardImage} />
                                         <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                                            <Text style={styles.cardHeading}>{item?.userObj?.name ? item?.userObj?.name : `User-${item?.userObj?._id}`} </Text>
-
+                                            <Text style={styles.cardHeading}>{item?.userObj?.name ? item?.userObj?.name : `${item.role}-${item?.userObj?._id}`} </Text>
                                             <Text style={styles.cardSmallData}>{item?.lastMessage ? item?.lastMessage : ""}</Text>
-
                                         </View>
                                     </View>
                                 </Pressable>

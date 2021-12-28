@@ -634,7 +634,15 @@ export default function TeacherProfile(props) {
             >
                 <View style={styles.bottomSheetInnerContainer}>
 
-                    <Text style={[styles.bottomSheetHeading, { fontFamily: 'Montserrat-SemiBold' }]}>Enquiry Options</Text>
+                    <Text style={[styles.bottomSheetHeading, { fontFamily: 'Montserrat-SemiBold',textAlign:'center' }]}>Enquiry Options</Text>
+                    <View style={[styles.flexRow, { alignItems: 'center',marginVertical:10 }]}>
+
+                        <Image source={{ uri: teacherObj?.profileImage ? generateImageUrl(teacherObj?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} style={{ width: 50, height: 50, borderRadius: 50 }} resizeMode="cover" />
+                        <View>
+
+                            <Text style={[styles.textCardMainHeading, { paddingHorizontal: 20 }]}>{teacherObj?.name} (Teacher)</Text>
+                        </View>
+                    </View>
                     <Pressable onPress={() => setChecked(EnquiryTypes.ONETOONE)} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
                         <Text style={styles.bottomSheetOptionText}>Specific Enquriy</Text>
                         <RadioButton

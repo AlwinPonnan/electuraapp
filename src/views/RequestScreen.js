@@ -50,6 +50,7 @@ export default function Requestscreen(props) {
 
     const handleAccept = async (id, enquiryId) => {
         setLoading(true)
+        // alert("Clicked")
         try {
             const { data: res } = await checkNcreateChatRoom(id, enquiryId);
             if (res.success) {
@@ -89,7 +90,7 @@ export default function Requestscreen(props) {
             <FlatList
                 data={requestArr}
                 keyExtractor={(item, index) => `${item._id}`}
-                contentContainerStyle={{ paddingHorizontal:100 }}
+                // contentContainerStyle={{ paddingHorizontal:100 }}
                 refreshing={isrefreshing}
                 onRefresh={() => getRequests()}
                 ListEmptyComponent={
@@ -106,7 +107,7 @@ export default function Requestscreen(props) {
                                 <View style={[styles.flexColumn, { justifyContent: "center" }]}>
                                     <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(70) }]}>
                                         <Text style={styles.cardHeading}>{item?.userObj?.name}</Text>
-                                        <Pressable onPress={() => handleAccept(item?.userObj?._id, item?._id)}>
+                                        <Pressable style={{paddingHorizontal:20,paddingVertical:5}} onPress={() => handleAccept(item?.userObj?._id, item?._id)}>
                                             <Text style={styles.acceptStyles}>Accept</Text>
                                         </Pressable>
                                     </View>

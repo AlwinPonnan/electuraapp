@@ -362,11 +362,22 @@ export default function AllCourses(props) {
 
     return (
         <View style={[styles.container]}>
-            <View style={{ flexDirection: 'row' }}>
-                <AntDesign name='left' size={20} style={[styles.topIcons, { flex: 1 }]} />
-                <AntDesign name='search1' size={20} style={[styles.topIcons, { marginRight: 25 }]} />
-                <AntDesign name='message1' size={20} style={[styles.topIcons, { marginRight: 25 }]} />
-                <Feather name='bell' size={20} style={[styles.topIcons]} />
+           <View style={{ flexDirection: 'row' }}>
+                <Pressable style={[{ flex: 1 }]} onPress={() => props.navigation.goBack()}>
+                    <AntDesign name='left' size={20} style={[styles.topIcons]} />
+                </Pressable>
+                {/* <Pressable onPress={() => props.navigation.navigate('')}>
+
+                    <AntDesign name='search1' size={20} style={[styles.topIcons, { marginRight: 25 }]} />
+                </Pressable> */}
+                <Pressable onPress={() => props.navigation.navigate('MainTopTab')}>
+
+                    <AntDesign name='message1' size={20} style={[styles.topIcons, { marginRight: 25 }]} />
+                </Pressable>
+                <Pressable onPress={() => props.navigation.navigate("Notification")}>
+
+                    <Feather name='bell' size={20} style={[styles.topIcons]} />
+                </Pressable>
             </View>
 
             <View style={[styles.searchInputView]}>
@@ -387,7 +398,8 @@ export default function AllCourses(props) {
                         <Text style={[styles.title]}>Recommended Courses</Text>
                         <FlatList
                             horizontal
-                            data={courseArr}
+                            data={courseArr.filter(el => el?.flags?.bestsellerFlag)}
+
                             renderItem={renderItem}
                             showsHorizontalScrollIndicator={false}
                             keyExtractor={(item, index) => `${index}`}

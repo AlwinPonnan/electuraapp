@@ -239,7 +239,7 @@ export default function Courses(props) {
 
                         <FlatList
                             horizontal
-                            data={courseArr}
+                            data={courseArr.filter(el => el?.flags?.bestsellerFlag)}
                             renderItem={renderItem}
                             ListEmptyComponent={
                                 <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>No Courses found</Text>
