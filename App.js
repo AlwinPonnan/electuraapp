@@ -164,18 +164,18 @@ const App = () => {
 
   useEffect(() => {
     if (successAlert)
-      setTimeout(() => setSuccessAlert(false), 4000)
+      setTimeout(() => setSuccessAlert(false), 1500)
   }, [successAlert])
 
 
   useEffect(() => {
     if (warningAlert)
-      setTimeout(() => setWarningAlert(false), 4000)
+      setTimeout(() => setWarningAlert(false), 1500)
   }, [warningAlert])
 
   useEffect(() => {
     if (errorAlert)
-      setTimeout(() => setErrorAlert(false), 4000)
+      setTimeout(() => setErrorAlert(false), 1500)
   }, [errorAlert])
 
 

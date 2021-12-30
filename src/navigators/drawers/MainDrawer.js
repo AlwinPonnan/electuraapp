@@ -10,7 +10,7 @@ import {
     Text,
     Image,
     TouchableOpacity, Linking
-    ,Share
+    , Share
 } from 'react-native';
 import 'react-native-gesture-handler';
 import MainBottomTab from '../tabs/MainBottomTab';
@@ -41,23 +41,23 @@ export default function MainDrawer() {
 
     const onShare = async () => {
         try {
-          const result = await Share.share({
-            message:
-            `Referal code from ${profileData?.name} is ${profileData.referalCode}`,
-          });
-          if (result.action === Share.sharedAction) {
-            if (result.activityType) {
-              // shared with activity type of result.activityType
-            } else {
-              // shared
+            const result = await Share.share({
+                message:
+                    `Referal code from ${profileData?.name} is ${profileData.referalCode}`,
+            });
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    // shared with activity type of result.activityType
+                } else {
+                    // shared
+                }
+            } else if (result.action === Share.dismissedAction) {
+                // dismissed
             }
-          } else if (result.action === Share.dismissedAction) {
-            // dismissed
-          }
         } catch (error) {
-          alert(error.message);
+            alert(error.message);
         }
-      };
+    };
     ////////////////////custom user drawer 
     function CustomDrawerContent(props) {
 
@@ -73,10 +73,13 @@ export default function MainDrawer() {
                 <View style={styles.profilePicContainer}>
                     <Image source={profileData.profileImage ? { uri: generateImageUrl(profileData.profileImage) } : require('../../../assets/images/user.png')} style={styles.profilePic} />
                     {
-                         profileData.name == "" ?
-                        <Text style={styles.userName}>+91-{profileData.phone} </Text>
-                        :
-                        <Text style={styles.userName}>{profileData.name} </Text>
+                        profileData.name == "" ?
+                            <Text style={styles.userName}>+91-{profileData.phone} </Text>
+                            :
+                            <View>
+                                <Text style={[styles.userName,{textAlign:'left'}]}>{profileData.name} </Text>
+                                <Text style={[styles.userName,{fontSize:12}]}>+91-{profileData.phone}</Text>
+                            </View>
                     }
                 </View>
 
@@ -85,7 +88,7 @@ export default function MainDrawer() {
                     <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate("MainBottomTab")}><Icon name="home-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Home</Text></TouchableOpacity>
 
                     <TouchableOpacity style={styles.DrawerItem} onPress={() => profileData?.role == "TEACHER" ? props.navigation.navigate('TeacherProfile', { data: profileData?._id }) : props.navigation.navigate('AccountEdit')}><Icon name="settings-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Account Settings</Text></TouchableOpacity>
-                    
+
                     {
                         roleName == "TEACHER" &&
                         <>
@@ -101,8 +104,8 @@ export default function MainDrawer() {
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="help-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Support</Text></TouchableOpacity>
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="help-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> FAQs</Text></TouchableOpacity>
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="document-text-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Policies</Text></TouchableOpacity>
-        
-                    <TouchableOpacity style={styles.DrawerItem} onPress={()=> onShare()}><Icon name="link-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Referal Code is <Text style={{fontFamily: "OpenSans-Bold",}}> {profileData?.referalCode} </Text></Text></TouchableOpacity>
+
+                    <TouchableOpacity style={styles.DrawerItem} onPress={() => onShare()}><Icon name="link-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Referal Code is <Text style={{ fontFamily: "OpenSans-Bold", }}> {profileData?.referalCode} </Text></Text></TouchableOpacity>
                     <TouchableOpacity onPress={() => { handleLogout() }} style={styles.DrawerItem}><Icon name="log-out-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Logout</Text></TouchableOpacity>
                 </View>
 
@@ -142,7 +145,7 @@ export default function MainDrawer() {
 
 
 
-   
+
     return (
         <Drawer.Navigator screenOptions={{ headerShown: false }} drawerContent={props => <CustomDrawerContent {...props} />}>
             <Drawer.Screen name="MainBottomTab" component={MainBottomTab} />

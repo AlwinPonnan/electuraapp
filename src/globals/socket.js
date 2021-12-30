@@ -54,5 +54,5 @@ export const listenToMessages = (callBackFn) => {
 }
 export const sendMessage = async(roomId, message) => {
     let tokenObj=await getDecodedToken();
-    socket.emit('message', { chatRoomId: roomId, message,sentBy:tokenObj?.userId });
+    socket.emit('message', { chatRoomId: roomId, message,sentBy:tokenObj?.userId,read:false });
 }

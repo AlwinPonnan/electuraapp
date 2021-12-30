@@ -85,7 +85,7 @@ export default function Notification(props) {
                                 <Pressable style={styles.notiCard} onPress={() => handleNotificationRedirect(item)}>
                                     <View style={[styles.flexRow, { alignItems: 'center', marginHorizontal: 5 }]}>
                                         <View>
-                                            <Image style={{ height: 50, width: 50 }} source={{ uri: generateImageUrl(item?.userObj?.profileImage) }} />
+                                            <Image style={{ height: 50, width: 50 }} source={{ uri: item?.sentByObj?.profileImage ? generateImageUrl(item?.sentByObj?.profileImage) :generateImageUrl(item?.userObj?.profileImage) }} />
                                         </View>
 
                                         <View style={styles.notificationInnerContainer}>

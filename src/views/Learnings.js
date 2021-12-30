@@ -222,7 +222,7 @@ export default function Learnings(props) {
     const renderItem = ({ item, index }) => {
         return (
             <Pressable style={styles.cardContainer}  >
-                <Image style={styles.courseImg} source={{ uri: item?.imgUrl }} />
+                <Image style={styles.courseImg} source={require('../../assets/images/3629604.jpg')} />
                 <View style={styles.textCardContainer}>
                     <View>
                         {decodedObj?.userId == item?.teacherId ?

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect,useContext } from 'react'
 import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj, light_colors } from '../globals/colors';
@@ -9,6 +9,9 @@ import { getAllCoursesSubjectWise, getAllForUsersHomePage } from '../Services/Co
 import { useIsFocused } from '@react-navigation/core';
 import { generateImageUrl } from '../globals/utils';
 import { getAllSubjects } from '../Services/Subjects';
+import { addTOWishList, getDecodedToken } from '../Services/User';
+import { successAlertContext } from '../../App';
+import { loadingContext } from '../navigators/stacks/RootStack';
 
 export default function Courses(props) {
     const [courseArr, setCourseArr] = useState([
@@ -21,48 +24,18 @@ export default function Courses(props) {
 
     const [subjectWiseCoursesArr, setSubjectWiseCoursesArr] = useState([]);
     const [mainCourseArr, setMainCourseArr] = useState([]);
-    const [productsArr, setProductsArr] = useState([
-        {
-            name: "Lorem Course",
-            categoryName: 'Science',
-            teacher: "Mr. Teacher",
-            teacherImg: "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80",
-            imgUrl: "https://images.unsplash.com/photo-1475778057357-d35f37fa89dd?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
-            description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
-            courseEstimatedTime: '1hr 30min',
-            active: false
 
-        },
-        {
-            name: "Lorem Course2",
-            categoryName: 'Physics',
-            teacher: "Mr. Teacher",
-            teacherImg: "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80",
-            imgUrl: "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
-            description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
-            courseEstimatedTime: '1hr 30min',
-            active: false
-        },
-        {
-            name: "Lorem Course3",
-            categoryName: 'A.I.',
-            teacher: "Mr. CBSE",
-            teacherImg: "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80",
-            imgUrl: "https://images.unsplash.com/photo-1475778057357-d35f37fa89dd?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
-            description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
-            active: false
-        },
-        {
-            name: "Lorem Course",
-            categoryName: 'Science',
-            teacher: "Mr. Teacher",
-            teacherImg: "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80",
-            imgUrl: "https://images.unsplash.com/photo-1497002961800-ea7dbfe18696?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1052&q=80",
-            description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti atque cum id assumenda nesciunt modi asperiores totam in vel iure?",
-            courseEstimatedTime: '1hr 30min',
-            active: false
-        },
-    ])
+    const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
+
+    const [loading, setLoading] = useContext(loadingContext);
+
+    const [successAlert, setSuccessAlert] = successAlertArr
+    const [warningAlert, setWarningAlert] = warningAlertArr
+    const [errorAlert, setErrorAlert] = errorAlertArr
+
+
+    const [alertText, setAlertText] = alertTextArr
+   
     const [categoryArr, setCategoryArr] = useState([]);
 
     const getCategories = async () => {
@@ -146,6 +119,36 @@ export default function Courses(props) {
         }
     }
 
+
+
+    const handleAddCourseToWhishlist = async (id) => {
+        setLoading(true)
+        try {
+            let tokenObj = await getDecodedToken()
+            let obj = {
+                userId: tokenObj?.userId,
+                courseId: id
+            }
+            console.log(obj)
+            const { data: res } = await addTOWishList(obj);
+            if (res.success) {
+                getDataOnInit()
+                // setAlertText(res.message);
+                // setSuccessAlert(true)
+            }
+        } catch (error) {
+            console.error(error)
+            if (error.response.data.message) {
+                setErrorAlert(true)
+                setAlertText(error.response.data.message)
+            }
+            else {
+                setErrorAlert(true)
+                setAlertText(error.message)
+            }
+        }
+        setLoading(false)
+    }
     const getDataOnInit = async () => {
         getSubjects()
         getCourses()
@@ -167,7 +170,7 @@ export default function Courses(props) {
                 <View style={styles.textCardContainer}>
                     <View>
 
-                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                        <Pressable onPress={()=>handleAddCourseToWhishlist(item._id)} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                             <Text style={styles.textCardMainHeading}>{item?.name}</Text>
                             {item.isWishListed ?
                                 <Icon name="heart" size={14} color={colorObj.primarColor} />
@@ -176,7 +179,7 @@ export default function Courses(props) {
                                 <Icon name="heart-outline" size={14} color={colorObj.primarColor} />
 
                             }
-                        </View>
+                        </Pressable>
                         <Text style={styles.textCardMainSubHeading1}>{item?.teacherName}</Text>
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                             <Text style={styles.textCardMainSubHeading2}>₹{item?.price}</Text>
@@ -274,10 +277,10 @@ export default function Courses(props) {
                                                                     <Text style={styles.textCardMainHeading}>{itemX?.name}</Text>
                                                                     {
                                                                         itemX?.isWishListed ?
-                                                                            <Icon name="heart" size={14} color={colorObj.primarColor} />
+                                                                            <Icon name="heart" onPress={()=>handleAddCourseToWhishlist(itemX._id)} size={14} color={colorObj.primarColor} />
 
                                                                             :
-                                                                            <Icon name="heart-outline" size={14} color={colorObj.primarColor} />
+                                                                            <Icon name="heart-outline" onPress={()=>handleAddCourseToWhishlist(itemX._id)} size={14} color={colorObj.primarColor} />
 
                                                                     }
                                                                 </View>

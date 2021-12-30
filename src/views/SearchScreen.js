@@ -30,12 +30,12 @@ export default function SearchScreen(props) {
         let tempQuery=query.toLowerCase()
         let tempArr = [...mainTeachersArr];
         console.log(JSON.stringify(tempArr, null, 2))
-        tempArr = tempArr.filter(el =>  el?.name.toLowerCase().includes(tempQuery) || el?.enquiryObj?.classesArr?.some(ele => ele.subjectArr?.some(elx => elx.subjectName?.toLowerCase().includes(tempQuery))))
+        tempArr = tempArr.filter(el =>  el?.name.toLowerCase().includes(tempQuery) || el?.enquiryObj?.classesArr?.some(ele => ele.subjectArr?.some(elx => elx?.subjectName?.toLowerCase().includes(tempQuery))))
         setTeachersArr([...tempArr])
 
 
         let tempCourseArr = [...mainCourseArr]
-        tempCourseArr = tempCourseArr.filter(el =>  el?.name.toLowerCase().includes(tempQuery) || el?.classesArr?.some(ele => ele.subjectArr.some(elx => elx.subjectName.toLowerCase().includes(tempQuery))) || el.name.includes(tempQuery) )
+        tempCourseArr = tempCourseArr.filter(el =>  el?.name.toLowerCase().includes(tempQuery) || el?.classesArr?.some(ele => ele.subjectArr?.some(elx => elx?.subjectName?.toLowerCase().includes(tempQuery))) || el?.name.includes(tempQuery) )
         setCourseArr([...tempCourseArr])
 
         setSearchQuery(query)

@@ -274,7 +274,7 @@ export default function TeacherProfile(props) {
 
     const handleProfileVisit = async () => {
         try {
-            await updateProfileVisit();
+            await updateProfileVisit(props.route.params.data);
 
         } catch (error) {
             console.error(error)
@@ -468,7 +468,7 @@ export default function TeacherProfile(props) {
             <View style={[styles.flexRow, { width: wp(90), alignSelf: "center", justifyContent: 'space-between' }]}>
                 <Image source={{ uri: teacherObj?.profileImage ? generateImageUrl(teacherObj?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} style={{ width: 100, height: 100, position: "relative", top: -40, borderRadius: 50 }} resizeMode="cover" />
                 {
-                    (teacherObj?.role == "TEACHER" && teacherObj?._id == decodedObj?.userId) ?
+                    !(teacherObj?.role == "TEACHER" && teacherObj?._id == decodedObj?.userId) ?
                         <View style={{ display: "flex", justifyContent: "flex-end", flexDirection: "row" }}>
                             <Pressable style={styles.btn2} onPress={() => props.navigation.navigate('TeacherSlots')}>
                                 <Icon name="calendar-outline" size={25} color={colorObj.primarColor} />
@@ -615,9 +615,9 @@ export default function TeacherProfile(props) {
             {/* bottom  sheet */}
             <RBSheet
                 ref={refRBSheet}
-                closeOnDragDown={true}
+                closeOnDragDown={false}
                 closeOnPressMask={false}
-                dragFromTopOnly={true}
+                dragFromTopOnly={false}
 
                 animationType="slide"
                 customStyles={{
@@ -632,7 +632,7 @@ export default function TeacherProfile(props) {
                     }
                 }}
             >
-                <View style={styles.bottomSheetInnerContainer}>
+                <ScrollView contentContainerStyle={styles.bottomSheetInnerContainer}>
 
                     <Text style={[styles.bottomSheetHeading, { fontFamily: 'Montserrat-SemiBold',textAlign:'center' }]}>Enquiry Options</Text>
                     <View style={[styles.flexRow, { alignItems: 'center',marginVertical:10 }]}>
@@ -672,6 +672,7 @@ export default function TeacherProfile(props) {
                                 current={selectedDate}
                                 style={[styles.calendar, { width: wp(90), marginVertical: 10 }]}
                                 onDayPress={onDayPress}
+                                minDate={`${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}`}
                                 // state={selectedDate}
                                 markedDates={{
                                     [selectedDate]: {
@@ -682,35 +683,8 @@ export default function TeacherProfile(props) {
                                     }
                                 }}
                             />
-                            {/* <Picker
-                                selectedValue={selectedSlotDay}
-                                style={[styles.textInput, { width: wp(90), fontFamily: 'Montserrat-SemiBold' }]}
-
-                                onValueChange={(itemValue, itemIndex) => {
-                                    if (itemValue == "N/A") {
-                                        setSlotsArr([])
-                                        setSelectedSlotDay('N/A')
-                                        setSelectedTimeSlot('')
-                                        // setSelectedDayId('')
-
-                                    }
-                                    else {
-
-                                        setSelectedSlotDay(itemValue)
-                                        handleDaySelect(itemValue)
-                                        // setSelectedDayId(teacherObj?.enquiryObj?.timeslots[itemIndex]._id)
-                                    }
-                                }
-
-                                }>
-                                <Picker.Item style={{ fontFamily: 'Montserrat-Regular' }} label="Please Select Day" value="N/A" />
-
-                                {teacherObj?.enquiryObj?.timeslots.map(el => {
-                                    return (
-                                        <Picker.Item style={{ fontFamily: 'Montserrat-Regular' }} key={el._id} label={el.day} value={el.day} />
-                                    )
-                                })}
-                            </Picker> */}
+                        
+                            
                             {slotsArr.length > 0 &&
                                 <Picker
                                     selectedValue={selectedTimeSlot}
@@ -755,7 +729,7 @@ export default function TeacherProfile(props) {
                     <TextInput style={[styles.textInput, { width: wp(90), textAlignVertical: 'top' }]} multiline numberOfLines={4} value={additionalMessage} onChangeText={(e) => setAdditionalMessage(e)} />
 
 
-                </View>
+                </ScrollView>
                 <View style={[styles.flexRow, { justifyContent: 'space-evenly', width: wp(100), position: 'absolute', bottom: 20, backgroundColor: 'white' }]}>
                     <Pressable style={styles.RBSheetbtn} onPress={() => refRBSheet.current.close()} >
                         <Text style={styles.RBSheetbtnTxt}>Close</Text>
@@ -919,8 +893,9 @@ const styles = StyleSheet.create({
 
     },
     bottomSheetInnerContainer: {
-        width: wp(90),
-        paddingHorizontal: 20
+        width: wp(100),
+        paddingHorizontal: 20,
+        paddingBottom:100
     },
     bottomSheetOptionText: {
         color: '#333333',

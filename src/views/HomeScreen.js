@@ -274,7 +274,7 @@ export default function HomeScreen(props) {
 
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                             <Text style={styles.headingAboveCard}>Top Instructors</Text>
-                            <Pressable  onPress={() => handleViewAll()}><Text style={[styles.viewAllText,{paddingHorizontal:40}]}>View All</Text></Pressable>
+                            <Pressable  onPress={() => props.navigation.navigate('AllTeacher')}><Text style={[styles.viewAllText,{paddingHorizontal:40}]}>View All</Text></Pressable>
                         </View>
                         <FlatList
                             horizontal

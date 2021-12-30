@@ -145,10 +145,8 @@ export const saveTokenToDatabase = async (token) => {
 export const getById = async (id) => {
     return await axiosApiInstance.get(`${url}/getById/${id}`)
 }
-export const updateProfileVisit = async () => {
-    let token = await getDecodedToken()
-    console.log(token)
-    return await axiosApiInstance.patch(`${url}/updateProfileVisit/${token.userId}`)
+export const updateProfileVisit = async (id) => {
+    return await axiosApiInstance.patch(`${url}/updateProfileVisit/${id}`)
 }
 
 export const addTOWishList = async (obj) => {
