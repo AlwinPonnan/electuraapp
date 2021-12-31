@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext, useCallback } from 'react'
-import { View, Text, StyleSheet, TextInput, FlatList, Pressable, Image, Modal } from 'react-native';
+import { View, Text, StyleSheet, TextInput, FlatList, Pressable, Image, Modal, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -20,6 +20,11 @@ import { Checkbox } from 'react-native-paper';
 import { getAllClasses } from '../Services/Classses';
 import { getAllTopics } from '../Services/Topic';
 import MultiSlider from '@ptomasroos/react-native-multi-slider'
+import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
+
+import { Picker } from '@react-native-picker/picker';
+import { successAlertContext } from '../../App';
+
 export default function AllTeacher(props) {
 
     const focused = useIsFocused()
@@ -48,14 +53,30 @@ export default function AllTeacher(props) {
 
     const [isScrollEnabled, setIsScrollEnabled] = useState(true);
 
+    const [selectedSlotDay, setSelectedSlotDay] = useState('');
+    const [selectedTimeSlot, setSelectedTimeSlot] = useState('');
+
     const [activeFilterContainer, setActiveFilterContainer] = useState('subject');      ///subject,class,topic,price ,sortby
     ////price range picker
 
     const [maxTeacherFees, setMaxTeacherFees] = useState(0);
     const [minTeacherFees, setMinTeacherFees] = useState(0);
 
+    const initialDate = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`
+    const [selectedDate, setSelectedDate] = useState(initialDate);
     ////
 
+    const [slotsArr, setSlotsArr] = useState([]);
+
+    const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
+
+
+    const [successAlert, setSuccessAlert] = successAlertArr
+    const [warningAlert, setWarningAlert] = warningAlertArr
+    const [errorAlert, setErrorAlert] = errorAlertArr
+
+
+    const [alertText, setAlertText] = alertTextArr
 
     const getTeachers = async () => {
         setIsLoading(true)
@@ -173,33 +194,124 @@ export default function AllTeacher(props) {
 
 
     const handleEnquireNow = async () => {
+        // setIsLoading(true)
+        // refRBSheet.current.close()
+        // try {
+
+
+        //     let obj = {
+        //         classId: '',
+        //         subjectId: '',
+        //         topicId: '',
+        //         region: '',
+        //         ClassType: '',
+        //         gender: '',
+        //         price: '',
+        //         specificRequirement: '',
+        //         enquiryType: checked,
+        //         teacherId: selectedTeacherObj?._id,
+        //         additionalMessage
+        //     }
+        //     let { data: res } = await NewEnquiry(obj);
+        //     if (res.success) {
+        //         setSuccessAlert(true)
+        //         setAlertText(res.message)
+        //         // alert(res.message)
+        //     }
+
+        // } catch (error) {
+        //     console.log(error)
+        //     setErrorAlert(true)
+        //     setAlertText(error.message)
+
+        // }
+        // setIsLoading(false)
         setIsLoading(true)
         refRBSheet.current.close()
         try {
-
-
-            let obj = {
-                classId: '',
-                subjectId: '',
-                topicId: '',
-                region: '',
-                ClassType: '',
-                gender: '',
-                price: '',
-                specificRequirement: '',
-                enquiryType: checked,
-                teacherId: selectedTeacherObj?._id,
-                additionalMessage
+            if (checked == EnquiryTypes.SLOT) {
+                // console.log()
+                let obj = {
+                    classId: '',
+                    subjectId: '',
+                    topicId: '',
+                    region: '',
+                    ClassType: '',
+                    gender: '',
+                    price: '',
+                    slotObj: {
+                        day: selectedSlotDay,
+                        meetingDate: selectedDate,
+                        timeSlotObj: slotsArr.find(el => el.time == selectedTimeSlot)
+                    },
+                    specificRequirement: '',
+                    enquiryType: checked,
+                    teacherId: selectedTeacherObj?._id,
+                    additionalMessage
+                }
+                // console.log(obj)
+                let { data: res } = await NewEnquiry(obj);
+                if (res.success) {
+                    setSuccessAlert(true)
+                    setAlertText(res.message)
+                    setAdditionalMessage("")
+                    // alert(res.message)
+                }
             }
-            let { data: res } = await NewEnquiry(obj);
-            if (res.success) {
-                setSuccessAlert(true)
-                setAlertText(res.message)
-                // alert(res.message)
+            else if (checked == "connect") {
+                // console.log()
+                let obj = {
+                    classId: '',
+                    subjectId: '',
+                    topicId: '',
+                    region: '',
+                    ClassType: '',
+                    gender: '',
+                    price: '',
+                    slotObj: {
+                        day: dayArr[new Date().getDay()].day,
+                        meetingDate: new Date(),
+                        // timeSlotObj: slotsArr.find(el => el.time == selectedTimeSlot)
+                    },
+                    specificRequirement: '',
+                    enquiryType: checked,
+                    teacherId: selectedTeacherObj?._id,
+                    additionalMessage
+                }
+                // console.log(obj)
+                let { data: res } = await NewEnquiry(obj);
+                if (res.success) {
+                    setSuccessAlert(true)
+                    setAlertText(res.message)
+                    setAdditionalMessage("")
+                    // alert(res.message)
+                }
+            }
+            else {
+                let obj = {
+                    classId: '',
+                    subjectId: '',
+                    topicId: '',
+                    region: '',
+                    ClassType: '',
+                    gender: '',
+                    price: '',
+                    specificRequirement: '',
+                    enquiryType: checked,
+                    teacherId: selectedTeacherObj?._id,
+                    additionalMessage
+                }
+                let { data: res } = await NewEnquiry(obj);
+                if (res.success) {
+                    setSuccessAlert(true)
+                    setAlertText(res.message)
+                    setAdditionalMessage("")
+                    // alert(res.message)
+                }
             }
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             setErrorAlert(true)
             setAlertText(error.message)
 
@@ -280,25 +392,33 @@ export default function AllTeacher(props) {
                             <Text style={{ height: 8, width: 8, marginLeft: 8, backgroundColor: "#23e615", borderRadius: 50 }}></Text>
                         }
                     </View>
-                    <Text style={[styles.location]}><Ionicons name="location-outline" size={16} color="#A3A3A3" style={{ marginRight: 10 }} />{item?.location ? item?.location : "Delhi"}</Text>
+                    <Text style={[styles.location]}><Ionicons name="location-outline" size={12} color="#A3A3A3" style={{ marginRight: 10 }} />{item?.enquiryObj?.address ? item?.enquiryObj?.address : "Delhi"}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', width: '90%' }}>
-                        <Text style={[styles.subject]}>{item?.enquiryObj?.classesArr?.reduce((acc, el) => acc + el.className + ',', '')}</Text>
-                        <Text style={[styles.subject]}>{item.course}</Text>
-                        <Text style={[styles.subject]}>{item?.enquiryObj?.experience ? item?.enquiryObj?.experience : 1}+ Year Experience</Text>
+                        <View style={styles.flexRow}>
+                            <Image style={{ height: 10, width: 10, marginTop: 7, marginHorizontal: 5 }} source={require("../../assets/images/medal.png")} />
+                            <Text style={[styles.subject]}>{item?.enquiryObj?.educationObj?.degree ? item?.enquiryObj?.educationObj?.degree : "PGT"}</Text>
+                        </View>
+                        {/* <View>
+                            <Text style={[styles.subject]}>{item.course}</Text>
+                        </View> */}
+                        <View style={styles.flexRow}>
+                            <AntDesign size={12} name="hourglass" color="#828282" style={{ marginTop: 7, marginHorizontal: 5 }} />
+                            <Text style={[styles.subject]}>{item?.enquiryObj?.experience ? item?.enquiryObj?.experience : 1}+ Year Experience</Text>
+                        </View>
                     </View>
                     <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
-                        {/* <Pressable onPress={() => props.navigation.navigate("TeacherProfile", { data: item._id })}>
-
-                            <Text style={[styles.button, { color: '#828282', marginRight: 25 }]}>View Profile</Text>
-                        </Pressable> */}
-                        {/* <Pressable onPress={() => { setSelectedTeacherObj(item._id); refRBSheet.current.open() }}>
-
-                            <Text style={[styles.button, { backgroundColor: '#085A4E', color: '#fff', paddingHorizontal: 15, paddingVertical: 3, borderRadius: 5 }]}>Enquire</Text>
-                        </Pressable> */}
                         <Pressable onPress={() => props.navigation.navigate("TeacherProfile", { data: item._id })}>
 
-                            <Text style={[styles.button, { backgroundColor: '#085A4E', color: '#fff', paddingHorizontal: 15, paddingVertical: 3, borderRadius: 5 }]}>View Profile</Text>
+                            <Text style={[styles.button, { color: '#828282', marginRight: 25 }]}>View Profile</Text>
                         </Pressable>
+                        <Pressable onPress={() => { setSelectedTeacherObj(item); setChecked(EnquiryTypes.ONETOONE); refRBSheet.current.open() }}>
+
+                            <Text style={[styles.button, { backgroundColor: '#085A4E', color: '#fff', paddingHorizontal: 15, paddingVertical: 3, borderRadius: 5 }]}>Enquire</Text>
+                        </Pressable>
+                        {/* <Pressable onPress={() => props.navigation.navigate("TeacherProfile", { data: item._id })}>
+
+                            <Text style={[styles.button, { backgroundColor: '#085A4E', color: '#fff', paddingHorizontal: 15, paddingVertical: 3, borderRadius: 5 }]}>View Profile</Text>
+                        </Pressable> */}
                     </View>
                 </View>
 
@@ -347,9 +467,49 @@ export default function AllTeacher(props) {
     const handleSearch = (e) => {
         let tempArr = [...MainTeachersArr]
         let query = e.toLowerCase()
-        tempArr = tempArr.filter(el => el.name.toLowerCase().includes(query) || el?.enquiryObj?.classesArr?.some(ele => ele.subjectArr.some(elx => elx.subjectName.toLowerCase().includes(query))))
+        tempArr = tempArr.filter(el => el?.name?.toLowerCase().includes(query) || el?.enquiryObj?.classesArr?.some(ele => ele?.subjectArr.some(elx => elx?.subjectName.toLowerCase().includes(query))))
         setTeachersArr([...tempArr])
     }
+    const onDayPress = day => {
+        console.log(day, "@@@@@@@@")
+        console.log(selectedDate)
+        let tempDate = day.dateString;
+        console.log(tempDate)
+        setSelectedDate(day.dateString)
+        // setSelectedSlotDay(new Date(tempDate).getDay())
+        handleDaySelect(new Date(tempDate).getDay())
+        // setSelected(day.dateString);
+    };
+    const initDayPress = () => {
+        console.log(selectedDate)
+        let tempDate = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`;
+        console.log(tempDate)
+        setSelectedDate(tempDate)
+        // setSelectedSlotDay(new Date(tempDate).getDay())
+        handleDaySelect(new Date(tempDate).getDay())
+        // setSelected(day.dateString);
+    }
+
+    const handleDaySelect = (tempdayIndex) => {
+        console.log(tempdayIndex)
+        let tempArr = [...selectedTeacherObj.enquiryObj.timeslots];
+        let dayIndex = tempArr.findIndex((el, i) => i == tempdayIndex);
+        console.log(dayIndex)
+        if (dayIndex != -1) {
+            setSlotsArr([...tempArr[dayIndex].slotArr])
+            setSelectedSlotDay(tempArr[dayIndex].day)
+        }
+    }
+    // const handleDaySelectOnint = (tempdayIndex, arr) => {
+    //     console.log(tempdayIndex)
+    //     let tempArr = [...arr];
+    //     let dayIndex = tempArr.findIndex((el, i) => i == tempdayIndex);
+    //     console.log(dayIndex)
+    //     if (dayIndex != -1) {
+    //         setSlotsArr([...tempArr[dayIndex].slotArr])
+    //         setSelectedSlotDay(tempArr[dayIndex].day)
+    //     }
+    // }
 
 
     return (
@@ -380,8 +540,8 @@ export default function AllTeacher(props) {
                     placeholder="Search Categories"
                 />
                 <Pressable onPress={() => filterBottomSheetRef.current.open()}>
-
-                    <Feather name='align-right' size={20} style={[styles.topIcons, { marginRight: 10 }]} />
+                    <Image source={require('../../assets/images/Filter.png')} />
+                    {/* <Feather name='align-right' size={20} style={[styles.topIcons, { marginRight: 10 }]} /> */}
                 </Pressable>
             </View>
             <Text style={[styles.title]}>Top Instructors</Text>
@@ -411,25 +571,35 @@ export default function AllTeacher(props) {
             {/* bottom  sheet */}
             <RBSheet
                 ref={refRBSheet}
-                closeOnDragDown={true}
+                closeOnDragDown={false}
                 closeOnPressMask={false}
+                dragFromTopOnly={false}
+
                 animationType="slide"
                 customStyles={{
                     wrapper: {
                         backgroundColor: "rgba(0,0,0,0.5)",
                     },
                     container: {
-                        height: hp(50)
+                        height: hp(100)
                     },
                     draggableIcon: {
-                        backgroundColor: "#000"
+                        backgroundColor: "#fff"
                     }
                 }}
             >
-                <View style={[styles.bottomSheetInnerContainer, { paddingHorizontal: 20 }]}>
+                <ScrollView scrollEnabled={true} contentContainerStyle={[styles.bottomSheetInnerContainer, { paddingHorizontal: 10, paddingBottom: 100 }]}>
 
-                    <Text style={styles.bottomSheetHeading}>Enquiry Options</Text>
-                    <Pressable onPress={() => setChecked('specific')} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
+                    <Text style={[styles.bottomSheetHeading, { fontFamily: 'Montserrat-SemiBold', textAlign: 'center' }]}>Enquiry Options</Text>
+                    <View style={[styles.flexRow, { alignItems: 'center', marginVertical: 10 }]}>
+
+                        <Image source={{ uri: selectedTeacherObj?.profileImage ? generateImageUrl(selectedTeacherObj?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} style={{ width: 50, height: 50, borderRadius: 50 }} resizeMode="cover" />
+                        <View>
+
+                            <Text style={[styles.textCardMainHeading, { paddingHorizontal: 20 }]}>{selectedTeacherObj?.name} (Teacher)</Text>
+                        </View>
+                    </View>
+                    <Pressable onPress={() => setChecked(EnquiryTypes.ONETOONE)} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
                         <Text style={styles.bottomSheetOptionText}>Specific Enquriy</Text>
                         <RadioButton
                             value={EnquiryTypes.ONETOONE}
@@ -439,16 +609,18 @@ export default function AllTeacher(props) {
                         />
 
                     </Pressable>
-                    <Pressable onPress={() => setChecked('slot')} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
+
+                    <Pressable disabled={selectedTeacherObj?.enquiryObj?.timeslots?.length == 0 || !selectedTeacherObj?.enquiryObj?.timeslots} onPress={() => { setChecked(EnquiryTypes.SLOT); initDayPress() }} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
                         <Text style={styles.bottomSheetOptionText}>Slot Booking</Text>
                         <RadioButton
                             value={EnquiryTypes.SLOT}
+                            disabled={selectedTeacherObj?.enquiryObj?.timeslots?.length == 0 || !selectedTeacherObj?.enquiryObj?.timeslots}
                             color={colorObj.primarColor}
-
                             status={checked === EnquiryTypes.SLOT ? 'checked' : 'unchecked'}
-                            onPress={() => setChecked(EnquiryTypes.SLOT)}
+                            onPress={() => { setChecked(EnquiryTypes.SLOT); initDayPress() }}
                         />
                     </Pressable>
+                    
                     <Pressable onPress={() => setChecked('connect')} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
                         <Text style={styles.bottomSheetOptionText}>Connect Now</Text>
                         <RadioButton
@@ -458,15 +630,75 @@ export default function AllTeacher(props) {
                             onPress={() => setChecked('connect')}
                         />
                     </Pressable>
-                    <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Message</Text>
 
-                    <TextInput style={[styles.textInput, { width: wp(90) }]} multiline numberOfLines={2} value={additionalMessage} onChangeText={(e) => setAdditionalMessage(e)} />
+                    <KeyboardAvoidingView  behavior={Platform.OS === "ios" ? "padding" : "height"}>
+                        <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Message</Text>
+
+                        <TextInput style={[styles.textInput, { width: wp(90), textAlignVertical: 'top' }]} multiline numberOfLines={4} value={additionalMessage} onChangeText={(e) => setAdditionalMessage(e)} />
+
+                    </KeyboardAvoidingView>
+
+                    {
+                        checked == EnquiryTypes.SLOT &&
+                        <>
+                            <Calendar
+                                enableSwipeMonths
+                                current={selectedDate}
+                                style={[styles.calendar, { width: wp(90), marginVertical: 10 }]}
+                                onDayPress={onDayPress}
+                                minDate={`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`}
+                                // state={selectedDate}
+                                markedDates={{
+                                    [selectedDate]: {
+                                        selected: true,
+                                        disableTouchEvent: true,
+                                        selectedColor: colorObj.primarColor,
+                                        selectedTextColor: 'white'
+                                    }
+                                }}
+                            />
 
 
-                    <Pressable style={styles.btn} onPress={() => handleEnquireNow()}>
-                        <Text style={styles.btnTxt}>Enquire</Text>
-                    </Pressable>
-                </View>
+                            {slotsArr.length > 0 &&
+                                <Picker
+                                    selectedValue={selectedTimeSlot}
+                                    style={[styles.textInput, { width: wp(90), fontFamily: 'Montserrat-SemiBold' }]}
+
+                                    onValueChange={(itemValue, itemIndex) => {
+                                        if (itemValue == "N/A") {
+                                            setSelectedTimeSlot('N/A')
+                                            // setSelectedTimeSlotObj('')
+                                        }
+                                        else {
+                                            setSelectedTimeSlot(itemValue)
+                                            // console.log(slotsArr[itemIndex])
+                                            // setSelectedTimeSlotObj({...slotsArr[itemIndex]})
+                                        }
+                                        // handleDaySelect(itemValue)
+                                    }
+                                    }>
+                                    <Picker.Item style={{ fontFamily: 'Montserrat-Regular' }} label="Please Select Time slot" value="N/A" />
+
+                                    {slotsArr.map(el => {
+                                        return (
+                                            <Picker.Item style={{ fontFamily: 'Montserrat-Regular' }} key={el._id} label={el.time} value={el.time} />
+                                        )
+                                    })}
+                                </Picker>
+                            }
+                        </>
+
+                    }
+
+                    <View style={[styles.flexRow, { justifyContent: 'space-evenly', width: wp(100), backgroundColor: 'white' }]}>
+                        <Pressable style={styles.RBSheetbtn} onPress={() => refRBSheet.current.close()} >
+                            <Text style={styles.RBSheetbtnTxt}>Close</Text>
+                        </Pressable>
+                        <Pressable style={styles.RBSheetbtn} onPress={() => handleEnquireNow()} >
+                            <Text style={styles.RBSheetbtnTxt}>Enquire</Text>
+                        </Pressable>
+                    </View>
+                </ScrollView>
             </RBSheet>
             <RBSheet
                 ref={filterBottomSheetRef}
@@ -724,8 +956,8 @@ const styles = StyleSheet.create({
         left: -30,
         opacity: 1,
         backgroundColor: "white",
-        borderColor:"rgba(0,0,0,0.1)",
-        borderWidth:1,
+        borderColor: "rgba(0,0,0,0.1)",
+        borderWidth: 1,
         position: "absolute",
     },
     teacherImg: {
@@ -938,5 +1170,37 @@ const styles = StyleSheet.create({
 
     customFilterHeadingBox: {
         paddingVertical: 10
-    }
+    },
+    RBSheetbtn: {
+        // backgroundColor: colorObj.primarColor,
+        borderRadius: 5,
+        // paddingHorizontal: 25,
+        height: 40,
+        borderColor: colorObj.primarColor,
+        borderWidth: 1,
+        marginVertical: 10,
+        // marginLeft: 40,
+        width: wp(40),
+        alignSelf: 'center',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        // shadowColor: "#000",
+        // shadowOffset: {
+        //     width: 0,
+        //     height: 1,
+        // },
+        // shadowOpacity: 0.18,
+        // shadowRadius: 1.00,
+
+        // elevation: 1,
+    },
+
+    RBSheetbtnTxt: {
+        fontFamily: 'Montserrat-SemiBold',
+        fontSize: 13,
+        color: colorObj.primarColor,
+        // marginTop: 15
+    },
 })

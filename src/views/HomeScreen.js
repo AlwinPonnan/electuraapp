@@ -27,10 +27,10 @@ export default function HomeScreen(props) {
     const isFocused = useIsFocused()
     const [selectedCategoryId, setSelectedCategoryId] = useState('');
     const [subjectArr, setSubjectArr] = useState([]);
-    const [selectedSubjectId, setSelectedSubjectId] = useState('');
+    const [selectedSubjectId, setSelectedSubjectId] = useState('All');
     const [teachersArr, setTeachersArr] = useState([]);
     const [mainTeachersArr, setMainTeachersArr] = useState([]);
-    const [selectedSubject, setSelectedSubject] = useState({});
+    const [selectedSubject, setSelectedSubject] = useState({name:"All",_id:"All"});
     const [referalCode, setReferalCode] = useState('');
 
     const [subjectWiseTeacherArr, setSubjectWiseTeacherArr] = useState([]);
@@ -76,7 +76,7 @@ export default function HomeScreen(props) {
                     }
                     return obj
                 })
-                setSubjectArr([...tempArr])
+                setSubjectArr([{name:"All",_id:"All"},...tempArr])
                 setIsrefreshing(false)
             }
         } catch (error) {
@@ -211,12 +211,20 @@ export default function HomeScreen(props) {
 
 
     const handleSubjectSelection = async (item) => {
-        let tempArr = [...mainTeachersArr];
-        console.log(JSON.stringify(tempArr, null, 2))
-        tempArr = tempArr.filter(el => el?.enquiryObj?.classesArr?.some(ele => ele.subjectArr.some(elx => elx.subjectId == item._id)))
-        setTeachersArr([...tempArr])
-        setSelectedSubjectId(item._id)
-        setSelectedSubject(item)
+        if(item._id=="All"){
+            setSelectedSubject(item);
+            setSelectedSubjectId(item._id)
+            setTeachersArr([...mainTeachersArr])
+        }
+        else{
+
+            let tempArr = [...mainTeachersArr];
+            console.log(JSON.stringify(tempArr, null, 2))
+            tempArr = tempArr.filter(el => el?.enquiryObj?.classesArr?.some(ele => ele.subjectArr.some(elx => elx.subjectId == item._id)))
+            setTeachersArr([...tempArr])
+            setSelectedSubjectId(item._id)
+            setSelectedSubject(item)
+        }
     }
 
 

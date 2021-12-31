@@ -16,13 +16,19 @@ import { useIsFocused } from '@react-navigation/core';
 
 import { loadingContext } from '../navigators/stacks/RootStack';
 import { successAlertContext } from '../../App';
+import { getAllStates } from '../Services/state';
+import { getByStateId } from '../Services/city';
+import { getByCityId } from '../Services/area';
+import { Picker } from '@react-native-picker/picker';
+
 export default function AccountEdit(props) {
+
     const [modalVisible, setModalVisible] = useState(false);
     const [profileData, setProfileData] = useContext(profileContext);
     const [roleName, setRoleName] = useContext(roleContext);
     const [weekScheduleIsVisible, setWeekScheduleIsVisible] = useState(false);
     const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
-    
+
     const [successAlert, setSuccessAlert] = successAlertArr
     const [warningAlert, setWarningAlert] = warningAlertArr
     const [errorAlert, setErrorAlert] = errorAlertArr
@@ -45,8 +51,16 @@ export default function AccountEdit(props) {
 
     const focused = useIsFocused()
 
-    
+    const [stateArr, setStateArr] = useState([]);
+    const [cityArr, setCityArr] = useState([]);
+    const [areaArr, setAreaArr] = useState([]);
+
+    const [selectedStateId, setSelectedStateId] = useState('');
+    const [selectedCityId, setSelectedCityId] = useState('');
+    const [selectedAreaId, setSelectedAreaId] = useState('');
     const [isLoading, setIsLoading] = useContext(loadingContext);
+
+
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener(
             'keyboardDidShow',
@@ -125,7 +139,7 @@ export default function AccountEdit(props) {
                 email,
                 phone: mobile,
                 gender: genderIsSelected ? "Male" : "Female",
-                enquiryObj: {...profileData.enquiryObj,educationObj:{degree}}
+                enquiryObj: { ...profileData.enquiryObj, educationObj: { degree }, areaId: selectedAreaId, cityId: selectedCityId, stateId: selectedStateId }
             }
             console.log(obj)
             let { data: res, status: statusCode } = await updateProfile(obj)
@@ -143,7 +157,7 @@ export default function AccountEdit(props) {
         catch (err) {
             console.error(err)
             setIsLoading(false)
-            
+
         }
     }
 
@@ -188,6 +202,11 @@ export default function AccountEdit(props) {
                 setMobile(res.data.phone)
                 setProfilePhoto(res.data.profileImage)
                 setProfileData(res.data)
+                setSelectedAreaId(res?.data?.enquiryObj?.areaId ? res?.data?.enquiryObj?.areaId : "")
+                setSelectedCityId(res?.data?.enquiryObj?.cityId ? res?.data?.enquiryObj?.cityId : "")
+
+                setSelectedStateId(res?.data?.enquiryObj?.stateId ? res?.data?.enquiryObj?.stateId : "")
+
                 setDegree(res?.data?.enquiryObj?.educationObj?.degree)
                 setGenderIsMale(res?.data?.enquiryObj?.gender == "Male" ? true : false)
                 setRoleName(res.data.role)
@@ -238,19 +257,19 @@ export default function AccountEdit(props) {
                 return { ...prevState }
             })
         }
-        else if(field=="minFees"){
+        else if (field == "minFees") {
             setProfileData(prevState => {
                 prevState.enquiryObj.feesObj.minFees = val;
                 return { ...prevState }
             })
         }
-        else if(field=="maxFees"){
+        else if (field == "maxFees") {
             setProfileData(prevState => {
                 prevState.enquiryObj.feesObj.maxFees = val;
                 return { ...prevState }
             })
         }
-        else if(field=="degree"){
+        else if (field == "degree") {
             setProfileData(prevState => {
                 prevState.enquiryObj.educationObj.degree = val;
                 return { ...prevState }
@@ -258,9 +277,43 @@ export default function AccountEdit(props) {
         }
     }
 
+    const getStates = async () => {
+        try {
+            const { data: res } = await getAllStates();
+            if (res.success) {
+                setStateArr(res.data)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const getCity = async (stateId) => {
+        try {
+            const { data: res } = await getByStateId(stateId);
+            console.log(res.data)
+            if (res.success) {
+                setCityArr(res.data)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const getArea = async (cityId) => {
+        try {
+            const { data: res } = await getByCityId(cityId);
+            if (res.success) {
+                setAreaArr(res.data)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
 
     useEffect(() => {
         getUserData()
+        getStates()
     }, [focused])
 
 
@@ -271,7 +324,7 @@ export default function AccountEdit(props) {
             <NavBar rootProps={props} />
             <ScrollView style={styles.container}>
                 <View>
-                    
+
                     <ImageBackground source={imageObj.teacherBackBanner} style={styles.topContainer}>
 
                     </ImageBackground>
@@ -300,6 +353,103 @@ export default function AccountEdit(props) {
                     {
                         roleName == "TEACHER" &&
                         <>
+                            {/* <Text style={styles.label}>
+                                Location
+                            </Text>
+                            <TextInput value={profileData?.enquiryObj?.address} onChangeText={(e) => handleProfileDataUpdate(e, "address")} style={styles.txtInput} placeholder="Enter your address" /> */}
+
+                            <Text style={styles.label}>State</Text>
+                            <Picker
+                                style={[styles.textInput]}
+
+                                selectedValue={selectedStateId}
+                                onValueChange={(itemValue, itemIndex) => {
+
+                                    if (itemValue != "") {
+                                        setSelectedStateId(itemValue)
+                                        getCity(itemValue)
+                                    }
+                                    else {
+                                        setSelectedStateId('')
+                                        setCityArr([])
+                                        setAreaArr([])
+                                    }
+                                }
+                                }>
+                                <Picker value="" label="Please Select State" />
+                                {
+
+                                    stateArr.map(el => {
+                                        return (
+                                            <Picker.Item key={el._id} label={el.name} value={el._id} />
+                                        )
+
+                                    })
+                                }
+                            </Picker>
+                            {
+                                cityArr.length > 0 &&
+                                <>
+                                    <Text style={styles.label}>City</Text>
+                                    <Picker
+                                        style={[styles.textInput]}
+                                        selectedValue={selectedCityId}
+                                        onValueChange={(itemValue, itemIndex) => {
+
+                                            if (itemValue != "") {
+                                                setSelectedCityId(itemValue)
+                                                getArea(itemValue)
+
+                                            }
+                                            else {
+                                                setSelectedCityId('')
+                                                setAreaArr([])
+                                            }
+                                        }
+                                        }>
+                                        <Picker value="" label="Please Select City" />
+                                        {
+
+                                            cityArr.map(el => {
+                                                return (
+                                                    <Picker.Item key={el._id} label={el.name} value={el._id} />
+                                                )
+
+                                            })
+                                        }
+                                    </Picker>
+                                </>
+                            }
+                            {areaArr.length > 0 &&
+                                <>
+                                    <Text style={styles.label}>Region</Text>
+                                    <Picker
+                                        style={[styles.textInput, { fontFamily: 'Montserrat-Regular' }]}
+                                        selectedValue={selectedAreaId}
+                                        onValueChange={(itemValue, itemIndex) => {
+
+                                            if (itemValue != "") {
+                                                setSelectedAreaId(itemValue)
+                                            }
+                                            else {
+                                                setSelectedAreaId('')
+                                            }
+                                        }
+                                        }>
+                                        <Picker style={{ fontFamily: 'Montserrat-Regular' }} value="" label="Please Select Area" />
+                                        {
+
+                                            areaArr.map(el => {
+                                                return (
+                                                    <Picker.Item key={el._id} label={el.name} value={el._id} />
+                                                )
+
+                                            })
+                                        }
+                                    </Picker>
+                                </>
+                            }
+
                             <Text style={styles.label}>
                                 Location
                             </Text>
@@ -346,16 +496,16 @@ export default function AccountEdit(props) {
                                 Fees Range (In Rupees)
                             </Text>
                             <View style={[styles.flexRow, { alignItems: 'center' }]}>
-                                <TextInput value={`${profileData?.enquiryObj?.feesObj?.minFees}`} keyboardType="numeric" onChangeText={(e) => handleProfileDataUpdate(e, "minFees")} style={[styles.txtInput,{width:wp(40)}]} placeholder="Min" />
-                                <Icon name="remove-outline" size={20} color="black"/>
-                                <TextInput value={`${profileData?.enquiryObj?.feesObj?.maxFees}`} keyboardType="numeric" onChangeText={(e) => handleProfileDataUpdate(e, "maxFees")} style={[styles.txtInput,{width:wp(40)}]} placeholder="Max" />
+                                <TextInput value={`${profileData?.enquiryObj?.feesObj?.minFees}`} keyboardType="numeric" onChangeText={(e) => handleProfileDataUpdate(e, "minFees")} style={[styles.txtInput, { width: wp(40) }]} placeholder="Min" />
+                                <Icon name="remove-outline" size={20} color="black" />
+                                <TextInput value={`${profileData?.enquiryObj?.feesObj?.maxFees}`} keyboardType="numeric" onChangeText={(e) => handleProfileDataUpdate(e, "maxFees")} style={[styles.txtInput, { width: wp(40) }]} placeholder="Max" />
 
                             </View>
                             <Text style={styles.label}>
                                 Qualification
                             </Text>
                             <TextInput value={degree} onChangeText={(e) => setDegree(e)} style={styles.txtInput} placeholder="Your Qualification" />
-                            
+
                             <Text style={styles.label}>
                                 Teaching Experience
                             </Text>
@@ -384,7 +534,7 @@ export default function AccountEdit(props) {
                 </View>
 
             </ScrollView>
-            
+
         </>
 
     )
@@ -412,7 +562,7 @@ const styles = StyleSheet.create({
         bottom: -30,
         left: '40%',
         alignSelf: 'center',
-        backgroundColor:'white'
+        backgroundColor: 'white'
     },
     addPhotoBtn: {
         backgroundColor: colorObj.whiteColor,

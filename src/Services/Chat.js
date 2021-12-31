@@ -17,3 +17,8 @@ export const getChatHistoryByRoomId=(id)=>{
     return axiosApiInstance.get(`${url}/getChatByChatRoomId/${id}`)
 }
 
+
+
+export const readAllChatMessage=(chatRoomId)=>{
+    return axiosApiInstance.patch(`${url}/readAllChatMessage/${chatRoomId}`)
+}

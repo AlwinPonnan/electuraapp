@@ -443,6 +443,18 @@ export default function TeacherProfile(props) {
         handleDaySelect(new Date(tempDate).getDay())
         // setSelected(day.dateString);
     };
+
+
+    const handleEnquireClick = () => {
+        if (teacherObj?.name) {
+            refRBSheet.current.open()
+        }
+        else {
+            props.navigation.navigate('AccountEdit')
+        }
+    }
+
+
     useEffect(() => {
         handleOnint()
     }, [focused])
@@ -468,7 +480,7 @@ export default function TeacherProfile(props) {
             <View style={[styles.flexRow, { width: wp(90), alignSelf: "center", justifyContent: 'space-between' }]}>
                 <Image source={{ uri: teacherObj?.profileImage ? generateImageUrl(teacherObj?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} style={{ width: 100, height: 100, position: "relative", top: -40, borderRadius: 50 }} resizeMode="cover" />
                 {
-                    !(teacherObj?.role == "TEACHER" && teacherObj?._id == decodedObj?.userId) ?
+                    (teacherObj?.role == "TEACHER" && teacherObj?._id == decodedObj?.userId) ?
                         <View style={{ display: "flex", justifyContent: "flex-end", flexDirection: "row" }}>
                             <Pressable style={styles.btn2} onPress={() => props.navigation.navigate('TeacherSlots')}>
                                 <Icon name="calendar-outline" size={25} color={colorObj.primarColor} />
@@ -479,7 +491,7 @@ export default function TeacherProfile(props) {
                         </View>
                         :
 
-                        <Pressable style={styles.btn} onPress={() => refRBSheet.current.open()}>
+                        <Pressable style={styles.btn} onPress={() => handleEnquireClick()}>
                             <Text style={styles.btnTxt}>Enquire</Text>
                         </Pressable>
                 }
@@ -634,8 +646,8 @@ export default function TeacherProfile(props) {
             >
                 <ScrollView contentContainerStyle={styles.bottomSheetInnerContainer}>
 
-                    <Text style={[styles.bottomSheetHeading, { fontFamily: 'Montserrat-SemiBold',textAlign:'center' }]}>Enquiry Options</Text>
-                    <View style={[styles.flexRow, { alignItems: 'center',marginVertical:10 }]}>
+                    <Text style={[styles.bottomSheetHeading, { fontFamily: 'Montserrat-SemiBold', textAlign: 'center' }]}>Enquiry Options</Text>
+                    <View style={[styles.flexRow, { alignItems: 'center', marginVertical: 10 }]}>
 
                         <Image source={{ uri: teacherObj?.profileImage ? generateImageUrl(teacherObj?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} style={{ width: 50, height: 50, borderRadius: 50 }} resizeMode="cover" />
                         <View>
@@ -664,6 +676,20 @@ export default function TeacherProfile(props) {
                             onPress={() => setChecked(EnquiryTypes.SLOT)}
                         />
                     </Pressable>
+
+                    <Pressable onPress={() => setChecked('connect')} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
+                        <Text style={styles.bottomSheetOptionText}>Connect Now</Text>
+                        <RadioButton
+                            value="connect"
+                            color={colorObj.primarColor}
+                            status={checked === 'connect' ? 'checked' : 'unchecked'}
+                            onPress={() => setChecked('connect')}
+                        />
+                    </Pressable>
+                    <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Message</Text>
+
+                    <TextInput style={[styles.textInput, { width: wp(90), textAlignVertical: 'top' }]} multiline numberOfLines={4} value={additionalMessage} onChangeText={(e) => setAdditionalMessage(e)} />
+
                     {
                         checked == EnquiryTypes.SLOT &&
                         <>
@@ -672,7 +698,7 @@ export default function TeacherProfile(props) {
                                 current={selectedDate}
                                 style={[styles.calendar, { width: wp(90), marginVertical: 10 }]}
                                 onDayPress={onDayPress}
-                                minDate={`${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}`}
+                                minDate={`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`}
                                 // state={selectedDate}
                                 markedDates={{
                                     [selectedDate]: {
@@ -683,8 +709,8 @@ export default function TeacherProfile(props) {
                                     }
                                 }}
                             />
-                        
-                            
+
+
                             {slotsArr.length > 0 &&
                                 <Picker
                                     selectedValue={selectedTimeSlot}
@@ -715,19 +741,6 @@ export default function TeacherProfile(props) {
                         </>
 
                     }
-                    <Pressable onPress={() => setChecked('connect')} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
-                        <Text style={styles.bottomSheetOptionText}>Connect Now</Text>
-                        <RadioButton
-                            value="connect"
-                            color={colorObj.primarColor}
-                            status={checked === 'connect' ? 'checked' : 'unchecked'}
-                            onPress={() => setChecked('connect')}
-                        />
-                    </Pressable>
-                    <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Message</Text>
-
-                    <TextInput style={[styles.textInput, { width: wp(90), textAlignVertical: 'top' }]} multiline numberOfLines={4} value={additionalMessage} onChangeText={(e) => setAdditionalMessage(e)} />
-
 
                 </ScrollView>
                 <View style={[styles.flexRow, { justifyContent: 'space-evenly', width: wp(100), position: 'absolute', bottom: 20, backgroundColor: 'white' }]}>
@@ -895,7 +908,7 @@ const styles = StyleSheet.create({
     bottomSheetInnerContainer: {
         width: wp(100),
         paddingHorizontal: 20,
-        paddingBottom:100
+        paddingBottom: 100
     },
     bottomSheetOptionText: {
         color: '#333333',

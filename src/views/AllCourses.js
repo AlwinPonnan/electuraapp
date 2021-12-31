@@ -12,7 +12,7 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import { colorObj } from '../globals/colors';
 import { RadioButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons'
-import { addToCart, getDecodedToken } from '../Services/User';
+import { addToCart, addTOWishList, getDecodedToken } from '../Services/User';
 import { successAlertContext } from '../../App';
 import { loadingContext } from '../navigators/stacks/RootStack';
 import { getAllClasses } from '../Services/Classses';
@@ -289,6 +289,35 @@ export default function AllCourses(props) {
     }
 
 
+
+    const handleAddCourseToWhishlist = async (id) => {
+        setLoading(true)
+        try {
+            let tokenObj = await getDecodedToken()
+            let obj = {
+                userId: tokenObj?.userId,
+                courseId: id
+            }
+            console.log(obj)
+            const { data: res } = await addTOWishList(obj);
+            if (res.success) {
+                handleOnint()
+                // setAlertText(res.message);
+                // setSuccessAlert(true)
+            }
+        } catch (error) {
+            console.error(error)
+            if (error.response.data.message) {
+                setErrorAlert(true)
+                setAlertText(error.response.data.message)
+            }
+            else {
+                setErrorAlert(true)
+                setAlertText(error.message)
+            }
+        }
+        setLoading(false)
+    }
     useEffect(() => {
         handleOnint()
     }, [focused])
@@ -301,7 +330,7 @@ export default function AllCourses(props) {
                 <View style={styles.textCardContainer}>
                     <View>
 
-                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                        <Pressable onPress={() => handleAddCourseToWhishlist(item._id)} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                             <Text style={styles.textCardMainHeading}>{item?.name}</Text>
                             {item.isWishListed ?
                                 <Icon name="heart" size={14} color={colorObj.primarColor} />
@@ -310,7 +339,7 @@ export default function AllCourses(props) {
                                 <Icon name="heart-outline" size={14} color={colorObj.primarColor} />
 
                             }
-                        </View>
+                        </Pressable>
                         <Text style={styles.textCardMainSubHeading1}>{item?.teacherName}</Text>
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                             <Text style={styles.textCardMainSubHeading2}>₹{item?.price}</Text>
@@ -332,11 +361,27 @@ export default function AllCourses(props) {
                     source={{ uri: item?.imgUrl }}
                 />
                 <View style={{ flex: 1, marginLeft: 10 }}>
-                    <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                        <Text style={styles.textCardMainHeading}>{item?.name}
-                        </Text>
-                        <Text style={[styles.textCardMainHeading, { fontSize: 12, paddingHorizontal: 10, color: colorObj.primarColor }]}>{item.rating}<Icon name="star" size={12} color={colorObj.primarColor} />
-                        </Text>
+                    <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent:'space-between' }}>
+                        <View style={[styles.flexRow,{alignItems:'center'}]}>
+
+                            <Text style={styles.textCardMainHeading}>{item?.name}
+                            </Text>
+                            <Text style={[styles.textCardMainHeading, { fontSize: 12, paddingHorizontal: 10, color: colorObj.primarColor }]}>{item.rating}<Icon name="star" size={12} color={colorObj.primarColor} />
+                            </Text>
+                        </View>
+                        <View>
+
+                            <Pressable onPress={() => handleAddCourseToWhishlist(item._id)} >
+
+                                {item.isWishListed ?
+                                    <Icon name="heart" size={14} color={colorObj.primarColor} />
+
+                                    :
+                                    <Icon name="heart-outline" size={14} color={colorObj.primarColor} />
+
+                                }
+                            </Pressable>
+                        </View>
                     </View>
                     <Text style={[styles.location]}>{item?.teacherName}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', width: '90%' }}>
@@ -362,7 +407,7 @@ export default function AllCourses(props) {
 
     return (
         <View style={[styles.container]}>
-           <View style={{ flexDirection: 'row' }}>
+            <View style={{ flexDirection: 'row' }}>
                 <Pressable style={[{ flex: 1 }]} onPress={() => props.navigation.goBack()}>
                     <AntDesign name='left' size={20} style={[styles.topIcons]} />
                 </Pressable>
@@ -388,7 +433,7 @@ export default function AllCourses(props) {
                     onChangeText={(e) => handleSearch(e)}
                 />
                 <Pressable onPress={() => filterBottomSheetRef.current.open()}>
-                    <Feather name='align-right' size={20} style={[styles.topIcons, { marginRight: 10 }]} />
+                    <Image source={require('../../assets/images/Filter.png')} />
                 </Pressable>
             </View>
 
@@ -412,8 +457,8 @@ export default function AllCourses(props) {
                     </>
                 }
                 refreshing={isrefreshing}
-                onRefresh={()=> handleOnint()}
-                contentContainerStyle={{ paddingBottom:50 }}
+                onRefresh={() => handleOnint()}
+                contentContainerStyle={{ paddingBottom: 50 }}
                 data={courseArr}
                 renderItem={renderTeacherItem}
                 keyExtractor={(item, index) => `${index}`}
@@ -476,7 +521,7 @@ export default function AllCourses(props) {
                                 {activeFilterContainer == "subject" &&
 
                                     <FlatList
-                                        data={subjectArr}
+                                        data={[...subjectArr, ...subjectArr, ...subjectArr, ...subjectArr]}
                                         keyExtractor={(item, index) => `${index}`}
                                         scrollEnabled={true}
                                         contentContainerStyle={{ paddingBottom: 100, marginTop: 20 }}

@@ -7,7 +7,7 @@ import { getDecodedToken } from '../Services/User';
 
 import { joinRoom, leaveRoom, listenToMessages, sendMessage } from '../globals/socket'
 import { FlatList } from 'react-native-gesture-handler';
-import { getChatHistoryByRoomId } from '../Services/Chat';
+import { getChatHistoryByRoomId, readAllChatMessage } from '../Services/Chat';
 import uuid from 'react-native-uuid';
 import { colorObj } from '../globals/colors'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -38,6 +38,7 @@ export default function SpecificChat(props) {
         flatListRef.current.scrollToEnd({ animated: false })
         getToken()
         getChatHistory()
+        readChatMessage()
         joinRoom(chatRoomId);
         listenToMessages((data) => {
             let tempObj = { ...data, _id: uuid.v4() }
@@ -45,6 +46,7 @@ export default function SpecificChat(props) {
                 prevState.push(tempObj)
                 return [...prevState]
             })
+            readChatMessage()
             console.log("ASdADsADs")
         })
 
@@ -77,6 +79,14 @@ export default function SpecificChat(props) {
         }
     }
 
+    const readChatMessage = async() => {
+        try {
+            const { data: res } = await readAllChatMessage(chatRoomId)
+            console.log(res.data)
+        } catch (error) {
+            console.error(error)
+        }
+    }
 
     const renderChats = ({ item, index }) => {
         return (
@@ -149,7 +159,7 @@ export default function SpecificChat(props) {
 
                             <View style={styles.searchContainer}>
                                 <View style={styles.flexRowAlignCenter}>
-                                    <TextInput  style={styles.searchInput} multiline={true} numberOfLines={3} value={messageStr} onChangeText={(val) => setMessageStr(val)} placeholder="Message..." placeholderTextColo="#828282" />
+                                    <TextInput style={styles.searchInput} multiline={true} numberOfLines={3} value={messageStr} onChangeText={(val) => setMessageStr(val)} placeholder="Message..." placeholderTextColo="#828282" />
                                 </View>
                                 <Pressable onPress={() => handleChatSend()}>
                                     <Icon name="send-outline" size={20} color="#828282" />

@@ -19,7 +19,7 @@ export default function Courses(props) {
     ])
     const focused = useIsFocused()
     const [subjectArr, setSubjectArr] = useState([]);
-    const [selectedSubjectId, setSelectedSubjectId] = useState('');
+    const [selectedSubjectId, setSelectedSubjectId] = useState('All');
     const [isrefreshing, setIsrefreshing] = useState(false);
 
     const [subjectWiseCoursesArr, setSubjectWiseCoursesArr] = useState([]);
@@ -62,7 +62,7 @@ export default function Courses(props) {
                     }
                     return obj
                 })
-                setSubjectArr([...tempArr])
+                setSubjectArr([{name:"All",_id:"All"},...tempArr])
                 setIsrefreshing(false)
 
             }
@@ -173,7 +173,8 @@ export default function Courses(props) {
                         <Pressable onPress={()=>handleAddCourseToWhishlist(item._id)} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                             <Text style={styles.textCardMainHeading}>{item?.name}</Text>
                             {item.isWishListed ?
-                                <Icon name="heart" size={14} color={colorObj.primarColor} />
+
+                                <Icon name="heart" size={14}  color={colorObj.primarColor} />
 
                                 :
                                 <Icon name="heart-outline" size={14} color={colorObj.primarColor} />
@@ -194,12 +195,26 @@ export default function Courses(props) {
 
 
     const handleSubjectSelection = async (id) => {
-        let tempArr = [...mainCourseArr];
-        console.log(JSON.stringify(tempArr, null, 2), "asddasdsa")
-        tempArr = tempArr.filter(el => el?.classesArr?.some(ele => ele.subjectArr.some(elx => elx.subjectId == id)))
-        setCourseArr([...tempArr])
-        setSelectedSubjectId(id)
+        // let tempArr = [...mainCourseArr];
+        // console.log(JSON.stringify(tempArr, null, 2), "asddasdsa")
+        // tempArr = tempArr.filter(el => el?.classesArr?.some(ele => ele.subjectArr.some(elx => elx.subjectId == id)))
+        // setCourseArr([...tempArr])
+        // setSelectedSubjectId(id)
+    
+        if(id=="All"){
+            setSelectedSubjectId(id)
+            setCourseArr([...mainCourseArr])
+        }
+        else{
+
+            let tempArr = [...mainCourseArr];
+            console.log(JSON.stringify(tempArr, null, 2), "asddasdsa")
+            tempArr = tempArr.filter(el => el?.classesArr?.some(ele => ele.subjectArr.some(elx => elx.subjectId == id)))
+            setCourseArr([...tempArr])
+            setSelectedSubjectId(id)
+        }
     }
+
 
 
     return (
@@ -273,17 +288,17 @@ export default function Courses(props) {
                                                         <View style={styles.textCardContainer}>
                                                             <View>
 
-                                                                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                                                                <Pressable onPress={()=>handleAddCourseToWhishlist(itemX._id)} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                                                                     <Text style={styles.textCardMainHeading}>{itemX?.name}</Text>
                                                                     {
                                                                         itemX?.isWishListed ?
-                                                                            <Icon name="heart" onPress={()=>handleAddCourseToWhishlist(itemX._id)} size={14} color={colorObj.primarColor} />
+                                                                            <Icon name="heart"  size={14} color={colorObj.primarColor} />
 
                                                                             :
-                                                                            <Icon name="heart-outline" onPress={()=>handleAddCourseToWhishlist(itemX._id)} size={14} color={colorObj.primarColor} />
+                                                                            <Icon name="heart-outline"  size={14} color={colorObj.primarColor} />
 
                                                                     }
-                                                                </View>
+                                                                </Pressable>
                                                                 <Text style={styles.textCardMainSubHeading1}>{itemX?.teacherName}</Text>
                                                                 <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                                                                     <Text style={styles.textCardMainSubHeading2}>₹{itemX?.price}</Text>

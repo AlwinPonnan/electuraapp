@@ -8,6 +8,7 @@ import { getAllChats } from '../Services/Chat';
 import { generateImageUrl } from '../globals/utils'
 import { loadingContext } from '../navigators/stacks/RootStack';
 import { chatRefreshContext } from '../../App';
+import { BadgeComponent } from '../navigators/tabs/MainTopTab';
 
 
 
@@ -95,9 +96,16 @@ export default function Chat(props) {
                             <>
                                 <Pressable onPress={() => props.navigation.navigate('SpecificChat', { chatRoomId: item.chatRoomId })} style={styles.card}>
                                     <View style={styles.flexRow}>
-                                        <Image source={{uri:item?.image}} style={styles.cardImage} />
+                                        <Image source={{ uri: item?.image }} style={styles.cardImage} />
                                         <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                                            <Text style={styles.cardHeading}>{item?.userObj?.name ? item?.userObj?.name : `${item.role}-${item?.userObj?._id}`} </Text>
+                                            <View style={[styles.flexRow,{alignItems:'center',justifyContent:'space-between',width:wp(70)}]}>
+
+                                                <Text style={styles.cardHeading}>{item?.userObj?.name ? item?.userObj?.name : `${item.role}-${item?.userObj?._id}`} </Text>
+                                                {
+                                                    item?.unreadMessages > 0 &&
+                                                    <BadgeComponent value={item?.unreadMessages} />
+                                                }
+                                            </View>
                                             <Text style={styles.cardSmallData}>{item?.lastMessage ? item?.lastMessage : ""}</Text>
                                         </View>
                                     </View>
