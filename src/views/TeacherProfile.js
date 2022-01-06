@@ -615,17 +615,17 @@ export default function TeacherProfile(props) {
                                 <View>
 
                                     <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                                        <Text style={styles.textCardMainHeading}>{item?.sentByObj?.name}</Text>
+                                        <Text style={[styles.textCardMainHeading,{color:'#828282',fontSize:14,fontFamily:"RedHatText-Medium"}]}>{item?.sentByObj?.name}</Text>
                                     </View>
 
                                     <View style={[styles.flexRow, { alignItems: 'center' }]}>
                                         {item?.ratingArr?.map((el, i) => {
                                             return (
-                                                <Icon key={i} name="star" size={12} color="#FF900E" />
+                                                <Icon key={i} name="star" size={10} color="#FF900E" />
                                             )
                                         })}
                                     </View>
-                                    <Text style={styles.textCardMainSubHeading1}>{item?.message}</Text>
+                                    <Text style={[styles.textCardMainSubHeading1,{color:'#000000',fontFamily:'RedHatText-Regular',fontSize:10}]}>{item?.message}</Text>
                                 </View>
 
                             </View>
