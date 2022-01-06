@@ -256,7 +256,7 @@ export default function HomeScreen(props) {
                             <Icon name="bookmark" size={14} color={colorObj?.primarColor} />
 
                             :
-                            
+
                             <Icon name="bookmark-outline" size={14} color={colorObj?.primarColor} />
 
                         }
@@ -476,7 +476,7 @@ const styles = StyleSheet.create({
         borderRadius: 26,
         paddingVertical: 10,
         marginVertical: 10,
-        marginHorizontal: 10,
+        marginHorizontal: 7,
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
@@ -499,7 +499,7 @@ const styles = StyleSheet.create({
     categoryName: {
         color: colorObj.whiteColor,
         textAlign: 'center',
-        fontSize:14,
+        fontSize: 11,
         fontFamily: 'OpenSans-Regular',
         paddingHorizontal: 20
     },

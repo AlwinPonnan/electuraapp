@@ -513,7 +513,7 @@ export default function TeacherProfile(props) {
                     }
                 </View>
                 <View style={[styles.flexRow, { alignItems: 'center', paddingHorizontal: 20 }]}>
-                    <Text style={{ fontFamily: 'RedHatText-Bold', fontSize: 12, color: '#828282' }}>{Math.round(teacherObj?.rating)}</Text>
+                    <Text style={{ fontFamily: 'RedHatText-Bold', fontSize: 12, color: '#828282' }}>{Math.round(teacherObj?.rating * 10) / 10}</Text>
                     <Icon name="star" style={{ marginHorizontal: 3 }} size={15} color="#FF900E" />
                 </View>
             </View>
@@ -610,7 +610,7 @@ export default function TeacherProfile(props) {
                 keyExtractor={(item, index) => `${index}`}
                 renderItem={({ item, index }) => {
                     return (
-                        <Pressable style={[styles.cardContainer, { height: hp(15) }]}  >
+                        <Pressable style={[styles.cardContainer, { minHeight: hp(15) }]}  >
                             <View style={styles.textCardContainer}>
                                 <View>
 
@@ -625,10 +625,7 @@ export default function TeacherProfile(props) {
                                             )
                                         })}
                                     </View>
-
-
                                     <Text style={styles.textCardMainSubHeading1}>{item?.message}</Text>
-
                                 </View>
 
                             </View>
@@ -806,7 +803,7 @@ export default function TeacherProfile(props) {
 
                         />
                         <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Message</Text>
-                        <TextInput style={[styles.textInput]} multiline numberOfLines={4} value={responseMessage} onChangeText={(e) => setResponseMessage(e)} />
+                        <TextInput style={[styles.textInput]} multiline maxLength={150} numberOfLines={4} value={responseMessage} onChangeText={(e) => setResponseMessage(e)} />
                         <Pressable style={styles.submitBtn} onPress={() => handleSubmitFeedBack()}>
                             <Text style={styles.submitBtnText}>Submit</Text>
                         </Pressable>
@@ -964,18 +961,20 @@ const styles = StyleSheet.create({
         borderRadius: 14,
         marginHorizontal: 10,
         marginVertical: 10,
-        paddingVertical: 10,
+        paddingVertical: "2.5%",
     },
     textCardContainer: {
-        paddingHorizontal: 15,
+        paddingHorizontal: 7,
         paddingVertical: 10
 
     },
     courseImg: {
         height: 100,
-        width: '90%',
+        width: '95%',
         alignSelf: 'center',
-        borderRadius: 14
+        borderRadius: 12,
+        // borderTopLeftRadius: 12,
+        // borderTopRightRadius: 12,
     },
     textCardMainHeading: {
         fontFamily: 'RedHatText-Bold', fontSize: 18, color: colorObj.primarColor
@@ -1034,6 +1033,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5F6FA',
         borderRadius: 5,
         marginVertical: 10,
+        maxHeight: hp(25),
         width: '100%',
         fontFamily: 'Montserrat-Regular'
 

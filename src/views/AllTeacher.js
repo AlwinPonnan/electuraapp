@@ -401,12 +401,11 @@ export default function AllTeacher(props) {
     const renderTeacherItem = ({ item, index }) => {
         return (
             <View style={[styles.listView]}>
-
                 <Image
                     style={styles.listImage}
                     source={{ uri: item?.profileImage ? generateImageUrl(item?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }}
                 />
-                <View style={{ flex: 1, marginLeft: 10 }}>
+                <View style={{ flex: 1, marginLeft: 10, paddingHorizontal: 5, paddingVertical: 5 }}>
                     <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                         <Text style={styles.textCardMainHeading}>{item?.name}
                         </Text>
@@ -416,16 +415,16 @@ export default function AllTeacher(props) {
                         }
                     </View>
                     <Text style={[styles.location]}><Ionicons name="location-outline" size={9} color="#A3A3A3" style={{ marginRight: 10 }} />{item?.enquiryObj?.address ? item?.enquiryObj?.address : "Delhi"}</Text>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', width: '90%' }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', width: '90%', paddingTop: 13 }}>
                         <View style={styles.flexRow}>
-                            <Image style={{ height: 9, width: 9, marginTop: 7, marginHorizontal: 5 }} source={require("../../assets/images/medal.png")} />
+                            <Image style={{ height: 9, width: 9, marginHorizontal: 5 }} source={require("../../assets/images/medal.png")} />
                             <Text style={[styles.subject]}>{item?.enquiryObj?.educationObj?.degree ? item?.enquiryObj?.educationObj?.degree : "PGT"}</Text>
                         </View>
                         {/* <View>
                             <Text style={[styles.subject]}>{item.course}</Text>
                         </View> */}
                         <View style={styles.flexRow}>
-                            <AntDesign size={9} name="hourglass" color="#828282" style={{ marginTop: 7, marginHorizontal: 5 }} />
+                            <AntDesign size={9} name="hourglass" color="#828282" style={{ marginHorizontal: 5 }} />
                             <Text style={[styles.subject]}>{item?.enquiryObj?.experience ? item?.enquiryObj?.experience : 1}+ Year Experience</Text>
                         </View>
                     </View>
@@ -938,7 +937,7 @@ export default function AllTeacher(props) {
                         <Pressable style={styles.btn} onPress={() => filterBottomSheetRef.current.close()} >
                             <Text style={styles.btnTxt}>Close</Text>
                         </Pressable>
-                        <Pressable style={styles.btn} onPress={() => handleShowFilterResults()} >
+                        <Pressable style={styles.btn} onPress={() => handleShowFilterResults()}>
                             <Text style={styles.btnTxt}>Apply</Text>
                         </Pressable>
                     </View>
@@ -964,13 +963,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         borderRadius: 5,
         marginTop: 35,
-        height: 45,
+        height: 35,
     },
     input: {
         width: '80%'
     },
     title: {
-        fontFamily: 'RedHatText-SemiBold',
+        fontFamily: 'RedHatText-Regular',
         fontSize: 16,
         color: 'black',
         marginTop: 40
@@ -1039,12 +1038,12 @@ const styles = StyleSheet.create({
         fontFamily: 'OpenSans-Regular', fontSize: 9, color: '#000000', marginTop: 15
     },
     listImage: {
-        height: 100,
+        height: 90,
         width: 100,
-        borderRadius: 7
+        borderRadius: 3
     },
     listView: {
-        borderBottomRightRadius: 10,
+        borderRadius: 5,
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
@@ -1052,12 +1051,11 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.20,
         shadowRadius: 1.41,
-
         elevation: 2,
         backgroundColor: 'white',
-        paddingVertical: 5,
-        paddingHorizontal: 5,
-        marginHorizontal: 2,
+        paddingVertical: 2,
+        paddingHorizontal: 3,
+        marginHorizontal: 5,
         marginVertical: 5,
         flexDirection: 'row',
         alignItems: 'center'
@@ -1073,13 +1071,12 @@ const styles = StyleSheet.create({
         fontSize: 9,
         fontFamily: 'Montserrat-Medium',
         color: '#A3A3A3',
-        marginTop: 7
     },
     subject: {
         fontSize: 9,
         fontFamily: 'Montserrat-Medium',
         color: '#A3A3A3',
-        marginTop: 7
+        // marginTop: 7
     },
     button: {
         fontSize: 10,

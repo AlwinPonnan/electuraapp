@@ -5,13 +5,11 @@ import { serverUrl } from './Url';
 const url = `${serverUrl}/area`
 
 
-
-
-export const getAllAreas=async()=>{
+export const getAllAreas = async () => {
     return axiosApiInstance.get(`${url}/`)
 }
 
-export const getByCityId=async(id)=>{
+export const getByCityId = async (id) => {
     return axiosApiInstance.get(`${url}/getAreaByCityId/${id}`)
 }
 

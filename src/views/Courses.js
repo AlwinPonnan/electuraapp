@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useContext } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, ScrollView } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj, light_colors } from '../globals/colors';
@@ -35,7 +35,7 @@ export default function Courses(props) {
 
 
     const [alertText, setAlertText] = alertTextArr
-   
+
     const [categoryArr, setCategoryArr] = useState([]);
 
     const getCategories = async () => {
@@ -62,7 +62,7 @@ export default function Courses(props) {
                     }
                     return obj
                 })
-                setSubjectArr([{name:"All",_id:"All"},...tempArr])
+                setSubjectArr([{ name: "All", _id: "All" }, ...tempArr])
                 setIsrefreshing(false)
 
             }
@@ -170,11 +170,11 @@ export default function Courses(props) {
                 <View style={styles.textCardContainer}>
                     <View>
 
-                        <Pressable onPress={()=>handleAddCourseToWhishlist(item._id)} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                        <Pressable onPress={() => handleAddCourseToWhishlist(item._id)} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                             <Text style={styles.textCardMainHeading}>{item?.name}</Text>
                             {item.isWishListed ?
 
-                                <Icon name="heart" size={14}  color={colorObj.primarColor} />
+                                <Icon name="heart" size={14} color={colorObj.primarColor} />
 
                                 :
                                 <Icon name="heart-outline" size={14} color={colorObj.primarColor} />
@@ -200,12 +200,12 @@ export default function Courses(props) {
         // tempArr = tempArr.filter(el => el?.classesArr?.some(ele => ele.subjectArr.some(elx => elx.subjectId == id)))
         // setCourseArr([...tempArr])
         // setSelectedSubjectId(id)
-    
-        if(id=="All"){
+
+        if (id == "All") {
             setSelectedSubjectId(id)
             setCourseArr([...mainCourseArr])
         }
-        else{
+        else {
 
             let tempArr = [...mainCourseArr];
             console.log(JSON.stringify(tempArr, null, 2), "asddasdsa")
@@ -232,7 +232,6 @@ export default function Courses(props) {
                             <Image source={require('../../assets/images/Banner.png')} resizeMode="contain" resizeMethod="resize" style={{ width: wp(100), height: 210 }} />
                         </View>
 
-
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                             <Text style={styles.headingAboveCard}>Recommended Courses</Text>
                             <Pressable onPress={() => props.navigation.navigate("AllCourses")}>
@@ -240,7 +239,6 @@ export default function Courses(props) {
                             </Pressable>
                         </View>
                         <FlatList
-
                             horizontal
                             data={subjectArr}
                             renderItem={({ item, index }) => {
@@ -288,14 +286,14 @@ export default function Courses(props) {
                                                         <View style={styles.textCardContainer}>
                                                             <View>
 
-                                                                <Pressable onPress={()=>handleAddCourseToWhishlist(itemX._id)} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                                                                <Pressable onPress={() => handleAddCourseToWhishlist(itemX._id)} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                                                                     <Text style={styles.textCardMainHeading}>{itemX?.name}</Text>
                                                                     {
                                                                         itemX?.isWishListed ?
-                                                                            <Icon name="heart"  size={14} color={colorObj.primarColor} />
+                                                                            <Icon name="heart" size={14} color={colorObj.primarColor} />
 
                                                                             :
-                                                                            <Icon name="heart-outline"  size={14} color={colorObj.primarColor} />
+                                                                            <Icon name="heart-outline" size={14} color={colorObj.primarColor} />
 
                                                                     }
                                                                 </Pressable>
@@ -357,30 +355,29 @@ const styles = StyleSheet.create({
         borderRadius: 14,
         marginHorizontal: 10,
         marginVertical: 10,
-        paddingVertical: 10,
+        paddingVertical: 3,
     },
     textCardContainer: {
-        paddingHorizontal: 15,
+        paddingHorizontal: 7,
         paddingVertical: 10
-
     },
     courseImg: {
         height: 100,
-        width: '90%',
+        width: '95%',
         alignSelf: 'center',
-        borderRadius: 14
+        borderRadius: 12
     },
     textCardMainHeading: {
-        fontFamily: 'Montserrat-SemiBold', fontSize: 14, color: '#232323'
+        fontFamily: 'Montserrat-Medium', fontSize: 12, color: '#232323'
     },
     textCardMainSubHeading1: {
-        fontFamily: 'Montserrat-Regular', fontSize: 12, color: '#7E7E7E', marginTop: 2
+        fontFamily: 'Montserrat-Regular', fontSize: 10, color: '#7E7E7E', marginTop: 2
     },
     textCardMainSubHeading2: {
-        fontFamily: 'Montserrat-Regular', fontSize: 12, color: colorObj.primarColor, marginTop: 15
+        fontFamily: 'Montserrat-Regular', fontSize: 10, color: colorObj.primarColor, marginTop: 15
     },
     headingAboveCard: {
-        fontSize: 16, fontFamily: 'OpenSans-SemiBold', color: '#303030', paddingLeft: 13, marginTop: 10
+        fontSize: 16, fontFamily: 'OpenSans-Medium', color: '#303030', paddingLeft: 13, marginTop: 10
     },
     viewAllText: {
         fontSize: 14, fontFamily: 'OpenSans-Regular', color: '#828282', paddingRight: 13, marginTop: 10
@@ -390,7 +387,7 @@ const styles = StyleSheet.create({
         borderRadius: 26,
         paddingVertical: 10,
         marginVertical: 10,
-        marginHorizontal: 10,
+        marginHorizontal: 7,
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
@@ -408,6 +405,7 @@ const styles = StyleSheet.create({
 
     categoryName: {
         color: colorObj.whiteColor,
+        fontSize: 11,
         textAlign: 'center',
         fontFamily: 'Montserrat-Regular',
         paddingHorizontal: 20
