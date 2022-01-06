@@ -324,12 +324,12 @@ export default function CourseDetail(props) {
                         <View style={[styles.flexRow]} >
                             <Text style={styles.pageHeading}>{courseObj?.name}</Text>
                             <View style={[styles.flexRow, { alignItems: "center" }]}>
-                                {courseObj?.rating &&
+                                {/* { courseObj?.rating &&
                                     <>
                                         <Text style={styles.ratingTxt}>{courseObj?.rating}</Text>
                                         <Icon name="star" size={10} color="rgba(8, 90, 78, 1)" />
                                     </>
-                                }
+                                } */}
                             </View>
                         </View>
                         {/* <Pressable onPress={() => handleAddCourseToWhishlist()}>
@@ -341,7 +341,7 @@ export default function CourseDetail(props) {
                         <Text style={styles.userName}>{courseObj?.teacherName}</Text>
                     </Pressable>
                     <Pressable style={{ marginTop: 5 }} >
-                        <ImageBackground source={{ uri: generateImageUrl(courseObj?.thumbnailImage?.url) }} resizeMode="cover" style={[styles.bannerimg, { display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}]}>
+                        <ImageBackground source={{ uri: generateImageUrl(courseObj?.thumbnailImage?.url) }} imageStyle={{ borderRadius: 6 }} resizeMode="cover" style={[styles.bannerimg, { display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }]}>
                             {/* <Icon name="play-circle-outline" size={50} color="black" /> */}
                         </ImageBackground>
                     </Pressable>
@@ -354,9 +354,9 @@ export default function CourseDetail(props) {
 
 
                     <View style={[styles.flexRow, { marginVertical: 15, justifyContent: 'space-between' }]}>
-                        <Text style={[styles.dataItem, { textTransform: 'capitalize' }]}> <Icon name="tv-outline" size={16} />  {courseObj?.ClassType} Mode</Text>
-                        <Text style={styles.dataItem}><Icon name="time-outline" size={16} />  {courseObj?.hours} Hours</Text>
-                        <Text style={styles.dataItem}><Icon name="clipboard-outline" size={16} /> {courseObj?.assignments} Assignments</Text>
+                        <Text style={[styles.dataItem, { textTransform: 'capitalize' }]}> <Icon name="tv-outline" size={12} />  {courseObj?.ClassType} Mode</Text>
+                        <Text style={styles.dataItem}><Icon name="time-outline" size={12} />  {courseObj?.hours} Hours</Text>
+                        <Text style={styles.dataItem}><Icon name="clipboard-outline" size={12} /> {courseObj?.assignments} Assignments</Text>
                     </View>
 
                     <Text style={styles.coursePrice}>Description</Text>
@@ -364,14 +364,14 @@ export default function CourseDetail(props) {
 
                         {courseObj?.description}
                     </Text>
-                    <View style={{ marginVertical: 10 }}>
-                        <Text style={[styles.coursePrice, { marginVertical: 10 }]}>Preview Video</Text>
+                    <View style={{ marginBottom: 10 }}>
+                        <Text style={[styles.coursePrice, { marginBottom: 10 }]}>Preview Video</Text>
 
                         <View style={{ flex: 1 }}>
                             {
                                 isFocused &&
                                 <WebView
-                                    
+
                                     style={{ height: 250, width: wp(100) }}
                                     source={{ uri: 'https://www.youtube.com/embed/' + youtubeVideoId }}
                                 />
@@ -380,7 +380,7 @@ export default function CourseDetail(props) {
 
                     </View>
 
-                    <Text style={styles.coursePrice}>
+                    <Text style={[styles.coursePrice, { fontSize: 15 }]}>
                         ₹ {courseObj?.price}
                     </Text>
                     <Pressable style={[styles.btn, { width: wp(90), marginVertical: 10 }]} onPress={() => setCouponModal(true)}>
@@ -420,7 +420,7 @@ export default function CourseDetail(props) {
 
                                             <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Address Line 2</Text>
                                             <TextInput style={[styles.textInput]} value={line2} onChangeText={(e) => setLine2(e)} />
-{/* 
+                                            {/* 
                                             <Text style={[styles.textInputLabel, { marginTop: 10 }]}>City</Text>
                                             <TextInput style={[styles.textInput]} value={city} onChangeText={(e) => setCity(e)} />
 
@@ -540,7 +540,7 @@ const styles = StyleSheet.create({
     },
     dataItem: {
         fontFamily: 'Montserrat-SemiBold',
-        fontSize: 13,
+        fontSize: 11,
         color: 'grey',
         marginVertical: 5
         // marginRight: 20,
@@ -563,7 +563,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
 
     },
-    description: { fontFamily: 'Montserrat-Regular', fontSize: 14, color: 'rgba(0,0,0,0.6)', paddingHorizontal: 8 },
+    description: { fontFamily: 'RedHatText-Regular', fontSize: 12, color: 'rgba(0,0,0,0.6)', },
     //modal styles
 
     centeredView: {
@@ -629,9 +629,9 @@ const styles = StyleSheet.create({
 
 
     coursePrice: {
-        fontSize: 20,
-        fontFamily: 'Montserrat-SemiBold',
-        color: 'black'
+        fontSize: 18,
+        fontFamily: 'RedHatText-SemiBold',
+        color: '#828282'
     },
     searchContainer: {
         backgroundColor: "#F5F5F5",

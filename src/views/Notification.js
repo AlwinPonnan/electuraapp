@@ -42,7 +42,7 @@ export default function Notification(props) {
     }
 
     const handleNotificationRedirect = (item) => {
-        if(item.redirectTo){
+        if (item.redirectTo) {
 
             if (item.redirectTo != "") {
                 setIsLoading(true)
@@ -61,7 +61,8 @@ export default function Notification(props) {
             <View style={styles.container}>
 
                 {/* <NavBar rootProps={props} /> */}
-                <View style={styles.innerContainer}>
+                {/* <View style={styles.innerContainer}> */}
+                <View style={{ paddingHorizontal: wp(2), marginTop: 20 }}>
 
                     <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                         <Pressable onPress={() => props.navigation.goBack()}>
@@ -72,39 +73,40 @@ export default function Notification(props) {
 
                     <Text style={styles.heading}>Notification</Text>
 
+                </View>
 
-                    <FlatList
-                        data={notificationArr}
-                        refreshing={isRefreshing}
-                        onRefresh={() => getNotifications()}
-                        contentContainerStyle={{ paddingBottom: 80 }}
-                        keyExtractor={(item, index) => `${item._id}`}
-                        renderItem={({ item, index }) => {
-                            return (
+                <FlatList
+                    data={notificationArr}
+                    refreshing={isRefreshing}
+                    onRefresh={() => getNotifications()}
+                    contentContainerStyle={{ paddingBottom: 80 }}
+                    keyExtractor={(item, index) => `${item._id}`}
+                    renderItem={({ item, index }) => {
+                        return (
 
-                                <Pressable style={styles.notiCard} onPress={() => handleNotificationRedirect(item)}>
-                                    <View style={[styles.flexRow, { alignItems: 'center', marginHorizontal: 5 }]}>
+                            <Pressable style={styles.notiCard} onPress={() => handleNotificationRedirect(item)}>
+                                <View style={[styles.flexRow, { alignItems: 'center', marginHorizontal: 5 }]}>
+                                    <View>
+                                        <Image style={{ height: 50, width: 50, borderRadius: 50 }} source={{ uri: item?.sentByObj?.profileImage ? generateImageUrl(item?.sentByObj?.profileImage) : generateImageUrl(item?.userObj?.profileImage) }} />
+                                    </View>
+
+                                    <View style={styles.notificationInnerContainer}>
+                                        <Text style={styles.cardHeading}>{item?.title}</Text>
                                         <View>
-                                            <Image style={{ height: 50, width: 50 }} source={{ uri: item?.sentByObj?.profileImage ? generateImageUrl(item?.sentByObj?.profileImage) :generateImageUrl(item?.userObj?.profileImage) }} />
-                                        </View>
 
-                                        <View style={styles.notificationInnerContainer}>
-                                            <Text style={styles.cardHeading}>{item?.title}</Text>
-                                            <View>
-
-                                                <Text style={styles.cardData}>{item?.content} </Text>
-                                                <Text style={styles.cardData}>{`${new Date(item?.createdAt).getDate()}/${new Date(item?.createdAt).getMonth() + 1}/${new Date(item?.createdAt).getFullYear()}`}</Text>
-                                            </View>
+                                            <Text style={styles.cardData}>{item?.content}</Text>
+                                            <Text style={styles.cardData}>{`${new Date(item?.createdAt).getDate()}/${new Date(item?.createdAt).getMonth() + 1}/${new Date(item?.createdAt).getFullYear()}`}</Text>
                                         </View>
                                     </View>
-                                    {/* <Text style={[styles.cardData, { alignSelf: "flex-end", paddingRight: 20 }]}>{`${new Date(item?.createdAt).getHours()}:${new Date(item?.createdAt).getMinutes()}`}</Text> */}
+                                </View>
+                                {/* <Text style={[styles.cardData, { alignSelf: "flex-end", paddingRight: 20 }]}>{`${new Date(item?.createdAt).getHours()}:${new Date(item?.createdAt).getMinutes()}`}</Text> */}
 
-                                </Pressable>
-                            )
-                        }}
-                    />
+                            </Pressable>
+                        )
+                    }}
+                />
 
-                </View>
+                {/* </View> */}
             </View>
         </>
     )
@@ -143,8 +145,8 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     cardHeading: {
-        fontFamily: 'RedHatText-Regular',
-        fontSize: 14,
+        fontFamily: 'RedHatText-Medium',
+        fontSize: 12,
         color: '#27303E',
         // marginTop: 8,
     },
@@ -219,7 +221,7 @@ const styles = StyleSheet.create({
 
     markAsReadText: {
         color: '#085A4E',
-        fontFamily: 'RedHatText-Medium',
+        fontFamily: 'RedHatText-Bold',
         fontSize: 12
     },
     innerContainer: {

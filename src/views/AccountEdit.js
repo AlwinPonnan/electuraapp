@@ -129,34 +129,47 @@ export default function AccountEdit(props) {
     }
 
 
-
+    function ValidateEmail(mail) {
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
+            return (true)
+        }
+        alert("You have entered an invalid email address!")
+        return (false)
+    }
 
     const handleProfileUpdate = async () => {
         try {
             setIsLoading(true)
-            let obj = {
-                name,
-                email,
-                phone: mobile,
-                gender: genderIsSelected ? "Male" : "Female",
-                enquiryObj: { ...profileData.enquiryObj, educationObj: { degree }, areaId: selectedAreaId, cityId: selectedCityId, stateId: selectedStateId }
-            }
-            console.log(obj)
-            let { data: res, status: statusCode } = await updateProfile(obj)
-            if (statusCode == 200 || statusCode == 304) {
-                console.log(res.message)
-                getUserData()
-                setSuccessAlert(true)
-                setAlertText(`${res.message}`)
-                // alert(res.message)
-                props.navigation.goBack()
+            if (!ValidateEmail(email)) {
                 setIsLoading(false)
+                alert("Please enter a valid email")
             }
-            console.log(res)
+            else {
+
+                let obj = {
+                    name,
+                    email,
+                    phone: mobile,
+                    gender: genderIsSelected ? "Male" : "Female",
+                    enquiryObj: { ...profileData.enquiryObj, educationObj: { degree }, areaId: selectedAreaId, cityId: selectedCityId, stateId: selectedStateId }
+                }
+                console.log(obj)
+                let { data: res, status: statusCode } = await updateProfile(obj)
+                if (statusCode == 200 || statusCode == 304) {
+                    console.log(res.message)
+                    getUserData()
+                    setSuccessAlert(true)
+                    setAlertText(`${res.message}`)
+                    // alert(res.message)
+                    props.navigation.goBack()
+                    setIsLoading(false)
+                }
+                console.log(res)
+            }
         }
         catch (err) {
-            console.error(err)
             setIsLoading(false)
+            console.error(err)
 
         }
     }
@@ -281,7 +294,8 @@ export default function AccountEdit(props) {
         try {
             const { data: res } = await getAllStates();
             if (res.success) {
-                setStateArr(res.data)
+                let tempArr = res.data.map(el => ({ ...el, name: `${el.name.charAt(0)}`.toUpperCase() + el.name.slice(1).toLowerCase() }))
+                setStateArr(tempArr)
             }
         } catch (error) {
             console.error(error)
@@ -335,6 +349,8 @@ export default function AccountEdit(props) {
                                 :
                                 <Image style={styles.profileImage} source={require("../../assets/images/user.png")} />
                         }
+
+                        <Image style={{ height: 30, width: 30, position: "absolute", bottom: 0, right: 0 }} source={require("../../assets/images/camera.png")} />
                     </Pressable>
                 </View>
                 <View style={styles.userInfoContainer}>
@@ -349,7 +365,7 @@ export default function AccountEdit(props) {
                     <Text style={styles.label}>
                         Phone
                     </Text>
-                    <TextInput value={mobile} keyboardType="numeric" onChangeText={(e) => setMobile(e)} style={styles.txtInput} placeholder="Enter your phone" />
+                    <TextInput value={mobile} editable={false} keyboardType="numeric" onChangeText={(e) => setMobile(e)} style={[styles.txtInput, { color: "grey" }]} placeholder="Enter your phone" />
                     {
                         roleName == "TEACHER" &&
                         <>
@@ -361,7 +377,6 @@ export default function AccountEdit(props) {
                             <Text style={styles.label}>State</Text>
                             <Picker
                                 style={[styles.textInput]}
-
                                 selectedValue={selectedStateId}
                                 onValueChange={(itemValue, itemIndex) => {
 
@@ -512,19 +527,19 @@ export default function AccountEdit(props) {
                             <TextInput value={profileData?.enquiryObj?.experience} onChangeText={(e) => handleProfileDataUpdate(e, "experience")} style={styles.txtInput} keyboardType="number-pad" placeholder="Your Teaching Experience (in years)" />
 
                             <Text style={styles.label}>
-                                Facebook Profile name
+                                Facebook profile link
                             </Text>
-                            <TextInput value={profileData?.enquiryObj?.facebookLink} onChangeText={(e) => handleProfileDataUpdate(e, "facebookLink")} style={styles.txtInput} placeholder="Facebook profile name" />
+                            <TextInput value={profileData?.enquiryObj?.facebookLink} onChangeText={(e) => handleProfileDataUpdate(e, "facebookLink")} style={styles.txtInput} placeholder="Facebook profile link" />
 
                             <Text style={styles.label}>
-                                Youtube Channel Name
+                                Youtube Channel link
                             </Text>
-                            <TextInput value={profileData?.enquiryObj?.youtubeLink} onChangeText={(e) => handleProfileDataUpdate(e, "youtubeLink")} style={styles.txtInput} placeholder="Youtube channel name" />
+                            <TextInput value={profileData?.enquiryObj?.youtubeLink} onChangeText={(e) => handleProfileDataUpdate(e, "youtubeLink")} style={styles.txtInput} placeholder="Youtube channel link" />
 
                             <Text style={styles.label}>
-                                Instagram Profile Name
+                                Instagram username
                             </Text>
-                            <TextInput value={profileData?.enquiryObj?.instagramLink} onChangeText={(e) => handleProfileDataUpdate(e, "instagramLink")} style={styles.txtInput} placeholder="Instagram profile name" />
+                            <TextInput value={profileData?.enquiryObj?.instagramLink} onChangeText={(e) => handleProfileDataUpdate(e, "instagramLink")} style={styles.txtInput} placeholder="Instagram username" />
                         </>
 
                     }

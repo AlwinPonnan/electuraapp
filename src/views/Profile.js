@@ -70,10 +70,8 @@ export default function Profile(props) {
             <NavBar rootProps={props} />
             <View style={styles.innerContainer}>
                 <View style={styles.flexRow}>
-
                     <Text style={styles.mainHeading}>My Account</Text>
                     {roleName == "TEACHER" &&
-
                         <View style={styles.flexRow}>
                             <Text style={styles.onlineText}>Online</Text>
                             <Switch color={colorObj.primarColor} value={isSwitchOn} onValueChange={() => handleToggle()} />
@@ -81,56 +79,42 @@ export default function Profile(props) {
                     }
                 </View>
                 <Pressable onPress={() => props.navigation.navigate('Learnings')}>
-
                     <Text style={styles.subHeading}>My Courses</Text>
                 </Pressable>
-
                 <Pressable onPress={() => props.navigation.navigate('ShoppingCart')}>
-
                     <Text style={styles.subHeading}>My Cart</Text>
                 </Pressable>
                 <Pressable onPress={() => props.navigation.navigate('wishlist')}>
-
                     <Text style={styles.subHeading}>My Wishlist</Text>
                 </Pressable>
-
                 <Pressable onPress={() => props.navigation.navigate('Orders')}>
-
                     <Text style={styles.subHeading}>My Orders</Text>
                 </Pressable>
                 {roleName == "TEACHER" &&
                     <>
                         <Pressable onPress={() => props.navigation.navigate('IncomingOrders')}>
-
                             <Text style={styles.subHeading}>Incoming Orders</Text>
                         </Pressable>
                     </>
                 }
                 <Pressable onPress={() => props.navigation.navigate('Enquiry')}>
-
                     <Text style={styles.subHeading}>My Enquires</Text>
                 </Pressable>
-
                 {/* <Text style={styles.subHeading}>My Teachers</Text> */}
                 {/* <Text style={styles.subHeading}>Feedbacks</Text> */}
                 {
                     roleName == "USER" &&
                     <>
-                        <Pressable onPress={()=>props.navigation.navigate('RegisterTeacher')}>
-
+                        <Pressable onPress={() => props.navigation.navigate('RegisterTeacher')}>
                             <Text style={[styles.subHeading, { fontFamily: 'RedHatText-SemiBold', color: "#085A4E" }]}>Become a Teacher</Text>
                         </Pressable>
-                        
                         {/* <Text style={[styles.subHeading, { fontFamily: 'RedHatText-SemiBold', color: "#085A4E" }]}>Create Your Course</Text> */}
                     </>
                 }
                 <View style={styles.flexRow}>
-
-                    <Text style={[styles.subHeading, { fontFamily: 'RedHatText-SemiBold', borderBottomWidth: 0, color: "#085A4E" }]}>Logout</Text>
+                    <Text style={[styles.subHeading, { fontFamily: 'RedHatText-SemiBold', borderBottomWidth: 0, color: "#085A4E" }]}>Log Out</Text>
                     <Icon name="log-out-outline" size={16} color={colorObj.primarColor} />
                 </View>
-
-
             </View>
         </View>
     )
@@ -150,18 +134,18 @@ const styles = StyleSheet.create({
 
     },
     mainHeading: {
-        fontFamily: 'RedHatText-SemiBold',
-        fontSize: 20,
+        fontFamily: 'RedHatText-Medium',
+        fontSize: 16,
         color: '#27303E'
     },
     subHeading: {
         fontFamily: 'RedHatText-Regular',
         fontSize: 14,
         color: '#27303E',
-        marginTop: 20,
-        borderBottomColor: '#27303E',
+        marginTop: 15,
+        borderBottomColor: 'rgba(39, 48, 62,0.2)',
         borderBottomWidth: 0.5,
-        paddingBottom: 10
+        paddingBottom: 15
 
     },
     onlineText: {
