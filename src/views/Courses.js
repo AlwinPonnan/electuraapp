@@ -229,7 +229,7 @@ export default function Courses(props) {
                 ListHeaderComponent={
                     <>
                         <View style={styles.bannerContainer}>
-                            <Image source={require('../../assets/images/Banner.png')} />
+                            <Image source={require('../../assets/images/Banner.png')} resizeMode="contain" resizeMethod="resize" style={{ width: wp(100), height: 210 }} />
                         </View>
 
 
