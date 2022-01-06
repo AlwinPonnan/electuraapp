@@ -36,14 +36,15 @@ export default function Chat(props) {
                 setChatArr(res.data.map(el => {
                     let obj = {
                         ...el,
-                        image: el?.userObj?.profileImage ? generateImageUrl(el?.userObj?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80"
+                        name:el?.userObj?.name ? el.userObj.name  : `${el.role}-`+`${el.userObj._id}`.slice(0,5),
+                        image: el?.userObj?.profileImage ? generateImageUrl(el?.userObj?.profileImage) : "https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper.png"
                     }
                     return obj
                 }))
                 setMainChatArr(res.data.map(el => {
                     let obj = {
                         ...el,
-                        image: el?.userObj?.profileImage ? generateImageUrl(el?.userObj?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80"
+                        image: el?.userObj?.profileImage ? generateImageUrl(el?.userObj?.profileImage) : "https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper.png"
                     }
                     return obj
                 }))
@@ -100,7 +101,7 @@ export default function Chat(props) {
                                         <View style={[styles.flexColumn, { justifyContent: "center" }]}>
                                             <View style={[styles.flexRow,{alignItems:'center',justifyContent:'space-between',width:wp(70)}]}>
 
-                                                <Text style={styles.cardHeading}>{item?.userObj?.name ? item?.userObj?.name : `${item.role}-${item?.userObj?._id}`} </Text>
+                                                <Text style={styles.cardHeading}>{item?.name} </Text>
                                                 {
                                                     item?.unreadMessages > 0 &&
                                                     <BadgeComponent value={item?.unreadMessages} />

@@ -362,7 +362,7 @@ export default function Enquiry(props) {
                         data={enquiryArr}
                         keyExtractor={(item, index) => `${index}`}
                         ListEmptyComponent={
-                            <Text style={{marginTop:20,}}>No Enquiries yet !</Text>
+                            <Text style={{ marginTop: 20, }}>No Enquiries yet !</Text>
                         }
                         onRefresh={() => getYourEnquires()}
                         refreshing={isRefreshing}
@@ -413,7 +413,19 @@ export default function Enquiry(props) {
                                                 keyExtractor={(item, index) => `${item._id}`}
                                                 ListEmptyComponent={
                                                     <View style={styles.card}>
-                                                        <Text style={[styles.cardHeading,{marginTop:5}]}>You do not have any responses yet !</Text>
+                                                        {item?.enquiryType != EnquiryTypes.GENERAL ?
+                                                            <>{item?.acceptedByTeacher?
+                                                                <Text style={[styles.cardHeading, { marginTop: 5 }]}>Enquiry Accepted By Teacher</Text>
+                                                                
+                                                                :
+                                                                <Text style={[styles.cardHeading, { marginTop: 5 }]}>You do not have any responses yet !</Text>
+
+                                                            }
+                                                            </>
+                                                            :
+                                                            <Text style={[styles.cardHeading, { marginTop: 5 }]}>You do not have any responses yet !</Text>
+
+                                                        }
                                                     </View>
                                                 }
                                                 renderItem={({ item: itemX, index: indexX }) => {
@@ -657,7 +669,7 @@ export default function Enquiry(props) {
                                                 <RadioButton.Group onValueChange={newValue => setSortBy(newValue)} value={sortBy}>
                                                     <View style={[{ marginVertical: 10 }, styles.flexColumn, { justifyContent: 'space-between' }]}>
 
-                                                        <Pressable onPress={() => setSortBy('General')} style={[styles.flexRow, {  alignItems: 'center' }]}>
+                                                        <Pressable onPress={() => setSortBy('General')} style={[styles.flexRow, { alignItems: 'center' }]}>
                                                             <RadioButton color={colorObj.primarColor} value="general" />
                                                             <Text style={styles.radioText}>General</Text>
                                                         </Pressable>
@@ -666,11 +678,11 @@ export default function Enquiry(props) {
                                                             <RadioButton color={colorObj.primarColor} value="specific" />
                                                             <Text style={styles.radioText}>Specific</Text>
                                                         </Pressable>
-                                                        <Pressable onPress={() => setSortBy('slot')} style={[styles.flexRow, {  alignItems: 'center' }]}>
+                                                        <Pressable onPress={() => setSortBy('slot')} style={[styles.flexRow, { alignItems: 'center' }]}>
                                                             <RadioButton color={colorObj.primarColor} value="slot" />
                                                             <Text style={styles.radioText}>Slot</Text>
                                                         </Pressable>
-                                                        <Pressable onPress={() => setSortBy('Connect')} style={[styles.flexRow, {  alignItems: 'center' }]}>
+                                                        <Pressable onPress={() => setSortBy('Connect')} style={[styles.flexRow, { alignItems: 'center' }]}>
                                                             <RadioButton color={colorObj.primarColor} value="connect" />
                                                             <Text style={styles.radioText}>Connect Now</Text>
                                                         </Pressable>

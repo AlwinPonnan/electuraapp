@@ -137,7 +137,7 @@ export default function AddCoupons(props) {
                     style={styles.container}
                 >
                     <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-                        <Image source={require('../../assets/images/Banner.png')} style={{ alignSelf: 'center', marginTop: 10 }} />
+                        <Image source={require('../../assets/images/Banner.png')} style={{ alignSelf: 'center', marginTop: 10,height:210,width:wp(100) }} />
                         <View style={styles.textContainer}>
                             <Text style={styles.mainHeading}>Add Coupon</Text>
                         </View>
@@ -146,7 +146,7 @@ export default function AddCoupons(props) {
                             <TextInput style={styles.inputStyles} onChangeText={(val) => setCode(val)} placeholder="Enter Code" />
                         </View>
                         <View style={styles.inputContainer}>
-                            <Icon name="home-outline" size={14} color="black" />
+                            <Icon name="cash-outline" size={14} color="black" />
                             <TextInput style={styles.inputStyles} maxLength={2} onChangeText={(val) => setAmountOff(val)} placeholder="Enter Amount Off" keyboardType="numeric" />
                         </View>
 
