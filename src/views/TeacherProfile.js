@@ -207,13 +207,13 @@ export default function TeacherProfile(props) {
                     <View>
 
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                            <Text style={[{fontFamily:'OpenSans-SemiBold',fontSize:12,color:'#333333'}]}>{item?.name}</Text>
+                            <Text style={[{ fontFamily: 'OpenSans-SemiBold', fontSize: 12, color: '#333333' }]}>{item?.name}</Text>
                             <Icon name="heart-outline" size={14} color={colorObj.primarColor} />
                         </View>
-                        <Text style={{fontFamily:'OpenSans-Regular',fontSize:10,color:'#828282'}}>{item?.teacherName}</Text>
+                        <Text style={{ fontFamily: 'OpenSans-Regular', fontSize: 10, color: '#828282' }}>{item?.teacherName}</Text>
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                            <Text style={{fontFamily:'OpenSans-Regular',fontSize:10,color:colorObj.primarColor,marginTop:10}}>₹{item?.price}</Text>
-                            <Text style={{fontFamily:'OpenSans-Regular',fontSize:10,color:colorObj.primarColor,marginTop:10}}><Icon name="star" size={10} color={colorObj.primarColor} />{item?.rating ? Math.round(item?.rating) : 3}</Text>
+                            <Text style={{ fontFamily: 'OpenSans-Regular', fontSize: 10, color: colorObj.primarColor, marginTop: 10 }}>₹{item?.price}</Text>
+                            <Text style={{ fontFamily: 'OpenSans-Regular', fontSize: 10, color: colorObj.primarColor, marginTop: 10 }}><Icon name="star" size={10} color={colorObj.primarColor} />{item?.rating ? Math.round(item?.rating) : 3}</Text>
                         </View>
                     </View>
 
@@ -456,7 +456,14 @@ export default function TeacherProfile(props) {
 
 
     useEffect(() => {
-        handleOnint()
+        if (focused) {
+
+            handleOnint()
+        }
+        else {
+            setProfileProgress(0)
+        }
+        return () => setProfileProgress(0)
     }, [focused])
 
     return (
@@ -526,19 +533,23 @@ export default function TeacherProfile(props) {
                 </View>
             </View>
             <View style={[styles.flexColumn, { width: wp(90), alignSelf: "center" }]}>
-                <Text style={styles.description}>{!teacherObj?.enquiryObj?.description ? teacherObj?.enquiryObj?.description : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,"}</Text>
+                <Text style={styles.description}>{teacherObj?.enquiryObj?.description ? teacherObj?.enquiryObj?.description : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,"}</Text>
             </View>
 
             <View style={[{ backgroundColor: '#F5F5F5', width: wp(90), alignSelf: 'center', borderRadius: 5, padding: 10, marginTop: 15 }]}>
-                <View style={[styles.flexRow,{alignItems:'center',justifyContent:'space-between'}]}>
-                    <Text style={styles.dashboardHeading}>My Dashboard <Text style={{ fontSize: 10, color: '#828282' }}> (private to you)</Text> </Text>
-                    <Text style={styles.dashboardHeading}><Text style={{ fontSize: 10, color: '#828282' }}>67% Completed</Text> </Text>
+                {(teacherObj?.role == "TEACHER" && teacherObj?._id == decodedObj?.userId) &&
+                    <>
+                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                            <Text style={styles.dashboardHeading}>My Dashboard <Text style={{ fontSize: 10, color: '#828282' }}> (private to you)</Text> </Text>
+                            <Text style={styles.dashboardHeading}><Text style={{ fontSize: 10, color: '#828282' }}>{profileProgress * 100}% Completed</Text> </Text>
 
-                </View>
-                <View style={[styles.flexColumn, { width: wp(100), alignItems: 'center', alignSelf: "center", marginTop: 20 }]}>
-                    <Progress.Bar progress={profileProgress} width={wp(85)} color={colorObj.primarColor} />
-                </View>
-                <View style={[styles.flexRow, { width: '100%', alignItems: 'center', alignSelf: 'center', justifyContent: 'space-between', backgroundColor: 'white', marginTop: 30, paddingVertical: 10, borderRadius: 5 }]}>
+                        </View>
+                        <View style={[styles.flexColumn, { width: wp(100), alignItems: 'center', alignSelf: "center", marginTop: 20 }]}>
+                            <Progress.Bar progress={profileProgress} width={wp(85)} color={colorObj.primarColor} />
+                        </View>
+                    </>
+                }
+                <View style={[styles.flexRow, { width: '100%', alignItems: 'center', alignSelf: 'center', justifyContent: 'space-between', backgroundColor: 'white', marginTop: (teacherObj?.role == "TEACHER" && teacherObj?._id == decodedObj?.userId) ? 30:5, paddingVertical: 10, borderRadius: 5 }]}>
                     <View style={[{ borderRightWidth: 1, paddingHorizontal: 20, borderRightColor: '#F2F2F2' }]}>
                         <Text style={styles.dashboardTextMain}>{teacherObj?.profileVisit}</Text>
                         <Text style={styles.dashboardTextSub}>Profile Visits</Text>
@@ -558,7 +569,7 @@ export default function TeacherProfile(props) {
 
 
 
-            <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between',paddingHorizontal:10 }]}>
+            <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10 }]}>
                 <Text style={styles.headingAboveCard}>Courses ({coursesArr.length})</Text>
                 <Text style={styles.viewAllText}>View All</Text>
             </View>
@@ -566,7 +577,7 @@ export default function TeacherProfile(props) {
             <FlatList
                 horizontal
                 data={coursesArr}
-                contentContainerStyle={{paddingHorizontal:10}}
+                contentContainerStyle={{ paddingHorizontal: 10 }}
                 renderItem={renderCourseItem}
                 ListEmptyComponent={
                     <Text style={{ fontFamily: 'RedHatText-Regular', padding: 10 }}>Currently the teacher has not listed any courses</Text>
@@ -576,7 +587,7 @@ export default function TeacherProfile(props) {
             />
 
 
-            <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between',paddingHorizontal:10 }]}>
+            <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10 }]}>
                 <Text style={styles.headingAboveCard}>{feedBackArr.length > 1 ? "Feedbacks" : "Feedback"} ({feedBackArr.length})</Text>
                 {
                     (teacherObj?._id != decodedObj?.userId) &&
@@ -594,7 +605,7 @@ export default function TeacherProfile(props) {
                         {feedBackArr.length > 1 ? "No FeedBacks found" : "No FeedBack found"}
                     </Text>
                 }
-                contentContainerStyle={{paddingHorizontal:10}}
+                contentContainerStyle={{ paddingHorizontal: 10 }}
                 showsHorizontalScrollIndicator={false}
                 keyExtractor={(item, index) => `${index}`}
                 renderItem={({ item, index }) => {

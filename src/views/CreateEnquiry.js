@@ -24,7 +24,7 @@ export default function CreateEnquiry(props) {
 
     const focused = useIsFocused()
     const [ClassType, setClassType] = useState("Immediately");
-    const [gender, setGender] = useState("Male");
+    const [gender, setGender] = useState("No Preference");
     const [price, setPrice] = useState('');
     const [region, setRegion] = useState('');
     const [subject, setSubject] = useState('');
@@ -138,6 +138,7 @@ export default function CreateEnquiry(props) {
             console.log(res.data)
             if (res.success) {
                 setCityArr(res.data)
+                setAreaArr([])
             }
         } catch (error) {
             console.error(error)
@@ -231,7 +232,7 @@ export default function CreateEnquiry(props) {
                     classArr.length > 0 &&
                     <>
 
-                        <Text style={styles.textInputLabel}>Class</Text>
+                        <Text style={styles.textInputLabel}>Which sub-category do you want to study for?</Text>
                         <Picker
                             style={styles.textInput}
                             selectedValue={selectedClassId}
@@ -258,7 +259,7 @@ export default function CreateEnquiry(props) {
                     <>
 
 
-                        <Text style={styles.textInputLabel}>Topic</Text>
+                        <Text style={styles.textInputLabel}>Which topic you want to study?</Text>
                         <Picker
                             style={styles.textInput}
                             selectedValue={selectedTopicId}
@@ -407,7 +408,7 @@ export default function CreateEnquiry(props) {
                 {/* <TextInput style={styles.textInput} onChangeText={(e) => setRegion(e)} /> */}
 
                 <Text style={styles.textInputLabel}>How much you want to pay per hour?</Text>
-                <TextInput style={styles.textInput} keyboardType="number-pad" value={price} onChangeText={(e) => setPrice(e)} />
+                <TextInput placeholder={"Enter amount in INR"} style={styles.textInput} keyboardType="number-pad" value={price} onChangeText={(e) => setPrice(e)} />
 
                 <Text style={styles.textInputLabel}>Gender preference for teacher</Text>
 

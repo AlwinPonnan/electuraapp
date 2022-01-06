@@ -135,10 +135,17 @@ export default function Learnings(props) {
                         }
                     }
                     else {
-                        return true
+                        let createdAt = new Date(el?.enquiryObj?.slotObj?.meetingDate)
+                        createdAt.setHours(createdAt.getHours() + 2)
+                        if (new Date().getTime() <= createdAt.getTime()) {
+                            return true
+                        }
+                        else {
+                            return false
+                        }
                     }
                 })
-                // console.log(JSON.stringify(temp,null,2),"adad")
+                console.log(JSON.stringify(temp,null,2),"adad")
 
                 setLiveClassArr(temp)
                 setIsRefreshing(false)
@@ -266,7 +273,7 @@ export default function Learnings(props) {
 
 
     const renderItem2 = ({ item, index }) => (
-        <Pressable style={styles.cardContainer} onPress={()=>props.navigation.navigate("CourseDetail", { data: item?.courseObj?.courseId })} >
+        <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("CourseDetail", { data: item?.courseObj?.courseId })} >
             <Image style={styles.courseImg} source={{ uri: generateImageUrl(item?.courseObj?.thumbnailImage?.url) }} />
             <View style={styles.textCardContainer}>
                 <View>
@@ -319,7 +326,9 @@ export default function Learnings(props) {
                             showsHorizontalScrollIndicator={false}
                             keyExtractor={(item, index) => `${index}`}
                             ListEmptyComponent={
-                                <Text>No Classes Found</Text>
+                                <View style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: "10%" }}>
+                                    <Text style={{ fontFamily: 'Montserrat-SemiBold', fontSize: 16, textAlign: "center" }}>No Classes Found !!</Text>
+                                </View>
                             }
                         />
 

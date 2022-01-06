@@ -402,7 +402,7 @@ export default function RegisterTeacher(props) {
                             <TextInput maxLength={10} style={styles.inputStyles} editable={false} value={phone} onChangeText={(val) => setPhone(val)} keyboardType="numeric" placeholder="+91     Enter Number  *" />
                         </View>
 
-                        <Text style={styles.label}>Select Classes taught by you *</Text>
+                        <Text style={styles.label}>What do you teach*</Text>
 
 
                         <FlatList
