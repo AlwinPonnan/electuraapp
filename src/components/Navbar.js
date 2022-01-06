@@ -50,32 +50,32 @@ export default function NavBar(props) {
   return (
     <View style={styles.headerContainer}>
       <Pressable style={styles.logoContainer} onPress={() => toggle()}>
-        <Icon name="menu-outline" size={20} style={styles.icon} />
+        {/* <Icon name="menu-outline" size={20} style={styles.icon} /> */}
 
-        {/* <Image source={require('../../assets/images/Icon/Hamburger.png')} style={styles.logo} resizeMethod="resize" resizeMode="contain" /> */}
+        <Image source={require('../../assets/images/menu.png')} style={styles.logo} resizeMethod="resize" resizeMode="contain" />
       </Pressable>
 
       <View style={styles.iconContainer}>
 
-        <Pressable onPress={() => props.rootProps.navigation.navigate("ShoppingCart")} android_ripple={{ color: '#ddd' }} style={[styles.iconButton, { flexDirection: 'row' }]}>
-          <Icon name="cart-outline" size={20} style={styles.icon} />
+        <Pressable onPress={() => props.rootProps.navigation.navigate("ShoppingCart")} android_ripple={{ color: '#27303E' }} style={[styles.iconButton, { flexDirection: 'row' }]}>
+          <Icon name="cart-outline" color={"#27303E"} size={20} style={styles.icon} />
           {cartObj?.courseArr?.length > 0 &&
             <Badge size={12}>{cartObj?.courseArr?.length}</Badge>
           }
         </Pressable>
-        <Pressable onPress={() => props.rootProps.navigation.navigate("SearchScreen")} android_ripple={{ color: '#ddd' }} style={styles.iconButton}>
-          <Icon name="search-outline" size={20} style={styles.icon} />
+        <Pressable onPress={() => props.rootProps.navigation.navigate("SearchScreen")} android_ripple={{ color: '#27303E' }} style={styles.iconButton}>
+          <Icon name="search-outline" color={"#27303E"} size={20} style={styles.icon} />
         </Pressable>
 
-        <Pressable onPress={() => props.rootProps.navigation.navigate("MainTopTab")} android_ripple={{ color: '#ddd' }} style={[styles.iconButton,{flexDirection:'row',alignItems:'center'}]}>
-          <Icon name="chatbubble-ellipses-outline" size={20} style={styles.icon} />
+        <Pressable onPress={() => props.rootProps.navigation.navigate("MainTopTab")} android_ripple={{ color: '#27303E' }} style={[styles.iconButton,{flexDirection:'row',alignItems:'center'}]}>
+          <Icon name="chatbubble-ellipses-outline" color={"#27303E"} size={20} style={styles.icon} />
           {requestArr?.length > 0 &&
             <Badge size={12}>{requestArr?.length}</Badge>
           }
         </Pressable>
 
-        <Pressable onPress={() => props.rootProps.navigation.navigate("Notification")} android_ripple={{ color: '#ddd' }} style={styles.iconButton}>
-          <Icon name="notifications-outline" size={22} style={styles.icon} />
+        <Pressable onPress={() => props.rootProps.navigation.navigate("Notification")} android_ripple={{ color: '#27303E' }} style={styles.iconButton}>
+          <Icon name="notifications-outline" color={"#27303E"} size={20} style={styles.icon} />
         </Pressable>
       </View>
 

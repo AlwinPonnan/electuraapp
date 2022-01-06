@@ -347,6 +347,23 @@ export default function AllTeacher(props) {
         })
     }
 
+    const handleBookmarkTeacher = async (id) => {
+        try {
+            setIsrefreshing(true)
+            const { data: res } = await BookmarkTeacher(id);
+            if (res) {
+                setSuccessAlert(true)
+                setAlertText(`${res.message}`)
+                handleOnint()
+                setIsrefreshing(false)
+            }
+
+        } catch (error) {
+            console.error(error)
+            setIsrefreshing(false)
+        }
+    }
+
     const renderItem = ({ item, index }) => {
         return (
             <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("TeacherProfile", { data: item._id })}>
@@ -361,15 +378,21 @@ export default function AllTeacher(props) {
                             </Text>
                             {
                                 item.onlineToggle == true &&
-                                <Text style={{ height: 8, width: 8, marginLeft: 8, backgroundColor: "#23e615", borderRadius: 50 }}></Text>
+                                <Text style={{ height: 5, width: 5, marginLeft: 8, backgroundColor: colorObj.primarColor, borderRadius: 50 }}></Text>
+
                             }
                         </View>
                         <Text style={styles.textCardMainSubHeading1}>{item?.enquiryObj?.classesArr?.reduce((acc, el) => acc + el.className + ',', '')}</Text>
                         <Text style={styles.textCardMainSubHeading2}>{item?.enquiryObj?.experience} Year Experience</Text>
                     </View>
-                    <View style={{ position: 'absolute', top: 5, right: 10 }} >
-                        <Ionicons name="bookmark-outline" size={16} color="black" />
-                    </View>
+                    <Pressable onPress={() => handleBookmarkTeacher(item?._id)} style={{ position: 'absolute', top: 5, right: 10 }} >
+                        {item?.enquiryObj?.bookmarked ?
+                            <Ionicons name="bookmark" size={14} color={colorObj?.primarColor} />
+                            :
+                            <Ionicons name="bookmark-outline" size={14} color={colorObj?.primarColor} />
+
+                        }
+                    </Pressable>
                 </View>
             </Pressable>
         )
@@ -389,27 +412,27 @@ export default function AllTeacher(props) {
                         </Text>
                         {
                             item.onlineToggle == true &&
-                            <Text style={{ height: 8, width: 8, marginLeft: 8, backgroundColor: "#23e615", borderRadius: 50 }}></Text>
+                            <Text style={{ height: 5, width: 5, marginLeft: 8, backgroundColor: colorObj.primarColor, borderRadius: 50 }}></Text>
                         }
                     </View>
-                    <Text style={[styles.location]}><Ionicons name="location-outline" size={12} color="#A3A3A3" style={{ marginRight: 10 }} />{item?.enquiryObj?.address ? item?.enquiryObj?.address : "Delhi"}</Text>
+                    <Text style={[styles.location]}><Ionicons name="location-outline" size={9} color="#A3A3A3" style={{ marginRight: 10 }} />{item?.enquiryObj?.address ? item?.enquiryObj?.address : "Delhi"}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', width: '90%' }}>
                         <View style={styles.flexRow}>
-                            <Image style={{ height: 10, width: 10, marginTop: 7, marginHorizontal: 5 }} source={require("../../assets/images/medal.png")} />
+                            <Image style={{ height: 9, width: 9, marginTop: 7, marginHorizontal: 5 }} source={require("../../assets/images/medal.png")} />
                             <Text style={[styles.subject]}>{item?.enquiryObj?.educationObj?.degree ? item?.enquiryObj?.educationObj?.degree : "PGT"}</Text>
                         </View>
                         {/* <View>
                             <Text style={[styles.subject]}>{item.course}</Text>
                         </View> */}
                         <View style={styles.flexRow}>
-                            <AntDesign size={12} name="hourglass" color="#828282" style={{ marginTop: 7, marginHorizontal: 5 }} />
+                            <AntDesign size={9} name="hourglass" color="#828282" style={{ marginTop: 7, marginHorizontal: 5 }} />
                             <Text style={[styles.subject]}>{item?.enquiryObj?.experience ? item?.enquiryObj?.experience : 1}+ Year Experience</Text>
                         </View>
                     </View>
-                    <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
+                    <View style={{ justifyContent: 'flex-end', flexDirection: 'row', marginRight: 10 }}>
                         <Pressable onPress={() => props.navigation.navigate("TeacherProfile", { data: item._id })}>
 
-                            <Text style={[styles.button, { color: '#828282', marginRight: 25 }]}>View Profile</Text>
+                            <Text style={[styles.button, { color: '#828282', marginRight: 15, fontFamily: 'Montserrat-Medium' }]}>View Profile</Text>
                         </Pressable>
                         <Pressable onPress={() => { setSelectedTeacherObj(item); setChecked(EnquiryTypes.ONETOONE); refRBSheet.current.open() }}>
 
@@ -419,6 +442,16 @@ export default function AllTeacher(props) {
 
                             <Text style={[styles.button, { backgroundColor: '#085A4E', color: '#fff', paddingHorizontal: 15, paddingVertical: 3, borderRadius: 5 }]}>View Profile</Text>
                         </Pressable> */}
+                    </View>
+                    <View style={{ position: 'absolute', top: 5, right: 10 }} >
+                        {item?.enquiryObj?.bookmarked ?
+                            <Ionicons name="bookmark" size={14} color={colorObj?.primarColor} />
+
+                            :
+
+                            <Ionicons name="bookmark-outline" size={14} color={colorObj?.primarColor} />
+
+                        }
                     </View>
                 </View>
 
@@ -518,10 +551,6 @@ export default function AllTeacher(props) {
                 <Pressable style={[{ flex: 1 }]} onPress={() => props.navigation.goBack()}>
                     <AntDesign name='left' size={20} style={[styles.topIcons]} />
                 </Pressable>
-                {/* <Pressable onPress={() => props.navigation.navigate('')}>
-
-                    <AntDesign name='search1' size={20} style={[styles.topIcons, { marginRight: 25 }]} />
-                </Pressable> */}
                 <Pressable onPress={() => props.navigation.navigate('MainTopTab')}>
 
                     <AntDesign name='message1' size={20} style={[styles.topIcons, { marginRight: 25 }]} />
@@ -533,7 +562,7 @@ export default function AllTeacher(props) {
             </View>
 
             <View style={[styles.searchInputView]}>
-                <AntDesign name='search1' size={20} style={[styles.topIcons, { marginRight: 15 }]} />
+                <AntDesign name='search1' color={"#828282"} size={14} style={[{ marginRight: 15 }]} />
                 <TextInput
                     style={styles.input}
                     onChangeText={(e) => handleSearch(e)}
@@ -544,29 +573,37 @@ export default function AllTeacher(props) {
                     {/* <Feather name='align-right' size={20} style={[styles.topIcons, { marginRight: 10 }]} /> */}
                 </Pressable>
             </View>
-            <Text style={[styles.title]}>Top Instructors</Text>
-            <View>
-                <FlatList
-                    style={{ height: 150 }}
-                    horizontal
-                    data={TeachersArr}
-                    renderItem={renderItem}
-                    showsHorizontalScrollIndicator={false}
-                    keyExtractor={(item, index) => `${index}`}
-                    ListEmptyComponent={
-                        <Text style={{ textAlign: 'center', fontFamily: 'Montserrat-SemiBold', fontSize: 16, width: wp(90), marginTop: 40 }}>No Teachers Found</Text>
-                    }
-                />
-            </View>
-            <Text style={[styles.title, { marginVertical: 10 }]}>Instructors Online</Text>
             <FlatList
-                style={{ height: 300 }}
+                ListHeaderComponent={
+                    <>
+                        <Text style={[styles.title]}>Top Instructors</Text>
+                        <View>
+                            <FlatList
+                                style={{ height: 120 }}
+                                horizontal
+                                data={TeachersArr}
+                                renderItem={renderItem}
+                                showsHorizontalScrollIndicator={false}
+                                keyExtractor={(item, index) => `${index}`}
+                                ListEmptyComponent={
+                                    <Text style={{ textAlign: 'center', fontFamily: 'Montserrat-SemiBold', fontSize: 16, width: wp(90), marginTop: 40 }}>No Teachers Found</Text>
+                                }
+                            />
+                        </View>
+                        <Text style={[styles.title, { marginBottom: 10, marginTop: 10 }]}>Instructors Online</Text>
+                    </>
+                }
+                contentContainerStyle={{ paddingBottom: 50 }}
                 data={TeachersArr.filter(el => el.onlineToggle)}
                 renderItem={renderTeacherItem}
                 keyExtractor={(item, index) => `${index}`}
                 ListEmptyComponent={
                     <Text style={{ textAlign: 'center', fontFamily: 'Montserrat-SemiBold', fontSize: 16, width: wp(90), marginTop: 40 }}>No Teachers Found</Text>
                 }
+            />
+
+            <FlatList
+
             />
             {/* bottom  sheet */}
             <RBSheet
@@ -620,7 +657,7 @@ export default function AllTeacher(props) {
                             onPress={() => { setChecked(EnquiryTypes.SLOT); initDayPress() }}
                         />
                     </Pressable>
-                    
+
                     <Pressable onPress={() => setChecked('connect')} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
                         <Text style={styles.bottomSheetOptionText}>Connect Now</Text>
                         <RadioButton
@@ -631,7 +668,7 @@ export default function AllTeacher(props) {
                         />
                     </Pressable>
 
-                    <KeyboardAvoidingView  behavior={Platform.OS === "ios" ? "padding" : "height"}>
+                    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
                         <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Message</Text>
 
                         <TextInput style={[styles.textInput, { width: wp(90), textAlignVertical: 'top' }]} multiline numberOfLines={4} value={additionalMessage} onChangeText={(e) => setAdditionalMessage(e)} />
@@ -926,7 +963,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 20,
         borderRadius: 5,
-        marginTop: 35
+        marginTop: 35,
+        height: 45,
     },
     input: {
         width: '80%'
@@ -939,20 +977,21 @@ const styles = StyleSheet.create({
     },
     cardContainer: {
         display: 'flex',
-        width: wp(65),
+        width: wp(55),
         flexDirection: 'row',
+        // justifyContent:"center",
+        alignItems: "center",
         backgroundColor: 'white',
         paddingHorizontal: 20,
-        paddingVertical: 15,
-        // height: 100,
+        paddingVertical: 5,
         position: 'relative',
-        marginHorizontal: 20,
-        marginTop: 20
+        marginHorizontal: 15
+
     },
     teacherImgContainer: {
         borderRadius: 50,
-        height: 100,
-        width: 100,
+        height: 90,
+        width: 90,
         left: -30,
         opacity: 1,
         backgroundColor: "white",
@@ -961,17 +1000,19 @@ const styles = StyleSheet.create({
         position: "absolute",
     },
     teacherImg: {
-        height: 100,
-        width: 100,
+        height: 90,
+        width: 90,
         left: 0,
+        // textAlign:'center',
         position: "absolute",
         borderRadius: 100
     },
     textCardContainer: {
-        paddingLeft: 90,
+        paddingLeft: 70,
         paddingVertical: 10,
         minHeight: 90,
         marginTop: 5,
+        // backgroundColor:'red',
         borderTopRightRadius: 10,
         borderBottomRightRadius: 10,
         shadowColor: "rgba(0,0,0,0.3)",
@@ -989,13 +1030,13 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     textCardMainHeading: {
-        fontFamily: 'Montserrat-SemiBold', fontSize: 12, color: '#232323'
+        fontFamily: 'OpenSans-SemiBold', fontSize: 10, color: '#232323'
     },
     textCardMainSubHeading1: {
-        fontFamily: 'Montserrat-Regular', fontSize: 10, color: '#7E7E7E', marginTop: 2
+        fontFamily: 'OpenSans-Regular', fontSize: 9, color: '#7E7E7E', marginTop: 2
     },
     textCardMainSubHeading2: {
-        fontFamily: 'Montserrat-Regular', fontSize: 10, color: '#000000', marginTop: 15
+        fontFamily: 'OpenSans-Regular', fontSize: 9, color: '#000000', marginTop: 15
     },
     listImage: {
         height: 100,
@@ -1004,19 +1045,19 @@ const styles = StyleSheet.create({
     },
     listView: {
         borderBottomRightRadius: 10,
-        shadowColor: "rgba(0,0,0,0.3)",
+        shadowColor: "#000",
         shadowOffset: {
             width: 0,
             height: 1,
         },
-        shadowOpacity: 0.22,
-        shadowRadius: 2.22,
-        padding: 15,
-        // paddingVertical: 20,
+        shadowOpacity: 0.20,
+        shadowRadius: 1.41,
+
         elevation: 2,
-        // width: '100%',
-        // height: '100%',
-        // position: 'relative',
+        backgroundColor: 'white',
+        paddingVertical: 5,
+        paddingHorizontal: 5,
+        marginHorizontal: 2,
         marginVertical: 5,
         flexDirection: 'row',
         alignItems: 'center'
@@ -1029,14 +1070,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     location: {
-        fontSize: 10,
-        fontFamily: 'Montserrat-Regular',
+        fontSize: 9,
+        fontFamily: 'Montserrat-Medium',
         color: '#A3A3A3',
         marginTop: 7
     },
     subject: {
-        fontSize: 10,
-        fontFamily: 'Montserrat-Regular',
+        fontSize: 9,
+        fontFamily: 'Montserrat-Medium',
         color: '#A3A3A3',
         marginTop: 7
     },

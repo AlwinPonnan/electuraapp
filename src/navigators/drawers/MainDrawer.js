@@ -17,6 +17,8 @@ import MainBottomTab from '../tabs/MainBottomTab';
 import AccountEdit from '../../views/AccountEdit';
 
 import Icon from 'react-native-vector-icons/Ionicons'
+import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons'
+
 import { colorObj } from '../../globals/colors';
 import MainTopTab from '../tabs/MainTopTab';
 import RegisterTeacher from '../../views/RegisterTeacher';
@@ -27,6 +29,8 @@ import { useIsFocused } from '@react-navigation/core';
 import TeacherProfile from '../../views/TeacherProfile';
 import Coupons from '../../views/Coupons';
 import TeacherCoupons from '../../views/TeacherCoupon';
+
+
 const Drawer = createDrawerNavigator();
 
 
@@ -43,7 +47,8 @@ export default function MainDrawer() {
         try {
             const result = await Share.share({
                 message:
-                    `Referal code from ${profileData?.name} is ${profileData.referalCode}`,
+                    `Sign up on Electura App to learn and teach online. Enter my code ${profileData.referalCode} while signing up.`
+                // `Referal code from ${profileData?.name} is ${profileData.referalCode}`,
             });
             if (result.action === Share.sharedAction) {
                 if (result.activityType) {
@@ -71,23 +76,23 @@ export default function MainDrawer() {
         return (
             <DrawerContentScrollView {...props}>
                 <View style={styles.profilePicContainer}>
-                    <Image source={profileData.profileImage ? { uri: generateImageUrl(profileData.profileImage) } : require('../../../assets/images/user.png')} style={styles.profilePic} />
+                    <Image source={!profileData.profileImage ? { uri: generateImageUrl(profileData.profileImage) } : require('../../../assets/images/user.png')} style={styles.profilePic} />
                     {
                         profileData.name == "" ?
-                            <Text style={styles.userName}>+91-{profileData.phone} </Text>
+                            <Text style={styles.userName}>Hi, User </Text>
                             :
                             <View>
-                                <Text style={[styles.userName,{textAlign:'left'}]}>{profileData.name} </Text>
-                                <Text style={[styles.userName,{fontSize:12}]}>+91-{profileData.phone}</Text>
+                                <Text style={[styles.userName, { textAlign: 'left' }]}>Hi,{profileData.name} </Text>
+                                {/* <Text style={[styles.userName,{fontSize:12}]}>+91-{profileData.phone}</Text> */}
                             </View>
                     }
                 </View>
 
                 <View style={{ marginBottom: 20, display: "flex", flexDirection: "column" }}>
 
-                    <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate("MainBottomTab")}><Icon name="home-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Home</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate("MainBottomTab", { screen: "Home", params: { screen: "HomeScreen" } })}><Icon name="home-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Home</Text></TouchableOpacity>
 
-                    <TouchableOpacity style={styles.DrawerItem} onPress={() => profileData?.role == "TEACHER" ? props.navigation.navigate('TeacherProfile', { data: profileData?._id }) : props.navigation.navigate('AccountEdit')}><Icon name="settings-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Account Settings</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.DrawerItem} onPress={() => profileData?.role == "TEACHER" ? props.navigation.navigate('AccountEdit', { data: profileData?._id }) : props.navigation.navigate('AccountEdit')}><Icon name="settings-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Account Settings</Text></TouchableOpacity>
 
                     {
                         roleName == "TEACHER" &&
@@ -101,20 +106,20 @@ export default function MainDrawer() {
 
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="pencil-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Blogs</Text></TouchableOpacity>
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="information-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> About Us</Text></TouchableOpacity>
-                    <TouchableOpacity style={styles.DrawerItem}><Icon name="help-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Support</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.DrawerItem}><MatIcon name="phone-message-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Contact Us</Text></TouchableOpacity>
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="help-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> FAQs</Text></TouchableOpacity>
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="document-text-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Policies</Text></TouchableOpacity>
 
                     <TouchableOpacity style={styles.DrawerItem} onPress={() => onShare()}><Icon name="link-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Referal Code is <Text style={{ fontFamily: "OpenSans-Bold", }}> {profileData?.referalCode} </Text></Text></TouchableOpacity>
-                    <TouchableOpacity onPress={() => { handleLogout() }} style={styles.DrawerItem}><Icon name="log-out-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Logout</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => { handleLogout() }} style={styles.DrawerItem}><Icon name="log-out-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Log Out</Text></TouchableOpacity>
                 </View>
 
                 {
                     roleName === "USER" &&
                     <View style={styles.teacherContainer} >
-                        <Text style={styles.teacherHeading}>Become Teacher</Text>
+                        <Text style={styles.teacherHeading}>BECOME A TEACHER</Text>
                         <Image source={require('../../../assets/images/teacherVector.png')} />
-                        <Text style={[styles.teacherHeading, { fontSize: 12, fontFamily: 'OpenSans-Regular' }]}>List your profile {roleName} on Electura and spread your word</Text>
+                        <Text style={[styles.teacherHeading, { fontSize: 10, fontFamily: 'OpenSans-Regular', width: '80%' }]}>List yourself to teach students and sell courses</Text>
                         <TouchableOpacity onPress={() => props.navigation.navigate("RegisterTeacher")} style={styles.teachButton}>
                             <Text style={styles.teachText}>Teach</Text>
                         </TouchableOpacity>
@@ -170,7 +175,7 @@ const styles = StyleSheet.create({
         color: colorObj.primarColor,
         fontFamily: "OpenSans-Regular",
         // textTransform: "capitalize",
-        fontSize: 16,
+        fontSize: 14,
         marginVertical: 5,
         marginLeft: 10
     },
@@ -185,7 +190,7 @@ const styles = StyleSheet.create({
     },
     profilePicContainer: {
         // backgroundColor: "#f2f2f2",
-        height: 140,
+        height: 100,
         // width: 140,
         marginTop: hp(2),
         display: "flex",
@@ -201,13 +206,13 @@ const styles = StyleSheet.create({
         height: 50,
     },
     userName: {
-        fontSize: 16,
+        fontSize: 14,
         // marginTop: 16,
         paddingHorizontal: 10,
         color: '#27303E',
         textAlign: "center",
         textTransform: 'capitalize',
-        fontFamily: "OpenSans-Bold",
+        fontFamily: "RedHatDisplay-Medium",
     },
     Logoutbtn: {
         backgroundColor: "#FFCB05",
@@ -249,7 +254,8 @@ const styles = StyleSheet.create({
         borderRadius: 3
     },
     teachText: {
-        fontFamily: 'OpenSans-SemiBold',
-        color: colorObj.whiteColor
+        fontFamily: 'OpenSans-Regular',
+        color: colorObj.whiteColor,
+        fontSize:12
     }
 });

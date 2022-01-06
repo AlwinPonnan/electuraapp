@@ -207,13 +207,13 @@ export default function TeacherProfile(props) {
                     <View>
 
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                            <Text style={styles.textCardMainHeading}>{item?.name}</Text>
+                            <Text style={[{fontFamily:'OpenSans-SemiBold',fontSize:12,color:'#333333'}]}>{item?.name}</Text>
                             <Icon name="heart-outline" size={14} color={colorObj.primarColor} />
                         </View>
-                        <Text style={styles.textCardMainSubHeading1}>{item?.teacherName}</Text>
+                        <Text style={{fontFamily:'OpenSans-Regular',fontSize:10,color:'#828282'}}>{item?.teacherName}</Text>
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                            <Text style={styles.textCardMainSubHeading2}>₹{item?.price}</Text>
-                            <Text style={styles.textCardMainSubHeading2}><Icon name="star" size={14} color={colorObj.primarColor} />{item?.rating ? item?.rating : 3}</Text>
+                            <Text style={{fontFamily:'OpenSans-Regular',fontSize:10,color:colorObj.primarColor,marginTop:10}}>₹{item?.price}</Text>
+                            <Text style={{fontFamily:'OpenSans-Regular',fontSize:10,color:colorObj.primarColor,marginTop:10}}><Icon name="star" size={10} color={colorObj.primarColor} />{item?.rating ? Math.round(item?.rating) : 3}</Text>
                         </View>
                     </View>
 
@@ -496,21 +496,21 @@ export default function TeacherProfile(props) {
                         </Pressable>
                 }
             </View>
-            <View style={[styles.flexRow, { marginLeft: 15, marginTop: -10, alignItems: 'center' }]}>
+            <View style={[styles.flexRow, { marginLeft: 35, marginTop: -25, alignItems: 'center' }]}>
                 <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                     <Text style={styles.textCardMainHeading}>{teacherObj?.name}
                     </Text>
                     {
                         teacherObj.onlineToggle == true &&
-                        <Text style={{ height: 8, width: 8, marginLeft: 8, backgroundColor: "#23e615", borderRadius: 50 }}></Text>
+                        <Text style={{ height: 5, width: 5, marginLeft: 8, backgroundColor: colorObj.primarColor, borderRadius: 50 }}></Text>
                     }
                 </View>
                 <View style={[styles.flexRow, { alignItems: 'center', paddingHorizontal: 20 }]}>
-                    <Text style={{ fontFamily: 'RedHatText-Medium', fontSize: 12, color: '#828282' }}>{teacherObj?.rating}</Text>
-                    <Icon name="star" style={{ marginHorizontal: 3 }} size={15} color="orange" />
+                    <Text style={{ fontFamily: 'RedHatText-Bold', fontSize: 12, color: '#828282' }}>{Math.round(teacherObj?.rating)}</Text>
+                    <Icon name="star" style={{ marginHorizontal: 3 }} size={15} color="#FF900E" />
                 </View>
             </View>
-            <View style={[styles.flexRow, { width: wp(90), alignSelf: "center", marginVertical: 10 }]}>
+            <View style={[styles.flexRow, { width: wp(85), alignSelf: "center", marginVertical: 10 }]}>
                 <View style={[styles.flexRow, { width: "33%" }]}>
                     <Image source={require("../../assets/images/office.png")} />
                     <Text style={styles.smallTxt}>{teacherObj?.enquiryObj?.address ? teacherObj?.enquiryObj?.address : "Delhi"}</Text>
@@ -525,18 +525,25 @@ export default function TeacherProfile(props) {
                     <Text style={styles.smallTxt}>{teacherObj?.enquiryObj?.experience ? teacherObj?.enquiryObj?.experience : "1"} year experience</Text>
                 </View>
             </View>
+            <View style={[styles.flexColumn, { width: wp(90), alignSelf: "center" }]}>
+                <Text style={styles.description}>{!teacherObj?.enquiryObj?.description ? teacherObj?.enquiryObj?.description : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,"}</Text>
+            </View>
 
-            <View style={[{ backgroundColor: '#F5F5F5', width: wp(90), alignSelf: 'center', borderRadius: 5, padding: 10 }]}>
-                <Text style={styles.dashboardHeading}>My Dashboard </Text>
-                <View style={[styles.flexColumn, { width: wp(90), alignItems: 'center', alignSelf: "center", marginTop: 20 }]}>
-                    <Progress.Bar progress={profileProgress} width={wp(70)} color={colorObj.primarColor} />
+            <View style={[{ backgroundColor: '#F5F5F5', width: wp(90), alignSelf: 'center', borderRadius: 5, padding: 10, marginTop: 15 }]}>
+                <View style={[styles.flexRow,{alignItems:'center',justifyContent:'space-between'}]}>
+                    <Text style={styles.dashboardHeading}>My Dashboard <Text style={{ fontSize: 10, color: '#828282' }}> (private to you)</Text> </Text>
+                    <Text style={styles.dashboardHeading}><Text style={{ fontSize: 10, color: '#828282' }}>67% Completed</Text> </Text>
+
                 </View>
-                <View style={[styles.flexRow, { width: '80%', alignItems: 'center', alignSelf: 'center', justifyContent: 'space-between', backgroundColor: 'white', marginVertical: 20, paddingVertical: 10, borderRadius: 5 }]}>
-                    <View style={[{ borderRightWidth: 1, paddingHorizontal: 10, borderRightColor: '#F2F2F2' }]}>
+                <View style={[styles.flexColumn, { width: wp(100), alignItems: 'center', alignSelf: "center", marginTop: 20 }]}>
+                    <Progress.Bar progress={profileProgress} width={wp(85)} color={colorObj.primarColor} />
+                </View>
+                <View style={[styles.flexRow, { width: '100%', alignItems: 'center', alignSelf: 'center', justifyContent: 'space-between', backgroundColor: 'white', marginTop: 30, paddingVertical: 10, borderRadius: 5 }]}>
+                    <View style={[{ borderRightWidth: 1, paddingHorizontal: 20, borderRightColor: '#F2F2F2' }]}>
                         <Text style={styles.dashboardTextMain}>{teacherObj?.profileVisit}</Text>
                         <Text style={styles.dashboardTextSub}>Profile Visits</Text>
                     </View>
-                    <View style={[{ borderRightWidth: 1, paddingHorizontal: 10, borderRightColor: '#F2F2F2' }]}>
+                    <View style={[{ borderRightWidth: 1, paddingHorizontal: 20, borderRightColor: '#F2F2F2' }]}>
                         <Text style={styles.dashboardTextMain}>{teacherObj?.totalBookmarks ? teacherObj?.totalBookmarks : 0}</Text>
                         <Text style={styles.dashboardTextSub}>Students</Text>
                     </View>
@@ -547,13 +554,11 @@ export default function TeacherProfile(props) {
                 </View>
             </View>
 
-            <View style={[styles.flexColumn, { width: wp(90), alignSelf: "center", marginTop: 20, }]}>
-                <Text style={styles.description}>{teacherObj?.enquiryObj?.description ? teacherObj?.enquiryObj?.description : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,"}</Text>
-            </View>
 
 
 
-            <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+
+            <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between',paddingHorizontal:10 }]}>
                 <Text style={styles.headingAboveCard}>Courses ({coursesArr.length})</Text>
                 <Text style={styles.viewAllText}>View All</Text>
             </View>
@@ -561,16 +566,17 @@ export default function TeacherProfile(props) {
             <FlatList
                 horizontal
                 data={coursesArr}
+                contentContainerStyle={{paddingHorizontal:10}}
                 renderItem={renderCourseItem}
                 ListEmptyComponent={
-                    <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>No Courses found</Text>
+                    <Text style={{ fontFamily: 'RedHatText-Regular', padding: 10 }}>Currently the teacher has not listed any courses</Text>
                 }
                 showsHorizontalScrollIndicator={false}
                 keyExtractor={(item, index) => `${index}`}
             />
 
 
-            <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+            <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between',paddingHorizontal:10 }]}>
                 <Text style={styles.headingAboveCard}>{feedBackArr.length > 1 ? "Feedbacks" : "Feedback"} ({feedBackArr.length})</Text>
                 {
                     (teacherObj?._id != decodedObj?.userId) &&
@@ -588,6 +594,7 @@ export default function TeacherProfile(props) {
                         {feedBackArr.length > 1 ? "No FeedBacks found" : "No FeedBack found"}
                     </Text>
                 }
+                contentContainerStyle={{paddingHorizontal:10}}
                 showsHorizontalScrollIndicator={false}
                 keyExtractor={(item, index) => `${index}`}
                 renderItem={({ item, index }) => {
@@ -815,9 +822,9 @@ const styles = StyleSheet.create({
         fontFamily: 'RedHatText-Regular'
     },
     dashboardHeading: {
-        fontFamily: 'RedHatText-SemiBold',
+        fontFamily: 'RedHatText-Regular',
         fontSize: 16,
-        color: 'black'
+        color: '#333'
     },
     contentContainer: {
         flex: 1,
@@ -922,10 +929,10 @@ const styles = StyleSheet.create({
 
     ////category card
     headingAboveCard: {
-        fontSize: 16, fontFamily: 'OpenSans-SemiBold', color: '#303030', paddingLeft: 13, marginTop: 10
+        fontSize: 16, fontFamily: 'RedHatText-Medium', color: '#4F4F4F', paddingLeft: 13, marginTop: 10
     },
     viewAllText: {
-        fontSize: 14, fontFamily: 'OpenSans-Regular', color: '#828282', paddingRight: 13, marginTop: 10
+        fontSize: 14, fontFamily: 'RedHatText-Regular', color: '#828282', paddingRight: 13, marginTop: 10
     },
 
 
@@ -960,7 +967,7 @@ const styles = StyleSheet.create({
         borderRadius: 14
     },
     textCardMainHeading: {
-        fontFamily: 'Montserrat-SemiBold', fontSize: 14, color: '#232323'
+        fontFamily: 'RedHatText-Bold', fontSize: 18, color: colorObj.primarColor
     },
     textCardMainSubHeading1: {
         fontFamily: 'Montserrat-Regular', fontSize: 12, color: '#7E7E7E', marginTop: 2

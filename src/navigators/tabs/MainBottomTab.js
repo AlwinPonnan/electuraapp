@@ -33,9 +33,11 @@ export default function MainBottomTab() {
           elevation: 0,
           borderTopColor: light_colors.lightGrey,
           borderTopWidth: 1,
+          paddingBottom:4,
+          // height:55
         },
         tabBarLabelStyle: {
-          fontFamily: 'Montserrat-Regular',
+          fontFamily: 'OpenSans-Regular',
         }
 
       }}
@@ -48,8 +50,9 @@ export default function MainBottomTab() {
 
         options={{
           title: "Teachers",
+          
           tabBarIcon: ({ color, size }) => (
-            <Icon name="people-outline" color={color} size={25} />
+            <Icon name="people-outline" color={color} size={20} />
           ),
         }}
       />
@@ -59,7 +62,7 @@ export default function MainBottomTab() {
         options={{
           title: 'Courses',
           tabBarIcon: ({ color, size }) => (
-            <Icon name="play-circle-outline" color={color} size={25} />
+            <Icon name="play-circle-outline" color={color} size={20} />
           ),
         }}
       />
@@ -74,7 +77,7 @@ export default function MainBottomTab() {
 
           tabBarIcon: ({ color, size }) => (
 
-            <Icon name="clipboard-outline" color={color} size={25} />
+            <Icon name="clipboard-outline" color={color} size={20} />
           ),
         }}
       />
@@ -88,7 +91,7 @@ export default function MainBottomTab() {
           title: 'Learning',
 
           tabBarIcon: ({ color, size }) => (
-            <Icon name="newspaper-outline" color={color} size={25} />
+            <Icon name="newspaper-outline" color={color} size={20} />
           ),
         }}
       />
@@ -102,7 +105,7 @@ export default function MainBottomTab() {
           title: 'Profile',
 
           tabBarIcon: ({ color, size }) => (
-            <Icon name="person-outline" color={color} size={25} />
+            <Icon name="person-outline" color={color} size={20} />
           ),
         }}
       />

@@ -30,7 +30,7 @@ export default function HomeScreen(props) {
     const [selectedSubjectId, setSelectedSubjectId] = useState('All');
     const [teachersArr, setTeachersArr] = useState([]);
     const [mainTeachersArr, setMainTeachersArr] = useState([]);
-    const [selectedSubject, setSelectedSubject] = useState({name:"All",_id:"All"});
+    const [selectedSubject, setSelectedSubject] = useState({ name: "All", _id: "All" });
     const [referalCode, setReferalCode] = useState('');
 
     const [subjectWiseTeacherArr, setSubjectWiseTeacherArr] = useState([]);
@@ -76,7 +76,7 @@ export default function HomeScreen(props) {
                     }
                     return obj
                 })
-                setSubjectArr([{name:"All",_id:"All"},...tempArr])
+                setSubjectArr([{ name: "All", _id: "All" }, ...tempArr])
                 setIsrefreshing(false)
             }
         } catch (error) {
@@ -111,11 +111,11 @@ export default function HomeScreen(props) {
     const getTeachers = async () => {
 
         try {
-        setIsrefreshing(true)
+            setIsrefreshing(true)
             const { data: res } = await getAllTeachers();
             if (res.success) {
                 console.log(JSON.stringify(res.data, null, 3), "teachers")
-                
+
                 setTeachersArr(res.data)
                 setMainTeachersArr(res.data)
                 setIsrefreshing(false)
@@ -211,12 +211,12 @@ export default function HomeScreen(props) {
 
 
     const handleSubjectSelection = async (item) => {
-        if(item._id=="All"){
+        if (item._id == "All") {
             setSelectedSubject(item);
             setSelectedSubjectId(item._id)
             setTeachersArr([...mainTeachersArr])
         }
-        else{
+        else {
 
             let tempArr = [...mainTeachersArr];
             console.log(JSON.stringify(tempArr, null, 2))
@@ -245,7 +245,7 @@ export default function HomeScreen(props) {
                             </Text>
                             {
                                 item.onlineToggle == true &&
-                                <Text style={{ height: 8, width: 8, marginLeft: 8, backgroundColor: "#23e615", borderRadius: 50 }}></Text>
+                                <Text style={{ height: 5, width: 5, marginLeft: 8, backgroundColor: colorObj.primarColor, borderRadius: 50 }}></Text>
                             }
                         </View>
                         <Text style={styles.textCardMainSubHeading1}>{item?.enquiryObj?.classesArr?.reduce((acc, el) => acc + el.className + ',', '')}</Text>
@@ -253,10 +253,11 @@ export default function HomeScreen(props) {
                     </View>
                     <Pressable onPress={() => handleBookmarkTeacher(item?._id)} style={{ position: 'absolute', top: 5, right: 10 }} >
                         {item?.enquiryObj?.bookmarked ?
-                            <Icon name="bookmark" size={16} color={colorObj?.primarColor} />
+                            <Icon name="bookmark" size={14} color={colorObj?.primarColor} />
 
                             :
-                            <Icon name="bookmark-outline" size={16} color={colorObj?.primarColor} />
+                            
+                            <Icon name="bookmark-outline" size={14} color={colorObj?.primarColor} />
 
                         }
                     </Pressable>
@@ -277,13 +278,9 @@ export default function HomeScreen(props) {
                     <>
 
                         <View style={styles.bannerContainer}>
-                            <Image source={require('../../assets/images/Banner.png')} />
+                            <Image source={require('../../assets/images/Banner.png')} resizeMode="contain" resizeMethod="resize" style={{ width: wp(100), height: 210 }} />
                         </View>
 
-                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                            <Text style={styles.headingAboveCard}>Top Instructors</Text>
-                            <Pressable  onPress={() => props.navigation.navigate('AllTeacher')}><Text style={[styles.viewAllText,{paddingHorizontal:40}]}>View All</Text></Pressable>
-                        </View>
                         <FlatList
                             horizontal
                             data={subjectArr}
@@ -298,8 +295,12 @@ export default function HomeScreen(props) {
                             showsHorizontalScrollIndicator={false}
                             keyExtractor={(item, index) => `${index}`}
                         />
+                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                            <Text style={styles.headingAboveCard}>Top Instructors</Text>
+                            <Pressable onPress={() => props.navigation.navigate('AllTeacher')}><Text style={[styles.viewAllText, { paddingHorizontal: 40 }]}>View All</Text></Pressable>
+                        </View>
                         <FlatList
-                            style={{ height: 150 }}
+                            style={{ height: 120 }}
                             horizontal
                             data={teachersArr}
                             renderItem={renderItem}
@@ -323,7 +324,7 @@ export default function HomeScreen(props) {
                                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                                             <Text style={styles.headingAboveCard}>{item?.name} Instructors</Text>
                                             <Pressable onPress={() => props.navigation.navigate('AllTeacher')}>
-                                                <Text style={[styles.viewAllText,{paddingHorizontal:40}]}>View All</Text>
+                                                <Text style={[styles.viewAllText, { paddingHorizontal: 40 }]}>View All</Text>
                                             </Pressable>
                                         </View>
                                         <FlatList
@@ -333,7 +334,7 @@ export default function HomeScreen(props) {
                                             showsHorizontalScrollIndicator={false}
                                             renderItem={({ item: itemX, index: indexX }) => {
                                                 return (
-                                                    <Pressable style={[styles.cardContainer, { marginVertical: 10, paddingVertical: 5 }]} onPress={() => props.navigation.navigate("TeacherProfile", { data: itemX._id })}>
+                                                    <Pressable style={[styles.cardContainer, { paddingVertical: 5 }]} onPress={() => props.navigation.navigate("TeacherProfile", { data: itemX._id })}>
                                                         <View style={styles.textCardContainer}>
                                                             <View style={styles.teacherImgContainer}>
                                                                 <Image style={styles.teacherImg} source={{ uri: itemX?.profileImage ? generateImageUrl(itemX?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
@@ -344,7 +345,8 @@ export default function HomeScreen(props) {
                                                                     </Text>
                                                                     {
                                                                         itemX.onlineToggle == true &&
-                                                                        <Text style={{ height: 8, width: 8, marginLeft: 8, backgroundColor: "#23e615", borderRadius: 50 }}></Text>
+                                                                        <Text style={{ height: 5, width: 5, marginLeft: 8, backgroundColor: colorObj.primarColor, borderRadius: 50 }}></Text>
+
                                                                     }
                                                                 </View>
 
@@ -353,9 +355,9 @@ export default function HomeScreen(props) {
                                                             </View>
                                                             <Pressable onPress={() => handleBookmarkTeacher(itemX?._id)} style={{ position: 'absolute', top: 5, right: 10 }} >
                                                                 {itemX?.enquiryObj?.bookmarked ?
-                                                                    <Icon name="bookmark" size={16} color={colorObj?.primarColor} />
+                                                                    <Icon name="bookmark" size={14} color={colorObj?.primarColor} />
                                                                     :
-                                                                    <Icon name="bookmark-outline" size={16} color={colorObj?.primarColor} />
+                                                                    <Icon name="bookmark-outline" size={14} color={colorObj?.primarColor} />
 
                                                                 }
                                                             </Pressable>
@@ -421,22 +423,23 @@ const styles = StyleSheet.create({
     },
     cardContainer: {
         display: 'flex',
-        width: wp(65),
+        width: wp(55),
         flexDirection: 'row',
         // justifyContent:"center",
         alignItems: "center",
         backgroundColor: 'white',
         paddingHorizontal: 20,
-        paddingVertical: 15,
+        paddingVertical: 5,
         position: 'relative',
-        marginHorizontal: 20
+        marginHorizontal: 15
 
     },
     textCardContainer: {
-        paddingLeft: 90,
+        paddingLeft: 70,
         paddingVertical: 10,
         minHeight: 90,
         marginTop: 5,
+        // backgroundColor:'red',
         borderTopRightRadius: 10,
         borderBottomRightRadius: 10,
         shadowColor: "rgba(0,0,0,0.3)",
@@ -454,16 +457,16 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     textCardMainHeading: {
-        fontFamily: 'Montserrat-SemiBold', fontSize: 12, color: '#232323'
+        fontFamily: 'OpenSans-SemiBold', fontSize: 10, color: '#232323'
     },
     textCardMainSubHeading1: {
-        fontFamily: 'Montserrat-Regular', fontSize: 10, color: '#7E7E7E', marginTop: 2
+        fontFamily: 'OpenSans-Regular', fontSize: 9, color: '#7E7E7E', marginTop: 2
     },
     textCardMainSubHeading2: {
-        fontFamily: 'Montserrat-Regular', fontSize: 10, color: '#000000', marginTop: 15
+        fontFamily: 'OpenSans-Regular', fontSize: 9, color: '#000000', marginTop: 15
     },
     headingAboveCard: {
-        fontSize: 16, fontFamily: 'RedHatText-SemiBold', color: '#303030', paddingLeft: 13, marginTop: 10
+        fontSize: 16, fontFamily: 'RedHatText-Medium', color: '#303030', paddingLeft: 13, marginTop: 10
     },
     viewAllText: {
         fontSize: 14, fontFamily: 'RedHatText-Regular', color: '#828282', paddingRight: 13, marginTop: 10
@@ -478,31 +481,32 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-evenly',
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.18,
-        shadowRadius: 1.00,
+        // shadowColor: "#000",
+        // shadowOffset: {
+        //     width: 0,
+        //     height: 1,
+        // },
+        // shadowOpacity: 0.18,
+        // shadowRadius: 1.00,
 
-        elevation: 1,
+        // elevation: 1,
     },
+    // categoryName: {
+    //     color: colorObj.whiteColor,
+    //     textAlign: 'center',
+    //     fontFamily: 'OpenSans-Regular',
+    // },
     categoryName: {
         color: colorObj.whiteColor,
         textAlign: 'center',
-        fontFamily: 'Montserrat-Regular',
-    },
-    categoryName: {
-        color: colorObj.whiteColor,
-        textAlign: 'center',
-        fontFamily: 'Montserrat-Regular',
+        fontSize:14,
+        fontFamily: 'OpenSans-Regular',
         paddingHorizontal: 20
     },
     teacherImgContainer: {
         borderRadius: 50,
-        height: 100,
-        width: 100,
+        height: 90,
+        width: 90,
         left: -30,
         opacity: 1,
         backgroundColor: "white",
@@ -511,9 +515,10 @@ const styles = StyleSheet.create({
         position: "absolute",
     },
     teacherImg: {
-        height: 100,
-        width: 100,
+        height: 90,
+        width: 90,
         left: 0,
+        // textAlign:'center',
         position: "absolute",
         borderRadius: 100
     },
