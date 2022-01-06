@@ -142,7 +142,7 @@ export default function AddCoupons(props) {
                             <Text style={styles.mainHeading}>Add Coupon</Text>
                         </View>
                         <View style={styles.inputContainer}>
-                            <Icon name="person-outline" size={14} color="black" />
+                            <Icon name="barcode-outline" size={14} color="black" />
                             <TextInput style={styles.inputStyles} onChangeText={(val) => setCode(val)} placeholder="Enter Code" />
                         </View>
                         <View style={styles.inputContainer}>
