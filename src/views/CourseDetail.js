@@ -338,10 +338,10 @@ export default function CourseDetail(props) {
                     </View>
                     <Pressable onPress={() => props.navigation.navigate("TeacherProfile", { data: userId })} style={[styles.flexRow, { alignItems: "center", marginTop: 5, marginBottom: 5 }]}>
                         <Image source={require("../../assets//images/user.png")} style={styles.img} />
-                        <Text style={styles.userName}>Teacher : {courseObj?.teacherName}</Text>
+                        <Text style={styles.userName}>{courseObj?.teacherName}</Text>
                     </Pressable>
                     <Pressable style={{ marginTop: 5 }} >
-                        <ImageBackground source={{ uri: generateImageUrl(courseObj?.thumbnailImage?.url) }} resizeMode="cover" style={[styles.bannerimg, { display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }]}>
+                        <ImageBackground source={{ uri: generateImageUrl(courseObj?.thumbnailImage?.url) }} resizeMode="cover" style={[styles.bannerimg, { display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}]}>
                             {/* <Icon name="play-circle-outline" size={50} color="black" /> */}
                         </ImageBackground>
                     </Pressable>
@@ -371,6 +371,7 @@ export default function CourseDetail(props) {
                             {
                                 isFocused &&
                                 <WebView
+                                    
                                     style={{ height: 250, width: wp(100) }}
                                     source={{ uri: 'https://www.youtube.com/embed/' + youtubeVideoId }}
                                 />
@@ -419,13 +420,13 @@ export default function CourseDetail(props) {
 
                                             <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Address Line 2</Text>
                                             <TextInput style={[styles.textInput]} value={line2} onChangeText={(e) => setLine2(e)} />
-
+{/* 
                                             <Text style={[styles.textInputLabel, { marginTop: 10 }]}>City</Text>
                                             <TextInput style={[styles.textInput]} value={city} onChangeText={(e) => setCity(e)} />
 
 
                                             <Text style={[styles.textInputLabel, { marginTop: 10 }]}>State</Text>
-                                            <TextInput style={[styles.textInput]} value={shippingState} onChangeText={(e) => setShippingState(e)} />
+                                            <TextInput style={[styles.textInput]} value={shippingState} onChangeText={(e) => setShippingState(e)} /> */}
 
 
                                             <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Pincode</Text>
@@ -438,10 +439,13 @@ export default function CourseDetail(props) {
                                         <View style={styles.flexRowAlignCenter}>
                                             <TextInput style={styles.searchInput} placeholder="Enter Code" onChangeText={(e) => setCode(e)} placeholderTextColor="#828282" />
                                         </View>
-                                        <Pressable onPress={() => getCouponCode()} style={[styles.flexRow, { alignItems: 'center' }]}>
+                                        <Pressable disabled={discountApplied} onPress={() => getCouponCode()} style={[styles.flexRow, { alignItems: 'center' }]}>
 
-                                            <Text style={styles.applyText}>Apply</Text>
-                                            <Icon name="checkmark-outline" size={20} color="#828282" />
+                                            <Text style={styles.applyText}>{discountApplied ? "Applied" : "Apply"}</Text>
+                                            {
+                                                !discountApplied &&
+                                                <Icon name="checkmark-outline" size={20} color="#828282" />
+                                            }
                                         </Pressable>
                                         {/* <Image style={styles.searchImages} source={require('../../assets/images/Filter.png')} /> */}
                                     </View>
@@ -451,12 +455,15 @@ export default function CourseDetail(props) {
                                         <Text style={[styles.textInputLabel, { marginTop: 10 }]}> ₹ {courseObj?.price}</Text>
 
                                     </View>
-                                    <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]} >
+                                    {
+                                        discountApplied &&
+                                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]} >
 
-                                        <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Discount Amount:{discountApplied && "(Applied)"}</Text>
-                                        <Text style={[styles.textInputLabel, { marginTop: 10 }]}> ₹ {courseObj?.discountPrice}</Text>
+                                            <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Discount Amount:{discountApplied && "(Applied)"}</Text>
+                                            <Text style={[styles.textInputLabel, { marginTop: 10 }]}> ₹ {courseObj?.discountPrice}</Text>
 
-                                    </View>
+                                        </View>
+                                    }
                                     <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]} >
 
                                         <Text style={[styles.textInputLabel, { marginTop: 10 }]}>final Amount:</Text>
