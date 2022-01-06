@@ -207,13 +207,13 @@ export default function TeacherProfile(props) {
                     <View>
 
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                            <Text style={[{fontFamily:'OpenSans-SemiBold',fontSize:12,color:'#333333'}]}>{item?.name}</Text>
+                            <Text style={[{ fontFamily: 'OpenSans-SemiBold', fontSize: 12, color: '#333333' }]}>{item?.name}</Text>
                             <Icon name="heart-outline" size={14} color={colorObj.primarColor} />
                         </View>
-                        <Text style={{fontFamily:'OpenSans-Regular',fontSize:10,color:'#828282'}}>{item?.teacherName}</Text>
+                        <Text style={{ fontFamily: 'OpenSans-Regular', fontSize: 10, color: '#828282' }}>{item?.teacherName}</Text>
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                            <Text style={{fontFamily:'OpenSans-Regular',fontSize:10,color:colorObj.primarColor,marginTop:10}}>₹{item?.price}</Text>
-                            <Text style={{fontFamily:'OpenSans-Regular',fontSize:10,color:colorObj.primarColor,marginTop:10}}><Icon name="star" size={10} color={colorObj.primarColor} />{item?.rating ? Math.round(item?.rating) : 3}</Text>
+                            <Text style={{ fontFamily: 'OpenSans-Regular', fontSize: 10, color: colorObj.primarColor, marginTop: 10 }}>₹{item?.price}</Text>
+                            <Text style={{ fontFamily: 'OpenSans-Regular', fontSize: 10, color: colorObj.primarColor, marginTop: 10 }}><Icon name="star" size={10} color={colorObj.primarColor} />{item?.rating ? Math.round(item?.rating) : 3}</Text>
                         </View>
                     </View>
 
@@ -506,7 +506,7 @@ export default function TeacherProfile(props) {
                     }
                 </View>
                 <View style={[styles.flexRow, { alignItems: 'center', paddingHorizontal: 20 }]}>
-                    <Text style={{ fontFamily: 'RedHatText-Bold', fontSize: 12, color: '#828282' }}>{Math.round(teacherObj?.rating)}</Text>
+                    <Text style={{ fontFamily: 'RedHatText-Bold', fontSize: 12, color: '#828282' }}>{Math.round(teacherObj?.rating * 10) / 10}</Text>
                     <Icon name="star" style={{ marginHorizontal: 3 }} size={15} color="#FF900E" />
                 </View>
             </View>
@@ -530,7 +530,7 @@ export default function TeacherProfile(props) {
             </View>
 
             <View style={[{ backgroundColor: '#F5F5F5', width: wp(90), alignSelf: 'center', borderRadius: 5, padding: 10, marginTop: 15 }]}>
-                <View style={[styles.flexRow,{alignItems:'center',justifyContent:'space-between'}]}>
+                <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                     <Text style={styles.dashboardHeading}>My Dashboard <Text style={{ fontSize: 10, color: '#828282' }}> (private to you)</Text> </Text>
                     <Text style={styles.dashboardHeading}><Text style={{ fontSize: 10, color: '#828282' }}>67% Completed</Text> </Text>
 
@@ -558,7 +558,7 @@ export default function TeacherProfile(props) {
 
 
 
-            <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between',paddingHorizontal:10 }]}>
+            <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10 }]}>
                 <Text style={styles.headingAboveCard}>Courses ({coursesArr.length})</Text>
                 <Text style={styles.viewAllText}>View All</Text>
             </View>
@@ -566,7 +566,7 @@ export default function TeacherProfile(props) {
             <FlatList
                 horizontal
                 data={coursesArr}
-                contentContainerStyle={{paddingHorizontal:10}}
+                contentContainerStyle={{ paddingHorizontal: 10 }}
                 renderItem={renderCourseItem}
                 ListEmptyComponent={
                     <Text style={{ fontFamily: 'RedHatText-Regular', padding: 10 }}>Currently the teacher has not listed any courses</Text>
@@ -576,7 +576,7 @@ export default function TeacherProfile(props) {
             />
 
 
-            <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between',paddingHorizontal:10 }]}>
+            <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10 }]}>
                 <Text style={styles.headingAboveCard}>{feedBackArr.length > 1 ? "Feedbacks" : "Feedback"} ({feedBackArr.length})</Text>
                 {
                     (teacherObj?._id != decodedObj?.userId) &&
@@ -594,12 +594,12 @@ export default function TeacherProfile(props) {
                         {feedBackArr.length > 1 ? "No FeedBacks found" : "No FeedBack found"}
                     </Text>
                 }
-                contentContainerStyle={{paddingHorizontal:10}}
+                contentContainerStyle={{ paddingHorizontal: 10 }}
                 showsHorizontalScrollIndicator={false}
                 keyExtractor={(item, index) => `${index}`}
                 renderItem={({ item, index }) => {
                     return (
-                        <Pressable style={[styles.cardContainer, { height: hp(15) }]}  >
+                        <Pressable style={[styles.cardContainer, { minHeight: hp(15) }]}  >
                             <View style={styles.textCardContainer}>
                                 <View>
 
@@ -614,10 +614,7 @@ export default function TeacherProfile(props) {
                                             )
                                         })}
                                     </View>
-
-
                                     <Text style={styles.textCardMainSubHeading1}>{item?.message}</Text>
-
                                 </View>
 
                             </View>
@@ -795,7 +792,7 @@ export default function TeacherProfile(props) {
 
                         />
                         <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Message</Text>
-                        <TextInput style={[styles.textInput]} multiline numberOfLines={4} value={responseMessage} onChangeText={(e) => setResponseMessage(e)} />
+                        <TextInput style={[styles.textInput]} multiline maxLength={150} numberOfLines={4} value={responseMessage} onChangeText={(e) => setResponseMessage(e)} />
                         <Pressable style={styles.submitBtn} onPress={() => handleSubmitFeedBack()}>
                             <Text style={styles.submitBtnText}>Submit</Text>
                         </Pressable>
@@ -953,18 +950,20 @@ const styles = StyleSheet.create({
         borderRadius: 14,
         marginHorizontal: 10,
         marginVertical: 10,
-        paddingVertical: 10,
+        paddingVertical: "2.5%",
     },
     textCardContainer: {
-        paddingHorizontal: 15,
+        paddingHorizontal: 7,
         paddingVertical: 10
 
     },
     courseImg: {
         height: 100,
-        width: '90%',
+        width: '95%',
         alignSelf: 'center',
-        borderRadius: 14
+        borderRadius: 12,
+        // borderTopLeftRadius: 12,
+        // borderTopRightRadius: 12,
     },
     textCardMainHeading: {
         fontFamily: 'RedHatText-Bold', fontSize: 18, color: colorObj.primarColor
@@ -1023,6 +1022,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5F6FA',
         borderRadius: 5,
         marginVertical: 10,
+        maxHeight: hp(25),
         width: '100%',
         fontFamily: 'Montserrat-Regular'
 
