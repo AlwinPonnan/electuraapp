@@ -232,7 +232,6 @@ export default function Courses(props) {
                             <Image source={require('../../assets/images/Banner.png')} resizeMode="contain" resizeMethod="resize" style={{ width: wp(100), height: 210 }} />
                         </View>
 
-
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                             <Text style={styles.headingAboveCard}>Recommended Courses</Text>
                             <Pressable onPress={() => props.navigation.navigate("AllCourses")}>
@@ -240,7 +239,6 @@ export default function Courses(props) {
                             </Pressable>
                         </View>
                         <FlatList
-
                             horizontal
                             data={subjectArr}
                             renderItem={({ item, index }) => {

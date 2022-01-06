@@ -360,9 +360,9 @@ export default function AllCourses(props) {
                     style={styles.listImage}
                     source={{ uri: item?.imgUrl }}
                 />
-                <View style={{ flex: 1, marginLeft: 10 }}>
-                    <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent:'space-between' }}>
-                        <View style={[styles.flexRow,{alignItems:'center'}]}>
+                <View style={{ flex: 1, marginLeft: 10, marginVertical: 5 }}>
+                    <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: 'space-between', }}>
+                        <View style={[styles.flexRow, { alignItems: 'center' }]}>
 
                             <Text style={styles.textCardMainHeading}>{item?.name}
                             </Text>
@@ -388,7 +388,7 @@ export default function AllCourses(props) {
                         <Text style={[styles.subject]}>{item?.description.slice(0, 40)}...</Text>
 
                     </View>
-                    <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
+                    <View style={{ justifyContent: 'flex-end', flexDirection: 'row', marginBottom: 10 }}>
 
                         <Pressable onPress={() => { handleAddCourseToCart(item._id) }}>
 
@@ -698,9 +698,9 @@ const styles = StyleSheet.create({
         width: '80%'
     },
     title: {
-        fontFamily: 'RedHatText-SemiBold',
-        fontSize: 20,
-        color: 'black',
+        fontFamily: 'OpenSans-SemiBold',
+        fontSize: 16,
+        color: '#303030',
         marginTop: 40
     },
     cardContainer: {
@@ -718,21 +718,21 @@ const styles = StyleSheet.create({
         borderRadius: 14,
         marginHorizontal: 10,
         marginVertical: 10,
-        paddingVertical: 10,
+        paddingVertical: 5,
     },
     textCardContainer: {
-        paddingHorizontal: 15,
+        paddingHorizontal: 7,
         paddingVertical: 10
 
     },
     courseImg: {
         height: 100,
-        width: '90%',
+        width: '95%',
         alignSelf: 'center',
-        borderRadius: 14
+        borderRadius: 12
     },
     textCardMainHeading: {
-        fontFamily: 'Montserrat-SemiBold', fontSize: 14, color: '#232323'
+        fontFamily: 'Montserrat-Medium', fontSize: 12, color: '#232323'
     },
     textCardMainSubHeading1: {
         fontFamily: 'Montserrat-Regular', fontSize: 12, color: '#7E7E7E', marginTop: 2
@@ -796,26 +796,24 @@ const styles = StyleSheet.create({
 
 
     listImage: {
-        height: 100,
-        width: 100,
-        borderRadius: 7
+        height: "94%",
+        width: 95,
+        borderRadius: 4
     },
     listView: {
-        borderBottomRightRadius: 10,
-        shadowColor: "rgba(0,0,0,0.3)",
+        borderRadius: 6,
+        shadowColor: "rgba(0,0,0,0.8)",
+        backgroundColor: "white",
         shadowOffset: {
             width: 0,
             height: 1,
         },
         shadowOpacity: 0.22,
         shadowRadius: 2.22,
-        padding: 15,
-        // paddingVertical: 20,
+        paddingHorizontal: 5,
         elevation: 2,
-        // width: '100%',
-        // height: '100%',
-        // position: 'relative',
         marginVertical: 5,
+        marginHorizontal: 3,
         flexDirection: 'row',
         alignItems: 'center'
     },
@@ -830,7 +828,7 @@ const styles = StyleSheet.create({
         fontSize: 10,
         fontFamily: 'Montserrat-Regular',
         color: '#A3A3A3',
-        marginTop: 7
+        // marginTop: 7
     },
     subject: {
         fontSize: 10,
