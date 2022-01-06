@@ -311,6 +311,10 @@ export default function CourseDetail(props) {
     useEffect(() => {
         if (isFocused)
             handleOnint()
+        else{
+            setCouponObj({})
+        }
+        return ()=>setCouponObj({})
     }, [isFocused])
 
     return (

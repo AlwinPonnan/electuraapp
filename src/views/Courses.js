@@ -244,6 +244,9 @@ export default function Courses(props) {
                             renderItem={({ item, index }) => {
                                 return (
                                     <Pressable onPress={() => handleSubjectSelection(item._id)} style={[styles.categoryContainer, selectedSubjectId != item._id && { backgroundColor: '#F7FFFE' }]}>
+                                        {item?.thumbnailImage &&
+                                            <Image source={{ uri: generateImageUrl(item?.thumbnailImage) }} style={{ height: 12, width: 12,marginRight:3 }} />
+                                        }
                                         {/* <Icon name="film-outline" size={14} /> */}
                                         <Text style={[styles.categoryName, selectedSubjectId != item._id && { color: '#828282' }]}>{item.name}</Text>
                                     </Pressable>
@@ -388,27 +391,28 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         marginVertical: 10,
         marginHorizontal: 7,
+        paddingHorizontal:20,
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-evenly',
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.18,
-        shadowRadius: 1.00,
+        justifyContent: 'center',
+        // shadowColor: "#000",
+        // shadowOffset: {
+        //     width: 0,
+        //     height: 1,
+        // },
+        // shadowOpacity: 0.18,
+        // shadowRadius: 1.00,
 
-        elevation: 1,
+        // elevation: 1,
     },
 
     categoryName: {
         color: colorObj.whiteColor,
-        fontSize: 11,
         textAlign: 'center',
-        fontFamily: 'Montserrat-Regular',
-        paddingHorizontal: 20
+        fontSize: 11,
+        fontFamily: 'OpenSans-Regular',
+        // paddingHorizontal: 20
     },
 
 

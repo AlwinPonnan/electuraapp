@@ -287,8 +287,11 @@ export default function HomeScreen(props) {
                             renderItem={({ item, index }) => {
                                 return (
                                     <Pressable onPress={() => { handleSubjectSelection(item) }} style={[styles.categoryContainer, selectedSubjectId != item._id && { backgroundColor: '#f0faf9' }]}>
+                                        {item?.thumbnailImage &&
+                                            <Image source={{ uri: generateImageUrl(item?.thumbnailImage) }} style={{ height: 12, width: 12,marginRight:3 }} />
+                                        }
                                         {/* <Icon name="film-outline" size={14} /> */}
-                                        <Text style={[styles.categoryName, selectedSubjectId != item._id && { color: '#000' }]}>{item.name}</Text>
+                                        <Text style={[styles.categoryName, selectedSubjectId != item._id && { color: '#828282' }]}>{item.name}</Text>
                                     </Pressable>
                                 )
                             }}
@@ -480,7 +483,8 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-evenly',
+        justifyContent: 'center',
+        paddingHorizontal: 20
         // shadowColor: "#000",
         // shadowOffset: {
         //     width: 0,
@@ -501,7 +505,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 11,
         fontFamily: 'OpenSans-Regular',
-        paddingHorizontal: 20
+        // paddingHorizontal: 20
     },
     teacherImgContainer: {
         borderRadius: 50,

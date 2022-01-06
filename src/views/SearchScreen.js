@@ -9,7 +9,7 @@ import NavBar from '../components/Navbar';
 import { getAllCategory } from "../Services/Category"
 import { Searchbar } from 'react-native-paper';
 import { getAllSubjects } from '../Services/Subjects';
-import { getAllTeachers } from '../Services/User';
+import { addTOWishList, BookmarkTeacher, getAllTeachers, getDecodedToken } from '../Services/User';
 import { generateImageUrl, sortByText } from '../globals/utils';
 import { getAllForUsersHomePage } from '../Services/Course';
 import { getAllClasses } from '../Services/Classses';
@@ -67,7 +67,47 @@ export default function SearchScreen(props) {
     };
 
 
+    const handleBookmarkTeacher = async (id) => {
+        try {
 
+            const { data: res } = await BookmarkTeacher(id);
+            if (res) {
+                // setSuccessAlert(true)
+                // setAlertText(`${res.message}`)
+                handleOnint()
+            }
+
+        } catch (error) {
+            console.error(error)
+            setIsrefreshing(false)
+        }
+    }
+    const handleAddCourseToWhishlist = async (id) => {
+        try {
+            let tokenObj = await getDecodedToken()
+            let obj = {
+                userId: tokenObj?.userId,
+                courseId: id
+            }
+            console.log(obj)
+            const { data: res } = await addTOWishList(obj);
+            if (res.success) {
+                handleOnint()
+                // setAlertText(res.message);
+                // setSuccessAlert(true)
+            }
+        } catch (error) {
+            console.error(error)
+            // if (error.response.data.message) {
+            //     setErrorAlert(true)
+            //     setAlertText(error.response.data.message)
+            // }
+            // else {
+            //     setErrorAlert(true)
+            //     setAlertText(error.message)
+            // }
+        }
+    }
 
     const getSubjects = async () => {
         try {
@@ -333,14 +373,21 @@ export default function SearchScreen(props) {
                 <View style={styles.textCardContainer}>
                     <View>
 
+                        <Pressable onPress={() => handleAddCourseToWhishlist(item._id)}style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                            <Text style={[styles.textCardMainHeading, { fontFamily: 'RedHatText-Medium', fontSize: 12 }]}>{item?.name}</Text>
+                            {item.isWishListed ?
+
+                                <Icon name="heart" size={14} color={colorObj.primarColor} />
+
+                                :
+                                <Icon name="heart-outline" size={14} color={colorObj.primarColor} />
+
+                            }
+                        </Pressable>
+                        <Text style={[styles.textCardMainSubHeading1, { fontFamily: 'RedHatText-Regular', fontSize: 10 }]}>{item?.teacherName}</Text>
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                            <Text style={styles.textCardMainHeading}>{item?.name}</Text>
-                            <Icon name="heart" size={14} color={colorObj.primarColor} />
-                        </View>
-                        <Text style={styles.textCardMainSubHeading1}>{item?.teacherName}</Text>
-                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                            <Text style={styles.textCardMainSubHeading2}>₹{item?.price}</Text>
-                            <Text style={styles.textCardMainSubHeading2}><Icon name="star" size={14} color={colorObj.primarColor} />4.2</Text>
+                            <Text style={[styles.textCardMainSubHeading2, { fontFamily: 'RedHatDisplay-Medium', fontSize: 10 }]}>₹{item?.price}</Text>
+                            <Text style={styles.textCardMainSubHeading2}><Icon name="star" size={14} color={colorObj.primarColor} />{item.rating}</Text>
                         </View>
                     </View>
 
@@ -351,18 +398,27 @@ export default function SearchScreen(props) {
     const renderInstructorItem = ({ item, index }) => {
         return (
             <Pressable style={styles.cardInstructorContainer} onPress={() => props.navigation.navigate("TeacherProfile", { data: item._id })} >
-                <Image style={styles.teacherImg} source={{ uri: item?.profileImage ? generateImageUrl(item?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
+                <View style={styles.teacherImgContainer}>
 
+                    <Image style={styles.teacherInstructorImg} source={{ uri: item?.profileImage ? generateImageUrl(item?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
+                </View>
                 <View style={styles.textCardInstructorContainer}>
                     <View>
 
-                        <Text style={styles.textCardMainHeading}>{item?.name}</Text>
-                        <Text style={styles.textCardMainSubHeading1}>{item?.enquiryObj?.classesArr?.reduce((acc, el) => acc + el.className + ',', '')}</Text>
-                        <Text style={styles.textCardMainSubHeading2}>{item?.enquiryObj?.experience} Year Experience</Text>
+                        <Text style={{ fontFamily: 'OpenSans-SemiBold', fontSize: 10, color: '#232323' }}>{item?.name}</Text>
+                        <Text style={{ fontFamily: 'OpenSans-Regular', fontSize: 9, color: '#7E7E7E', marginTop: 2 }}>{item?.enquiryObj?.classesArr?.reduce((acc, el) => acc + el.className + ',', '')}</Text>
+                        <Text style={{ fontFamily: 'OpenSans-Regular', fontSize: 9, color: '#000000', marginTop: 15 }}>{item?.enquiryObj?.experience} Year Experience</Text>
                     </View>
-                    <View style={{ position: 'absolute', top: 5, right: 10 }} >
-                        <Icon name="bookmark-outline" size={16} color="black" />
-                    </View>
+                    <Pressable onPress={() => handleBookmarkTeacher(item?._id)} style={{ position: 'absolute', top: 5, right: 10 }} >
+                        {item?.enquiryObj?.bookmarked ?
+                            <Icon name="bookmark" size={14} color={colorObj?.primarColor} />
+
+                            :
+
+                            <Icon name="bookmark-outline" size={14} color={colorObj?.primarColor} />
+
+                        }
+                    </Pressable>
                 </View>
             </Pressable>
         )
@@ -373,8 +429,11 @@ export default function SearchScreen(props) {
     const renderCategoryItem = ({ item, index }) => {
         return (
             <Pressable onPress={() => { handleSubjectSelectionTop(item._id) }} style={[styles.categoryContainer, selectedSubjectId != item._id && { backgroundColor: '#f0faf9' }]}>
+                {item?.thumbnailImage &&
+                    <Image source={{ uri: generateImageUrl(item?.thumbnailImage) }} style={{ height: 12, width: 12, marginRight: 3 }} />
+                }
                 {/* <Icon name="film-outline" size={14} /> */}
-                <Text style={[styles.categoryName, selectedSubjectId != item._id && { color: '#000' }]}>{item.name}</Text>
+                <Text style={[styles.categoryName, selectedSubjectId != item._id && { color: '#828282' }]}>{item.name}</Text>
             </Pressable>
         )
     }
@@ -406,10 +465,10 @@ export default function SearchScreen(props) {
                     keyExtractor={(item, index) => `${index}`}
                 />
                 <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                    <Text style={styles.headingAboveCard}>Recommended Courses</Text>
-                    <Pressable onPress={() => props.navigation.navigate("MainDrawer",{screen:"MainBottomTab",params:{screen:"Courses",params:{screen:"AllCourses"}}})}>
+                    <Text style={[styles.headingAboveCard, { fontFamily: 'RedHatText-Medium' }]}>Recommended Courses</Text>
+                    <Pressable onPress={() => props.navigation.navigate("MainDrawer", { screen: "MainBottomTab", params: { screen: "Courses", params: { screen: "AllCourses" } } })}>
 
-                        <Text style={styles.viewAllText}>View All</Text>
+                        <Text style={[styles.viewAllText, { fontFamily: 'RedHatText-Regular' }]}>View All</Text>
                     </Pressable>
                 </View>
 
@@ -424,10 +483,11 @@ export default function SearchScreen(props) {
                     keyExtractor={(item, index) => `${index}`}
                 />
                 <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                    <Text style={styles.headingAboveCard}>Top Instructors</Text>
+                    <Text style={[styles.headingAboveCard, { fontFamily: 'RedHatText-Medium' }]}>Top Instructors</Text>
                     <Pressable onPress={() => props.navigation.navigate("AllTeacher")}>
 
-                        <Text style={styles.viewAllText}>View All</Text>
+                        <Text style={[styles.viewAllText, { fontFamily: 'RedHatText-Regular' }]}>View All</Text>
+
                     </Pressable>
                 </View>
 
@@ -686,7 +746,7 @@ const styles = StyleSheet.create({
         elevation: 1,
     },
     cardContainer: {
-        width: wp(45),
+        width: wp(40),
         backgroundColor: 'white',
         shadowColor: "#000",
         shadowOffset: {
@@ -700,10 +760,10 @@ const styles = StyleSheet.create({
         borderRadius: 14,
         marginHorizontal: 10,
         marginVertical: 10,
-        paddingVertical: 10,
+        paddingVertical: 3,
     },
     textCardContainer: {
-        paddingHorizontal: 15,
+        paddingHorizontal: 7,
         paddingVertical: 10
 
     },
@@ -728,17 +788,17 @@ const styles = StyleSheet.create({
     viewAllText: {
         fontSize: 14, fontFamily: 'OpenSans-Regular', color: '#828282', paddingRight: 13, marginTop: 10
     },
-    categoryContainer: {
-        backgroundColor: colorObj.primarColor,
-        borderRadius: 26,
-        paddingVertical: 10,
-        marginVertical: 10,
-        marginHorizontal: 10,
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-evenly'
-    },
+    // categoryContainer: {
+    //     backgroundColor: colorObj.primarColor,
+    //     borderRadius: 26,
+    //     paddingVertical: 10,
+    //     marginVertical: 10,
+    //     marginHorizontal: 10,
+    //     display: 'flex',
+    //     flexDirection: 'row',
+    //     alignItems: 'center',
+    //     justifyContent: 'space-evenly'
+    // },
 
     categoryName: {
         color: colorObj.whiteColor,
@@ -775,21 +835,23 @@ const styles = StyleSheet.create({
 
     cardInstructorContainer: {
         display: 'flex',
-        width: wp(65),
+        width: wp(55),
         flexDirection: 'row',
+        // justifyContent:"center",
+        alignItems: "center",
         backgroundColor: 'white',
         paddingHorizontal: 20,
-        paddingVertical: 15,
-        height: 100,
+        paddingVertical: 5,
         position: 'relative',
-        marginHorizontal: 20
+        marginHorizontal: 15
 
     },
     textCardInstructorContainer: {
-        paddingLeft: 90,
+        paddingLeft: 70,
         paddingVertical: 10,
         minHeight: 90,
         marginTop: 5,
+        // backgroundColor:'red',
         borderTopRightRadius: 10,
         borderBottomRightRadius: 10,
         shadowColor: "rgba(0,0,0,0.3)",
@@ -809,14 +871,24 @@ const styles = StyleSheet.create({
 
 
     teacherInstructorImg: {
-        height: 100,
-        width: 100,
-        left: -10,
-        top: 15,
+        height: 90,
+        width: 90,
+        left: 0,
+        // textAlign:'center',
         position: "absolute",
         borderRadius: 100
     },
-
+    teacherImgContainer: {
+        borderRadius: 50,
+        height: 90,
+        width: 90,
+        left: -10,
+        opacity: 1,
+        backgroundColor: "white",
+        borderColor: "rgba(0,0,0,0.1)",
+        borderWidth: 1,
+        position: "absolute",
+    },
 
 
 
@@ -874,10 +946,10 @@ const styles = StyleSheet.create({
         color: '#232323'
     },
     teacherImg: {
-        height: 100,
-        width: 100,
-        left: -10,
-        top: 15,
+        height: 90,
+        width: 90,
+        left: 0,
+        // textAlign:'center',
         position: "absolute",
         borderRadius: 100
     },
@@ -971,30 +1043,22 @@ const styles = StyleSheet.create({
     },
 
     categoryContainer: {
-        backgroundColor: '#f0faf9',
+        backgroundColor: colorObj.primarColor,
         borderRadius: 26,
         paddingVertical: 10,
         marginVertical: 10,
-        marginHorizontal: 10,
+        marginHorizontal: 7,
+        paddingHorizontal: 20,
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-evenly',
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.18,
-        shadowRadius: 1.00,
-
-        elevation: 1,
+        justifyContent: 'center',
     },
     categoryName: {
-        color: '#000',
+        color: colorObj.whiteColor,
         textAlign: 'center',
-        fontFamily: 'Montserrat-Regular',
-        paddingHorizontal: 20
+        fontSize: 11,
+        fontFamily: 'OpenSans-Regular',
     },
 
     flexRowAlignCenter: {
