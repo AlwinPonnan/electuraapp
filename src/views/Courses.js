@@ -90,8 +90,8 @@ export default function Courses(props) {
                     return obj
                 })
                 console.log(temp)
-                setCourseArr(temp)
-                setMainCourseArr(temp)
+                setCourseArr(temp.filter((el,i)=>i<10).sort((a,b)=>b?.enrollments-a?.enrollments))
+                setMainCourseArr(temp.filter((el,i)=>i<10).sort((a,b)=>b?.enrollments-a?.enrollments))
                 setIsrefreshing(false)
             }
         } catch (error) {
@@ -258,7 +258,7 @@ export default function Courses(props) {
 
                         <FlatList
                             horizontal
-                            data={courseArr.filter(el => el?.flags?.bestsellerFlag)}
+                            data={courseArr}
                             renderItem={renderItem}
                             ListEmptyComponent={
                                 <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>No Courses found</Text>

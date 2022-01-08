@@ -9,7 +9,7 @@ import { RadioButton } from 'react-native-paper';
 import Swipeable from 'react-native-swipeable';
 import { useIsFocused } from '@react-navigation/core';
 import { getById, getDecodedToken, updateProfileVisit } from '../Services/User';
-import { dayArr, generateImageUrl } from '../globals/utils';
+import { dayArr, formatDate, generateImageUrl } from '../globals/utils';
 import { getByCoursesUserId } from '../Services/Course';
 
 import { Rating, AirbnbRating } from 'react-native-ratings';
@@ -71,7 +71,7 @@ export default function TeacherProfile(props) {
     const [selectedDayId, setSelectedDayId] = useState('');
     const [selectedTimeSlotObj, setSelectedTimeSlotObj] = useState({});
     const [slotsArr, setSlotsArr] = useState([]);
-    const initialDate = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`
+    const initialDate = `${formatDate(new Date())}`
     const [selectedDate, setSelectedDate] = useState(initialDate);
 
     const [profileProgress, setProfileProgress] = useState(0);
@@ -201,7 +201,7 @@ export default function TeacherProfile(props) {
 
     const renderCourseItem = ({ item, index }) => {
         return (
-            <Pressable style={styles.cardContainer} onPress={() => {setIsLoading(true); props.navigation.navigate("CourseDetail", { data: item._id })}} >
+            <Pressable style={styles.cardContainer} onPress={() => { setIsLoading(true); props.navigation.navigate("CourseDetail", { data: item._id }) }} >
                 <Image style={styles.courseImg} source={{ uri: item?.imgUrl }} />
                 <View style={styles.textCardContainer}>
                     <View>
@@ -519,12 +519,13 @@ export default function TeacherProfile(props) {
             </View>
             <View style={[styles.flexRow, { width: wp(85), alignSelf: "center", marginVertical: 10 }]}>
                 <View style={[styles.flexRow, { width: "33%" }]}>
-                    <Image source={require("../../assets/images/office.png")} />
+                    <Icon name="location-outline" size={16} color={"#828282"} />
+
                     <Text style={styles.smallTxt}>{teacherObj?.enquiryObj?.address ? teacherObj?.enquiryObj?.address : "Delhi"}</Text>
                 </View>
                 <View style={[styles.flexRow, { width: "33%" }]}>
                     <Image source={require("../../assets/images/medal.png")} />
-                    <Text style={styles.smallTxt}>{teacherObj?.enquiryObj?.educationObj?.degree ? teacherObj?.enquiryObj?.educationObj?.degree : "PGT"}</Text>
+                    <Text style={[styles.smallTxt]}>{teacherObj?.enquiryObj?.educationObj?.degree ? teacherObj?.enquiryObj?.educationObj?.degree : "PGT"}</Text>
 
                 </View>
                 <View style={[styles.flexRow, { width: "33%" }]}>
@@ -549,7 +550,7 @@ export default function TeacherProfile(props) {
                         </View>
                     </>
                 }
-                <View style={[styles.flexRow, { width: '100%', alignItems: 'center', alignSelf: 'center', justifyContent: 'space-between', backgroundColor: 'white', marginTop: (teacherObj?.role == "TEACHER" && teacherObj?._id == decodedObj?.userId) ? 30:5, paddingVertical: 10, borderRadius: 5 }]}>
+                <View style={[styles.flexRow, { width: '100%', alignItems: 'center', alignSelf: 'center', justifyContent: 'space-between', backgroundColor: 'white', marginTop: (teacherObj?.role == "TEACHER" && teacherObj?._id == decodedObj?.userId) ? 30 : 5, paddingVertical: 10, borderRadius: 5 }]}>
                     <View style={[{ borderRightWidth: 1, paddingHorizontal: 20, borderRightColor: '#F2F2F2' }]}>
                         <Text style={styles.dashboardTextMain}>{teacherObj?.profileVisit}</Text>
                         <Text style={styles.dashboardTextSub}>Profile Visits</Text>
@@ -571,7 +572,10 @@ export default function TeacherProfile(props) {
 
             <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10 }]}>
                 <Text style={styles.headingAboveCard}>Courses ({coursesArr.length})</Text>
-                <Text style={styles.viewAllText}>View All</Text>
+                <Pressable onPress={() => props.navigation.navigate("MainDrawer", { screen: "MainBottomTab", params: { screen: "Courses", params: { screen: "AllCourses" } } })}>
+
+                    <Text style={[styles.viewAllText, { fontFamily: 'RedHatText-Regular' }]}>View All</Text>
+                </Pressable>
             </View>
 
             <FlatList
@@ -615,7 +619,7 @@ export default function TeacherProfile(props) {
                                 <View>
 
                                     <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                                        <Text style={[styles.textCardMainHeading,{color:'#828282',fontSize:14,fontFamily:"RedHatText-Medium"}]}>{item?.sentByObj?.name}</Text>
+                                        <Text style={[styles.textCardMainHeading, { color: '#828282', fontSize: 14, fontFamily: "RedHatText-Medium" }]}>{item?.sentByObj?.name}</Text>
                                     </View>
 
                                     <View style={[styles.flexRow, { alignItems: 'center' }]}>
@@ -625,7 +629,7 @@ export default function TeacherProfile(props) {
                                             )
                                         })}
                                     </View>
-                                    <Text style={[styles.textCardMainSubHeading1,{color:'#000000',fontFamily:'RedHatText-Regular',fontSize:10}]}>{item?.message}</Text>
+                                    <Text style={[styles.textCardMainSubHeading1, { color: '#000000', fontFamily: 'RedHatText-Regular', fontSize: 10 }]}>{item?.message}</Text>
                                 </View>
 
                             </View>
@@ -713,7 +717,7 @@ export default function TeacherProfile(props) {
                                 current={selectedDate}
                                 style={[styles.calendar, { width: wp(90), marginVertical: 10 }]}
                                 onDayPress={onDayPress}
-                                minDate={`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`}
+                                minDate={`${formatDate(new Date())}`}
                                 // state={selectedDate}
                                 markedDates={{
                                     [selectedDate]: {

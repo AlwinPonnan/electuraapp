@@ -7,7 +7,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import { useIsFocused } from '@react-navigation/core';
 import { getAllTeachers } from '../Services/User';
-import { generateImageUrl, sortByText } from '../globals/utils';
+import { formatDate, generateImageUrl, sortByText } from '../globals/utils';
 import RBSheet from "react-native-raw-bottom-sheet";
 import { NewEnquiry } from '../Services/Enquiry';
 
@@ -62,7 +62,7 @@ export default function AllTeacher(props) {
     const [maxTeacherFees, setMaxTeacherFees] = useState(0);
     const [minTeacherFees, setMinTeacherFees] = useState(0);
 
-    const initialDate = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`
+    const initialDate = `${formatDate(new Date())}`
     const [selectedDate, setSelectedDate] = useState(initialDate);
     ////
 
@@ -513,9 +513,9 @@ export default function AllTeacher(props) {
         // setSelected(day.dateString);
     };
     const initDayPress = () => {
-        console.log(selectedDate)
-        let tempDate = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`;
-        console.log(tempDate)
+        // console.log(selectedDate)
+        let tempDate = formatDate(new Date());
+        // console.log(tempDate)
         setSelectedDate(tempDate)
         // setSelectedSlotDay(new Date(tempDate).getDay())
         handleDaySelect(new Date(tempDate).getDay())
@@ -682,7 +682,7 @@ export default function AllTeacher(props) {
                                 current={selectedDate}
                                 style={[styles.calendar, { width: wp(90), marginVertical: 10 }]}
                                 onDayPress={onDayPress}
-                                minDate={`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`}
+                                minDate={`${formatDate(new Date())}`}
                                 // state={selectedDate}
                                 markedDates={{
                                     [selectedDate]: {

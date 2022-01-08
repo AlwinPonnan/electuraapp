@@ -116,8 +116,8 @@ export default function HomeScreen(props) {
             if (res.success) {
                 console.log(JSON.stringify(res.data, null, 3), "teachers")
 
-                setTeachersArr(res.data)
-                setMainTeachersArr(res.data)
+                setTeachersArr(res.data.filter((el,i)=>i<10).sort((a,b)=>b?.profileVisit-a?.profileVisit))
+                setMainTeachersArr(res.data.filter((el,i)=>i<10).sort((a,b)=>b?.profileVisit-a?.profileVisit))
                 setIsrefreshing(false)
             }
 

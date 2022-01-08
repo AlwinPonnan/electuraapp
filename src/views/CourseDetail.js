@@ -358,7 +358,7 @@ export default function CourseDetail(props) {
 
 
                     <View style={[styles.flexRow, { marginVertical: 15, justifyContent: 'space-between' }]}>
-                        <Text style={[styles.dataItem, { textTransform: 'capitalize' }]}> <Icon name="tv-outline" size={12} />  {courseObj?.ClassType} Mode</Text>
+                        <Text style={[styles.dataItem, { textTransform: 'capitalize' }]}> <Icon name="tv-outline" size={12} />  {courseObj?.enrollments} Enrollments</Text>
                         <Text style={styles.dataItem}><Icon name="time-outline" size={12} />  {courseObj?.hours} Hours</Text>
                         <Text style={styles.dataItem}><Icon name="clipboard-outline" size={12} /> {courseObj?.assignments} Assignments</Text>
                     </View>
