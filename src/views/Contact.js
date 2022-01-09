@@ -1,14 +1,56 @@
-import React from 'react'
-import { View, Text, StyleSheet, Image, TextInput, Pressable } from 'react-native'
+import React, { useState, useEffect, useContext } from 'react'
+import { View, Text, StyleSheet, Image, TextInput, Pressable, ScrollView } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icons from "react-native-vector-icons/FontAwesome";
 import IconsFoundation from "react-native-vector-icons/Foundation";
 import IconsFeather from "react-native-vector-icons/Feather";
-export default function Contact() {
-    return (
-        <View style={{ flex: 1, backgroundColor: "white" }}>
-            <View style={styles.container}>
+import { successAlertContext } from '../../App';
+import NavBar from '../components/Navbar';
 
+import { loadingContext } from '../navigators/stacks/RootStack';
+import { newGeneralFeedback } from '../Services/GeneralFeedback';
+import { colorObj } from '../globals/colors';
+export default function Contact(props) {
+    const [isLoading, setIsLoading] = useContext(loadingContext);
+
+    const [message, setMessage] = useState('');
+
+    const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
+
+
+    const [successAlert, setSuccessAlert] = successAlertArr
+    const [warningAlert, setWarningAlert] = warningAlertArr
+    const [errorAlert, setErrorAlert] = errorAlertArr
+
+
+    const [alertText, setAlertText] = alertTextArr
+    const handleSubmit = async () => {
+        try {
+
+            let obj = {
+                message
+            }
+            const { data: res } = await newGeneralFeedback(obj)
+            if (res.success) {
+                setSuccessAlert(true)
+                setAlertText(res.message)
+            }
+        } catch (error) {
+            if (error?.response?.data?.message) {
+                setAlertText(error.data.response.message)
+                setErrorAlert(true)
+            }
+            else {
+                setAlertText(error.message)
+                setErrorAlert(true)
+            }
+        }
+    }
+
+    return (
+        <ScrollView contentContainerStyle={{ backgroundColor: "white" }}>
+            <NavBar rootProps={props} />
+            <View style={styles.container}>
                 <View style={styles.flexRow}>
                     <View style={styles.flexColumn}>
                         <Text style={styles.headingText}>Help Center</Text>
@@ -47,22 +89,22 @@ export default function Contact() {
                     <Text style={styles.greyText}>
                         Are you facing any issues? Report a bug? Suggest a new feature? Let us know. We’ll get back to you at earliest.
                     </Text>
-                    <TextInput />
-                    <Pressable style={styles.submitBtn}>
-                        <Text>
+                    <TextInput multiline={true} onChangeText={(val) => setMessage(val)} style={styles.textInput} />
+                    <Pressable onPress={() => handleSubmit()} style={styles.submitBtn}>
+                        <Text style={styles.btnText}>
                             Submit
                         </Text>
                     </Pressable>
 
                 </View>
             </View>
-        </View>
+        </ScrollView>
     )
 }
+
 const styles = StyleSheet.create({
     container: {
         width: wp(90),
-        height: hp(100),
         paddingTop: hp(4),
         alignSelf: "center",
         justifyContent: "center",
@@ -104,6 +146,29 @@ const styles = StyleSheet.create({
         color: "#828282",
         marginTop: 10,
         // width: "90%",
+    },
+    submitBtn: {
+        backgroundColor: colorObj.primarColor,
+        borderRadius: 20,
+        width: wp(25),
+        alignSelf: "flex-end",
+        marginBottom: 40,
+        paddingVertical: 10,
+        justifyContent: "center",
+        alignItems: "center",
+
+    },
+    btnText: {
+        color: "white",
+        fontSize: 12,
+        fontFamily: 'Montserrat-Medium'
+    },
+    textInput: {
+        backgroundColor: "#F5F6FA",
+        height: hp(15),
+        marginVertical: 20,
+        borderRadius: 6,
+        width: "100%"
     },
 
 })
