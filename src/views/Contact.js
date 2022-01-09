@@ -1,10 +1,54 @@
-import React from 'react'
+import React, { useState, useEffect,useContext } from 'react'
 import { View, Text, StyleSheet, Image, TextInput, Pressable } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { successAlertContext } from '../../App';
+import NavBar from '../components/Navbar';
 
-export default function Contact() {
+import { loadingContext } from '../navigators/stacks/RootStack';
+import { newGeneralFeedback } from '../Services/GeneralFeedback';
+
+export default function Contact(props) {
+
+    const [isLoading, setIsLoading] = useContext(loadingContext);
+
+    const [message, setMessage] = useState('');
+
+    const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
+
+
+    const [successAlert, setSuccessAlert] = successAlertArr
+    const [warningAlert, setWarningAlert] = warningAlertArr
+    const [errorAlert, setErrorAlert] = errorAlertArr
+
+
+    const [alertText, setAlertText] = alertTextArr
+    const handleSubmit = async() => {
+        try {
+
+            let obj = {
+                message
+            }
+            const { data: res } = await newGeneralFeedback(obj)
+            if (res.success) {
+                setSuccessAlert(true)
+                setAlertText(res.message)
+            }
+        } catch (error) {
+            if (error?.response?.data?.message) {
+                setAlertText(error.data.response.message)
+                setErrorAlert(true)
+            }
+            else {
+                setAlertText(error.message)
+                setErrorAlert(true)
+            }
+        }
+    }
+
     return (
         <View>
+            <NavBar rootProps={props} />
+
             <View style={styles.flexRow}>
                 <View style={styles.flexColumn}>
                     <Text style={styles.headingText}>Help Center</Text>
