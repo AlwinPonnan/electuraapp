@@ -29,6 +29,14 @@ export const getQueryParams = (url) => {
     return params
 }
 
+
+export const socialLink={
+    instagram:'https://www.instagram.com/electura.co/?hl=en',
+    facebook:'https://www.facebook.com/electura.co',
+    linkdin:'https://www.linkedin.com/company/electura',
+    email:'mailto:connect@electura.co?subject=subject&body=Description'
+}
+
 export function formatDate(date) {
     var d = new Date(date),
         month = '' + (d.getMonth() + 1),

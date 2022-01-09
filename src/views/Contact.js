@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { View, Text, StyleSheet, Image, TextInput, Pressable, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, Image, TextInput, Pressable, ScrollView,Linking } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icons from "react-native-vector-icons/FontAwesome";
 import IconsFoundation from "react-native-vector-icons/Foundation";
@@ -10,6 +10,7 @@ import NavBar from '../components/Navbar';
 import { loadingContext } from '../navigators/stacks/RootStack';
 import { newGeneralFeedback } from '../Services/GeneralFeedback';
 import { colorObj } from '../globals/colors';
+import { socialLink } from '../globals/utils';
 export default function Contact(props) {
     const [isLoading, setIsLoading] = useContext(loadingContext);
 
@@ -27,13 +28,21 @@ export default function Contact(props) {
     const handleSubmit = async () => {
         try {
 
-            let obj = {
-                message
+            if(message!=""){
+
+                let obj = {
+                    message
+                }
+                const { data: res } = await newGeneralFeedback(obj)
+                if (res.success) {
+                    setMessage("")
+                    setSuccessAlert(true)
+                    setAlertText(res.message)
+                }
             }
-            const { data: res } = await newGeneralFeedback(obj)
-            if (res.success) {
-                setSuccessAlert(true)
-                setAlertText(res.message)
+            else{
+                setAlertText("Please Enter Message")
+                setErrorAlert(true)
             }
         } catch (error) {
             if (error?.response?.data?.message) {
@@ -47,8 +56,16 @@ export default function Contact(props) {
         }
     }
 
+
+    const handleShare=(url)=>{
+        Linking.openURL(url)
+    }
+    
+    // https://www.facebook.com/electura.co
+
+
     return (
-        <ScrollView contentContainerStyle={{ backgroundColor: "white" }}>
+        <ScrollView keyboardShouldPersistTaps={"handled"} contentContainerStyle={{ backgroundColor: "white" }}>
             <NavBar rootProps={props} />
             <View style={styles.container}>
                 <View style={styles.flexRow}>
@@ -58,21 +75,21 @@ export default function Contact(props) {
                             Please get in touch with team Electura and we’ll be happy to help you.
                         </Text>
                         <View style={[styles.flexRow, { marginTop: 20 }]}>
-                            <View style={styles.circle}>
+                            <Pressable onPress={()=>handleShare(socialLink.instagram)} style={styles.circle}>
                                 <Icons color="#E517DD" name="instagram" size={15} />
-                            </View>
+                            </Pressable>
                             <View style={styles.circle}>
                                 <Icons color="#64D315" name="whatsapp" size={15} />
                             </View>
-                            <View style={styles.circle}>
+                            <Pressable style={styles.circle} onPress={()=>handleShare(socialLink.linkdin)}>
                                 <Icons color="#6747ED" name="linkedin" size={15} />
-                            </View>
-                            <View style={styles.circle}>
+                            </Pressable>
+                            <Pressable style={styles.circle} onPress={()=>handleShare(socialLink.email)}>
                                 <IconsFeather color="#FF900E" name="mail" size={15} />
-                            </View>
-                            <View style={styles.circle}>
+                            </Pressable>
+                            <Pressable style={styles.circle} onPress={()=>handleShare(socialLink.facebook)}>
                                 <Icons color="#0085FF" name="facebook" size={15} />
-                            </View>
+                            </Pressable>
                             <View style={styles.circle}>
                                 <IconsFoundation color="#085A4E" name="web" size={15} />
                             </View>
@@ -89,7 +106,7 @@ export default function Contact(props) {
                     <Text style={styles.greyText}>
                         Are you facing any issues? Report a bug? Suggest a new feature? Let us know. We’ll get back to you at earliest.
                     </Text>
-                    <TextInput multiline={true} onChangeText={(val) => setMessage(val)} style={styles.textInput} />
+                    <TextInput value={message} multiline={true} onChangeText={(val) => setMessage(val)} style={styles.textInput} />
                     <Pressable onPress={() => handleSubmit()} style={styles.submitBtn}>
                         <Text style={styles.btnText}>
                             Submit
