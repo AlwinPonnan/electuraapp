@@ -50,7 +50,7 @@ export const loadingContext = createContext()
 
 export default function RootStack() {
     const [roleName, setRoleName] = useState('USER');
-    const [isAuthorized, setIsAuthorized] = useState(false);
+    const [isAuthorized, setIsAuthorized] = useState(true);
     const [profileData, setProfileData] = useState({});
     const [loading, setLoading] = useContext(loadingContext);
 
@@ -149,54 +149,54 @@ export default function RootStack() {
             <roleContext.Provider value={[roleName, setRoleName]}>
                 <profileContext.Provider value={[profileData, setProfileData]}>
 
-                        <NavigationContainer linking={linking}>
-                            <Stack.Navigator initialRouteName="Login">
-                                {isAuthorized ?
-                                    <>
-                                        <Stack.Screen name="MainDrawer" component={MainDrawer} options={{ headerShown: false }} />
-                                        <Stack.Screen name="CreateCourse" component={CreateCourse} options={{ headerShown: false }} />
-                                        <Stack.Screen name="Notification" component={Notification} options={{ headerShown: false, cardStyles: { backgroundColor: '#ffffff' } }} />
-                                        <Stack.Screen name="MainTopTab" component={MainTopTab} options={{
-                                            headerShown: true, showLabel: false, title: "", label: "",
-                                            headerShadowVisible: false
-                                        }} />
-                                        <Stack.Screen name="SpecificChat" component={SpecificChat} options={{
-                                            headerShown: false
-                                        }} />
-                                        <Stack.Screen name="ShoppingCart" component={ShoppingCart} options={{ headerShown: false }} />
-                                        <Stack.Screen name="OrderSummary" component={OrderSummary} options={{ headerShown: false }} />
-                                        <Stack.Screen name="PaymentSuccess" component={PaymentSuccess} options={{ headerShown: false }} />
-                                        <Stack.Screen name="PaymentFailed" component={PaymentFailed} options={{ headerShown: false }} />
-                                        <Stack.Screen name="Orders" component={Order} options={{ headerShown: false }} />
-                                        <Stack.Screen name="OrderDetail" component={OrderDetail} options={{ headerShown: false }} />
-                                        <Stack.Screen name="IncomingOrders" component={IncomingOrders} options={{ headerShown: false }} />
-                                        <Stack.Screen name="AddCoupons" component={AddCoupons} options={{ headerShown: false }} />
-                                        <Stack.Screen name="wishlist" component={WishList} options={{ headerShown: false }} />
-                                        <Stack.Screen name="wishlistedTeacher" component={WishListedTeachers} options={{ headerShown: false }} />
+                    <NavigationContainer linking={linking}>
+                        <Stack.Navigator initialRouteName="Login">
+                            {isAuthorized ?
+                                <>
+                                    <Stack.Screen name="MainDrawer" component={MainDrawer} options={{ headerShown: false }} />
+                                    <Stack.Screen name="CreateCourse" component={CreateCourse} options={{ headerShown: false }} />
+                                    <Stack.Screen name="Notification" component={Notification} options={{ headerShown: false, cardStyles: { backgroundColor: '#ffffff' } }} />
+                                    <Stack.Screen name="MainTopTab" component={MainTopTab} options={{
+                                        headerShown: true, showLabel: false, title: "", label: "",
+                                        headerShadowVisible: false
+                                    }} />
+                                    <Stack.Screen name="SpecificChat" component={SpecificChat} options={{
+                                        headerShown: false
+                                    }} />
+                                    <Stack.Screen name="ShoppingCart" component={ShoppingCart} options={{ headerShown: false }} />
+                                    <Stack.Screen name="OrderSummary" component={OrderSummary} options={{ headerShown: false }} />
+                                    <Stack.Screen name="PaymentSuccess" component={PaymentSuccess} options={{ headerShown: false }} />
+                                    <Stack.Screen name="PaymentFailed" component={PaymentFailed} options={{ headerShown: false }} />
+                                    <Stack.Screen name="Orders" component={Order} options={{ headerShown: false }} />
+                                    <Stack.Screen name="OrderDetail" component={OrderDetail} options={{ headerShown: false }} />
+                                    <Stack.Screen name="IncomingOrders" component={IncomingOrders} options={{ headerShown: false }} />
+                                    <Stack.Screen name="AddCoupons" component={AddCoupons} options={{ headerShown: false }} />
+                                    <Stack.Screen name="wishlist" component={WishList} options={{ headerShown: false }} />
+                                    <Stack.Screen name="wishlistedTeacher" component={WishListedTeachers} options={{ headerShown: false }} />
 
-                                        <Stack.Screen name="CourseDetail" component={CourseDetail} options={{ headerShown: false }} />
-                                        <Stack.Screen name="TestZoom" component={Testzoom} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} />
-                                        <Stack.Screen name="zoomMeeting" component={zoomMeeting} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} />
-                                        
-                                        
-                                    </>
-
-                                    :
-                                    <>
-                                        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false, cardStyles: { backgroundColor: '#ffffff' } }} />
-                                        <Stack.Screen name="OtpScreen" component={OtpScreen} options={{ headerShown: false }} />
-                                    </>
-                                }
-
-                                {/* <Stack.Screen name="MainTopTab" component={MainTopTab} options={{ headerShown: true }} /> */}
+                                    <Stack.Screen name="CourseDetail" component={CourseDetail} options={{ headerShown: false }} />
+                                    <Stack.Screen name="TestZoom" component={Testzoom} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} />
+                                    <Stack.Screen name="zoomMeeting" component={zoomMeeting} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} />
 
 
+                                </>
 
-                            </Stack.Navigator>
-                        </NavigationContainer>
-                        {loading &&
-                            <LoadingContainer />
-                        }
+                                :
+                                <>
+                                    <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false, cardStyles: { backgroundColor: '#ffffff' } }} />
+                                    <Stack.Screen name="OtpScreen" component={OtpScreen} options={{ headerShown: false }} />
+                                </>
+                            }
+
+                            {/* <Stack.Screen name="MainTopTab" component={MainTopTab} options={{ headerShown: true }} /> */}
+
+
+
+                        </Stack.Navigator>
+                    </NavigationContainer>
+                    {loading &&
+                        <LoadingContainer />
+                    }
                 </profileContext.Provider>
             </roleContext.Provider>
         </AuthContext.Provider>

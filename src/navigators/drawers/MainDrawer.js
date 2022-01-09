@@ -29,6 +29,7 @@ import { useIsFocused } from '@react-navigation/core';
 import TeacherProfile from '../../views/TeacherProfile';
 import Coupons from '../../views/Coupons';
 import TeacherCoupons from '../../views/TeacherCoupon';
+import Contact from '../../views/Contact';
 
 
 const Drawer = createDrawerNavigator();
@@ -106,7 +107,7 @@ export default function MainDrawer() {
 
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="pencil-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Blogs</Text></TouchableOpacity>
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="information-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> About Us</Text></TouchableOpacity>
-                    <TouchableOpacity style={styles.DrawerItem}><MatIcon name="phone-message-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Contact Us</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate('Contact')}><MatIcon name="phone-message-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Contact Us</Text></TouchableOpacity>
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="help-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> FAQs</Text></TouchableOpacity>
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="document-text-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Policies</Text></TouchableOpacity>
 
@@ -156,6 +157,7 @@ export default function MainDrawer() {
             <Drawer.Screen name="MainBottomTab" component={MainBottomTab} />
             <Drawer.Screen name="AccountEdit" component={AccountEdit} />
             <Drawer.Screen name="CreateCourse" component={CreateCourse} />
+            <Drawer.Screen name="Contact" component={Contact} />
             <Drawer.Screen name="TeacherCoupons" component={TeacherCoupons} />
             <Drawer.Screen name="RegisterTeacher" component={RegisterTeacher} />
         </Drawer.Navigator>
@@ -256,6 +258,6 @@ const styles = StyleSheet.create({
     teachText: {
         fontFamily: 'OpenSans-Regular',
         color: colorObj.whiteColor,
-        fontSize:12
+        fontSize: 12
     }
 });
