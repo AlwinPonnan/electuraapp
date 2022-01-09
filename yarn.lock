@@ -4760,6 +4760,11 @@ memoize-one@^5.2.1:
   resolved "https://registry.yarnpkg.com/memoize-one/-/memoize-one-5.2.1.tgz#8337aa3c4335581839ec01c3d594090cebe8f00e"
   integrity sha512-zYiwtZUcYyXKo/np96AGZAckk+FWWsUdJ3cHGGmld7+AhvcWmQyGCYUh1hc4Q/pkOhb65dQR/pqCyK0cOaHz4Q==
 
+memoize-one@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/memoize-one/-/memoize-one-6.0.0.tgz#b2591b871ed82948aee4727dc6abceeeac8c1045"
+  integrity sha512-rkpe71W0N0c0Xz6QD0eJETuWAJGnJ9afsl1srmwPrI+yBCkge5EycXXbYRyvL29zZVUWQCY7InPRCv3GDXuZNw==
+
 merge-stream@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/merge-stream/-/merge-stream-2.0.0.tgz"
@@ -5935,6 +5940,14 @@ react-native-screens@^3.5.0:
   integrity sha512-xew4x0YX0RaDduNYM4gZXkphPwGZIbbu9fTU85xOtT1tOUPm3OU4pFMiN6PF54haMCsaMQRvdOXvLicUVRiptA==
   dependencies:
     warn-once "^0.1.0"
+
+react-native-sectioned-multi-select@^0.9.0:
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/react-native-sectioned-multi-select/-/react-native-sectioned-multi-select-0.9.0.tgz#c5efc398d3542a6925d0f62e2799699870ac6722"
+  integrity sha512-HfIMt+qsb8dVRkuBU8z0oIXKHVLbNU553mPM32RA4FrR6h2MQb6lr361lPXPlh4W+FR5BXuqLa9DQBZDp1le/w==
+  dependencies:
+    lodash.isequal "^4.5.0"
+    memoize-one "^6.0.0"
 
 react-native-slider@^0.11.0:
   version "0.11.0"

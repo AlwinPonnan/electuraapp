@@ -524,15 +524,30 @@ export default function TeacherProfile(props) {
                     <Text style={styles.smallTxt}>{teacherObj?.enquiryObj?.address ? teacherObj?.enquiryObj?.address : "Delhi"}</Text>
                 </View>
                 <View style={[styles.flexRow, { width: "33%" }]}>
-                    <Image source={require("../../assets/images/medal.png")} />
-                    <Text style={[styles.smallTxt]}>{teacherObj?.enquiryObj?.educationObj?.degree ? teacherObj?.enquiryObj?.educationObj?.degree : "PGT"}</Text>
-
-                </View>
-                <View style={[styles.flexRow, { width: "33%" }]}>
                     <Image source={require("../../assets/images/time.png")} />
                     <Text style={styles.smallTxt}>{teacherObj?.enquiryObj?.experience ? teacherObj?.enquiryObj?.experience : "1"} year experience</Text>
                 </View>
+                <View style={[styles.flexRow, { width: "33%",paddingLeft:5 }]}>
+                    <Image source={require("../../assets/images/medal.png")} />
+                    <View style={styles.flexColumn}>
+
+                        {teacherObj?.enquiryObj?.qualificationArr?.length > 0 ?
+                            <>
+                                {teacherObj?.enquiryObj?.qualificationArr.map(el => {
+                                    return (
+                                        <Text style={[styles.smallTxt]}>{el.name},</Text>
+                                    )
+                                })}
+                            </>
+                            :
+
+                            <Text style={[styles.smallTxt]}>PGT</Text>
+                        }
+                    </View>
+
+                </View>
             </View>
+
             <View style={[styles.flexColumn, { width: wp(90), alignSelf: "center" }]}>
                 <Text style={styles.description}>{teacherObj?.enquiryObj?.description ? teacherObj?.enquiryObj?.description : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,"}</Text>
             </View>

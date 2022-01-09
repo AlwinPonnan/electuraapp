@@ -21,6 +21,10 @@ import { getByStateId } from '../Services/city';
 import { getByCityId } from '../Services/area';
 import { Picker } from '@react-native-picker/picker';
 
+import MatIcon from 'react-native-vector-icons/MaterialIcons'
+import SectionedMultiSelect from 'react-native-sectioned-multi-select'
+import uuid from 'react-native-uuid';
+
 export default function AccountEdit(props) {
 
     const [modalVisible, setModalVisible] = useState(false);
@@ -60,6 +64,347 @@ export default function AccountEdit(props) {
     const [selectedAreaId, setSelectedAreaId] = useState('');
     const [isLoading, setIsLoading] = useContext(loadingContext);
 
+
+    const [selectedQulifications, setSelectedQulifications] = useState([]);
+
+    const items = [
+        // this is the parent or 'item'
+        {
+            name: 'Art/Science',
+            id: 1,
+            // these are the children or 'sub items'
+            children: [
+                {
+                    name: 'B.A.',
+                    id: 2,
+                },
+                {
+                    name: 'M.A.',
+                    id: 3,
+
+                },
+                {
+                    name: 'B.F.A',
+                    id: 4,
+
+                },
+                {
+                    name: 'M.F.A',
+                    id: 5,
+
+                },
+                {
+                    name: 'B.Ed',
+                    id: 6,
+
+                },
+                {
+                    name: 'M.Ed',
+                    id: 7,
+
+                },
+                {
+                    name: 'B.Sc.',
+                    id: 8,
+
+                },
+                {
+                    name: 'M.Sc.',
+                    id: 9,
+
+                },
+                {
+                    name: 'BJMC',
+                    id: 10,
+
+                },
+                {
+                    name: 'BJMC',
+                    id: 11,
+
+                },
+                {
+                    name: 'MJMC',
+                    id: 12,
+
+                },
+                {
+                    name: 'MSW',
+                    id: 13,
+
+                }
+            ],
+        },
+        {
+            name: 'Computers',
+            id: 14,
+
+            // these are the children or 'sub items'
+            children: [
+                {
+                    name: 'B.IT.',
+                    id: 15,
+
+                },
+                {
+                    name: 'BCA',
+                    id: 16,
+
+                },
+                {
+                    name: 'MCA/PGDCA',
+                    id: 17,
+
+                },
+            ],
+        },
+        {
+            name: 'Doctorate',
+            id: 18,
+            // these are the children or 'sub items'
+            children: [
+                {
+                    name: 'M.Phill',
+                    id: 19,
+
+                },
+                {
+                    name: 'Ph.D.',
+                    id: 20,
+
+                },
+
+            ],
+        },
+        {
+            name: 'Engineering/Design',
+            id: 21,
+            // these are the children or 'sub items'
+            children: [
+                {
+                    name: 'B.Tech/B.E.',
+                    id: 22,
+
+                },
+                {
+                    name: 'M.Tech/M.E.',
+                    id: 23,
+
+                },
+                {
+                    name: 'M.Tech/M.E.',
+                    id: 24,
+
+                },
+                {
+                    name: 'B.Arch',
+                    id: 25,
+
+                },
+                {
+                    name: 'M.Arch',
+                    id: 26,
+
+                },
+                {
+                    name: 'B.Des.',
+                    id: 27,
+
+                },
+                {
+                    name: 'M.Arch',
+                    id: 28,
+
+                },
+                {
+                    name: 'B.Pharma',
+                    id: 29,
+
+                },
+                {
+                    name: 'M.Pharma',
+                    id: 30,
+
+                },
+                {
+                    name: 'M.S.(Engineering)',
+                    id: 31,
+
+                }
+
+            ],
+        },
+        {
+            name: 'Finance/Commerce',
+            id: 32,
+
+            // these are the children or 'sub items'
+            children: [
+                {
+                    name: 'B.Com.',
+                    id: 33,
+
+                },
+                {
+                    name: 'M.Com.',
+                    id: 34,
+
+                },
+                {
+                    name: 'CA',
+                    id: 35,
+
+                },
+                {
+                    name: 'CFA',
+                    id: 36,
+
+                },
+                {
+                    name: 'CS',
+                    id: 37,
+
+                },
+                {
+                    name: 'ICWA',
+                    id: 38,
+
+                },
+            ],
+        },
+        {
+            name: 'Law',
+            id: 39,
+
+            // these are the children or 'sub items'
+            children: [
+                {
+                    name: 'BL/LLB',
+                    id: 40,
+
+                },
+                {
+                    name: 'ML/LLM',
+                    id: 41,
+
+                },
+            ],
+        },
+        {
+            name: 'Management',
+            id: 42,
+
+            // these are the children or 'sub items'
+            children: [
+                {
+                    name: 'BBA',
+                    id: 43,
+
+                },
+                {
+                    name: 'BHM',
+                    id: 44,
+
+                },
+                {
+                    name: 'MBA/PGDM',
+                    id: 45,
+
+                }
+            ],
+        },
+
+        {
+            name: 'Medicine',
+            id: 46,
+
+            // these are the children or 'sub items'
+            children: [
+                {
+                    name: 'BAMS',
+                    id: 47,
+
+                },
+                {
+                    name: 'BDS',
+                    id: 48,
+
+                },
+                {
+                    name: 'BHMS',
+                    id: 49,
+
+                },
+                {
+                    name: 'BPT',
+                    id: 50,
+
+
+                },
+                {
+                    name: 'BVSc.',
+                    id: 51,
+
+                },
+                {
+                    name: 'M.D.',
+                    id: 52,
+
+                },
+                {
+                    name: 'M.S. (Medicine)',
+                    id: 53,
+
+                },
+                {
+                    name: 'MBBS',
+                    id: 54,
+
+                },
+                {
+                    name: 'MCh',
+                    id: 55,
+
+                },
+                {
+                    name: 'MDS',
+                    id: 56,
+
+                },
+                {
+                    name: 'MPT',
+                    id: 57,
+
+                },
+                {
+                    name: 'MVSc.',
+                    id: 58,
+
+                }
+            ],
+        },
+        {
+            name: 'Non-Graduate',
+            id: 59,
+
+            // these are the children or 'sub items'
+            children: [
+                {
+                    name: 'Diploma',
+                    id: 60,
+
+                },
+
+                {
+                    name: 'High School',
+                    id: 61,
+
+                }
+            ],
+        },
+
+
+    ];
 
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener(
@@ -146,14 +491,23 @@ export default function AccountEdit(props) {
             }
             else {
 
+                let tempArr=[]
+                selectedQulifications.forEach(el=>{
+                    items.forEach(elx=>{
+                        let index=elx.children.findIndex(elz=>elz.id==el)
+                        if(index!=-1){
+                            tempArr.push({name:elx.children[index].name,id:el})
+                        }
+                    })
+                })
                 let obj = {
                     name,
                     email,
                     phone: mobile,
                     gender: genderIsSelected ? "Male" : "Female",
-                    enquiryObj: { ...profileData.enquiryObj, educationObj: { degree }, areaId: selectedAreaId, cityId: selectedCityId, stateId: selectedStateId }
+                    enquiryObj: { ...profileData.enquiryObj, educationObj: { degree }, areaId: selectedAreaId, cityId: selectedCityId, stateId: selectedStateId, qualificationArr: tempArr }
                 }
-                console.log(obj)
+                console.log(tempArr)
                 let { data: res, status: statusCode } = await updateProfile(obj)
                 if (statusCode == 200 || statusCode == 304) {
                     console.log(res.message)
@@ -223,6 +577,13 @@ export default function AccountEdit(props) {
                 setDegree(res?.data?.enquiryObj?.educationObj?.degree)
                 setGenderIsMale(res?.data?.enquiryObj?.gender == "Male" ? true : false)
                 setRoleName(res.data.role)
+
+                let tempArr=res?.data?.enquiryObj?.qualificationArr;
+                tempArr=tempArr.map(el=>{
+                    let temp=items.find(elx=>elx.children.find)
+                })
+
+                setSelectedQulifications(res?.data?.enquiryObj?.qualificationArr.map(el=>el.id))
                 // console.log(JSON.stringify(res.data, null, 2))
             }
         }
@@ -323,6 +684,13 @@ export default function AccountEdit(props) {
         } catch (error) {
             console.error(error)
         }
+    }
+
+    const onSelectedItemsChange = (value) => {
+        console.log(value[0])
+        setSelectedQulifications(value)
+        console.log(selectedQulifications, "@@@@@@@@@@@@")
+        console.log(value)
     }
 
     useEffect(() => {
@@ -519,8 +887,27 @@ export default function AccountEdit(props) {
                             <Text style={styles.label}>
                                 Qualification
                             </Text>
-                            <TextInput value={degree} onChangeText={(e) => setDegree(e)} style={styles.txtInput} placeholder="Your Qualification" />
+                            {/* <TextInput value={degree} onChangeText={(e) => setDegree(e)} style={styles.txtInput} placeholder="Your Qualification" /> */}
+                            <SectionedMultiSelect
+                                items={items}
+                                IconRenderer={MatIcon}
+                                uniqueKey="id"
+                                subKey="children"
+                                searchPlaceholderText={"Search Qualifications..."}
+                                searchTextFontFamily={{ fontFamily: "Montserrat-Medium" }}
+                                confirmFontFamily={{ fontFamily: "Montserrat-SemiBold" }}
+                                selectText="Choose Your Qualifications..."
+                                showDropDowns={true}
 
+                                itemFontFamily={{ fontFamily: 'Montserrat-SemiBold' }}
+                                subItemFontFamily={{ fontFamily: "Montserrat-Regular" }}
+                                // subItemFontFamily={"Montserrat"}
+                                showChips={true}
+                                styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderBottomColor: "rgba(0,0,0,0.1)", borderBottomWidth: 2, paddingVertical: 10, paddingHorizontal: 10 }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28) }], confirmText: [styles.btnTxt], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
+                                readOnlyHeadings={true}
+                                onSelectedItemsChange={onSelectedItemsChange}
+                                selectedItems={selectedQulifications}
+                            />
                             <Text style={styles.label}>
                                 Teaching Experience
                             </Text>
