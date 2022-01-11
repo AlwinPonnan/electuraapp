@@ -58,9 +58,10 @@ export default function WishList(props) {
 
 
     const renderItem = ({ item }) => (
-        <Pressable style={[styles.topView,]}>
+        <Pressable style={[styles.topView]}>
             <Image
                 style={[styles.img]}
+                resizeMode='contain'
                 source={{ uri: item?.imgUrl }}
             />
             <View style={{ flex: 1, marginLeft: 10 }}>
@@ -81,7 +82,7 @@ export default function WishList(props) {
 
     return (
         <View style={[styles.container]}>
-            <View style={{ flexDirection: 'row' }}>
+            {/* <View style={{ flexDirection: 'row' }}>
                 <Pressable onPress={() => props.navigation.goBack()}>
 
                     <AntDesign name='arrowleft' size={20} style={{ color: 'black' }} />
@@ -89,10 +90,9 @@ export default function WishList(props) {
                 <Text style={[styles.topText, { flex: 1, marginLeft: 20 }]}>Wishlist</Text>
                 <AntDesign name='message1' size={20} style={{ color: 'black', marginRight: 20 }} />
                 <Feather name='bell' size={20} style={{ color: 'black' }} />
-            </View>
+            </View> */}
 
             <FlatList
-                contentContainerStyle={{ marginTop: 50 }}
                 data={wishListArr}
                 renderItem={renderItem}
                 keyExtractor={(item, index) => { return index.toString(); }}
@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
     topView: {
         flexDirection: 'row',
         alignItems: 'center',
+        marginVertical: 4
 
     },
     img: {
