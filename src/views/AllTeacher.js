@@ -25,6 +25,9 @@ import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import { Picker } from '@react-native-picker/picker';
 import { successAlertContext } from '../../App';
 
+import MatIcon from 'react-native-vector-icons/MaterialIcons'
+import SectionedMultiSelect from 'react-native-sectioned-multi-select';
+
 export default function AllTeacher(props) {
 
     const focused = useIsFocused()
@@ -66,6 +69,8 @@ export default function AllTeacher(props) {
     const [selectedDate, setSelectedDate] = useState(initialDate);
     ////
 
+
+    const [selectedNewFilter, setSelectedNewFilter] = useState("All");
     const [slotsArr, setSlotsArr] = useState([]);
 
     const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
@@ -77,6 +82,9 @@ export default function AllTeacher(props) {
 
 
     const [alertText, setAlertText] = alertTextArr
+
+
+    const [outerSelectedSubjectArr, setOuterSelectedSubjectArr] = useState([]);
 
     const getTeachers = async () => {
         setIsLoading(true)
@@ -543,6 +551,9 @@ export default function AllTeacher(props) {
     //     }
     // }
 
+    const handleSubjectSelectionOuterFilter = (obj) => {
+        setOuterSelectedSubjectArr(obj)
+    }
 
     return (
         <View style={[styles.container]}>
@@ -575,7 +586,7 @@ export default function AllTeacher(props) {
             <FlatList
                 ListHeaderComponent={
                     <>
-                        <Text style={[styles.title]}>Top Instructors</Text>
+                        {/* <Text style={[styles.title]}>Top Instructors</Text>
                         <View>
                             <FlatList
                                 style={{ height: 120 }}
@@ -588,8 +599,68 @@ export default function AllTeacher(props) {
                                     <Text style={{ textAlign: 'center', fontFamily: 'Montserrat-SemiBold', fontSize: 16, width: wp(90), marginTop: 40 }}>No Teachers Found</Text>
                                 }
                             />
+                        </View> */}
+                        <View style={[styles.flexRow,{marginTop:25,alignItems:'center',justifyContent:'space-between'}]}>
+
+                            <SectionedMultiSelect
+                                items={subjectArr}
+                                IconRenderer={MatIcon}
+                                uniqueKey="_id"
+                                itemFontFamily={{ fontFamily: 'Montserrat-SemiBold' }}
+                                subItemFontFamily={{ fontFamily: "Montserrat-Regular" }}
+                                searchPlaceholderText={"Search Subcategories..."}
+                                searchTextFontFamily={{ fontFamily: "Montserrat-Medium" }}
+                                confirmFontFamily={{ fontFamily: "Montserrat-SemiBold" }}
+                                showChips={false}
+                                alwaysShowSelectText={true}
+                                selectText="Subcategory"
+                                
+                                onSelectedItemsChange={handleSubjectSelectionOuterFilter}
+                                selectedItems={outerSelectedSubjectArr}
+                                styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282", borderWidth: 0.7, paddingVertical: 10, paddingHorizontal: 10,width:wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
+
+                            />
+                            <SectionedMultiSelect
+                                items={topicArr}
+                                IconRenderer={MatIcon}
+                                uniqueKey="_id"
+                                itemFontFamily={{ fontFamily: 'Montserrat-SemiBold' }}
+                                subItemFontFamily={{ fontFamily: "Montserrat-Regular" }}
+                                searchPlaceholderText={"Search Topics..."}
+                                searchTextFontFamily={{ fontFamily: "Montserrat-Medium" }}
+                                confirmFontFamily={{ fontFamily: "Montserrat-SemiBold" }}
+                                showChips={false}
+                                alwaysShowSelectText={true}
+                                selectText="Topics"
+                                
+                                onSelectedItemsChange={handleSubjectSelectionOuterFilter}
+                                selectedItems={outerSelectedSubjectArr}
+                                styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282", borderWidth: 0.7, paddingVertical: 10, paddingHorizontal: 10,width:wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
+
+                            />
                         </View>
-                        <Text style={[styles.title, { marginBottom: 10, marginTop: 10 }]}>Instructors Online</Text>
+                        {/* <SectionedMultiSelect
+                                items={subjectArr}
+                                IconRenderer={MatIcon}
+                                uniqueKey="_id"
+                                showChips={false}
+                                selectText="Subcategory"
+                                onSelectedItemsChange={handleSubjectSelectionOuterFilter}
+                                selectedItems={outerSelectedSubjectArr}
+                            /> */}
+                        {/* <Text style={[styles.title, { marginBottom: 10, marginTop: 10 }]}>Instructors Online</Text> */}
+                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+
+                            <Pressable onPress={() => setSelectedNewFilter("All")} style={[styles.newContainer, selectedNewFilter != "All" && { backgroundColor: '#f0faf9' }]}>
+                                <Text style={[styles.newcategoryName, selectedNewFilter != "All" && { color: '#828282' }]}>All</Text>
+                            </Pressable>
+                            <Pressable onPress={() => setSelectedNewFilter("Online")} style={[styles.newContainer, selectedNewFilter != "Online" && { backgroundColor: '#f0faf9' }]}>
+                                <Text style={[styles.newcategoryName, selectedNewFilter != "Online" && { color: '#828282' }]}>Online</Text>
+                            </Pressable>
+                            <Pressable onPress={() => setSelectedNewFilter("Top Tutors")} style={[styles.newContainer, selectedNewFilter != "Top Tutors" && { backgroundColor: '#f0faf9' }]}>
+                                <Text style={[styles.newcategoryName, selectedNewFilter != "Top Tutors" && { color: '#828282' }]}>Top Tutors</Text>
+                            </Pressable>
+                        </View>
                     </>
                 }
                 contentContainerStyle={{ paddingBottom: 50 }}
@@ -1240,5 +1311,40 @@ const styles = StyleSheet.create({
         fontSize: 13,
         color: colorObj.primarColor,
         // marginTop: 15
+    },
+
+
+    newContainer: {
+        backgroundColor: colorObj.primarColor,
+        borderRadius: 26,
+        paddingVertical: 10,
+        marginVertical: 10,
+        marginHorizontal: 7,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 20
+        // shadowColor: "#000",
+        // shadowOffset: {
+        //     width: 0,
+        //     height: 1,
+        // },
+        // shadowOpacity: 0.18,
+        // shadowRadius: 1.00,
+
+        // elevation: 1,
+    },
+    // categoryName: {
+    //     color: colorObj.whiteColor,
+    //     textAlign: 'center',
+    //     fontFamily: 'OpenSans-Regular',
+    // },
+    newcategoryName: {
+        color: colorObj.whiteColor,
+        textAlign: 'center',
+        fontSize: 11,
+        fontFamily: 'OpenSans-Regular',
+        // paddingHorizontal: 20
     },
 })
