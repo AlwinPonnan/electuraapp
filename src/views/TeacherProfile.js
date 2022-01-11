@@ -148,7 +148,7 @@ export default function TeacherProfile(props) {
             setDecodedObj(decodedTokenObj)
             let userId = props.route.params.data;
             const { data: res } = await getById(userId)
-            // console.log(JSON.stringify(res.data.enquiryObj.facebookLink, null, 2), "teacher data")
+            console.log(JSON.stringify(res.data, null, 2), "teacher data")
             if (res.success) {
                 let tempObj = res.data;
                 tempObj.enquiryObj.timeslots = tempObj?.enquiryObj?.timeslots?.filter(el => el.slotArr.length > 0)
@@ -527,7 +527,7 @@ export default function TeacherProfile(props) {
                     <Image source={require("../../assets/images/time.png")} />
                     <Text style={styles.smallTxt}>{teacherObj?.enquiryObj?.experience ? teacherObj?.enquiryObj?.experience : "1"} year experience</Text>
                 </View>
-                <View style={[styles.flexRow, { width: "33%",paddingLeft:5 }]}>
+                <View style={[styles.flexRow, { width: "33%", paddingLeft: 5 }]}>
                     <Image source={require("../../assets/images/medal.png")} />
                     <View style={styles.flexColumn}>
 
@@ -548,9 +548,7 @@ export default function TeacherProfile(props) {
                 </View>
             </View>
 
-            <View style={[styles.flexColumn, { width: wp(90), alignSelf: "center" }]}>
-                <Text style={styles.description}>{teacherObj?.enquiryObj?.description ? teacherObj?.enquiryObj?.description : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,"}</Text>
-            </View>
+
 
             <View style={[{ backgroundColor: '#F5F5F5', width: wp(90), alignSelf: 'center', borderRadius: 5, padding: 10, marginTop: 15 }]}>
                 {(teacherObj?.role == "TEACHER" && teacherObj?._id == decodedObj?.userId) &&
@@ -581,9 +579,42 @@ export default function TeacherProfile(props) {
                 </View>
             </View>
 
+            <View style={[styles.flexColumn, { width: wp(90), alignSelf: "center" }]}>
+                <Text style={[styles.headingAboveCard, { paddingLeft: 0 }]}>Courses ({coursesArr.length})</Text>
+                <Text style={styles.description}>{teacherObj?.enquiryObj?.description ? teacherObj?.enquiryObj?.description : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,"}</Text>
+            </View>
 
 
+            <View style={[styles.flexColumn, { width: wp(90), alignSelf: "center" }]}>
+                <Text style={[styles.headingAboveCard, { paddingLeft: 0 }]}>Teacher’s Proficiency</Text>
+            </View>
+            <FlatList
+                horizontal
+                data={teacherObj?.enquiryObj?.classesArr}
+                contentContainerStyle={{ paddingHorizontal: 10 }}
+                renderItem={({ item, index }) => {
+                    return (
+                        <Pressable style={[styles.teacherProficiencycardContainer, { minHeight: hp(15) }]}  >
+                            <View style={styles.textCardContainer}>
+                                <View>
 
+                                    <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                                        <Text style={[styles.textCardMainHeading, { color: '#000000', fontSize: 14, fontFamily: "RedHatText-Medium" }]}>{item?.sentByObj?.name}</Text>
+                                    </View>
+
+                                    <Text style={[styles.textCardMainSubHeading1, { color: '#7E7E7E', marginTop: 7, fontFamily: 'RedHatText-Regular', fontSize: 10 }]}>{item?.message}</Text>
+                                </View>
+
+                            </View>
+                        </Pressable>
+                    )
+                }}
+                ListEmptyComponent={
+                    <Text style={{ fontFamily: 'RedHatText-Regular', padding: 10 }}>Currently the teacher has not listed any courses</Text>
+                }
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={(item, index) => `${index}`}
+            />
 
             <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10 }]}>
                 <Text style={styles.headingAboveCard}>Courses ({coursesArr.length})</Text>
@@ -880,7 +911,7 @@ const styles = StyleSheet.create({
     description: {
         fontFamily: 'RedHatText-Regular',
         fontSize: 13,
-        color: "black",
+        color: "#828282",
         lineHeight: 20,
         marginTop: 8,
         marginBottom: 8,
@@ -965,6 +996,23 @@ const styles = StyleSheet.create({
 
 
 
+    teacherProficiencycardContainer: {
+        width: wp(42),
+        backgroundColor: 'white',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        // height: hp(25),
+        shadowOpacity: 0.20,
+        shadowRadius: 1.41,
+        elevation: 2,
+        borderRadius: 5,
+        marginHorizontal: 10,
+        marginVertical: 10,
+        paddingVertical: "2.5%",
+    },
     cardContainer: {
         width: wp(40),
         backgroundColor: 'white',
