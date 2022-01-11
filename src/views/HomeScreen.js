@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import NavBar from '../components/Navbar';
 import { getAllCategory } from '../Services/Category';
 import { useIsFocused } from '@react-navigation/core';
-import { BookmarkTeacher, getAllTeachers, getAllTeachersSubjectWise, getUser, referalSubmit } from '../Services/User';
+import { BookmarkTeacher, getAllTeachers, getAllTeachersClassWiseBySubjectId, getAllTeachersSubjectWise, getUser, referalSubmit } from '../Services/User';
 import { imageObj } from '../globals/images';
 import { getAllSubjects } from '../Services/Subjects';
 import { generateImageUrl } from '../globals/utils';
@@ -35,6 +35,7 @@ export default function HomeScreen(props) {
 
     const [subjectWiseTeacherArr, setSubjectWiseTeacherArr] = useState([]);
 
+    const [classwiseArr, setClasswiseArr] = useState([]);
     const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
 
 
@@ -116,8 +117,8 @@ export default function HomeScreen(props) {
             if (res.success) {
                 console.log(JSON.stringify(res.data, null, 3), "teachers")
 
-                setTeachersArr(res.data.filter((el,i)=>i<10).sort((a,b)=>b?.profileVisit-a?.profileVisit))
-                setMainTeachersArr(res.data.filter((el,i)=>i<10).sort((a,b)=>b?.profileVisit-a?.profileVisit))
+                setTeachersArr(res.data.filter((el, i) => i < 10).sort((a, b) => b?.profileVisit - a?.profileVisit))
+                setMainTeachersArr(res.data.filter((el, i) => i < 10).sort((a, b) => b?.profileVisit - a?.profileVisit))
                 setIsrefreshing(false)
             }
 
@@ -161,6 +162,23 @@ export default function HomeScreen(props) {
         }
     }
 
+
+
+
+    const getClassWiseBySubjectId = async (id) => {
+        try {
+            setIsrefreshing(true)
+            const { data: res } = await getAllTeachersClassWiseBySubjectId(id);
+            if (res.success) {
+                setClasswiseArr(res.data)
+                setIsrefreshing(false)
+
+            }
+        } catch (error) {
+            console.error(error)
+            setIsrefreshing(false)
+        }
+    }
 
 
     async function registerAppWithFCM() {
@@ -218,10 +236,11 @@ export default function HomeScreen(props) {
         }
         else {
 
-            let tempArr = [...mainTeachersArr];
-            console.log(JSON.stringify(tempArr, null, 2))
-            tempArr = tempArr.filter(el => el?.enquiryObj?.classesArr?.some(ele => ele.subjectArr.some(elx => elx.subjectId == item._id)))
-            setTeachersArr([...tempArr])
+            // let tempArr = [...mainTeachersArr];
+            // console.log(JSON.stringify(tempArr, null, 2))
+            // tempArr = tempArr.filter(el => el?.enquiryObj?.classesArr?.some(ele => ele.subjectArr.some(elx => elx.subjectId == item._id)))
+            // setTeachersArr([...tempArr])
+            getClassWiseBySubjectId(item._id)
             setSelectedSubjectId(item._id)
             setSelectedSubject(item)
         }
@@ -288,7 +307,7 @@ export default function HomeScreen(props) {
                                 return (
                                     <Pressable onPress={() => { handleSubjectSelection(item) }} style={[styles.categoryContainer, selectedSubjectId != item._id && { backgroundColor: '#f0faf9' }]}>
                                         {item?.thumbnailImage &&
-                                            <Image source={{ uri: generateImageUrl(item?.thumbnailImage) }} style={{ height: 12, width: 12,marginRight:3 }} />
+                                            <Image source={{ uri: generateImageUrl(item?.thumbnailImage) }} style={{ height: 12, width: 12, marginRight: 3 }} />
                                         }
                                         {/* <Icon name="film-outline" size={14} /> */}
                                         <Text style={[styles.categoryName, selectedSubjectId != item._id && { color: '#828282' }]}>{item.name}</Text>
@@ -320,7 +339,7 @@ export default function HomeScreen(props) {
 
 
                         <FlatList
-                            data={subjectWiseTeacherArr}
+                            data={selectedSubjectId == "All" ? subjectWiseTeacherArr : classwiseArr}
                             renderItem={({ item, index }) => {
                                 return (
                                     <View style={{ marginVertical: 10 }}>
