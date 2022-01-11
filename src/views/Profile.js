@@ -87,9 +87,9 @@ export default function Profile(props) {
                 <Pressable onPress={() => props.navigation.navigate('wishlist')}>
                     <Text style={styles.subHeading}>My Wishlist</Text>
                 </Pressable>
-                <Pressable onPress={() => props.navigation.navigate('wishlistedTeacher')}>
+                {/* <Pressable onPress={() => props.navigation.navigate('wishlistedTeacher')}>
                     <Text style={styles.subHeading}>Wishlisted Teachers</Text>
-                </Pressable>
+                </Pressable> */}
                 <Pressable onPress={() => props.navigation.navigate('Orders')}>
                     <Text style={styles.subHeading}>My Orders</Text>
                 </Pressable>

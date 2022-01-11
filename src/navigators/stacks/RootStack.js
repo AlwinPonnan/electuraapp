@@ -39,6 +39,7 @@ import Testzoom from '../../views/Testzoom';
 import zoomMeeting from '../../views/zoomMeeting';
 import linking from '../../globals/Linking';
 import WishListedTeachers from '../../views/WishlistedTeachers';
+import WishlistTab from '../tabs/WishlistTab';
 const Stack = createNativeStackNavigator();
 
 export const AuthContext = createContext()
@@ -171,7 +172,7 @@ export default function RootStack() {
                                     <Stack.Screen name="OrderDetail" component={OrderDetail} options={{ headerShown: false }} />
                                     <Stack.Screen name="IncomingOrders" component={IncomingOrders} options={{ headerShown: false }} />
                                     <Stack.Screen name="AddCoupons" component={AddCoupons} options={{ headerShown: false }} />
-                                    <Stack.Screen name="wishlist" component={WishList} options={{ headerShown: false }} />
+                                    <Stack.Screen name="wishlist" component={WishlistTab} options={{ headerShown: false }} />
                                     <Stack.Screen name="wishlistedTeacher" component={WishListedTeachers} options={{ headerShown: false }} />
 
                                     <Stack.Screen name="CourseDetail" component={CourseDetail} options={{ headerShown: false }} />
