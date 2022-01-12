@@ -517,17 +517,17 @@ export default function TeacherProfile(props) {
                     <Icon name="star" style={{ marginHorizontal: 3 }} size={15} color="#FF900E" />
                 </View>
             </View>
-            <View style={[styles.flexRow, { width: wp(85), alignSelf: "center", marginVertical: 10 }]}>
-                <View style={[styles.flexRow, { width: "33%" }]}>
+            <View style={[styles.flexRow, { width: wp(85), alignSelf: "center", justifyContent:'space-between',marginVertical: 10 }]}>
+                <View style={[styles.flexRow]}>
                     <Icon name="location-outline" size={16} color={"#828282"} />
 
                     <Text style={styles.smallTxt}>{teacherObj?.enquiryObj?.address ? teacherObj?.enquiryObj?.address : "Delhi"}</Text>
                 </View>
-                <View style={[styles.flexRow, { width: "33%" }]}>
+                <View style={[styles.flexRow]}>
                     <Image source={require("../../assets/images/time.png")} />
                     <Text style={styles.smallTxt}>{teacherObj?.enquiryObj?.experience ? teacherObj?.enquiryObj?.experience : "1"} year experience</Text>
                 </View>
-                <View style={[styles.flexRow, { width: "33%", paddingLeft: 5 }]}>
+                {/* <View style={[styles.flexRow, { width: "33%", paddingLeft: 5 }]}>
                     <Image source={require("../../assets/images/medal.png")} />
                     <View style={styles.flexColumn}>
 
@@ -545,7 +545,7 @@ export default function TeacherProfile(props) {
                         }
                     </View>
 
-                </View>
+                </View> */}
             </View>
 
 
@@ -580,7 +580,7 @@ export default function TeacherProfile(props) {
             </View>
 
             <View style={[styles.flexColumn, { width: wp(90), alignSelf: "center" }]}>
-                <Text style={[styles.headingAboveCard, { paddingLeft: 0 }]}>Courses ({coursesArr.length})</Text>
+                <Text style={[styles.headingAboveCard, { paddingLeft: 0 }]}>Description</Text>
                 <Text style={styles.description}>{teacherObj?.enquiryObj?.description ? teacherObj?.enquiryObj?.description : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,"}</Text>
             </View>
 
@@ -594,15 +594,15 @@ export default function TeacherProfile(props) {
                 contentContainerStyle={{ paddingHorizontal: 10 }}
                 renderItem={({ item, index }) => {
                     return (
-                        <Pressable style={[styles.teacherProficiencycardContainer, { minHeight: hp(15) }]}  >
+                        <Pressable style={[styles.teacherProficiencycardContainer, { minHeight: hp(8) }]}  >
                             <View style={styles.textCardContainer}>
                                 <View>
 
                                     <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                                        <Text style={[styles.textCardMainHeading, { color: '#000000', fontSize: 14, fontFamily: "RedHatText-Medium" }]}>{item?.sentByObj?.name}</Text>
+                                        <Text style={[styles.textCardMainHeading, { color: '#000000', fontSize: 14, fontFamily: "Montserrat-SemiBold" }]}>{item?.className}</Text>
                                     </View>
 
-                                    <Text style={[styles.textCardMainSubHeading1, { color: '#7E7E7E', marginTop: 7, fontFamily: 'RedHatText-Regular', fontSize: 10 }]}>{item?.message}</Text>
+                                    <Text style={[styles.textCardMainSubHeading1, { color: '#7E7E7E', marginTop: 7, fontFamily: 'Montserrat-Regular', fontSize: 10 }]}>{item?.subjectArr.reduce((acc,el)=>acc+el.subjectName+',','')}</Text>
                                 </View>
 
                             </View>

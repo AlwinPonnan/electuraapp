@@ -78,9 +78,9 @@ export default function Contact(props) {
                             <Pressable onPress={()=>handleShare(socialLink.instagram)} style={styles.circle}>
                                 <Icons color="#E517DD" name="instagram" size={15} />
                             </Pressable>
-                            <View style={styles.circle}>
+                            {/* <View style={styles.circle}>
                                 <Icons color="#64D315" name="whatsapp" size={15} />
-                            </View>
+                            </View> */}
                             <Pressable style={styles.circle} onPress={()=>handleShare(socialLink.linkdin)}>
                                 <Icons color="#6747ED" name="linkedin" size={15} />
                             </Pressable>
@@ -90,9 +90,9 @@ export default function Contact(props) {
                             <Pressable style={styles.circle} onPress={()=>handleShare(socialLink.facebook)}>
                                 <Icons color="#0085FF" name="facebook" size={15} />
                             </Pressable>
-                            <View style={styles.circle}>
+                            {/* <View style={styles.circle}>
                                 <IconsFoundation color="#085A4E" name="web" size={15} />
-                            </View>
+                            </View> */}
                         </View>
                     </View>
 

@@ -15,13 +15,14 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import { addToCart, addTOWishList, getDecodedToken } from '../Services/User';
 import { successAlertContext } from '../../App';
 import { loadingContext } from '../navigators/stacks/RootStack';
-import { getAllClasses } from '../Services/Classses';
+import { getAllBySubject, getAllClasses } from '../Services/Classses';
 import { getAllTopics } from '../Services/Topic';
 import { getAllSubjects } from '../Services/Subjects';
 import MultiSlider from '@ptomasroos/react-native-multi-slider'
 
 import { Checkbox } from 'react-native-paper';
-
+import MatIcon from 'react-native-vector-icons/MaterialIcons'
+import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 export default function AllCourses(props) {
 
     const [loading, setLoading] = useContext(loadingContext);
@@ -44,6 +45,7 @@ export default function AllCourses(props) {
     const [classesArr, setClassesArr] = useState([]);
     const [topicArr, setTopicArr] = useState([]);
     const [mainTopicArr, setMainTopicArr] = useState([]);
+    const [mainClassesArr, setMainClassesArr] = useState([]);
 
     const [multiSliderValue, setMultiSliderValue] = useState([10, 550]);
 
@@ -57,8 +59,23 @@ export default function AllCourses(props) {
 
 
     const [alertText, setAlertText] = alertTextArr
+    const [selectedNewFilter, setSelectedNewFilter] = useState("All");
 
 
+
+    const [outerSelectedClassArr, setOuterSelectedClassArr] = useState([]);
+    const [outerTopicArr, setOuterTopicArr] = useState([]);
+
+    const [innerFilteredCourseArr, setInnerFilteredCourseArr] = useState([]);
+
+
+
+    const [nestedClassArr, setNestedClassArr] = useState([]);
+    const [mainNestedClassArr, setMainNestedClassArr] = useState([]);
+
+
+    const previousSelectedSubjectId = props?.route?.params?.filterId;
+    const isSubjectSelected = props?.route?.params?.isSubjectId
     const getCourses = async () => {
         try {
             setIsrefreshing(true)
@@ -87,10 +104,12 @@ export default function AllCourses(props) {
                 })]
                 setMaxFees(maxCount)
                 setMinFees(minCount)
-                console.log(JSON.stringify(temp, null, 2))
+                // console.log(JSON.stringify(temp, null, 2))
                 setCourseArr(temp)
                 setMainCourseArr(temp)
+                setInnerFilteredCourseArr(temp)
                 setIsrefreshing(false)
+                getSubjects(temp)
 
             }
         } catch (error) {
@@ -100,8 +119,9 @@ export default function AllCourses(props) {
     }
 
 
-    const getSubjects = async () => {
+    const getSubjects = async (arr) => {
         try {
+            console.log(props)
             setIsrefreshing(true)
             const { data: res } = await getAllSubjects();
             if (res.success) {
@@ -112,6 +132,11 @@ export default function AllCourses(props) {
                     }
                     return obj
                 })])
+                if (isSubjectSelected) {
+                    console.log("inside,@@@@@@@@@@@@@", isSubjectSelected)
+                    setOuterSelectedClassArr([`${previousSelectedSubjectId}`])
+                    setCourseArr([...arr.filter(el => el?.classesArr.some(elx => elx?.classId == previousSelectedSubjectId))])
+                }
                 setIsrefreshing(false)
             }
 
@@ -132,6 +157,13 @@ export default function AllCourses(props) {
                     }
                     return obj
                 })])
+                // setMainClassesArr([...res.data.map(el => {
+                //     let obj = {
+                //         ...el,
+                //         checked: false
+                //     }
+                //     return obj
+                // })])
                 setIsrefreshing(false)
             }
         } catch (error) {
@@ -142,28 +174,41 @@ export default function AllCourses(props) {
 
     const handleTopicFilter = () => {
         let tempArr = [...mainTopicArr];
-        let tempClassesArr = [...classesArr.filter(elx => elx.checked)]
+        let tempClassesArr = [...nestedClassArr.filter(elx => elx.classArr.some(elz => elz.checked))]
         let tempSubjectArr = [...subjectArr.filter(elx => elx.checked)]
 
-        tempArr = tempArr.filter(ely => tempClassesArr.some(ele => ele._id == ely.classId) || tempSubjectArr.some(ele => ele._id == ely.subjectId));
-        console.log(tempArr)
+        tempArr = tempArr.filter(ely => tempSubjectArr.some(ele => ele._id == ely.subjectId));
+        tempArr = tempArr.filter(ely => tempClassesArr.some(elz => elz.classArr.some(el => el._id == ely.classId)) || tempSubjectArr.some(ele => ele._id == ely.subjectId));
+
+        // console.log(tempArr)
         setTopicArr([...tempArr])
     }
 
-    const handleSubjectSelection = (id) => {
-        setSubjectArr(prevState => {
-            let tempIndex = prevState.findIndex(el => el._id == id);
-            if (tempIndex != -1)
-                prevState[tempIndex].checked = !prevState[tempIndex].checked
-            return [...prevState]
+    const handleSubjectSelection = (index, id) => {
+        let tempArr = [...subjectArr];
+        tempArr = tempArr.map((el, i) => {
+            if (i == index) {
+
+                el.checked = !el.checked
+            }
+            else {
+                el.checked = false
+            }
+            return el
         })
+        setSubjectArr([...tempArr])
+        let tempClassesArr = [...mainNestedClassArr];
+        console.log(tempClassesArr)
+        tempClassesArr = tempClassesArr.filter(el => el._id == id);
+        setNestedClassArr([...tempClassesArr])
         handleTopicFilter()
     }
-    const handleClassSelection = (id) => {
-        setClassesArr(prevState => {
-            let tempIndex = prevState.findIndex(el => el._id == id);
+    const handleClassSelection = (subjectIndex, id) => {
+        console.log(subjectIndex, id)
+        setNestedClassArr(prevState => {
+            let tempIndex = prevState[subjectIndex].classArr.findIndex(el => el._id == id);
             if (tempIndex != -1)
-                prevState[tempIndex].checked = !prevState[tempIndex].checked
+                prevState[subjectIndex].classArr[tempIndex].checked = !prevState[subjectIndex].classArr[tempIndex].checked
             return [...prevState]
         })
         handleTopicFilter()
@@ -177,6 +222,33 @@ export default function AllCourses(props) {
             return [...prevState]
         })
     }
+
+    const getNestedClasses = async () => {
+        try {
+            const { data: res } = await getAllBySubject();
+            if (res.success) {
+                setNestedClassArr([...res.data.map(el => {
+                    let obj = {
+                        ...el,
+                        checked: false,
+                        classArr: el.classArr.map(elx => ({ ...elx, checked: false }))
+                    }
+                    return obj
+                })])
+                setMainNestedClassArr([...res.data.map(el => {
+                    let obj = {
+                        ...el,
+                        checked: false,
+                        classArr: el.classArr.map(elx => ({ ...elx, checked: false }))
+                    }
+                    return obj
+                })])
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
 
     const getTopics = async () => {
         try {
@@ -209,8 +281,9 @@ export default function AllCourses(props) {
 
     const handleOnint = () => {
         getCourses()
-        getSubjects()
         getClasses()
+        getNestedClasses()
+
         getTopics()
     }
 
@@ -220,6 +293,8 @@ export default function AllCourses(props) {
 
         let filteredClassesArr = [...classesArr.filter(el => el.checked)]
         let filteredSubjectArr = [...subjectArr.filter(el => el.checked)]
+        let filteredTopicArr = [...topicArr.filter(el => el.checked)]
+
 
 
         let tempArr = [...mainCourseArr];
@@ -233,6 +308,10 @@ export default function AllCourses(props) {
         if (filteredSubjectArr.length > 0) {
             console.log("subject filter")
             tempArr = tempArr.filter(el => el?.classesArr?.some(elx => elx.subjectArr.some(elz => filteredSubjectArr.some(elm => elm._id == elz.subjectId))))
+        }
+        if (filteredTopicArr.length > 0) {
+            console.log("Topic filter")
+            tempArr = tempArr.filter(el => el?.classesArr?.some(elx => elx.subjectArr.some(elz => elz?.topicArr?.length > 0 ? elz.topicArr.some(elm => filteredTopicArr.some(elq => elq._id == elm.topicId)) : false)))
         }
 
         tempArr = tempArr.filter(el => el.price >= parseInt(multiSliderValue[0]) || el.price <= parseInt(multiSliderValue[1]))
@@ -323,34 +402,65 @@ export default function AllCourses(props) {
     }, [focused])
 
 
-    const renderItem = ({ item, index }) => {
-        return (
-            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("CourseDetail", { data: item._id })} >
-                <Image style={styles.courseImg} source={{ uri: item?.imgUrl }} />
-                <View style={styles.textCardContainer}>
-                    <View>
+    const handleBtnFilter = (value) => {
+        let tempCourseArr = [...innerFilteredCourseArr]
+        if (value == "All") {
+            setCourseArr([...tempCourseArr])
 
-                        <Pressable onPress={() => handleAddCourseToWhishlist(item._id)} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                            <Text style={styles.textCardMainHeading}>{item?.name}</Text>
-                            {item.isWishListed ?
-                                <Icon name="heart" size={14} color={colorObj.primarColor} />
+        }
 
-                                :
-                                <Icon name="heart-outline" size={14} color={colorObj.primarColor} />
+        else {
+            tempCourseArr = tempCourseArr.filter((el, i) => i < 10).sort((a, b) => b?.enrollments - a?.enrollments)
+            setCourseArr([...tempCourseArr])
 
-                            }
-                        </Pressable>
-                        <Text style={styles.textCardMainSubHeading1}>{item?.teacherName}</Text>
-                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                            <Text style={styles.textCardMainSubHeading2}>₹{item?.price}</Text>
-                            <Text style={styles.textCardMainSubHeading2}>{item.rating}<Icon name="star" size={12} color={colorObj.primarColor} /></Text>
-                        </View>
-                    </View>
-
-                </View>
-            </Pressable>
-        )
+        }
+        setSelectedNewFilter(value)
     }
+
+    const handleClassSelectionOuterFilter = (obj) => {
+        setOuterSelectedClassArr(obj)
+
+    }
+
+    const handleOuterClassFilter = () => {
+        console.log(outerSelectedClassArr)
+        let tempCourseArr = [...mainCourseArr]
+        if (outerSelectedClassArr.length > 0) {
+
+            tempCourseArr = tempCourseArr.filter(el => outerSelectedClassArr.some(elx => el.classesArr.some(ely => ely.classId == elx)))
+            setCourseArr([...tempCourseArr])
+            setInnerFilteredCourseArr([...tempCourseArr])
+            let tempTopicArr = [...mainTopicArr];
+            tempTopicArr = tempTopicArr.filter(el => outerSelectedClassArr.some(elx => elx == el.classId))
+            setTopicArr([...tempTopicArr])
+        }
+        else {
+            setCourseArr([...tempCourseArr])
+            setInnerFilteredCourseArr([...tempCourseArr])
+            setTopicArr([...mainTopicArr])
+        }
+    }
+
+    const handleTopicOuterFilter = (obj) => {
+        setOuterTopicArr(obj)
+    }
+    const handleOuterTopicFilter = () => {
+        console.log(outerTopicArr)
+        let tempCourseArr = [...mainCourseArr]
+        if (outerTopicArr.length > 0) {
+
+            tempCourseArr = tempCourseArr.filter(el => outerTopicArr.some(elx => el?.classesArr.some(ely => ely?.subjectArr?.some(elz => elz?.topicArr?.length > 0 ? elz?.topicArr?.some(elm => elm.topicId == elx) : false))))
+            setCourseArr([...tempCourseArr])
+            setInnerFilteredCourseArr([...tempCourseArr])
+
+        }
+        else {
+            setCourseArr([...tempCourseArr])
+            setInnerFilteredCourseArr([...tempCourseArr])
+        }
+    }
+
+
 
     const renderTeacherItem = ({ item, index }) => {
         return (
@@ -440,7 +550,7 @@ export default function AllCourses(props) {
             <FlatList
                 ListHeaderComponent={
                     <>
-                        <Text style={[styles.title]}>Recommended Courses</Text>
+                        {/* <Text style={[styles.title]}>Recommended Courses</Text>
                         <FlatList
                             horizontal
                             data={courseArr.filter(el => el?.flags?.bestsellerFlag)}
@@ -451,9 +561,59 @@ export default function AllCourses(props) {
                             ListEmptyComponent={
                                 <Text style={{ textAlign: 'center', fontFamily: 'Montserrat-SemiBold', fontSize: 16, width: wp(90), marginTop: 40 }}>No Courses Found</Text>
                             }
-                        />
+                        /> */}
 
-                        <Text style={[styles.title]}>New Courses</Text>
+                        {/* <Text style={[styles.title]}>New Courses</Text> */}
+                        <View style={[styles.flexRow, { marginTop: 25, alignItems: 'center', justifyContent: 'space-between' }]}>
+
+                            <SectionedMultiSelect
+                                items={classesArr}
+                                IconRenderer={MatIcon}
+                                uniqueKey="_id"
+                                itemFontFamily={{ fontFamily: 'Montserrat-SemiBold' }}
+                                subItemFontFamily={{ fontFamily: "Montserrat-Regular" }}
+                                searchPlaceholderText={"Search Subcategories..."}
+                                searchTextFontFamily={{ fontFamily: "Montserrat-Medium" }}
+                                confirmFontFamily={{ fontFamily: "Montserrat-SemiBold" }}
+                                showChips={false}
+                                alwaysShowSelectText={true}
+                                onConfirm={() => handleOuterClassFilter()}
+                                selectText="Subcategory"
+
+                                onSelectedItemsChange={handleClassSelectionOuterFilter}
+                                selectedItems={outerSelectedClassArr}
+                                styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282", borderWidth: 0.7, paddingVertical: 10, paddingHorizontal: 10, width: wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
+
+                            />
+                            <SectionedMultiSelect
+                                items={topicArr}
+                                IconRenderer={MatIcon}
+                                uniqueKey="_id"
+                                itemFontFamily={{ fontFamily: 'Montserrat-SemiBold' }}
+                                subItemFontFamily={{ fontFamily: "Montserrat-Regular" }}
+                                searchPlaceholderText={"Search Topics..."}
+                                searchTextFontFamily={{ fontFamily: "Montserrat-Medium" }}
+                                confirmFontFamily={{ fontFamily: "Montserrat-SemiBold" }}
+                                showChips={false}
+                                alwaysShowSelectText={true}
+                                selectText="Topics"
+                                onConfirm={() => handleOuterTopicFilter()}
+                                onSelectedItemsChange={handleTopicOuterFilter}
+                                selectedItems={outerTopicArr}
+                                styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282", borderWidth: 0.7, paddingVertical: 10, paddingHorizontal: 10, width: wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
+
+                            />
+                        </View>
+                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+
+                            <Pressable onPress={() => handleBtnFilter("All")} style={[styles.newContainer, selectedNewFilter != "All" && { backgroundColor: '#f0faf9' }]}>
+                                <Text style={[styles.newcategoryName, selectedNewFilter != "All" && { color: '#828282' }]}>All</Text>
+                            </Pressable>
+
+                            <Pressable onPress={() => handleBtnFilter("Best Seller")} style={[styles.newContainer, selectedNewFilter != "Best Seller" && { backgroundColor: '#f0faf9' }]}>
+                                <Text style={[styles.newcategoryName, selectedNewFilter != "Best Seller" && { color: '#828282' }]}>Bestseller</Text>
+                            </Pressable>
+                        </View>
                     </>
                 }
                 refreshing={isrefreshing}
@@ -521,7 +681,7 @@ export default function AllCourses(props) {
                                 {activeFilterContainer == "subject" &&
 
                                     <FlatList
-                                        data={[...subjectArr, ...subjectArr, ...subjectArr, ...subjectArr]}
+                                        data={subjectArr}
                                         keyExtractor={(item, index) => `${index}`}
                                         scrollEnabled={true}
                                         contentContainerStyle={{ paddingBottom: 100, marginTop: 20 }}
@@ -535,9 +695,9 @@ export default function AllCourses(props) {
                                                         <Checkbox
                                                             color={colorObj.primarColor}
                                                             status={item.checked ? "checked" : "unchecked"}
-                                                            onPress={() => handleSubjectSelection(item._id)}
+                                                            onPress={() => handleSubjectSelection(index, item._id)}
                                                         />
-                                                        <Pressable onPress={() => handleSubjectSelection(item._id)} style={{ paddingVertical: 5, width: '100%' }} >
+                                                        <Pressable onPress={() => handleSubjectSelection(index, item._id)} style={{ paddingVertical: 5, width: '100%' }} >
                                                             <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>{item.name}</Text>
                                                         </Pressable>
 
@@ -552,26 +712,38 @@ export default function AllCourses(props) {
                                 {activeFilterContainer == "class" &&
 
                                     <FlatList
-                                        data={classesArr}
+                                        data={nestedClassArr}
                                         keyExtractor={(item, index) => `${item._id}`}
                                         scrollEnabled={true}
                                         contentContainerStyle={{ paddingBottom: 100, marginTop: 20 }}
 
                                         renderItem={({ item, index }) => {
                                             return (
-                                                <View>
-                                                    <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 10, justifyContent: 'space-between', }]}>
-                                                        <Checkbox
-                                                            color={colorObj.primarColor}
-                                                            status={item.checked ? "checked" : "unchecked"}
-                                                            onPress={() => handleClassSelection(item._id)}
-                                                        />
-                                                        <Pressable onPress={() => handleClassSelection(item._id)} style={{ paddingVertical: 5, width: '100%' }} >
-                                                            <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>{item.name}</Text>
+                                                <View style={{ paddingHorizontal: 20 }}>
+                                                    <Text style={[styles.checkBoxText, { textAlign: 'left', fontFamily: 'Montserrat-Medium' }]}>{item?.name}</Text>
+                                                    <FlatList
+                                                        scrollEnabled={false}
+                                                        data={item.classArr}
+                                                        keyExtractor={(item, index) => `${item._id}`}
+                                                        renderItem={({ item: itemX, index: indexX }) => {
+                                                            return (
+                                                                <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 3, justifyContent: 'space-between', }]}>
 
-                                                        </Pressable>
+                                                                    <Checkbox
+                                                                        color={colorObj.primarColor}
+                                                                        status={itemX.checked ? "checked" : "unchecked"}
+                                                                        onPress={() => handleClassSelection(index, itemX._id)}
+                                                                    />
+                                                                    <Pressable onPress={() => handleClassSelection(index, itemX._id)} style={{ paddingVertical: 5, width: '100%' }} >
+                                                                        <Text style={[styles.checkBoxText, { textAlign: 'left', fontSize: 12 }]}>{itemX.name}</Text>
 
-                                                    </View>
+                                                                    </Pressable>
+                                                                </View>
+
+                                                            )
+                                                        }}
+                                                    />
+
 
                                                 </View>
                                             )
@@ -959,6 +1131,41 @@ const styles = StyleSheet.create({
 
     customFilterHeadingBox: {
         paddingVertical: 10
-    }
+    },
+
+    newContainer: {
+        backgroundColor: colorObj.primarColor,
+        borderRadius: 26,
+        paddingVertical: 10,
+        marginVertical: 10,
+        marginHorizontal: 7,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 20
+        // shadowColor: "#000",
+        // shadowOffset: {
+        //     width: 0,
+        //     height: 1,
+        // },
+        // shadowOpacity: 0.18,
+        // shadowRadius: 1.00,
+
+        // elevation: 1,
+    },
+    // categoryName: {
+    //     color: colorObj.whiteColor,
+    //     textAlign: 'center',
+    //     fontFamily: 'OpenSans-Regular',
+    // },
+    newcategoryName: {
+        color: colorObj.whiteColor,
+        textAlign: 'center',
+        fontSize: 11,
+        fontFamily: 'OpenSans-Regular',
+        // paddingHorizontal: 20
+    },
+
 
 })

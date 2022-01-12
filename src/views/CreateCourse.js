@@ -16,7 +16,7 @@ import { getAllCategory } from '../Services/Category';
 import { Picker } from '@react-native-picker/picker';
 import { courseAdd, uploadCourseImage } from '../Services/Course';
 import { Checkbox } from 'react-native-paper';
-import { getAllClasses } from '../Services/Classses';
+import { getAllClasses, getAllNestedCategories } from '../Services/Classses';
 import DocumentPicker from 'react-native-document-picker'
 import { successAlertContext } from '../../App';
 import { loadingContext } from '../navigators/stacks/RootStack';
@@ -60,8 +60,16 @@ export default function CreateCourse(props) {
                     ...el,
                     classId: el._id,
                     subjectArr: el.subjectArr.filter(ele => ele.checked).map(ele => {
-                        ele.subjectId = ele.subjectId
-                        return ele
+                        let obj1={
+                            subjectId:ele.subjectId,
+                            topicArr:ele.topicArr.filter(elx=>elx.checked).map(elx=>{
+                                let obj2={
+                                    topicId:elx._id
+                                }
+                                return obj2
+                            })
+                        }
+                        return obj1
                     })
                 }
                 return obj
@@ -117,20 +125,11 @@ export default function CreateCourse(props) {
 
     const [categoryArr, setCategoryArr] = useState([]);
 
-    const getCategories = async () => {
-        try {
-            const { data: res } = await getAllCategory();
-            if (res.success) {
-                setCategoryArr(res.data)
-            }
-        } catch (error) {
-            console.error(error)
-        }
-    }
+
 
     const getClasses = async () => {
         try {
-            let { data: res, status: statusCode } = await getAllClasses();
+            let { data: res, status: statusCode } = await getAllNestedCategories();
             console.log(statusCode)
             if (statusCode == 200 || statusCode == 304) {
 
@@ -140,6 +139,7 @@ export default function CreateCourse(props) {
                         subjectArr: el.subjectArr.map(ele => {
                             let tempObj = {
                                 ...ele,
+                                topicArr: ele.topicArr.map(elx => ({ ...elx, checked: false })),
                                 checked: false
                             }
                             return tempObj
@@ -149,7 +149,7 @@ export default function CreateCourse(props) {
                     }
                     return obj
                 })
-                // console.log(JSON.stringify(tempArr, null, 2), "classes")
+                console.log(JSON.stringify(tempArr, null, 2), "classes")
                 setClassesArr(tempArr)
             }
         }
@@ -178,6 +178,16 @@ export default function CreateCourse(props) {
                     prevState[index].subjectArr[subjectIndex].checked = !prevState[index].subjectArr[subjectIndex].checked;
 
             }
+            return [...prevState]
+        })
+    }
+
+    const setSelectedTopic = (classIndex, subjectIndex, topicIndex) => {
+        setClassesArr(prevState => {
+
+            prevState[classIndex].subjectArr[subjectIndex].topicArr[topicIndex].checked = !prevState[classIndex].subjectArr[subjectIndex].topicArr[topicIndex].checked
+
+
             return [...prevState]
         })
     }
@@ -218,7 +228,7 @@ export default function CreateCourse(props) {
                 ListHeaderComponent={
                     <>
 
-                        <Image source={require('../../assets/images/Banner.png')} style={{ alignSelf: 'center', marginTop: 10 }} />
+                        <Image source={require('../../assets/images/Banner.png')} resizeMode="contain" resizeMethod="resize" style={{ width: wp(100), height: 210 }} />
                         <View style={styles.textContainer}>
                             <Text style={styles.mainHeading}>Create Your Course</Text>
                         </View>
@@ -231,7 +241,7 @@ export default function CreateCourse(props) {
                         </KeyboardAvoidingView>
                         <KeyboardAvoidingView
                             behavior={Platform.OS === "ios" ? "padding" : "height"}
-                            style={[styles.container,styles.inputContainer]}
+                            style={[styles.container, styles.inputContainer]}
                         >
                             <Icon name="cash-outline" size={14} color="black" />
                             <TextInput style={styles.inputStyles} onChangeText={(val) => setPrice(val)} placeholder="Enter Price" keyboardType="numeric" />
@@ -246,6 +256,7 @@ export default function CreateCourse(props) {
                         <FlatList
                             data={classesArr}
                             keyExtractor={(item, index) => `${item._id}`}
+                            scrollEnabled={false}
                             renderItem={({ item, index }) => {
                                 return (
                                     <View>
@@ -268,21 +279,54 @@ export default function CreateCourse(props) {
                                             <FlatList
                                                 data={item.subjectArr}
                                                 keyExtractor={(item, index) => `${item._id}`}
+                                                scrollEnabled={false}
                                                 renderItem={({ item: itemX, index: indexX }) => {
                                                     return (
-                                                        <View style={[styles.flexRowAlignCenter, { marginVertical: 2, paddingHorizontal: 20 }]}>
-                                                            <Checkbox
-                                                                color={colorObj.primarColor}
-                                                                status={itemX.checked ? "checked" : "unchecked"}
-                                                                onPress={() => {
+                                                        <View>
+
+                                                            <View style={[styles.flexRowAlignCenter, { marginVertical: 2, paddingHorizontal: 20 }]}>
+                                                                <Checkbox
+                                                                    color={colorObj.primarColor}
+                                                                    status={itemX.checked ? "checked" : "unchecked"}
+                                                                    onPress={() => {
+                                                                        setSelectedSubject(item._id, itemX.subjectId);
+                                                                    }}
+                                                                />
+                                                                <TouchableOpacity style={{ width: wp(82), paddingVertical: 5, }} onPress={() => {
                                                                     setSelectedSubject(item._id, itemX.subjectId);
-                                                                }}
-                                                            />
-                                                            <TouchableOpacity style={{ width: wp(82), paddingVertical: 5, }} onPress={() => {
-                                                                setSelectedSubject(item._id, itemX.subjectId);
-                                                            }}>
-                                                                <Text>{itemX.subjectName}</Text>
-                                                            </TouchableOpacity>
+                                                                }}>
+                                                                    <Text>{itemX.subjectName}</Text>
+                                                                </TouchableOpacity>
+                                                            </View>
+                                                            {itemX.checked &&
+                                                                <FlatList
+                                                                    data={itemX.topicArr}
+                                                                    keyExtractor={(item, index) => `${item._id}`}
+                                                                    scrollEnabled={false}
+                                                                    renderItem={({ item: itemY, index: indexY }) => {
+                                                                        return (
+                                                                            <View>
+
+                                                                                <View style={[styles.flexRowAlignCenter, { marginVertical: 2, paddingHorizontal: 40 }]}>
+                                                                                    <Checkbox
+                                                                                        color={colorObj.primarColor}
+                                                                                        status={itemY.checked ? "checked" : "unchecked"}
+                                                                                        onPress={() => {
+                                                                                            setSelectedTopic(index, indexX, indexY);
+                                                                                        }}
+                                                                                    />
+                                                                                    <TouchableOpacity style={{ width: wp(82), paddingVertical: 5, }} onPress={() => {
+                                                                                        setSelectedTopic(index, indexX, indexY);
+                                                                                    }}>
+                                                                                        <Text>{itemY.name}</Text>
+                                                                                    </TouchableOpacity>
+                                                                                </View>
+
+                                                                            </View>
+                                                                        )
+                                                                    }}
+                                                                />
+                                                            }
                                                         </View>
                                                     )
                                                 }}
@@ -339,9 +383,9 @@ export default function CreateCourse(props) {
                             </View>
                         </RadioButton.Group>
 
-                        <Pressable style={styles.btnContainer} onPress={() => {handleSubmit()}}>
+                        <Pressable style={styles.btnContainer} onPress={() => { handleSubmit() }}>
                             <Text style={styles.termsText}></Text>
-                            <Pressable style={styles.btn} onPress={() => {handleSubmit()}}>
+                            <Pressable style={styles.btn} onPress={() => { handleSubmit() }}>
                                 <Text style={styles.btnText}>Create</Text>
                             </Pressable>
                         </Pressable>
@@ -404,7 +448,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         elevation: 3,
         marginTop: 20,
-        minHeight:60,
+        minHeight: 60,
         borderColor: 'transparent',
         backgroundColor: colorObj.whiteColor
     },

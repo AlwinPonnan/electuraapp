@@ -22,6 +22,11 @@ export const getAllCoursesSubjectWise = async () => {
     return axiosApiInstance.get(`${url}/getAllCoursesSubjectWise`)
 }
 
+export const getAllCoursesSubjectWiseClass = async (id) => {
+    return axiosApiInstance.get(`${url}/getAllCoursesSubjectWiseClass/${id}`)
+}
+
+
 
 export const getByCoursesUserId = async (id) => {
     return axiosApiInstance.get(`${url}/getByUserId/${id}`)

@@ -14,3 +14,10 @@ export const getAllClasses = async () => {
 export const getBySubjectId=async(id)=>{
     return axiosApiInstance.get(`${url}/getBySubjectId/${id}`)
 }
+
+export const getAllBySubject=async()=>{
+    return axiosApiInstance.get(`${url}/getByAllSubjects`)
+}
+export const getAllNestedCategories=async()=>{
+    return axiosApiInstance.get(`${url}/getAllNestedCategories`)
+}

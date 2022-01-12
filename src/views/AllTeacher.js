@@ -6,7 +6,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import { useIsFocused } from '@react-navigation/core';
-import { getAllTeachers } from '../Services/User';
+import { BookmarkTeacher, getAllTeachers } from '../Services/User';
 import { formatDate, generateImageUrl, sortByText } from '../globals/utils';
 import RBSheet from "react-native-raw-bottom-sheet";
 import { NewEnquiry } from '../Services/Enquiry';
@@ -17,7 +17,7 @@ import { colorObj } from '../globals/colors';
 import { loadingContext } from '../navigators/stacks/RootStack';
 import { getAllSubjects } from '../Services/Subjects';
 import { Checkbox } from 'react-native-paper';
-import { getAllClasses } from '../Services/Classses';
+import { getAllBySubject, getAllClasses } from '../Services/Classses';
 import { getAllTopics } from '../Services/Topic';
 import MultiSlider from '@ptomasroos/react-native-multi-slider'
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
@@ -32,6 +32,9 @@ export default function AllTeacher(props) {
 
     const focused = useIsFocused()
     const refRBSheet = useRef();
+    console.log(props.route.params)
+    const previousSelectedSubjectId = props?.route?.params?.filterId;
+    const isSubjectSelected = props?.route?.params?.isSubjectId
 
     const filterBottomSheetRef = useRef()
     const [checked, setChecked] = useState(EnquiryTypes.ONETOONE);
@@ -47,6 +50,7 @@ export default function AllTeacher(props) {
     const [subjectArr, setSubjectArr] = useState([]);
 
     const [classesArr, setClassesArr] = useState([]);
+    const [mainClassesArr, setMainClassesArr] = useState([]);
     const [topicArr, setTopicArr] = useState([]);
     const [mainTopicArr, setMainTopicArr] = useState([]);
 
@@ -84,7 +88,16 @@ export default function AllTeacher(props) {
     const [alertText, setAlertText] = alertTextArr
 
 
-    const [outerSelectedSubjectArr, setOuterSelectedSubjectArr] = useState([]);
+    const [outerSelectedClassArr, setOuterSelectedClassArr] = useState([]);
+    const [outerTopicArr, setOuterTopicArr] = useState([]);
+
+    const [innerFilteredTeacherArr, setInnerFilteredTeacherArr] = useState([]);
+
+
+
+    const [nestedClassArr, setNestedClassArr] = useState([]);
+    const [mainNestedClassArr, setMainNestedClassArr] = useState([]);
+
 
     const getTeachers = async () => {
         setIsLoading(true)
@@ -105,9 +118,12 @@ export default function AllTeacher(props) {
                 })]
                 setMaxTeacherFees(maxCount)
                 setMinTeacherFees(minCount)
-                console.log(minCount, maxCount)
+                // console.log(minCount, maxCount)
                 setTeachersArr(res.data)
                 setMainTeachersArr(res.data)
+
+                getSubjects(res.data)
+                setInnerFilteredTeacherArr(res.data)
             }
 
         } catch (error) {
@@ -117,7 +133,7 @@ export default function AllTeacher(props) {
     }
 
 
-    const getSubjects = async () => {
+    const getSubjects = async (arr) => {
         try {
             const { data: res } = await getAllSubjects();
             if (res.success) {
@@ -128,6 +144,13 @@ export default function AllTeacher(props) {
                     }
                     return obj
                 })])
+                if (isSubjectSelected) {
+                    console.log("inside,@@@@@@@@@@@@@", isSubjectSelected)
+                    setOuterSelectedClassArr([`${previousSelectedSubjectId}`])
+                    setTeachersArr([...arr.filter(el => el?.enquiryObj?.classesArr.some(elx => elx?.classId == previousSelectedSubjectId))])
+                }
+
+
             }
         } catch (error) {
             console.error(error)
@@ -144,11 +167,47 @@ export default function AllTeacher(props) {
                     }
                     return obj
                 })])
+                setMainClassesArr([...res.data.map(el => {
+                    let obj = {
+                        ...el,
+                        checked: false
+                    }
+                    return obj
+                })])
             }
         } catch (error) {
             console.error(error)
         }
     }
+
+    const getNestedClasses = async () => {
+        try {
+            const { data: res } = await getAllBySubject();
+            if (res.success) {
+                setNestedClassArr([...res.data.map(el => {
+                    let obj = {
+                        ...el,
+                        checked: false,
+                        classArr: el.classArr.map(elx => ({ ...elx, checked: false }))
+                    }
+                    return obj
+                })])
+                setMainNestedClassArr([...res.data.map(el => {
+                    let obj = {
+                        ...el,
+                        checked: false,
+                        classArr: el.classArr.map(elx => ({ ...elx, checked: false }))
+                    }
+                    return obj
+                })])
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+
+
     const getTopics = async () => {
         try {
             const { data: res } = await getAllTopics();
@@ -174,18 +233,23 @@ export default function AllTeacher(props) {
     }
     const handleOnint = () => {
         getTeachers()
-        getSubjects()
         getClasses()
+        getNestedClasses()
         getTopics()
     }
 
+
+
+
     const handleTopicFilter = () => {
         let tempArr = [...mainTopicArr];
-        let tempClassesArr = [...classesArr.filter(elx => elx.checked)]
+        let tempClassesArr = [...nestedClassArr.filter(elx => elx.classArr.some(elz=>elz.checked))]
         let tempSubjectArr = [...subjectArr.filter(elx => elx.checked)]
 
-        tempArr = tempArr.filter(ely => tempClassesArr.some(ele => ele._id == ely.classId) || tempSubjectArr.some(ele => ele._id == ely.subjectId));
-        console.log(tempArr)
+        tempArr = tempArr.filter(ely => tempSubjectArr.some(ele=>ele._id==ely.subjectId));
+        tempArr = tempArr.filter(ely => tempClassesArr.some(elz=>elz.classArr.some(el=>el._id==ely.classId)) || tempSubjectArr.some(ele=>ele._id==ely.subjectId));
+        
+        // console.log(tempArr)
         setTopicArr([...tempArr])
     }
 
@@ -194,7 +258,7 @@ export default function AllTeacher(props) {
         handleOnint()
     }, [focused])
 
-    const multiSliderValuesChange = values => { console.log(values); setMultiSliderValue(values) };
+    const multiSliderValuesChange = values => { setMultiSliderValue(values) };
 
 
 
@@ -327,20 +391,31 @@ export default function AllTeacher(props) {
         setIsLoading(false)
     }
 
-    const handleSubjectSelection = (id) => {
-        setSubjectArr(prevState => {
-            let tempIndex = prevState.findIndex(el => el._id == id);
-            if (tempIndex != -1)
-                prevState[tempIndex].checked = !prevState[tempIndex].checked
-            return [...prevState]
+    const handleSubjectSelection = (index,id) => {
+        let tempArr = [...subjectArr];
+        tempArr = tempArr.map((el, i) => {
+            if (i == index) {
+
+                el.checked = !el.checked
+            }
+            else {
+                el.checked = false
+            }
+            return el
         })
+        setSubjectArr([...tempArr])
+        let tempClassesArr=[...mainNestedClassArr];
+        console.log(tempClassesArr)
+        tempClassesArr=tempClassesArr.filter(el=>el._id==id);
+        setNestedClassArr([...tempClassesArr])
         handleTopicFilter()
     }
-    const handleClassSelection = (id) => {
-        setClassesArr(prevState => {
-            let tempIndex = prevState.findIndex(el => el._id == id);
+    const handleClassSelection = (subjectIndex,id) => {
+        console.log(subjectIndex,id)
+        setNestedClassArr(prevState => {
+            let tempIndex = prevState[subjectIndex].classArr.findIndex(el => el._id == id);
             if (tempIndex != -1)
-                prevState[tempIndex].checked = !prevState[tempIndex].checked
+                prevState[subjectIndex].classArr[tempIndex].checked = !prevState[subjectIndex].classArr[tempIndex].checked
             return [...prevState]
         })
         handleTopicFilter()
@@ -357,13 +432,11 @@ export default function AllTeacher(props) {
 
     const handleBookmarkTeacher = async (id) => {
         try {
-            setIsrefreshing(true)
             const { data: res } = await BookmarkTeacher(id);
             if (res) {
                 setSuccessAlert(true)
                 setAlertText(`${res.message}`)
                 handleOnint()
-                setIsrefreshing(false)
             }
 
         } catch (error) {
@@ -372,39 +445,39 @@ export default function AllTeacher(props) {
         }
     }
 
-    const renderItem = ({ item, index }) => {
-        return (
-            <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("TeacherProfile", { data: item._id })}>
+    // const renderItem = ({ item, index }) => {
+    //     return (
+    //         <Pressable style={styles.cardContainer} onPress={() => props.navigation.navigate("TeacherProfile", { data: item._id })}>
 
-                <View style={styles.textCardContainer}>
-                    <View style={styles.teacherImgContainer}>
-                        <Image style={styles.teacherImg} source={{ uri: item?.profileImage ? generateImageUrl(item?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
-                    </View>
-                    <View>
-                        <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                            <Text style={styles.textCardMainHeading}>{item?.name}
-                            </Text>
-                            {
-                                item.onlineToggle == true &&
-                                <Text style={{ height: 5, width: 5, marginLeft: 8, backgroundColor: colorObj.primarColor, borderRadius: 50 }}></Text>
+    //             <View style={styles.textCardContainer}>
+    //                 <View style={styles.teacherImgContainer}>
+    //                     <Image style={styles.teacherImg} source={{ uri: item?.profileImage ? generateImageUrl(item?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} />
+    //                 </View>
+    //                 <View>
+    //                     <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+    //                         <Text style={styles.textCardMainHeading}>{item?.name}
+    //                         </Text>
+    //                         {
+    //                             item.onlineToggle == true &&
+    //                             <Text style={{ height: 5, width: 5, marginLeft: 8, backgroundColor: colorObj.primarColor, borderRadius: 50 }}></Text>
 
-                            }
-                        </View>
-                        <Text style={styles.textCardMainSubHeading1}>{item?.enquiryObj?.classesArr?.reduce((acc, el) => acc + el.className + ',', '')}</Text>
-                        <Text style={styles.textCardMainSubHeading2}>{item?.enquiryObj?.experience} Year Experience</Text>
-                    </View>
-                    <Pressable onPress={() => handleBookmarkTeacher(item?._id)} style={{ position: 'absolute', top: 5, right: 10 }} >
-                        {item?.enquiryObj?.bookmarked ?
-                            <Ionicons name="bookmark" size={14} color={colorObj?.primarColor} />
-                            :
-                            <Ionicons name="bookmark-outline" size={14} color={colorObj?.primarColor} />
+    //                         }
+    //                     </View>
+    //                     <Text style={styles.textCardMainSubHeading1}>{item?.enquiryObj?.classesArr?.reduce((acc, el) => acc + el.className + ',', '')}</Text>
+    //                     <Text style={styles.textCardMainSubHeading2}>{item?.enquiryObj?.experience} Year Experience</Text>
+    //                 </View>
+    //                 <Pressable onPress={() => handleBookmarkTeacher(item?._id)} style={{ position: 'absolute', top: 5, right: 10 }} >
+    //                     {item?.enquiryObj?.bookmarked ?
+    //                         <Ionicons name="bookmark" size={14} color={colorObj?.primarColor} />
+    //                         :
+    //                         <Ionicons name="bookmark-outline" size={14} color={colorObj?.primarColor} />
 
-                        }
-                    </Pressable>
-                </View>
-            </Pressable>
-        )
-    }
+    //                     }
+    //                 </Pressable>
+    //             </View>
+    //         </Pressable>
+    //     )
+    // }
 
     const renderTeacherItem = ({ item, index }) => {
         return (
@@ -445,12 +518,9 @@ export default function AllTeacher(props) {
 
                             <Text style={[styles.button, { backgroundColor: '#085A4E', color: '#fff', paddingHorizontal: 15, paddingVertical: 3, borderRadius: 5 }]}>Enquire</Text>
                         </Pressable>
-                        {/* <Pressable onPress={() => props.navigation.navigate("TeacherProfile", { data: item._id })}>
 
-                            <Text style={[styles.button, { backgroundColor: '#085A4E', color: '#fff', paddingHorizontal: 15, paddingVertical: 3, borderRadius: 5 }]}>View Profile</Text>
-                        </Pressable> */}
                     </View>
-                    <View style={{ position: 'absolute', top: 5, right: 10 }} >
+                    <Pressable onPress={() => handleBookmarkTeacher(item?._id)} style={{ position: 'absolute', top: 5, right: 10 }} >
                         {item?.enquiryObj?.bookmarked ?
                             <Ionicons name="bookmark" size={14} color={colorObj?.primarColor} />
 
@@ -459,7 +529,7 @@ export default function AllTeacher(props) {
                             <Ionicons name="bookmark-outline" size={14} color={colorObj?.primarColor} />
 
                         }
-                    </View>
+                    </Pressable>
                 </View>
 
 
@@ -477,15 +547,15 @@ export default function AllTeacher(props) {
         let filteredClassesArr = [...classesArr.filter(el => el.checked)]
         let filteredSubjectArr = [...subjectArr.filter(el => el.checked)]
         let tempArr = [...MainTeachersArr];
-        console.log(JSON.stringify(MainTeachersArr, null, 2))
+        // console.log(JSON.stringify(MainTeachersArr, null, 2))
         if (filteredClassesArr.length > 0) {
-            console.log("class filter")
+            // console.log("class filter")
 
             tempArr = tempArr.filter(el => el?.enquiryObj?.classesArr?.some(elx => filteredClassesArr.some(ely => ely._id == elx.classId)))
 
         }
         if (filteredSubjectArr.length > 0) {
-            console.log("subject filter")
+            // console.log("subject filter")
             tempArr = tempArr.filter(el => el?.enquiryObj?.classesArr?.some(elx => elx.subjectArr.some(elz => filteredSubjectArr.some(elm => elm._id == elz.subjectId))))
         }
 
@@ -499,8 +569,9 @@ export default function AllTeacher(props) {
         }
 
 
-        console.log(tempArr)
+        // console.log(tempArr)
         setTeachersArr([...tempArr])
+        setInnerFilteredTeacherArr([...tempArr])
         filterBottomSheetRef.current.close()
     }
 
@@ -511,10 +582,10 @@ export default function AllTeacher(props) {
         setTeachersArr([...tempArr])
     }
     const onDayPress = day => {
-        console.log(day, "@@@@@@@@")
-        console.log(selectedDate)
+        // console.log(day, "@@@@@@@@")
+        // console.log(selectedDate)
         let tempDate = day.dateString;
-        console.log(tempDate)
+        // console.log(tempDate)
         setSelectedDate(day.dateString)
         // setSelectedSlotDay(new Date(tempDate).getDay())
         handleDaySelect(new Date(tempDate).getDay())
@@ -531,10 +602,10 @@ export default function AllTeacher(props) {
     }
 
     const handleDaySelect = (tempdayIndex) => {
-        console.log(tempdayIndex)
+        // console.log(tempdayIndex)
         let tempArr = [...selectedTeacherObj.enquiryObj.timeslots];
         let dayIndex = tempArr.findIndex((el, i) => i == tempdayIndex);
-        console.log(dayIndex)
+        // console.log(dayIndex)
         if (dayIndex != -1) {
             setSlotsArr([...tempArr[dayIndex].slotArr])
             setSelectedSlotDay(tempArr[dayIndex].day)
@@ -551,8 +622,51 @@ export default function AllTeacher(props) {
     //     }
     // }
 
-    const handleSubjectSelectionOuterFilter = (obj) => {
-        setOuterSelectedSubjectArr(obj)
+    const handleClassSelectionOuterFilter = (obj) => {
+        setOuterSelectedClassArr(obj)
+
+    }
+
+    const handleOuterClassFilter = () => {
+        console.log(outerSelectedClassArr)
+        let tempTeacherArr = [...MainTeachersArr]
+        if (outerSelectedClassArr.length > 0) {
+
+            tempTeacherArr = tempTeacherArr.filter(el => outerSelectedClassArr.some(elx => el.enquiryObj.classesArr.some(ely => ely.classId == elx)))
+            setTeachersArr([...tempTeacherArr])
+            setInnerFilteredTeacherArr([...tempTeacherArr])
+            let tempTopicArr = [...mainTopicArr];
+            tempTopicArr = tempTopicArr.filter(el => outerSelectedClassArr.some(elx => elx == el.classId))
+            setTopicArr([...tempTopicArr])
+        }
+        else {
+            setTeachersArr([...tempTeacherArr])
+            setInnerFilteredTeacherArr([...tempTeacherArr])
+            setTopicArr([...mainTopicArr])
+        }
+    }
+
+    const handleTopicOuterFilter = (obj) => {
+        setOuterTopicArr(obj)
+    }
+
+
+    const handleBtnFilter = (value) => {
+        let tempTeacherArr = [...innerFilteredTeacherArr]
+        if (value == "All") {
+            setTeachersArr([...tempTeacherArr])
+
+        }
+        else if (value == "Online") {
+            tempTeacherArr = tempTeacherArr.filter(el => el.onlineToggle)
+            setTeachersArr([...tempTeacherArr])
+        }
+        else {
+            tempTeacherArr = tempTeacherArr.filter((el, i) => i < 10).sort((a, b) => b?.profileVisit - a?.profileVisit)
+            setTeachersArr([...tempTeacherArr])
+
+        }
+        setSelectedNewFilter(value)
     }
 
     return (
@@ -600,10 +714,10 @@ export default function AllTeacher(props) {
                                 }
                             />
                         </View> */}
-                        <View style={[styles.flexRow,{marginTop:25,alignItems:'center',justifyContent:'space-between'}]}>
+                        <View style={[styles.flexRow, { marginTop: 25, alignItems: 'center', justifyContent: 'space-between' }]}>
 
                             <SectionedMultiSelect
-                                items={subjectArr}
+                                items={classesArr}
                                 IconRenderer={MatIcon}
                                 uniqueKey="_id"
                                 itemFontFamily={{ fontFamily: 'Montserrat-SemiBold' }}
@@ -613,11 +727,12 @@ export default function AllTeacher(props) {
                                 confirmFontFamily={{ fontFamily: "Montserrat-SemiBold" }}
                                 showChips={false}
                                 alwaysShowSelectText={true}
+                                onConfirm={() => handleOuterClassFilter()}
                                 selectText="Subcategory"
-                                
-                                onSelectedItemsChange={handleSubjectSelectionOuterFilter}
-                                selectedItems={outerSelectedSubjectArr}
-                                styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282", borderWidth: 0.7, paddingVertical: 10, paddingHorizontal: 10,width:wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
+
+                                onSelectedItemsChange={handleClassSelectionOuterFilter}
+                                selectedItems={outerSelectedClassArr}
+                                styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282", borderWidth: 0.7, paddingVertical: 10, paddingHorizontal: 10, width: wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
 
                             />
                             <SectionedMultiSelect
@@ -632,39 +747,29 @@ export default function AllTeacher(props) {
                                 showChips={false}
                                 alwaysShowSelectText={true}
                                 selectText="Topics"
-                                
-                                onSelectedItemsChange={handleSubjectSelectionOuterFilter}
-                                selectedItems={outerSelectedSubjectArr}
-                                styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282", borderWidth: 0.7, paddingVertical: 10, paddingHorizontal: 10,width:wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
+                                onSelectedItemsChange={handleTopicOuterFilter}
+                                selectedItems={outerTopicArr}
+                                styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282", borderWidth: 0.7, paddingVertical: 10, paddingHorizontal: 10, width: wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
 
                             />
                         </View>
-                        {/* <SectionedMultiSelect
-                                items={subjectArr}
-                                IconRenderer={MatIcon}
-                                uniqueKey="_id"
-                                showChips={false}
-                                selectText="Subcategory"
-                                onSelectedItemsChange={handleSubjectSelectionOuterFilter}
-                                selectedItems={outerSelectedSubjectArr}
-                            /> */}
-                        {/* <Text style={[styles.title, { marginBottom: 10, marginTop: 10 }]}>Instructors Online</Text> */}
+
                         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
 
-                            <Pressable onPress={() => setSelectedNewFilter("All")} style={[styles.newContainer, selectedNewFilter != "All" && { backgroundColor: '#f0faf9' }]}>
+                            <Pressable onPress={() => handleBtnFilter("All")} style={[styles.newContainer, selectedNewFilter != "All" && { backgroundColor: '#f0faf9' }]}>
                                 <Text style={[styles.newcategoryName, selectedNewFilter != "All" && { color: '#828282' }]}>All</Text>
                             </Pressable>
-                            <Pressable onPress={() => setSelectedNewFilter("Online")} style={[styles.newContainer, selectedNewFilter != "Online" && { backgroundColor: '#f0faf9' }]}>
+                            <Pressable onPress={() => handleBtnFilter("Online")} style={[styles.newContainer, selectedNewFilter != "Online" && { backgroundColor: '#f0faf9' }]}>
                                 <Text style={[styles.newcategoryName, selectedNewFilter != "Online" && { color: '#828282' }]}>Online</Text>
                             </Pressable>
-                            <Pressable onPress={() => setSelectedNewFilter("Top Tutors")} style={[styles.newContainer, selectedNewFilter != "Top Tutors" && { backgroundColor: '#f0faf9' }]}>
+                            <Pressable onPress={() => handleBtnFilter("Top Tutors")} style={[styles.newContainer, selectedNewFilter != "Top Tutors" && { backgroundColor: '#f0faf9' }]}>
                                 <Text style={[styles.newcategoryName, selectedNewFilter != "Top Tutors" && { color: '#828282' }]}>Top Tutors</Text>
                             </Pressable>
                         </View>
                     </>
                 }
                 contentContainerStyle={{ paddingBottom: 50 }}
-                data={TeachersArr.filter(el => el.onlineToggle)}
+                data={TeachersArr}
                 renderItem={renderTeacherItem}
                 keyExtractor={(item, index) => `${index}`}
                 ListEmptyComponent={
@@ -876,9 +981,9 @@ export default function AllTeacher(props) {
                                                         <Checkbox
                                                             color={colorObj.primarColor}
                                                             status={item.checked ? "checked" : "unchecked"}
-                                                            onPress={() => handleSubjectSelection(item._id)}
+                                                            onPress={() => handleSubjectSelection(index,item._id)}
                                                         />
-                                                        <Pressable onPress={() => handleSubjectSelection(item._id)} style={{ paddingVertical: 5, width: '100%' }} >
+                                                        <Pressable onPress={() => handleSubjectSelection(index,item._id)} style={{ paddingVertical: 5, width: '100%' }} >
                                                             <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>{item.name}</Text>
                                                         </Pressable>
 
@@ -893,26 +998,38 @@ export default function AllTeacher(props) {
                                 {activeFilterContainer == "class" &&
 
                                     <FlatList
-                                        data={classesArr}
+                                        data={nestedClassArr}
                                         keyExtractor={(item, index) => `${item._id}`}
                                         scrollEnabled={true}
                                         contentContainerStyle={{ paddingBottom: 100, marginTop: 20 }}
 
                                         renderItem={({ item, index }) => {
                                             return (
-                                                <View>
-                                                    <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 10, justifyContent: 'space-between', }]}>
-                                                        <Checkbox
-                                                            color={colorObj.primarColor}
-                                                            status={item.checked ? "checked" : "unchecked"}
-                                                            onPress={() => handleClassSelection(item._id)}
-                                                        />
-                                                        <Pressable onPress={() => handleClassSelection(item._id)} style={{ paddingVertical: 5, width: '100%' }} >
-                                                            <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>{item.name}</Text>
+                                                <View style={{paddingHorizontal:20}}>
+                                                    <Text style={[styles.checkBoxText, { textAlign: 'left',fontFamily:'Montserrat-Medium' }]}>{item?.name}</Text>
+                                                    <FlatList
+                                                        scrollEnabled={false}
+                                                        data={item.classArr}
+                                                        keyExtractor={(item,index)=>`${item._id}`}
+                                                        renderItem={({ item: itemX, index: indexX }) => {
+                                                            return (
+                                                                <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 3, justifyContent: 'space-between', }]}>
 
-                                                        </Pressable>
+                                                                    <Checkbox
+                                                                        color={colorObj.primarColor}
+                                                                        status={itemX.checked ? "checked" : "unchecked"}
+                                                                        onPress={() => handleClassSelection(index,itemX._id)}
+                                                                    />
+                                                                    <Pressable onPress={() => handleClassSelection(index,itemX._id)} style={{ paddingVertical: 5, width: '100%' }} >
+                                                                        <Text style={[styles.checkBoxText, { textAlign: 'left',fontSize:12 }]}>{itemX.name}</Text>
 
-                                                    </View>
+                                                                    </Pressable>
+                                                                </View>
+
+                                                            )
+                                                        }}
+                                                    />
+
 
                                                 </View>
                                             )

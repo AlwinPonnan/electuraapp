@@ -5,7 +5,7 @@ import { colorObj, light_colors } from '../globals/colors';
 import Icon from 'react-native-vector-icons/Ionicons'
 import NavBar from '../components/Navbar';
 import { getAllCategory } from '../Services/Category';
-import { getAllCoursesSubjectWise, getAllForUsersHomePage } from '../Services/Course';
+import { getAllCoursesSubjectWise, getAllCoursesSubjectWiseClass, getAllForUsersHomePage } from '../Services/Course';
 import { useIsFocused } from '@react-navigation/core';
 import { generateImageUrl } from '../globals/utils';
 import { getAllSubjects } from '../Services/Subjects';
@@ -25,6 +25,9 @@ export default function Courses(props) {
     const [subjectWiseCoursesArr, setSubjectWiseCoursesArr] = useState([]);
     const [mainCourseArr, setMainCourseArr] = useState([]);
 
+
+    const [classWiseCoursesArr, setClassWiseCoursesArr] = useState([]);
+    const [mainClassWiseCoursesArr, setMainClassWiseCoursesArr] = useState([]);
     const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
 
     const [loading, setLoading] = useContext(loadingContext);
@@ -36,18 +39,8 @@ export default function Courses(props) {
 
     const [alertText, setAlertText] = alertTextArr
 
-    const [categoryArr, setCategoryArr] = useState([]);
 
-    const getCategories = async () => {
-        try {
-            const { data: res } = await getAllCategory();
-            if (res.success) {
-                setCategoryArr(res.data)
-            }
-        } catch (error) {
-            console.error(error)
-        }
-    }
+   
 
     const getSubjects = async () => {
         try {
@@ -111,6 +104,26 @@ export default function Courses(props) {
                 console.log(JSON.stringify(tempArr, null, 2))
 
                 setSubjectWiseCoursesArr([...tempArr])
+                setIsrefreshing(false)
+            }
+        } catch (error) {
+            console.error(error)
+            setIsrefreshing(false)
+        }
+    }
+
+    const getClassWise = async (id) => {
+        try {
+            setIsrefreshing(true)
+            const { data: res } = await getAllCoursesSubjectWiseClass(id);
+            if (res.success) {
+                let tempArr = res.data;
+                tempArr = tempArr.filter(el => el.courseArr.length >= 1)
+                console.log(JSON.stringify(tempArr, null, 2))
+
+                setMainClassWiseCoursesArr([...tempArr])
+                setClassWiseCoursesArr([...tempArr])
+
                 setIsrefreshing(false)
             }
         } catch (error) {
@@ -195,11 +208,7 @@ export default function Courses(props) {
 
 
     const handleSubjectSelection = async (id) => {
-        // let tempArr = [...mainCourseArr];
-        // console.log(JSON.stringify(tempArr, null, 2), "asddasdsa")
-        // tempArr = tempArr.filter(el => el?.classesArr?.some(ele => ele.subjectArr.some(elx => elx.subjectId == id)))
-        // setCourseArr([...tempArr])
-        // setSelectedSubjectId(id)
+      
 
         if (id == "All") {
             setSelectedSubjectId(id)
@@ -212,6 +221,7 @@ export default function Courses(props) {
             tempArr = tempArr.filter(el => el?.classesArr?.some(ele => ele.subjectArr.some(elx => elx.subjectId == id)))
             setCourseArr([...tempArr])
             setSelectedSubjectId(id)
+            getClassWise(id)
         }
     }
 
@@ -234,7 +244,7 @@ export default function Courses(props) {
 
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                             <Text style={styles.headingAboveCard}>Recommended Courses</Text>
-                            <Pressable onPress={() => props.navigation.navigate("AllCourses")}>
+                            <Pressable onPress={() => props.navigation.navigate("AllCourses", { filterId: "All", isSubjectId: false })}>
                                 <Text style={styles.viewAllText}>View All</Text>
                             </Pressable>
                         </View>
@@ -268,13 +278,13 @@ export default function Courses(props) {
                         />
 
                         <FlatList
-                            data={subjectWiseCoursesArr}
+                            data={selectedSubjectId == "All" ? subjectWiseCoursesArr : classWiseCoursesArr}
                             renderItem={({ item, index }) => {
                                 return (
                                     <View>
                                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                                             <Text style={styles.headingAboveCard}>{item?.name}</Text>
-                                            <Pressable onPress={() => props.navigation.navigate("AllCourses")}>
+                                            <Pressable onPress={() => props.navigation.navigate("AllCourses",{ filterId: item._id, isSubjectId: selectedSubjectId != "All" })}>
                                                 <Text style={styles.viewAllText}>View All</Text>
                                             </Pressable>
                                         </View>
