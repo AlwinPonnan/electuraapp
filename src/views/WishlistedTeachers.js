@@ -50,11 +50,11 @@ export default function WishListedTeachers(props) {
 
     const removeProductFromWishList = async (id) => {
         try {
-            alert("removing")
+            // alert("removing")
             const { data: res } = await BookmarkTeacher(id);
             if (res.success) {
                 console.log(res.data)
-                // handleOnit()
+                handleOnit()
             }
         } catch (error) {
             console.error(error)

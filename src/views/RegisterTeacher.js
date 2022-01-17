@@ -15,7 +15,7 @@ import { Picker } from '@react-native-picker/picker';
 import { getAllCategory } from '../Services/Category';
 import { useIsFocused } from '@react-navigation/core';
 import { RadioButton } from 'react-native-paper';
-import { getAllClasses } from '../Services/Classses';
+import { getAllClasses, getAllNestedCategories } from '../Services/Classses';
 import { Checkbox } from 'react-native-paper';
 
 import { nanoid } from 'nanoid/non-secure'
@@ -32,7 +32,7 @@ export default function RegisterTeacher(props) {
     const [onlineIsSelected, setOnlineIsSelected] = useState(false);
     const [offlineIsSelected, setOfflineIsSelected] = useState(false);
 
-    const [classesArr, setClassesArr] = useState([]);
+    const [subjectArr, setSubjectArr] = useState([]);
     const [certificate, setCertificate] = useState();
 
     const [name, setName] = useState('');
@@ -83,26 +83,28 @@ export default function RegisterTeacher(props) {
         setIsLoading(true)
         try {
 
-            let classesFilteredArr = classesArr.filter(el => el.checked).map(el => {
+            let subjectFilteredArr = subjectArr.filter(el => el.checked).map(el => {
                 let obj = {
                     ...el,
-                    classId: el._id,
-                    subjectArr: el.subjectArr.filter(ele => ele.checked).map(ele => {
-                        ele.subjectId = ele.subjectId
+                    subjectId: el._id,
+                    classArr: el.classArr.filter(ele => ele.checked).map(ele => {
+                        ele.classId = ele._id
                         return ele
                     })
                 }
                 return obj
             })
             // let categoryFilteredArr = categoryArr.filter(el => el.checked == true).map(el => { return { categoryId: el._id } })
-            console.log(JSON.stringify(classesFilteredArr, null, 2))
-            if (validId && validId?.name != "" && name != "" && classesFilteredArr.length > 0) {
+            console.log(JSON.stringify(subjectFilteredArr, null, 2))
+            if (validId && validId?.name != "" && name != "" && subjectFilteredArr.length > 0) {
                 let userToken = await getDecodedToken()
                 let obj = {
                     name,
                     email,
                     userId: userToken.userId,
-                    classesArr: classesFilteredArr,
+                    classesArr: [],
+                    subjectArr: subjectFilteredArr,
+                
                 }
                 const { data: res } = await newEnquiry(obj);
                 if (res.success) {
@@ -182,7 +184,7 @@ export default function RegisterTeacher(props) {
 
     const getClasses = async () => {
         try {
-            let { data: res, status: statusCode } = await getAllClasses();
+            let { data: res, status: statusCode } = await getAllNestedCategories();
             console.log(statusCode)
             if (statusCode == 200 || statusCode == 304) {
 
@@ -192,7 +194,7 @@ export default function RegisterTeacher(props) {
                         label: el.name,
                         value: el._id,
                         addMore: false,
-                        subjectArr: el.subjectArr.map(ele => {
+                        classArr: el.classArr.map(ele => {
                             let tempObj = {
                                 ...ele,
                                 checked: false,
@@ -207,7 +209,7 @@ export default function RegisterTeacher(props) {
                     return obj
                 })
                 // console.log(JSON.stringify(tempArr, null, 2), "classes")
-                setClassesArr(tempArr)
+                setSubjectArr(tempArr)
             }
         }
         catch (err) {
@@ -215,40 +217,31 @@ export default function RegisterTeacher(props) {
         }
     }
 
-    const setClassSelected = (id) => {
+    const setSubjectSelected = (id) => {
 
-        let tempArr = classesArr.map(el => {
+        let tempArr = subjectArr.map(el => {
             if (el._id == id) {
                 el.checked = !el.checked
             }
             return el
         })
-        setClassesArr(tempArr)
+        setSubjectArr(tempArr)
         console.log(tempArr, "temp arr")
     }
 
-    const setSelectedSubject = (classId, subjectId) => {
-        setClassesArr(prevState => {
-            let index = prevState.findIndex(el => el._id == classId);
+    const setSelectedClass = (classId, subjectId) => {
+        setSubjectArr(prevState => {
+            let index = prevState.findIndex(el => el._id == subjectId);
             if (index != -1) {
-                let subjectIndex = prevState[index].subjectArr.findIndex(ele => ele.subjectId == subjectId)
-                if (subjectIndex != -1)
-                    prevState[index].subjectArr[subjectIndex].checked = !prevState[index].subjectArr[subjectIndex].checked;
+                let classIndex = prevState[index].classArr.findIndex(ele => ele._id == classId)
+                if (classIndex != -1)
+                    prevState[index].classArr[classIndex].checked = !prevState[index].classArr[classIndex].checked;
 
             }
             return [...prevState]
         })
     }
-    // const setCategorySelected = (id) => {
-
-    //     let tempArr = categoryArr.map(el => {
-    //         if (el._id == id) {
-    //             el.checked = !el.checked
-    //         }
-    //         return el
-    //     })
-    //     setCategoryArr(tempArr)
-    // }
+  
 
 
     const pickImageValidId = async () => {
@@ -406,7 +399,7 @@ export default function RegisterTeacher(props) {
 
 
                         <FlatList
-                            data={classesArr}
+                            data={subjectArr}
                             keyExtractor={(item, index) => `${item._id}`}
                             renderItem={({ item, index }) => {
                                 return (
@@ -417,11 +410,11 @@ export default function RegisterTeacher(props) {
                                                 color={colorObj.primarColor}
                                                 status={item.checked ? "checked" : "unchecked"}
                                                 onPress={() => {
-                                                    setClassSelected(item._id);
+                                                    setSubjectSelected(item._id);
                                                 }}
                                             />
                                             <TouchableOpacity style={{ width: wp(82), paddingVertical: 5, }} onPress={() => {
-                                                setClassSelected(item._id);
+                                                setSubjectSelected(item._id);
                                             }}>
                                                 <Text style={{ fontFamily: 'Montserrat-Regular' }}>{item.name}</Text>
                                             </TouchableOpacity>
@@ -429,7 +422,7 @@ export default function RegisterTeacher(props) {
                                         </View>
                                         {item.checked &&
                                             <FlatList
-                                                data={item.subjectArr}
+                                                data={item.classArr}
                                                 keyExtractor={(item, index) => `${item._id}`}
                                                 renderItem={({ item: itemX, index: indexX }) => {
                                                     return (
@@ -438,13 +431,13 @@ export default function RegisterTeacher(props) {
                                                                 color={colorObj.primarColor}
                                                                 status={itemX.checked ? "checked" : "unchecked"}
                                                                 onPress={() => {
-                                                                    setSelectedSubject(item._id, itemX.subjectId);
+                                                                    setSelectedClass(itemX._id,item._id);
                                                                 }}
                                                             />
                                                             <TouchableOpacity style={{ width: wp(82), paddingVertical: 5, }} onPress={() => {
-                                                                setSelectedSubject(item._id, itemX.subjectId);
+                                                                setSelectedClass(itemX._id,item._id);
                                                             }}>
-                                                                <Text style={{ fontFamily: 'Montserrat-Regular' }}>{itemX.subjectName}</Text>
+                                                                <Text style={{ fontFamily: 'Montserrat-Regular' }}>{itemX.name}</Text>
                                                             </TouchableOpacity>
                                                         </View>
                                                     )

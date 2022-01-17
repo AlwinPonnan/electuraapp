@@ -492,14 +492,17 @@ export default function AccountEdit(props) {
             else {
 
                 let tempArr=[]
-                selectedQulifications.forEach(el=>{
-                    items.forEach(elx=>{
-                        let index=elx.children.findIndex(elz=>elz.id==el)
-                        if(index!=-1){
-                            tempArr.push({name:elx.children[index].name,id:el})
-                        }
+                if(selectedQulifications?.length>0){
+
+                    selectedQulifications.forEach(el=>{
+                        items.forEach(elx=>{
+                            let index=elx.children.findIndex(elz=>elz.id==el)
+                            if(index!=-1){
+                                tempArr.push({name:elx.children[index].name,id:el})
+                            }
+                        })
                     })
-                })
+                }
                 let obj = {
                     name,
                     email,
@@ -578,10 +581,10 @@ export default function AccountEdit(props) {
                 setGenderIsMale(res?.data?.enquiryObj?.gender == "Male" ? true : false)
                 setRoleName(res.data.role)
 
-                let tempArr=res?.data?.enquiryObj?.qualificationArr;
-                tempArr=tempArr.map(el=>{
-                    let temp=items.find(elx=>elx.children.find)
-                })
+                // let tempArr=res?.data?.enquiryObj?.qualificationArr;
+                // tempArr=tempArr.map(el=>{
+                //     let temp=items.find(elx=>elx.children.find)
+                // })
 
                 setSelectedQulifications(res?.data?.enquiryObj?.qualificationArr.map(el=>el.id))
                 // console.log(JSON.stringify(res.data, null, 2))

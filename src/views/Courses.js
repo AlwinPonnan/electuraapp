@@ -101,7 +101,7 @@ export default function Courses(props) {
             if (res.success) {
                 let tempArr = res.data;
                 tempArr = tempArr.filter(el => el.courseArr.length >= 1)
-                console.log(JSON.stringify(tempArr, null, 2))
+                console.log(JSON.stringify(tempArr,"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", null, 2))
 
                 setSubjectWiseCoursesArr([...tempArr])
                 setIsrefreshing(false)
@@ -218,7 +218,7 @@ export default function Courses(props) {
 
             let tempArr = [...mainCourseArr];
             console.log(JSON.stringify(tempArr, null, 2), "asddasdsa")
-            tempArr = tempArr.filter(el => el?.classesArr?.some(ele => ele.subjectArr.some(elx => elx.subjectId == id)))
+            tempArr = tempArr.filter(el => el?.subjectArr.some(elx => elx.subjectId == id))
             setCourseArr([...tempArr])
             setSelectedSubjectId(id)
             getClassWise(id)

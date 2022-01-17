@@ -64,6 +64,15 @@ export default function MainDrawer() {
             alert(error.message);
         }
     };
+
+
+    const LinkingAbout=()=>{
+        Linking.openURL("https://www.electura.co/aboutus")
+    }
+    const LinkingPrivacy=()=>{
+        Linking.openURL("https://www.electura.co/privacy_policy")
+    }
+    
     ////////////////////custom user drawer 
     function CustomDrawerContent(props) {
 
@@ -77,9 +86,9 @@ export default function MainDrawer() {
         return (
             <DrawerContentScrollView {...props}>
                 <View style={styles.profilePicContainer}>
-                    <Image source={!profileData.profileImage ? { uri: generateImageUrl(profileData.profileImage) } : require('../../../assets/images/user.png')} style={styles.profilePic} />
+                    <Image source={profileData.profileImage ? { uri: generateImageUrl(profileData.profileImage) } : require('../../../assets/images/user.png')} style={styles.profilePic} />
                     {
-                        profileData.name == "" ?
+                        profileData.name == "" || !profileData.name ?
                             <Text style={styles.userName}>Hi, User </Text>
                             :
                             <View>
@@ -106,10 +115,10 @@ export default function MainDrawer() {
                     }
 
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="pencil-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Blogs</Text></TouchableOpacity>
-                    <TouchableOpacity style={styles.DrawerItem}><Icon name="information-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> About Us</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.DrawerItem}  onPress={()=>LinkingAbout()}><Icon name="information-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> About Us</Text></TouchableOpacity>
                     <TouchableOpacity style={styles.DrawerItem} onPress={() => props.navigation.navigate('Contact')}><MatIcon name="phone-message-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Contact Us</Text></TouchableOpacity>
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="help-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> FAQs</Text></TouchableOpacity>
-                    <TouchableOpacity style={styles.DrawerItem}><Icon name="document-text-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Policies</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.DrawerItem} onPress={()=>LinkingPrivacy()} ><Icon name="document-text-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Policies</Text></TouchableOpacity>
 
                     <TouchableOpacity style={styles.DrawerItem} onPress={() => onShare()}><Icon name="link-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Referal Code is <Text style={{ fontFamily: "OpenSans-Bold", }}> {profileData?.referalCode} </Text></Text></TouchableOpacity>
                     <TouchableOpacity onPress={() => { handleLogout() }} style={styles.DrawerItem}><Icon name="log-out-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Log Out</Text></TouchableOpacity>

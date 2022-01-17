@@ -590,7 +590,7 @@ export default function TeacherProfile(props) {
             </View>
             <FlatList
                 horizontal
-                data={teacherObj?.enquiryObj?.classesArr}
+                data={teacherObj?.enquiryObj?.subjectArr}
                 contentContainerStyle={{ paddingHorizontal: 10 }}
                 renderItem={({ item, index }) => {
                     return (
@@ -599,10 +599,10 @@ export default function TeacherProfile(props) {
                                 <View>
 
                                     <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                                        <Text style={[styles.textCardMainHeading, { color: '#000000', fontSize: 14, fontFamily: "Montserrat-SemiBold" }]}>{item?.className}</Text>
+                                        <Text style={[styles.textCardMainHeading, { color: '#000000', fontSize: 14, fontFamily: "Montserrat-SemiBold" }]}>{item?.subjectName}</Text>
                                     </View>
 
-                                    <Text style={[styles.textCardMainSubHeading1, { color: '#7E7E7E', marginTop: 7, fontFamily: 'Montserrat-Regular', fontSize: 10 }]}>{item?.subjectArr.reduce((acc,el)=>acc+el.subjectName+',','')}</Text>
+                                    <Text style={[styles.textCardMainSubHeading1, { color: '#7E7E7E', marginTop: 7, fontFamily: 'Montserrat-Regular', fontSize: 10 }]}>{item?.classArr.reduce((acc,el)=>acc+el.className+',','')}</Text>
                                 </View>
 
                             </View>
@@ -610,7 +610,7 @@ export default function TeacherProfile(props) {
                     )
                 }}
                 ListEmptyComponent={
-                    <Text style={{ fontFamily: 'RedHatText-Regular', padding: 10 }}>Currently the teacher has not listed any courses</Text>
+                    <Text style={{ fontFamily: 'RedHatText-Regular', padding: 10 }}>No Data Found</Text>
                 }
                 showsHorizontalScrollIndicator={false}
                 keyExtractor={(item, index) => `${index}`}

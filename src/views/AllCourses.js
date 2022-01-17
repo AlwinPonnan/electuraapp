@@ -104,7 +104,7 @@ export default function AllCourses(props) {
                 })]
                 setMaxFees(maxCount)
                 setMinFees(minCount)
-                // console.log(JSON.stringify(temp, null, 2))
+                console.log(JSON.stringify(temp, null, 2),"@@@@@@@@@@@@@@@@")
                 setCourseArr(temp)
                 setMainCourseArr(temp)
                 setInnerFilteredCourseArr(temp)
@@ -135,7 +135,7 @@ export default function AllCourses(props) {
                 if (isSubjectSelected) {
                     console.log("inside,@@@@@@@@@@@@@", isSubjectSelected)
                     setOuterSelectedClassArr([`${previousSelectedSubjectId}`])
-                    setCourseArr([...arr.filter(el => el?.classesArr.some(elx => elx?.classId == previousSelectedSubjectId))])
+                    setCourseArr([...arr.filter(el => el?.subjectArr.some(elz=> elz.classArr.some(elx => elx?.classId == previousSelectedSubjectId)))])
                 }
                 setIsrefreshing(false)
             }
@@ -302,16 +302,18 @@ export default function AllCourses(props) {
         if (filteredClassesArr.length > 0) {
             console.log("class filter")
 
-            tempArr = tempArr.filter(el => el?.classesArr?.some(elx => filteredClassesArr.some(ely => ely._id == elx.classId)))
+            tempArr = tempArr.filter(el => el?.subjectArr?.some(elx => elx.classArr.some(elz => filteredClassesArr.some(elm => elm._id == elz.classId))))
+
 
         }
         if (filteredSubjectArr.length > 0) {
             console.log("subject filter")
-            tempArr = tempArr.filter(el => el?.classesArr?.some(elx => elx.subjectArr.some(elz => filteredSubjectArr.some(elm => elm._id == elz.subjectId))))
+            tempArr = tempArr.filter(el => el?.subjectArr?.some(elx => filteredSubjectArr.some(ely => ely._id == elx.subjectId)))
+        
         }
         if (filteredTopicArr.length > 0) {
             console.log("Topic filter")
-            tempArr = tempArr.filter(el => el?.classesArr?.some(elx => elx.subjectArr.some(elz => elz?.topicArr?.length > 0 ? elz.topicArr.some(elm => filteredTopicArr.some(elq => elq._id == elm.topicId)) : false)))
+            tempArr = tempArr.filter(el => el?.subjectArr?.some(elx => elx.classArr.some(elz => elz?.topicArr?.length > 0 ? elz.topicArr.some(elm => filteredTopicArr.some(elq => elq._id == elm.topicId)) : false)))
         }
 
         tempArr = tempArr.filter(el => el.price >= parseInt(multiSliderValue[0]) || el.price <= parseInt(multiSliderValue[1]))
@@ -335,7 +337,7 @@ export default function AllCourses(props) {
     const handleSearch = (e) => {
         let tempArr = [...mainCourseArr]
         let query = e.toLowerCase()
-        tempArr = tempArr.filter(el => el.name.toLowerCase().includes(query) || el?.classesArr?.some(ele => ele.subjectArr.some(elx => elx.subjectName.toLowerCase().includes(query))))
+        tempArr = tempArr.filter(el => el.name.toLowerCase().includes(query) || el?.subjectArr?.some(ele => ele.classArr.some(elx => elx.className.toLowerCase().includes(query))) || el?.subjectArr.some(elz=>elz.subjectName.toLowerCase().includes(query)))
         setCourseArr([...tempArr])
     }
 
@@ -427,7 +429,7 @@ export default function AllCourses(props) {
         let tempCourseArr = [...mainCourseArr]
         if (outerSelectedClassArr.length > 0) {
 
-            tempCourseArr = tempCourseArr.filter(el => outerSelectedClassArr.some(elx => el.classesArr.some(ely => ely.classId == elx)))
+            tempCourseArr = tempCourseArr.filter(el => outerSelectedClassArr.some(elx => el.subjectArr.some(elz=>elz.classArr.some(ely => ely.classId == elx))))
             setCourseArr([...tempCourseArr])
             setInnerFilteredCourseArr([...tempCourseArr])
             let tempTopicArr = [...mainTopicArr];
@@ -449,7 +451,7 @@ export default function AllCourses(props) {
         let tempCourseArr = [...mainCourseArr]
         if (outerTopicArr.length > 0) {
 
-            tempCourseArr = tempCourseArr.filter(el => outerTopicArr.some(elx => el?.classesArr.some(ely => ely?.subjectArr?.some(elz => elz?.topicArr?.length > 0 ? elz?.topicArr?.some(elm => elm.topicId == elx) : false))))
+            tempCourseArr = tempCourseArr.filter(el => outerTopicArr.some(elx => el?.subjectArr.some(ely => ely?.classArr?.some(elz => elz?.topicArr?.length > 0 ? elz?.topicArr?.some(elm => elm.topicId == elx) : false))))
             setCourseArr([...tempCourseArr])
             setInnerFilteredCourseArr([...tempCourseArr])
 

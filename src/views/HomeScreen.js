@@ -267,7 +267,7 @@ export default function HomeScreen(props) {
                                 <Text style={{ height: 5, width: 5, marginLeft: 8, backgroundColor: colorObj.primarColor, borderRadius: 50 }}></Text>
                             }
                         </View>
-                        <Text style={styles.textCardMainSubHeading1}>{item?.enquiryObj?.classesArr?.reduce((acc, el) => acc + el.className + ',', '')}</Text>
+                        <Text style={styles.textCardMainSubHeading1}>{ `${item?.enquiryObj?.subjectArr?.reduce((acc, el) => acc + el.subjectName + ',', '')}`.slice(0,20)}...</Text>
                         <Text style={styles.textCardMainSubHeading2}>{item?.enquiryObj?.experience ? item?.enquiryObj?.experience : 1} Year Experience</Text>
                     </View>
                     <Pressable onPress={() => handleBookmarkTeacher(item?._id)} style={{ position: 'absolute', top: 5, right: 10 }} >
@@ -372,7 +372,7 @@ export default function HomeScreen(props) {
                                                                     }
                                                                 </View>
 
-                                                                <Text style={styles.textCardMainSubHeading1}>{itemX?.enquiryObj?.classesArr?.reduce((acc, el) => acc + el.className + ',', '')}</Text>
+                                                                <Text style={styles.textCardMainSubHeading1}>{ `${itemX?.enquiryObj?.subjectArr?.reduce((acc, el) => acc + el.subjectName + ',', '')}`.slice(0,20)}...</Text>
                                                                 <Text style={styles.textCardMainSubHeading2}>{item?.enquiryObj?.experience ? item?.enquiryObj?.experience : 1}Year Experience</Text>
                                                             </View>
                                                             <Pressable onPress={() => handleBookmarkTeacher(itemX?._id)} style={{ position: 'absolute', top: 5, right: 10 }} >
@@ -392,7 +392,7 @@ export default function HomeScreen(props) {
                                 )
                             }}
                             ListEmptyComponent={
-                                <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>No Courses found</Text>
+                                <Text style={{ fontFamily: 'Montserrat-Regular', padding: 10 }}>No Teachers found</Text>
                             }
 
                             showsHorizontalScrollIndicator={false}

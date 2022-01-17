@@ -147,7 +147,7 @@ export default function AllTeacher(props) {
                 if (isSubjectSelected) {
                     console.log("inside,@@@@@@@@@@@@@", isSubjectSelected)
                     setOuterSelectedClassArr([`${previousSelectedSubjectId}`])
-                    setTeachersArr([...arr.filter(el => el?.enquiryObj?.classesArr.some(elx => elx?.classId == previousSelectedSubjectId))])
+                    setTeachersArr([...arr.filter(el => el?.enquiryObj?.subjectArr.some(elz=> elz.classArr.some(elx => elx?.classId == previousSelectedSubjectId)))])
                 }
 
 
@@ -499,7 +499,7 @@ export default function AllTeacher(props) {
                     <View style={{ flexDirection: 'row', alignItems: 'center', width: '90%', paddingTop: 13 }}>
                         <View style={styles.flexRow}>
                             <Image style={{ height: 9, width: 9, marginHorizontal: 5 }} source={require("../../assets/images/medal.png")} />
-                            <Text style={[styles.subject]}>{item?.enquiryObj?.educationObj?.degree ? item?.enquiryObj?.educationObj?.degree : "PGT"}</Text>
+                            <Text style={[styles.subject]}>{item?.enquiryObj?.qualificationArr?.length!=0 ? `${item?.enquiryObj?.qualificationArr[0]?.name}...` : "PGT"}</Text>
                         </View>
                         {/* <View>
                             <Text style={[styles.subject]}>{item.course}</Text>
@@ -551,12 +551,12 @@ export default function AllTeacher(props) {
         if (filteredClassesArr.length > 0) {
             // console.log("class filter")
 
-            tempArr = tempArr.filter(el => el?.enquiryObj?.classesArr?.some(elx => filteredClassesArr.some(ely => ely._id == elx.classId)))
+            tempArr = tempArr.filter(el => el?.enquiryObj?.subjectArr?.some(elx => elx.classArr.some(elz => filteredClassesArr.some(elm => elm._id == elz.classId))))
 
         }
         if (filteredSubjectArr.length > 0) {
             // console.log("subject filter")
-            tempArr = tempArr.filter(el => el?.enquiryObj?.classesArr?.some(elx => elx.subjectArr.some(elz => filteredSubjectArr.some(elm => elm._id == elz.subjectId))))
+            tempArr = tempArr.filter(el => el?.enquiryObj?.subjectArr?.some(elx => filteredSubjectArr.some(ely => ely._id == elx.subjectId)))
         }
 
         tempArr = tempArr.filter(el => el.enquiryObj?.feesObj?.minFees >= parseInt(multiSliderValue[0]) || el.enquiryObj?.feesObj?.maxFees <= parseInt(multiSliderValue[1]))
@@ -578,7 +578,7 @@ export default function AllTeacher(props) {
     const handleSearch = (e) => {
         let tempArr = [...MainTeachersArr]
         let query = e.toLowerCase()
-        tempArr = tempArr.filter(el => el?.name?.toLowerCase().includes(query) || el?.enquiryObj?.classesArr?.some(ele => ele?.subjectArr.some(elx => elx?.subjectName.toLowerCase().includes(query))))
+        tempArr = tempArr.filter(el => el?.name?.toLowerCase().includes(query) || el?.enquiryObj?.subjectArr?.some(ele => ele?.classArr.some(elx => elx?.className.toLowerCase().includes(query))))
         setTeachersArr([...tempArr])
     }
     const onDayPress = day => {
@@ -632,7 +632,7 @@ export default function AllTeacher(props) {
         let tempTeacherArr = [...MainTeachersArr]
         if (outerSelectedClassArr.length > 0) {
 
-            tempTeacherArr = tempTeacherArr.filter(el => outerSelectedClassArr.some(elx => el.enquiryObj.classesArr.some(ely => ely.classId == elx)))
+            tempTeacherArr = tempTeacherArr.filter(el => outerSelectedClassArr.some(elx => el.enquiryObj.subjectArr.some(elz=>elz.classArr.some(ely => ely.classId == elx))))
             setTeachersArr([...tempTeacherArr])
             setInnerFilteredTeacherArr([...tempTeacherArr])
             let tempTopicArr = [...mainTopicArr];

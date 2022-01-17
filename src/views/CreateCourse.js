@@ -36,7 +36,7 @@ export default function CreateCourse(props) {
     const [price, setPrice] = useState('');
     const [selectedCategoryId, setSelectedCategoryId] = useState('');
     const [youtubeLink, setYoutubeLink] = useState('');
-    const [classesArr, setClassesArr] = useState([]);
+    const [subjectArr, setSubjectArr] = useState([]);
     const [courseImg, setCourseImg] = useState();
 
     const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
@@ -55,13 +55,13 @@ export default function CreateCourse(props) {
         setLoading(true)
         try {
 
-            let classesFilteredArr = classesArr.filter(el => el.checked == true).map(el => {
+            let subjectFilteredArr = subjectArr.filter(el => el.checked == true).map(el => {
                 let obj = {
-                    ...el,
-                    classId: el._id,
-                    subjectArr: el.subjectArr.filter(ele => ele.checked).map(ele => {
+                    // ...el,
+                    subjectId: el._id,
+                    classArr: el.classArr.filter(ele => ele.checked).map(ele => {
                         let obj1={
-                            subjectId:ele.subjectId,
+                            classId:ele._id,
                             topicArr:ele.topicArr.filter(elx=>elx.checked).map(elx=>{
                                 let obj2={
                                     topicId:elx._id
@@ -74,7 +74,8 @@ export default function CreateCourse(props) {
                 }
                 return obj
             })
-            if (courseImg?.name != "" && name != "" && hours != "" && assignments != "" && description != "" && classesFilteredArr.length >= 1) {
+            console.log(JSON.stringify(subjectFilteredArr,null,2))
+            if (courseImg?.name != "" && name != "" && hours != "" && assignments != "" && description != "" && subjectFilteredArr.length >= 1) {
 
                 let userToken = await getDecodedToken()
                 console.log(userToken)
@@ -83,8 +84,8 @@ export default function CreateCourse(props) {
                     hours,
                     price,
                     assignments,
-                    classesArr: classesFilteredArr,
-
+                    classesArr: [],
+                    subjectArr:subjectFilteredArr,
                     youtubeLink,
                     description,
                     userId: userToken?.userId,
@@ -123,7 +124,6 @@ export default function CreateCourse(props) {
     }
 
 
-    const [categoryArr, setCategoryArr] = useState([]);
 
 
 
@@ -136,7 +136,7 @@ export default function CreateCourse(props) {
                 let tempArr = res.data.map(el => {
                     let obj = {
                         ...el,
-                        subjectArr: el.subjectArr.map(ele => {
+                        classArr: el.classArr.map(ele => {
                             let tempObj = {
                                 ...ele,
                                 topicArr: ele.topicArr.map(elx => ({ ...elx, checked: false })),
@@ -149,8 +149,8 @@ export default function CreateCourse(props) {
                     }
                     return obj
                 })
-                console.log(JSON.stringify(tempArr, null, 2), "classes")
-                setClassesArr(tempArr)
+                console.log(JSON.stringify(res.data, null, 2), "classes@@@@@@@@@@@@@@@@@@@@")
+                setSubjectArr(tempArr)
             }
         }
         catch (err) {
@@ -159,33 +159,33 @@ export default function CreateCourse(props) {
     }
     const setClassSelected = (id) => {
 
-        let tempArr = classesArr.map(el => {
+        let tempArr = subjectArr.map(el => {
             if (el._id == id) {
                 el.checked = !el.checked
             }
             return el
         })
-        setClassesArr(tempArr)
+        setSubjectArr(tempArr)
         console.log(tempArr, "temp arr")
     }
 
     const setSelectedSubject = (classId, subjectId) => {
-        setClassesArr(prevState => {
-            let index = prevState.findIndex(el => el._id == classId);
+        setSubjectArr(prevState => {
+            let index = prevState.findIndex(el => el._id == subjectId);
             if (index != -1) {
-                let subjectIndex = prevState[index].subjectArr.findIndex(ele => ele.subjectId == subjectId)
-                if (subjectIndex != -1)
-                    prevState[index].subjectArr[subjectIndex].checked = !prevState[index].subjectArr[subjectIndex].checked;
+                let classIndex = prevState[index].classArr.findIndex(ele => ele._id == classId)
+                if (classIndex != -1)
+                    prevState[index].classArr[classIndex].checked = !prevState[index].classArr[classIndex].checked;
 
             }
             return [...prevState]
         })
     }
 
-    const setSelectedTopic = (classIndex, subjectIndex, topicIndex) => {
-        setClassesArr(prevState => {
+    const setSelectedTopic = (subjectIndex,classIndex, topicIndex) => {
+        setSubjectArr(prevState => {
 
-            prevState[classIndex].subjectArr[subjectIndex].topicArr[topicIndex].checked = !prevState[classIndex].subjectArr[subjectIndex].topicArr[topicIndex].checked
+            prevState[subjectIndex].classArr[classIndex].topicArr[topicIndex].checked = !prevState[subjectIndex].classArr[classIndex].topicArr[topicIndex].checked
 
 
             return [...prevState]
@@ -254,7 +254,7 @@ export default function CreateCourse(props) {
                         <Text style={styles.label}>Select Classes taught by you *</Text>
 
                         <FlatList
-                            data={classesArr}
+                            data={subjectArr}
                             keyExtractor={(item, index) => `${item._id}`}
                             scrollEnabled={false}
                             renderItem={({ item, index }) => {
@@ -277,7 +277,7 @@ export default function CreateCourse(props) {
                                         </View>
                                         {item.checked &&
                                             <FlatList
-                                                data={item.subjectArr}
+                                                data={item.classArr}
                                                 keyExtractor={(item, index) => `${item._id}`}
                                                 scrollEnabled={false}
                                                 renderItem={({ item: itemX, index: indexX }) => {
@@ -289,13 +289,13 @@ export default function CreateCourse(props) {
                                                                     color={colorObj.primarColor}
                                                                     status={itemX.checked ? "checked" : "unchecked"}
                                                                     onPress={() => {
-                                                                        setSelectedSubject(item._id, itemX.subjectId);
+                                                                        setSelectedSubject(itemX._id, item._id);
                                                                     }}
                                                                 />
                                                                 <TouchableOpacity style={{ width: wp(82), paddingVertical: 5, }} onPress={() => {
-                                                                    setSelectedSubject(item._id, itemX.subjectId);
+                                                                    setSelectedSubject(itemX._id, item._id);
                                                                 }}>
-                                                                    <Text>{itemX.subjectName}</Text>
+                                                                    <Text>{itemX.name}</Text>
                                                                 </TouchableOpacity>
                                                             </View>
                                                             {itemX.checked &&

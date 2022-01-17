@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from 'react'
-import { View, Text, StyleSheet, Image, TextInput, Pressable, KeyboardAvoidingView, ScrollView, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, Image, TextInput, Pressable, KeyboardAvoidingView, ScrollView, ActivityIndicator,Linking } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj } from '../globals/colors';
 import { imageObj } from '../globals/images';
@@ -29,6 +29,10 @@ export default function login(props) {
 
 
     const [alertText, setAlertText] = alertTextArr
+
+    const LinkingPrivacy=()=>{
+        Linking.openURL("https://www.electura.co/privacy_policy")
+    }
     const handleOtpSend = async () => {
         try {
             if (checkValidPhone(phone)) {
@@ -57,6 +61,11 @@ export default function login(props) {
     return (
 
             <ScrollView contentContainerStyle={styles.innerContainer}>
+                <View style={[styles.flexRow,{alignItems:'center',justifyContent:'space-between',width:wp(96),paddingHorizontal:10}]}>
+                    <Image source={imageObj.loginLogo} style={{width:100,height:100}} resizeMode='contain' />
+                    <Image source={imageObj.loginSideText} style={{width:50,height:50}} resizeMode='contain' />
+
+                </View>
                 <Image source={imageObj.loginImage} style={{ alignSelf: 'center', marginTop: 10 }} />
                 <View style={styles.textContainer}>
                     <Text style={styles.mainHeading}>Find The Best In Education</Text>
@@ -71,7 +80,7 @@ export default function login(props) {
                     <TextInput placeholderTextColor="black" ref={phoneRef} maxLength={10} style={styles.inputStyles} onChangeText={(val) => setPhone(val)} keyboardType="numeric" placeholder="Enter Number" />
                 </KeyboardAvoidingView>
                 <View style={styles.btnContainer}>
-                    <Text style={styles.termsText}>By Continuing you accept the <Text style={{ color: colorObj.primarColor }}>terms and conditions</Text></Text>
+                    <Pressable onPress={()=>LinkingPrivacy()}><Text style={styles.termsText}>By Continuing you accept the <Text style={{ color: colorObj.primarColor }}>terms and conditions</Text></Text></Pressable>
                     <Pressable style={styles.btn} onPress={() => handleOtpSend()}>
                         <Text style={styles.btnText}>Send Otp</Text>
                     </Pressable>
@@ -85,7 +94,10 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'column',
     },
-
+    flexRow:{
+        display:'flex',
+        flexDirection:'row'
+    },
     innerContainer: {
         minHeight: hp(100),
         minWidth: wp(100),
