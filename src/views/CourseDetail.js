@@ -85,7 +85,7 @@ export default function CourseDetail(props) {
             console.log(res.data.youtubeLink.split('/')[3])
             setYoutubeVideoId(res.data.youtubeLink.split('/')[3])
             if (res.success) {
-                console.log(res.data)
+                console.log(JSON.stringify(res.data, null, 2))
                 setCourseObj({ ...res.data, discountPrice: 0 })
             }
         } catch (error) {
@@ -311,10 +311,10 @@ export default function CourseDetail(props) {
     useEffect(() => {
         if (isFocused)
             handleOnint()
-        else{
+        else {
             setCouponObj({})
         }
-        return ()=>setCouponObj({})
+        return () => setCouponObj({})
     }, [isFocused])
 
     return (
@@ -341,7 +341,14 @@ export default function CourseDetail(props) {
                         </Pressable> */}
                     </View>
                     <Pressable onPress={() => props.navigation.navigate("TeacherProfile", { data: userId })} style={[styles.flexRow, { alignItems: "center", marginTop: 5, marginBottom: 5 }]}>
-                        <Image source={require("../../assets//images/user.png")} style={styles.img} />
+                        {courseObj?.profileImage!="" ?
+                            <Image source={{ uri: generateImageUrl(courseObj?.profileImage) }} style={styles.img} />
+
+                            :
+                            <Image source={require("../../assets/images/user.png")} style={styles.img} />
+
+                        }
+
                         <Text style={styles.userName}>{courseObj?.teacherName}</Text>
                     </Pressable>
                     <Pressable style={{ marginTop: 5 }} >

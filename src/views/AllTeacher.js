@@ -33,8 +33,12 @@ export default function AllTeacher(props) {
     const focused = useIsFocused()
     const refRBSheet = useRef();
     console.log(props.route.params)
+
+
     const previousSelectedSubjectId = props?.route?.params?.filterId;
     const isSubjectSelected = props?.route?.params?.isSubjectId
+
+    const isTopSelected = props?.route?.params?.isTopSelected
 
     const filterBottomSheetRef = useRef()
     const [checked, setChecked] = useState(EnquiryTypes.ONETOONE);
@@ -124,6 +128,9 @@ export default function AllTeacher(props) {
 
                 getSubjects(res.data)
                 setInnerFilteredTeacherArr(res.data)
+                if (isTopSelected) {
+                    handleBtnFilter("Top Tutors", res.data)
+                }
             }
 
         } catch (error) {
@@ -147,7 +154,8 @@ export default function AllTeacher(props) {
                 if (isSubjectSelected) {
                     console.log("inside,@@@@@@@@@@@@@", isSubjectSelected)
                     setOuterSelectedClassArr([`${previousSelectedSubjectId}`])
-                    setTeachersArr([...arr.filter(el => el?.enquiryObj?.subjectArr.some(elz=> elz.classArr.some(elx => elx?.classId == previousSelectedSubjectId)))])
+                    setTeachersArr([...arr.filter(el => el?.enquiryObj?.subjectArr.some(elz => elz.classArr.some(elx => elx?.classId == previousSelectedSubjectId)))])
+
                 }
 
 
@@ -243,12 +251,12 @@ export default function AllTeacher(props) {
 
     const handleTopicFilter = () => {
         let tempArr = [...mainTopicArr];
-        let tempClassesArr = [...nestedClassArr.filter(elx => elx.classArr.some(elz=>elz.checked))]
+        let tempClassesArr = [...nestedClassArr.filter(elx => elx.classArr.some(elz => elz.checked))]
         let tempSubjectArr = [...subjectArr.filter(elx => elx.checked)]
 
-        tempArr = tempArr.filter(ely => tempSubjectArr.some(ele=>ele._id==ely.subjectId));
-        tempArr = tempArr.filter(ely => tempClassesArr.some(elz=>elz.classArr.some(el=>el._id==ely.classId)) || tempSubjectArr.some(ele=>ele._id==ely.subjectId));
-        
+        tempArr = tempArr.filter(ely => tempSubjectArr.some(ele => ele._id == ely.subjectId));
+        tempArr = tempArr.filter(ely => tempClassesArr.some(elz => elz.classArr.some(el => el._id == ely.classId)) || tempSubjectArr.some(ele => ele._id == ely.subjectId));
+
         // console.log(tempArr)
         setTopicArr([...tempArr])
     }
@@ -391,7 +399,7 @@ export default function AllTeacher(props) {
         setIsLoading(false)
     }
 
-    const handleSubjectSelection = (index,id) => {
+    const handleSubjectSelection = (index, id) => {
         let tempArr = [...subjectArr];
         tempArr = tempArr.map((el, i) => {
             if (i == index) {
@@ -404,14 +412,14 @@ export default function AllTeacher(props) {
             return el
         })
         setSubjectArr([...tempArr])
-        let tempClassesArr=[...mainNestedClassArr];
+        let tempClassesArr = [...mainNestedClassArr];
         console.log(tempClassesArr)
-        tempClassesArr=tempClassesArr.filter(el=>el._id==id);
+        tempClassesArr = tempClassesArr.filter(el => el._id == id);
         setNestedClassArr([...tempClassesArr])
         handleTopicFilter()
     }
-    const handleClassSelection = (subjectIndex,id) => {
-        console.log(subjectIndex,id)
+    const handleClassSelection = (subjectIndex, id) => {
+        console.log(subjectIndex, id)
         setNestedClassArr(prevState => {
             let tempIndex = prevState[subjectIndex].classArr.findIndex(el => el._id == id);
             if (tempIndex != -1)
@@ -499,7 +507,7 @@ export default function AllTeacher(props) {
                     <View style={{ flexDirection: 'row', alignItems: 'center', width: '90%', paddingTop: 13 }}>
                         <View style={styles.flexRow}>
                             <Image style={{ height: 9, width: 9, marginHorizontal: 5 }} source={require("../../assets/images/medal.png")} />
-                            <Text style={[styles.subject]}>{item?.enquiryObj?.qualificationArr?.length!=0 ? `${item?.enquiryObj?.qualificationArr[0]?.name}...` : "PGT"}</Text>
+                            <Text style={[styles.subject]}>{item?.enquiryObj?.qualificationArr?.length != 0 ? `${item?.enquiryObj?.qualificationArr[0]?.name}...` : "PGT"}</Text>
                         </View>
                         {/* <View>
                             <Text style={[styles.subject]}>{item.course}</Text>
@@ -632,7 +640,7 @@ export default function AllTeacher(props) {
         let tempTeacherArr = [...MainTeachersArr]
         if (outerSelectedClassArr.length > 0) {
 
-            tempTeacherArr = tempTeacherArr.filter(el => outerSelectedClassArr.some(elx => el.enquiryObj.subjectArr.some(elz=>elz.classArr.some(ely => ely.classId == elx))))
+            tempTeacherArr = tempTeacherArr.filter(el => outerSelectedClassArr.some(elx => el.enquiryObj.subjectArr.some(elz => elz.classArr.some(ely => ely.classId == elx))))
             setTeachersArr([...tempTeacherArr])
             setInnerFilteredTeacherArr([...tempTeacherArr])
             let tempTopicArr = [...mainTopicArr];
@@ -651,8 +659,9 @@ export default function AllTeacher(props) {
     }
 
 
-    const handleBtnFilter = (value) => {
-        let tempTeacherArr = [...innerFilteredTeacherArr]
+    const handleBtnFilter = (value, arr) => {
+
+        let tempTeacherArr = arr.length > 0 ? arr : [...innerFilteredTeacherArr]
         if (value == "All") {
             setTeachersArr([...tempTeacherArr])
 
@@ -714,7 +723,7 @@ export default function AllTeacher(props) {
                                 }
                             />
                         </View> */}
-                        <View style={[styles.flexRow, { marginTop: 25, alignItems: 'center', justifyContent: 'space-between' }]}>
+                        <View style={[styles.flexRow, { marginTop: 15, alignItems: 'center', justifyContent: 'space-between' }]}>
 
                             <SectionedMultiSelect
                                 items={classesArr}
@@ -732,7 +741,7 @@ export default function AllTeacher(props) {
 
                                 onSelectedItemsChange={handleClassSelectionOuterFilter}
                                 selectedItems={outerSelectedClassArr}
-                                styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282", borderWidth: 0.7, paddingVertical: 10, paddingHorizontal: 10, width: wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
+                                styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282", borderWidth: 0.7, borderRadius: 5, paddingVertical: 10, paddingHorizontal: 10, width: wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
 
                             />
                             <SectionedMultiSelect
@@ -749,20 +758,20 @@ export default function AllTeacher(props) {
                                 selectText="Topics"
                                 onSelectedItemsChange={handleTopicOuterFilter}
                                 selectedItems={outerTopicArr}
-                                styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282", borderWidth: 0.7, paddingVertical: 10, paddingHorizontal: 10, width: wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
+                                styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282", borderWidth: 0.7, borderRadius: 5, paddingVertical: 10, paddingHorizontal: 10, width: wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
 
                             />
                         </View>
 
                         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
 
-                            <Pressable onPress={() => handleBtnFilter("All")} style={[styles.newContainer, selectedNewFilter != "All" && { backgroundColor: '#f0faf9' }]}>
+                            <Pressable onPress={() => handleBtnFilter("All",[])} style={[styles.newContainer, selectedNewFilter != "All" && { backgroundColor: '#f0faf9' }]}>
                                 <Text style={[styles.newcategoryName, selectedNewFilter != "All" && { color: '#828282' }]}>All</Text>
                             </Pressable>
-                            <Pressable onPress={() => handleBtnFilter("Online")} style={[styles.newContainer, selectedNewFilter != "Online" && { backgroundColor: '#f0faf9' }]}>
+                            <Pressable onPress={() => handleBtnFilter("Online",[])} style={[styles.newContainer, selectedNewFilter != "Online" && { backgroundColor: '#f0faf9' }]}>
                                 <Text style={[styles.newcategoryName, selectedNewFilter != "Online" && { color: '#828282' }]}>Online</Text>
                             </Pressable>
-                            <Pressable onPress={() => handleBtnFilter("Top Tutors")} style={[styles.newContainer, selectedNewFilter != "Top Tutors" && { backgroundColor: '#f0faf9' }]}>
+                            <Pressable onPress={() => handleBtnFilter("Top Tutors",[])} style={[styles.newContainer, selectedNewFilter != "Top Tutors" && { backgroundColor: '#f0faf9' }]}>
                                 <Text style={[styles.newcategoryName, selectedNewFilter != "Top Tutors" && { color: '#828282' }]}>Top Tutors</Text>
                             </Pressable>
                         </View>
@@ -981,9 +990,9 @@ export default function AllTeacher(props) {
                                                         <Checkbox
                                                             color={colorObj.primarColor}
                                                             status={item.checked ? "checked" : "unchecked"}
-                                                            onPress={() => handleSubjectSelection(index,item._id)}
+                                                            onPress={() => handleSubjectSelection(index, item._id)}
                                                         />
-                                                        <Pressable onPress={() => handleSubjectSelection(index,item._id)} style={{ paddingVertical: 5, width: '100%' }} >
+                                                        <Pressable onPress={() => handleSubjectSelection(index, item._id)} style={{ paddingVertical: 5, width: '100%' }} >
                                                             <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>{item.name}</Text>
                                                         </Pressable>
 
@@ -1005,12 +1014,12 @@ export default function AllTeacher(props) {
 
                                         renderItem={({ item, index }) => {
                                             return (
-                                                <View style={{paddingHorizontal:20}}>
-                                                    <Text style={[styles.checkBoxText, { textAlign: 'left',fontFamily:'Montserrat-Medium' }]}>{item?.name}</Text>
+                                                <View style={{ paddingHorizontal: 20 }}>
+                                                    <Text style={[styles.checkBoxText, { textAlign: 'left', fontFamily: 'Montserrat-Medium' }]}>{item?.name}</Text>
                                                     <FlatList
                                                         scrollEnabled={false}
                                                         data={item.classArr}
-                                                        keyExtractor={(item,index)=>`${item._id}`}
+                                                        keyExtractor={(item, index) => `${item._id}`}
                                                         renderItem={({ item: itemX, index: indexX }) => {
                                                             return (
                                                                 <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 3, justifyContent: 'space-between', }]}>
@@ -1018,10 +1027,10 @@ export default function AllTeacher(props) {
                                                                     <Checkbox
                                                                         color={colorObj.primarColor}
                                                                         status={itemX.checked ? "checked" : "unchecked"}
-                                                                        onPress={() => handleClassSelection(index,itemX._id)}
+                                                                        onPress={() => handleClassSelection(index, itemX._id)}
                                                                     />
-                                                                    <Pressable onPress={() => handleClassSelection(index,itemX._id)} style={{ paddingVertical: 5, width: '100%' }} >
-                                                                        <Text style={[styles.checkBoxText, { textAlign: 'left',fontSize:12 }]}>{itemX.name}</Text>
+                                                                    <Pressable onPress={() => handleClassSelection(index, itemX._id)} style={{ paddingVertical: 5, width: '100%' }} >
+                                                                        <Text style={[styles.checkBoxText, { textAlign: 'left', fontSize: 12 }]}>{itemX.name}</Text>
 
                                                                     </Pressable>
                                                                 </View>
@@ -1151,7 +1160,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         borderRadius: 5,
         marginTop: 35,
-        height: 35,
+        height: 45,
     },
     input: {
         width: '80%'

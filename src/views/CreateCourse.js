@@ -251,7 +251,7 @@ export default function CreateCourse(props) {
                             <Text style={{ fontFamily: "Montserrat-Thin", fontSize: 14, marginLeft: 10 }}>{courseImg?.name ? courseImg?.name : "Upload Thumbnail Image *"}</Text>
                         </TouchableOpacity>
 
-                        <Text style={styles.label}>Select Classes taught by you *</Text>
+                        <Text style={styles.label}>Select Category for the course *</Text>
 
                         <FlatList
                             data={subjectArr}

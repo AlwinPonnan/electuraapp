@@ -319,7 +319,7 @@ export default function HomeScreen(props) {
                         />
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                             <Text style={styles.headingAboveCard}>Top Instructors</Text>
-                            <Pressable onPress={() => props.navigation.navigate('AllTeacher', { filterId: "All", isSubjectId: false })}><Text style={[styles.viewAllText, { paddingHorizontal: 40 }]}>View All</Text></Pressable>
+                            <Pressable onPress={() => props.navigation.navigate('AllTeacher', { filterId: "All", isSubjectId: false,isTopSelected:true })}><Text style={[styles.viewAllText, { paddingHorizontal: 40 }]}>View All</Text></Pressable>
                         </View>
                         <FlatList
                             style={{ height: 120 }}
@@ -345,7 +345,7 @@ export default function HomeScreen(props) {
                                     <View style={{ marginVertical: 10 }}>
                                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                                             <Text style={styles.headingAboveCard}>{item?.name} Instructors</Text>
-                                            <Pressable onPress={() => props.navigation.navigate('AllTeacher', { filterId: item._id, isSubjectId: selectedSubjectId != "All" })}>
+                                            <Pressable onPress={() => props.navigation.navigate('AllTeacher', { filterId: item._id, isSubjectId: selectedSubjectId != "All",isTopSelected:false })}>
                                                 <Text style={[styles.viewAllText, { paddingHorizontal: 40 }]}>View All</Text>
                                             </Pressable>
                                         </View>

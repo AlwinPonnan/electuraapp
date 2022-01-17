@@ -82,6 +82,7 @@ export const updateBackgroundProfile = async (obj) => {
 export const updateProfileImage = async (obj) => {
     try {
         let token = await getDecodedToken()
+        console.log(token)
         let res = axiosApiInstance.patch(`${url}/updateImage/${token.userId}`, obj)
         return res
     }

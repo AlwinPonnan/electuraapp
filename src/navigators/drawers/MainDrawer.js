@@ -92,7 +92,7 @@ export default function MainDrawer() {
                             <Text style={styles.userName}>Hi, User </Text>
                             :
                             <View>
-                                <Text style={[styles.userName, { textAlign: 'left' }]}>Hi,{profileData.name} </Text>
+                                <Text style={[styles.userName, { textAlign: 'left' }]}>Hi, {profileData.name} </Text>
                                 {/* <Text style={[styles.userName,{fontSize:12}]}>+91-{profileData.phone}</Text> */}
                             </View>
                     }
