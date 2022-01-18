@@ -40,7 +40,14 @@ export default function Requestscreen(props) {
             const { data: res } = await getAllEnquiryRequests();
             if (res.success) {
                 setIsrefreshing(false)
-                setRequestArr(res.data)
+                setRequestArr([...res.data.map(el=>{
+                    let obj={
+                        ...el,
+                        name:el?.userObj?.name ? el.userObj.name  : `${el.userObj.role}-`+`${el.userObj._id}`.slice(0,5),
+                        image: el?.userObj?.profileImage ? generateImageUrl(el?.userObj?.profileImage) : "https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper.png"
+                    }
+                    return obj
+                })])
             }
         } catch (error) {
             console.error(error)
@@ -103,10 +110,10 @@ export default function Requestscreen(props) {
                     return (
                         <View style={styles.card}>
                             <View style={styles.flexRow}>
-                                <Image source={{ uri: generateImageUrl(item?.userObj?.profileImage) }} style={styles.cardImage} />
+                                <Image source={{ uri: item.image }} style={styles.cardImage} />
                                 <View style={[styles.flexColumn, { justifyContent: "center" }]}>
                                     <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(70) }]}>
-                                        <Text style={styles.cardHeading}>{item?.userObj?.name}</Text>
+                                        <Text style={styles.cardHeading}>{item?.name}</Text>
                                         <Pressable style={{paddingHorizontal:20,paddingVertical:5}} onPress={() => handleAccept(item?.userObj?._id, item?._id)}>
                                             <Text style={styles.acceptStyles}>Accept</Text>
                                         </Pressable>

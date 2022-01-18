@@ -7,7 +7,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import { useIsFocused } from '@react-navigation/core';
 import { BookmarkTeacher, getAllTeachers } from '../Services/User';
-import { formatDate, generateImageUrl, sortByText } from '../globals/utils';
+import { dayArr, formatDate, generateImageUrl, sortByText } from '../globals/utils';
 import RBSheet from "react-native-raw-bottom-sheet";
 import { NewEnquiry } from '../Services/Enquiry';
 
@@ -569,7 +569,7 @@ export default function AllTeacher(props) {
             tempArr = tempArr.filter(el => el?.enquiryObj?.subjectArr?.some(elx => filteredSubjectArr.some(ely => ely._id == elx.subjectId)))
         }
 
-        tempArr = tempArr.filter(el => el.enquiryObj?.feesObj?.minFees >= parseInt(multiSliderValue[0]) || el.enquiryObj?.feesObj?.maxFees <= parseInt(multiSliderValue[1]))
+        tempArr = tempArr.filter(el => el.enquiryObj?.feesObj?.minFees >= parseInt(multiSliderValue[0]) && el.enquiryObj?.feesObj?.maxFees <= parseInt(multiSliderValue[1]))
 
         if (sortBy == sortByText.priceLowToHigh) {
             tempArr = tempArr.sort((a, b) => a.enquiryObj?.feesObj?.maxFees - b.enquiryObj?.feesObj?.maxFees)
@@ -1080,7 +1080,7 @@ export default function AllTeacher(props) {
                                     />
                                 }
                                 {activeFilterContainer == "price" &&
-                                    <View style={{ paddingHorizontal: 20, marginTop: 50 }}>
+                                    <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
                                         <Text style={[styles.bottomSheetHeading, { fontSize: 16 }]}>Selected Price Range</Text>
                                         <Text style={[styles.bottomSheetHeading, { fontSize: 14 }]}>₹ {multiSliderValue[0]} - ₹ {multiSliderValue[1]} </Text>
                                         <MultiSlider
@@ -1100,7 +1100,7 @@ export default function AllTeacher(props) {
                                     </View>
                                 }
                                 {activeFilterContainer == "sortBy" &&
-                                    <View style={{ paddingHorizontal: 20, marginTop: 50, width: wp(50) }}>
+                                    <View style={{ paddingHorizontal: 20, marginTop: 20, width: wp(50) }}>
 
                                         <RadioButton.Group onValueChange={newValue => setSortBy(newValue)} value={sortBy}>
                                             <View style={[{ marginVertical: 10 }, styles.flexColumn, { justifyContent: 'space-between' }]}>

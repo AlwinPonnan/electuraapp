@@ -145,7 +145,7 @@ export default function Learnings(props) {
                         }
                     }
                 })
-                console.log(JSON.stringify(temp,null,2),"adad")
+                console.log(JSON.stringify(temp, null, 2), "adad")
 
                 setLiveClassArr(temp)
                 setIsRefreshing(false)
@@ -229,7 +229,16 @@ export default function Learnings(props) {
     const renderItem = ({ item, index }) => {
         return (
             <Pressable style={styles.cardContainer}  >
-                <Image style={styles.courseImg} source={require('../../assets/images/3629604.jpg')} />
+                {
+                    (item?.teacherObj?.profileImage || item?.teacherObj?.profileImage == "asd") ?
+                    
+                    <Image style={styles.courseImg} source={require('../../assets/images/learningAlt.png')} />
+                    
+                    :
+                    <Image style={styles.courseImg} source={{ uri: generateImageUrl(item?.teacherObj?.profileImage) }} />
+
+                }
+                
                 <View style={styles.textCardContainer}>
                     <View>
                         {decodedObj?.userId == item?.teacherId ?

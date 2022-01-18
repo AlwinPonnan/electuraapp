@@ -91,10 +91,10 @@ export default function Notification(props) {
                             <Pressable style={item.read ? styles.notiCard : styles.unreadnotiCard} onPress={() => handleNotificationRedirect(item)}>
                                 <View style={[styles.flexRow, { alignItems: 'center', marginHorizontal: 5 }]}>
                                     <View>
-                                        {item?.sentByObj?.profileImage &&
+                                        { (item?.userObj?.profileImage && item?.sentByObj?.profileImage) &&
                                             <Image style={{ height: 50, width: 50, borderRadius: 50 }} source={{ uri: generateImageUrl(item?.sentByObj?.profileImage) }} />
                                         }
-                                        {item?.userObj?.profileImage &&
+                                        {(item?.userObj?.profileImage && !item?.sentByObj?.profileImage) &&
                                             <Image style={{ height: 50, width: 50, borderRadius: 50 }} source={{ uri: generateImageUrl(item?.userObj?.profileImage) }} />
                                         }
                                         {

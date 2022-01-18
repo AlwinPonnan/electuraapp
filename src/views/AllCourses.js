@@ -316,7 +316,7 @@ export default function AllCourses(props) {
             tempArr = tempArr.filter(el => el?.subjectArr?.some(elx => elx.classArr.some(elz => elz?.topicArr?.length > 0 ? elz.topicArr.some(elm => filteredTopicArr.some(elq => elq._id == elm.topicId)) : false)))
         }
 
-        tempArr = tempArr.filter(el => el.price >= parseInt(multiSliderValue[0]) || el.price <= parseInt(multiSliderValue[1]))
+        tempArr = tempArr.filter(el => el.price >= parseInt(multiSliderValue[0]) && el.price <= parseInt(multiSliderValue[1]))
 
         if (sortBy == sortByText.priceLowToHigh) {
             tempArr = tempArr.sort((a, b) => a.price - b.price)
@@ -466,7 +466,7 @@ export default function AllCourses(props) {
 
     const renderTeacherItem = ({ item, index }) => {
         return (
-            <View style={[styles.listView]}>
+            <Pressable onPress={()=> props.navigation.navigate("CourseDetail", { data: item._id })} style={[styles.listView]}>
 
                 <Image
                     style={styles.listImage}
@@ -510,7 +510,7 @@ export default function AllCourses(props) {
                 </View>
 
 
-            </View >
+            </Pressable >
 
 
 
@@ -566,7 +566,7 @@ export default function AllCourses(props) {
                         /> */}
 
                         {/* <Text style={[styles.title]}>New Courses</Text> */}
-                        <View style={[styles.flexRow, { marginTop: 25, alignItems: 'center', justifyContent: 'space-between' }]}>
+                        <View style={[styles.flexRow, { marginTop: 10, alignItems: 'center', justifyContent: 'space-between' }]}>
 
                             <SectionedMultiSelect
                                 items={classesArr}
@@ -584,7 +584,7 @@ export default function AllCourses(props) {
 
                                 onSelectedItemsChange={handleClassSelectionOuterFilter}
                                 selectedItems={outerSelectedClassArr}
-                                styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282", borderWidth: 0.7, paddingVertical: 10, paddingHorizontal: 10, width: wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
+                                styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282", borderRadius: 50, borderWidth: 0.7, paddingVertical: 5, paddingHorizontal: 10, width: wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
 
                             />
                             <SectionedMultiSelect
@@ -602,7 +602,7 @@ export default function AllCourses(props) {
                                 onConfirm={() => handleOuterTopicFilter()}
                                 onSelectedItemsChange={handleTopicOuterFilter}
                                 selectedItems={outerTopicArr}
-                                styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282", borderWidth: 0.7, paddingVertical: 10, paddingHorizontal: 10, width: wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
+                                styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282",  borderRadius: 50,borderWidth: 0.7, paddingVertical: 5, paddingHorizontal: 10, width: wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
 
                             />
                         </View>
@@ -785,9 +785,9 @@ export default function AllCourses(props) {
                                     />
                                 }
                                 {activeFilterContainer == "price" &&
-                                    <View style={{ paddingHorizontal: 20, marginTop: 50 }}>
+                                    <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
                                         <Text style={[styles.bottomSheetHeading, { fontSize: 16 }]}>Selected Price Range</Text>
-                                        <Text style={[styles.bottomSheetHeading, { fontSize: 14 }]}>₹ {multiSliderValue[0]} - ₹ {multiSliderValue[1]} </Text>
+                                        <Text style={[styles.bottomSheetHeading, { fontSize: 14,marginTop:20 }]}>₹ {multiSliderValue[0]} - ₹ {multiSliderValue[1]} </Text>
                                         <MultiSlider
                                             values={[multiSliderValue[0], multiSliderValue[1]]}
                                             sliderLength={250}
@@ -805,7 +805,7 @@ export default function AllCourses(props) {
                                     </View>
                                 }
                                 {activeFilterContainer == "sortBy" &&
-                                    <View style={{ paddingHorizontal: 20, marginTop: 50, width: wp(50) }}>
+                                    <View style={{ paddingHorizontal: 20, marginTop: 20, width: wp(50) }}>
 
                                         <RadioButton.Group onValueChange={newValue => setSortBy(newValue)} value={sortBy}>
                                             <View style={[{ marginVertical: 10 }, styles.flexColumn, { justifyContent: 'space-between' }]}>
