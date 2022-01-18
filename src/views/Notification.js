@@ -5,7 +5,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import Icon from 'react-native-vector-icons/Ionicons';
 import NavBar from '../components/Navbar';
 import { useIsFocused } from '@react-navigation/core';
-import { getAllNotifications } from '../Services/User';
+import { getAllNotifications, markNotificationAsRead } from '../Services/User';
 import { FlatList } from 'react-native-gesture-handler';
 import { generateImageUrl } from '../globals/utils';
 
@@ -41,14 +41,18 @@ export default function Notification(props) {
         setIsRefreshing(false)
     }
 
-    const handleNotificationRedirect = (item) => {
-        if (item.redirectTo) {
+    const handleNotificationRedirect = async (item) => {
+        setIsLoading(true)
+        let { data: res } = await markNotificationAsRead(item._id)
+        if (res.success) {
+            if (item.redirectTo) {
 
-            if (item.redirectTo != "") {
-                setIsLoading(true)
-                Linking.openURL(item.redirectTo)
+                if (item.redirectTo != "") {
+                    Linking.openURL(item.redirectTo)
+                }
             }
         }
+        setIsLoading(false)
     }
 
 
@@ -64,14 +68,14 @@ export default function Notification(props) {
                 {/* <View style={styles.innerContainer}> */}
                 <View style={{ paddingHorizontal: wp(2), marginTop: 20 }}>
 
-                    <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                    <View style={[styles.flexRow, { alignItems: 'center' }]}>
                         <Pressable onPress={() => props.navigation.goBack()}>
-                            <Icon name="chevron-back-outline" size={20} color="black" />
+                            <Icon name="chevron-back-outline" size={20} color={colorObj.primarColor} />
                         </Pressable>
-                        <Text style={styles.markAsReadText} >Mark as read</Text>
+                        <Text style={styles.heading}>Notification</Text>
+                        {/* <Text style={styles.markAsReadText} >Mark as read</Text> */}
                     </View>
 
-                    <Text style={styles.heading}>Notification</Text>
 
                 </View>
 
@@ -79,15 +83,26 @@ export default function Notification(props) {
                     data={notificationArr}
                     refreshing={isRefreshing}
                     onRefresh={() => getNotifications()}
-                    contentContainerStyle={{ paddingBottom: 80 }}
+                    contentContainerStyle={{ paddingBottom: 80,marginTop:10 }}
                     keyExtractor={(item, index) => `${item._id}`}
                     renderItem={({ item, index }) => {
                         return (
 
-                            <Pressable style={styles.notiCard} onPress={() => handleNotificationRedirect(item)}>
+                            <Pressable style={item.read ? styles.notiCard : styles.unreadnotiCard} onPress={() => handleNotificationRedirect(item)}>
                                 <View style={[styles.flexRow, { alignItems: 'center', marginHorizontal: 5 }]}>
                                     <View>
-                                        <Image style={{ height: 50, width: 50, borderRadius: 50 }} source={{ uri: item?.sentByObj?.profileImage ? generateImageUrl(item?.sentByObj?.profileImage) : generateImageUrl(item?.userObj?.profileImage) }} />
+                                        {item?.sentByObj?.profileImage &&
+                                            <Image style={{ height: 50, width: 50, borderRadius: 50 }} source={{ uri: generateImageUrl(item?.sentByObj?.profileImage) }} />
+                                        }
+                                        {item?.userObj?.profileImage &&
+                                            <Image style={{ height: 50, width: 50, borderRadius: 50 }} source={{ uri: generateImageUrl(item?.userObj?.profileImage) }} />
+                                        }
+                                        {
+                                            (!item?.userObj?.profileImage && !item?.sentByObj?.profileImage) &&
+
+                                            <Image style={{ height: 50, width: 50, borderRadius: 50 }} resizeMode='contain' source={require('../../assets/images/Icon.png')} />
+                                        }
+
                                     </View>
 
                                     <View style={styles.notificationInnerContainer}>
@@ -174,14 +189,15 @@ const styles = StyleSheet.create({
     },
 
     heading: {
-        fontFamily: 'Montserrat-SemiBold',
+        fontFamily: 'RedHatText-Medium',
         fontSize: 20,
-        marginTop: 15,
+        paddingHorizontal:15,
+        // marginTop: 15,
         // paddingHorizontal:10,
         // textAlign: "center",
         // display: "flex",
         // alignSelf: "center",
-        color: "black",
+        color: colorObj.primarColor,
     },
     btn: {
         backgroundColor: colorObj.primarColor,
@@ -211,9 +227,19 @@ const styles = StyleSheet.create({
         borderBottomWidth: 0.5,
         display: 'flex',
         alignSelf: 'center',
-        marginVertical: 10,
+        // marginVertical: 10,
         padding: 15,
         // backgroundColor: 'rgba(0,0,0,0.)'
+    },
+    unreadnotiCard: {
+        width: wp(100),
+        borderBottomColor: '#BDBDBD',
+        borderBottomWidth: 0.5,
+        display: 'flex',
+        alignSelf: 'center',
+        // marginVertical: 10,
+        padding: 15,
+        backgroundColor: '#F9F9F9'
     },
 
 

@@ -58,7 +58,7 @@ export default function WishList(props) {
 
 
     const renderItem = ({ item }) => (
-        <Pressable style={[styles.topView]}>
+        <Pressable style={[styles.topView]} onPress={()=>props.navigation.navigate("CourseDetail", { data: item._id })}>
             <Image
                 style={[styles.img]}
                 resizeMode='contain'

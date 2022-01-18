@@ -196,6 +196,10 @@ export const toggleOnline = async () => {
     return await axiosApiInstance.patch(`${url}/toggleOnline`)
 }
 
+export const markNotificationAsRead=async(id)=>{
+    return await axiosApiInstance.patch(`${url}/markNotificationAsRead/${id}`) 
+}
+
 
 export const techerSlotSelect = async (obj) => {
     return await axiosApiInstance.post(`${url}/submitslotArr`,obj)

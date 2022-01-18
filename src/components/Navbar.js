@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import ImageUrls from '../globals/images';
 import { DrawerActions, useIsFocused } from '@react-navigation/native';
 import { Badge } from 'react-native-paper';
-import { getCart } from '../Services/User';
+import { getAllNotifications, getCart } from '../Services/User';
 import { getAllEnquiryRequests } from '../Services/Enquiry';
 
 export default function NavBar(props) {
@@ -19,6 +19,7 @@ export default function NavBar(props) {
 
   const [cartObj, setCartObj] = useState({});
   const [requestArr, setRequestArr] = useState([]);
+  const [notificationArr, setNotificationArr] = useState([]);
   const focused = useIsFocused()
   const getUserCart = async () => {
     try {
@@ -33,18 +34,32 @@ export default function NavBar(props) {
   }
   const getRequests = async () => {
     try {
-        const { data: res } = await getAllEnquiryRequests();
-        if (res.success) {
-            setRequestArr(res.data)
-        }
+      const { data: res } = await getAllEnquiryRequests();
+      if (res.success) {
+        setRequestArr(res.data)
+      }
     } catch (error) {
-        console.error(error)
+      console.error(error)
     }
-}
+  }
+
+  const getNotification = async () => {
+    try {
+      const { data: res } = await getAllNotifications();
+      if (res.success) {
+        console.log(JSON.stringify(res.data,null,2))
+        setNotificationArr([...res.data.filter(el=>!el.read)])
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
 
   useEffect(() => {
     getUserCart()
     getRequests()
+    getNotification()
   }, [focused])
 
   return (
@@ -67,15 +82,18 @@ export default function NavBar(props) {
           <Icon name="search-outline" color={"#27303E"} size={20} style={styles.icon} />
         </Pressable>
 
-        <Pressable onPress={() => props.rootProps.navigation.navigate("MainTopTab")} android_ripple={{ color: '#27303E' }} style={[styles.iconButton,{flexDirection:'row',alignItems:'center'}]}>
+        <Pressable onPress={() => props.rootProps.navigation.navigate("MainTopTab")} android_ripple={{ color: '#27303E' }} style={[styles.iconButton, { flexDirection: 'row', alignItems: 'center' }]}>
           <Icon name="chatbubble-ellipses-outline" color={"#27303E"} size={20} style={styles.icon} />
           {requestArr?.length > 0 &&
             <Badge size={12}>{requestArr?.length}</Badge>
           }
         </Pressable>
 
-        <Pressable onPress={() => props.rootProps.navigation.navigate("Notification")} android_ripple={{ color: '#27303E' }} style={styles.iconButton}>
+        <Pressable onPress={() => props.rootProps.navigation.navigate("Notification")} android_ripple={{ color: '#27303E' }}  style={[styles.iconButton, { flexDirection: 'row', alignItems: 'center' }]}>
           <Icon name="notifications-outline" color={"#27303E"} size={20} style={styles.icon} />
+          {notificationArr?.length > 0 &&
+            <Badge size={12}>{notificationArr?.length}</Badge>
+          }
         </Pressable>
       </View>
 

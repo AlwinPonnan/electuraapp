@@ -104,13 +104,14 @@ export default function TeacherProfile(props) {
     const openYoutube = (name) => {
         if (name != "") {
 
-            Linking.canOpenURL('vnd.youtube://channel/' + name).then(supported => {
-                if (supported) {
-                    return Linking.openURL('vnd.youtube://channel/' + name);
-                } else {
-                    return Linking.openURL('https://www.youtube.com/channel/' + name);
-                }
-            });
+            // Linking.canOpenURL('vnd.youtube://channel/' + name).then(supported => {
+            //     if (supported) {
+            //         return Linking.openURL('vnd.youtube://channel/' + name);
+            //     } else {
+            //         return Linking.openURL('https://www.youtube.com/channel/' + name);
+            //     }
+            // });
+            Linking.openURL(name)
         }
         else if (name == "" && teacherObj?.role == "TEACHER" && teacherObj?._id == decodedObj?.userId) {
             props.navigation.navigate('AccountEdit')
@@ -517,7 +518,7 @@ export default function TeacherProfile(props) {
                     <Icon name="star" style={{ marginHorizontal: 3 }} size={15} color="#FF900E" />
                 </View>
             </View>
-            <View style={[styles.flexRow, { width: wp(85), alignSelf: "center", justifyContent:'space-between',marginVertical: 10 }]}>
+            <View style={[styles.flexRow, { width: wp(85), alignSelf: "center", justifyContent: 'space-between', marginVertical: 10 }]}>
                 <View style={[styles.flexRow]}>
                     <Icon name="location-outline" size={16} color={"#828282"} />
 
@@ -565,7 +566,7 @@ export default function TeacherProfile(props) {
                 }
                 <View style={[styles.flexRow, { width: '100%', alignItems: 'center', alignSelf: 'center', justifyContent: 'space-between', backgroundColor: 'white', marginTop: (teacherObj?.role == "TEACHER" && teacherObj?._id == decodedObj?.userId) ? 30 : 5, paddingVertical: 10, borderRadius: 5 }]}>
                     <View style={[{ borderRightWidth: 1, paddingHorizontal: 20, borderRightColor: '#F2F2F2' }]}>
-                        <Text style={styles.dashboardTextMain}>{teacherObj?.profileVisit}</Text>
+                        <Text style={styles.dashboardTextMain}>{teacherObj?.profileVisit >= 10000 ? `${teacherObj?.profileVisit}K` : teacherObj?.profileVisit}</Text>
                         <Text style={styles.dashboardTextSub}>Profile Visits</Text>
                     </View>
                     <View style={[{ borderRightWidth: 1, paddingHorizontal: 20, borderRightColor: '#F2F2F2' }]}>
@@ -579,10 +580,20 @@ export default function TeacherProfile(props) {
                 </View>
             </View>
 
-            <View style={[styles.flexColumn, { width: wp(90), alignSelf: "center" }]}>
-                <Text style={[styles.headingAboveCard, { paddingLeft: 0 }]}>Description</Text>
-                <Text style={styles.description}>{teacherObj?.enquiryObj?.description ? teacherObj?.enquiryObj?.description : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,"}</Text>
-            </View>
+            {teacherObj?.enquiryObj?.description &&
+
+                <View style={[styles.flexColumn, { width: wp(90), alignSelf: "center" }]}>
+                    <Text style={[styles.headingAboveCard, { paddingLeft: 0 }]}>Description</Text>
+                    <Text style={styles.description}>{teacherObj?.enquiryObj?.description}</Text>
+                </View>
+            }
+
+            {teacherObj?.enquiryObj?.qualificationArr.length > 0 &&
+                <View style={[styles.flexColumn, { width: wp(90), alignSelf: "center" }]}>
+                    <Text style={[styles.headingAboveCard, { paddingLeft: 0 }]}>Qualification</Text>
+                    <Text style={styles.description}>{teacherObj?.enquiryObj?.qualificationArr.reduce((acc,el)=>acc+el.name+',','')}</Text>
+                </View>
+            }
 
 
             <View style={[styles.flexColumn, { width: wp(90), alignSelf: "center" }]}>
@@ -602,7 +613,7 @@ export default function TeacherProfile(props) {
                                         <Text style={[styles.textCardMainHeading, { color: '#000000', fontSize: 14, fontFamily: "Montserrat-SemiBold" }]}>{item?.subjectName}</Text>
                                     </View>
 
-                                    <Text style={[styles.textCardMainSubHeading1, { color: '#7E7E7E', marginTop: 7, fontFamily: 'Montserrat-Regular', fontSize: 10 }]}>{item?.classArr.reduce((acc,el)=>acc+el.className+',','')}</Text>
+                                    <Text style={[styles.textCardMainSubHeading1, { color: '#7E7E7E', marginTop: 7, fontFamily: 'Montserrat-Regular', fontSize: 10 }]}>{item?.classArr.reduce((acc, el) => acc + el.className + ',', '')}</Text>
                                 </View>
 
                             </View>

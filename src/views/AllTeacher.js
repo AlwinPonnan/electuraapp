@@ -490,10 +490,12 @@ export default function AllTeacher(props) {
     const renderTeacherItem = ({ item, index }) => {
         return (
             <View style={[styles.listView]}>
-                <Image
-                    style={styles.listImage}
-                    source={{ uri: item?.profileImage ? generateImageUrl(item?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }}
-                />
+                <Pressable onPress={()=>props.navigation.navigate("TeacherProfile", { data: item._id })}>
+                    <Image
+                        style={styles.listImage}
+                        source={{ uri: item?.profileImage ? generateImageUrl(item?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }}
+                    />
+                </Pressable>
                 <View style={{ flex: 1, marginLeft: 10, paddingHorizontal: 5, paddingVertical: 5 }}>
                     <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                         <Text style={styles.textCardMainHeading}>{item?.name}
@@ -765,13 +767,13 @@ export default function AllTeacher(props) {
 
                         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
 
-                            <Pressable onPress={() => handleBtnFilter("All",[])} style={[styles.newContainer, selectedNewFilter != "All" && { backgroundColor: '#f0faf9' }]}>
+                            <Pressable onPress={() => handleBtnFilter("All", [])} style={[styles.newContainer, selectedNewFilter != "All" && { backgroundColor: '#f0faf9' }]}>
                                 <Text style={[styles.newcategoryName, selectedNewFilter != "All" && { color: '#828282' }]}>All</Text>
                             </Pressable>
-                            <Pressable onPress={() => handleBtnFilter("Online",[])} style={[styles.newContainer, selectedNewFilter != "Online" && { backgroundColor: '#f0faf9' }]}>
+                            <Pressable onPress={() => handleBtnFilter("Online", [])} style={[styles.newContainer, selectedNewFilter != "Online" && { backgroundColor: '#f0faf9' }]}>
                                 <Text style={[styles.newcategoryName, selectedNewFilter != "Online" && { color: '#828282' }]}>Online</Text>
                             </Pressable>
-                            <Pressable onPress={() => handleBtnFilter("Top Tutors",[])} style={[styles.newContainer, selectedNewFilter != "Top Tutors" && { backgroundColor: '#f0faf9' }]}>
+                            <Pressable onPress={() => handleBtnFilter("Top Tutors", [])} style={[styles.newContainer, selectedNewFilter != "Top Tutors" && { backgroundColor: '#f0faf9' }]}>
                                 <Text style={[styles.newcategoryName, selectedNewFilter != "Top Tutors" && { color: '#828282' }]}>Top Tutors</Text>
                             </Pressable>
                         </View>

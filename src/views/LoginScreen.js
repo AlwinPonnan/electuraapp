@@ -69,7 +69,7 @@ export default function login(props) {
                 <Image source={imageObj.loginImage} style={{ alignSelf: 'center', marginTop: 10 }} />
                 <View style={styles.textContainer}>
                     <Text style={styles.mainHeading}>Find The Best In Education</Text>
-                    <Text style={styles.labelSubHeading}>Learn new profession from the comfort of your home or anywhere</Text>
+                    <Text style={styles.labelSubHeading}>Discover teacher and courses. Learn wherever you are.</Text>
                 </View>
 
                 <KeyboardAvoidingView style={styles.inputContainer}>

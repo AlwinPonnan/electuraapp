@@ -195,6 +195,7 @@ export default function CourseDetail(props) {
                     setAlertText(`Error: ${error.code} | ${error.description}`)
                     setErrorAlert(true)
                 }
+                setDiscountApplied(false)
             });
         } catch (error) {
             console.log(error)
@@ -280,6 +281,7 @@ export default function CourseDetail(props) {
 
 
     const getCouponCode = async () => {
+        setCouponModal(false)
         setLoading(true)
         try {
             const { data: res } = await getCouponByCode(code);
@@ -287,9 +289,16 @@ export default function CourseDetail(props) {
                 console.log(res.data)
                 setCouponObj(res.data)
                 let tempObj = { ...courseObj }
-                setDiscountApplied(true)
-                tempObj.discountPrice = courseObj?.price * (res.data.amountOff / 100)
-                setCourseObj({ ...tempObj })
+                if (res.data.courseArr.some(el => el.courseId == courseObj?._id)) {
+                    setDiscountApplied(true)
+                    tempObj.discountPrice = courseObj?.price * (res.data.amountOff / 100)
+                    setCourseObj({ ...tempObj })
+                    setCouponModal(true)
+                }
+                else {
+                    setAlertText("Invalid Coupon Code")
+                    setErrorAlert(true)
+                }
             }
         } catch (error) {
             console.error(error)
@@ -313,8 +322,9 @@ export default function CourseDetail(props) {
             handleOnint()
         else {
             setCouponObj({})
+            setDiscountApplied(false)
         }
-        return () => setCouponObj({})
+        return () => { setCouponObj({}); setDiscountApplied(false) }
     }, [isFocused])
 
     return (
@@ -341,7 +351,7 @@ export default function CourseDetail(props) {
                         </Pressable> */}
                     </View>
                     <Pressable onPress={() => props.navigation.navigate("TeacherProfile", { data: userId })} style={[styles.flexRow, { alignItems: "center", marginTop: 5, marginBottom: 5 }]}>
-                        {courseObj?.profileImage!="" ?
+                        {courseObj?.profileImage != "" ?
                             <Image source={{ uri: generateImageUrl(courseObj?.profileImage) }} style={styles.img} />
 
                             :
@@ -416,9 +426,10 @@ export default function CourseDetail(props) {
                         visible={couponModal}
                         onRequestClose={() => {
                             setCouponModal(false);
+                            setDiscountApplied(false)
                         }}
                     >
-                        <Pressable style={styles.centeredView} onPress={() => setCouponModal(false)}>
+                        <Pressable style={styles.centeredView} onPress={() => { setCouponModal(false); setDiscountApplied(false) }}>
                             <Pressable style={styles.modalView}>
                                 <ScrollView>
 
@@ -448,7 +459,7 @@ export default function CourseDetail(props) {
                                     <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Enter Coupon Code (if any)</Text>
                                     <View style={styles.searchContainer}>
                                         <View style={styles.flexRowAlignCenter}>
-                                            <TextInput style={styles.searchInput} placeholder="Enter Code" onChangeText={(e) => setCode(e)} placeholderTextColor="#828282" />
+                                            <TextInput style={styles.searchInput} placeholder="Enter Code" onChangeText={(e) => {setCode(e);setDiscountApplied(false)}} placeholderTextColor="#828282" />
                                         </View>
                                         <Pressable disabled={discountApplied} onPress={() => getCouponCode()} style={[styles.flexRow, { alignItems: 'center' }]}>
 
@@ -478,7 +489,7 @@ export default function CourseDetail(props) {
                                     <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]} >
 
                                         <Text style={[styles.textInputLabel, { marginTop: 10 }]}>final Amount:</Text>
-                                        <Text style={[styles.textInputLabel, { marginTop: 10 }]}> ₹ {courseObj?.price - courseObj?.discountPrice}</Text>
+                                        <Text style={[styles.textInputLabel, { marginTop: 10 }]}> ₹ {courseObj?.price - (discountApplied ? courseObj?.discountPrice : 0)}</Text>
 
                                     </View>
                                     {/* <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Discount Amount : ₹ 00.00</Text>

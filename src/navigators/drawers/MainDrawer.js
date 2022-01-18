@@ -120,7 +120,7 @@ export default function MainDrawer() {
                     <TouchableOpacity style={styles.DrawerItem}><Icon name="help-circle-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> FAQs</Text></TouchableOpacity>
                     <TouchableOpacity style={styles.DrawerItem} onPress={()=>LinkingPrivacy()} ><Icon name="document-text-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Policies</Text></TouchableOpacity>
 
-                    <TouchableOpacity style={styles.DrawerItem} onPress={() => onShare()}><Icon name="link-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Referal Code is <Text style={{ fontFamily: "OpenSans-Bold", }}> {profileData?.referalCode} </Text></Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.DrawerItem} onPress={() => onShare()}><Icon name="link-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}>Referal Code is <Text style={{ fontFamily: "OpenSans-Bold" }}> {profileData?.referalCode}  </Text></Text><Icon name="share-social-outline" size={12} color={colorObj.primarColor} /></TouchableOpacity>
                     <TouchableOpacity onPress={() => { handleLogout() }} style={styles.DrawerItem}><Icon name="log-out-outline" size={16} color={colorObj.primarColor} /><Text style={styles.drawerItemTxt}> Log Out</Text></TouchableOpacity>
                 </View>
 

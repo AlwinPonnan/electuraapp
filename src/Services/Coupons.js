@@ -19,3 +19,12 @@ export const newCoupon = async (obj) => {
 export const getCouponByCode = async (code) => {
     return axiosApiInstance.get(`${url}/getByCode/${code}`)
 }
+
+
+
+export const deleteCouponById = async (id) => {
+    return axiosApiInstance.delete(`${url}/deleteById/${id}`)
+}
+
+
+

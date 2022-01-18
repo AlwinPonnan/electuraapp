@@ -196,7 +196,7 @@ export default function Courses(props) {
                         </Pressable>
                         <Text style={styles.textCardMainSubHeading1}>{item?.teacherName}</Text>
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                            <Text style={styles.textCardMainSubHeading2}>₹{item?.price}</Text>
+                            <Text style={[styles.textCardMainSubHeading2,{fontSize:12,fontFamily:'Montserrat-SemiBold'}]}>₹{item?.price}</Text>
                             <Text style={styles.textCardMainSubHeading2}>{item.rating}<Icon name="star" size={12} color={colorObj.primarColor} /></Text>
                         </View>
                     </View>
@@ -312,7 +312,7 @@ export default function Courses(props) {
                                                                 </Pressable>
                                                                 <Text style={styles.textCardMainSubHeading1}>{itemX?.teacherName}</Text>
                                                                 <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
-                                                                    <Text style={styles.textCardMainSubHeading2}>₹{itemX?.price}</Text>
+                                                                    <Text style={[styles.textCardMainSubHeading2,{fontSize:12,fontFamily:'Montserrat-SemiBold'}]}>₹{itemX?.price}</Text>
                                                                     <Text style={styles.textCardMainSubHeading2}>{itemX.rating}<Icon name="star" size={12} color={colorObj.primarColor} /></Text>
                                                                 </View>
                                                             </View>

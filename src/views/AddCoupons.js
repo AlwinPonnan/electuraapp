@@ -147,7 +147,7 @@ export default function AddCoupons(props) {
                         </View>
                         <View style={styles.inputContainer}>
                             <Icon name="cash-outline" size={14} color="black" />
-                            <TextInput style={styles.inputStyles} maxLength={2} onChangeText={(val) => setAmountOff(val)} placeholder="Enter Amount Off" keyboardType="numeric" />
+                            <TextInput style={styles.inputStyles} maxLength={2} onChangeText={(val) => setAmountOff(val)} placeholder="Enter percentage discount" keyboardType="numeric" />
                         </View>
 
                         <Text style={styles.label}>Select your courses *</Text>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, View, Text, TextInput, Pressable, Modal,FlatList } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Pressable, Modal, FlatList } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import NavBar from '../components/Navbar';
@@ -8,7 +8,7 @@ import { colorObj } from '../globals/colors';
 import { loadingContext } from '../navigators/stacks/RootStack';
 import { successAlertContext } from '../../App';
 import { useIsFocused } from '@react-navigation/core';
-import { getCouponsByTeacherId } from '../Services/Coupons';
+import { deleteCouponById, getCouponsByTeacherId } from '../Services/Coupons';
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
@@ -51,12 +51,23 @@ export default function TeacherCoupons(props) {
         getCoupons()
     }
 
-    const searchCouponCode=(val)=>{
-        let tempArr=[...mainCouponArr]
-        tempArr=tempArr.filter(el=>el.code.toLowerCase().includes(val.toLowerCase()))
+    const searchCouponCode = (val) => {
+        let tempArr = [...mainCouponArr]
+        tempArr = tempArr.filter(el => el.code.toLowerCase().includes(val.toLowerCase()))
         setCouponArr()
     }
 
+
+    const handleDelete=async(id)=>{
+        try {
+            const {data:res}=await deleteCouponById(id);
+            if(res.success){
+                handleOnInit()
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
 
     useEffect(() => {
         handleOnInit()
@@ -75,7 +86,7 @@ export default function TeacherCoupons(props) {
                     <TextInput
                         style={styles.input}
                         placeholder="Search coupon code"
-                        onChangeText={(e)=>searchCouponCode(e)}
+                        onChangeText={(e) => searchCouponCode(e)}
                     />
 
                 </View>
@@ -87,9 +98,17 @@ export default function TeacherCoupons(props) {
                     return (
                         <View style={{ backgroundColor: '#F9F9F9', padding: 20 }}>
                             <View style={{ flexDirection: 'row', }}>
-                                <AntDesign name='checksquare' size={18} style={{ color: '#085A4E', marginRight: 20 }} />
+                                {/* <AntDesign name='checksquare' size={18} style={{ color: '#085A4E', marginRight: 20 }} /> */}
                                 <View style={{ flex: 1 }}>
-                                    <Text style={{ marginLeft: 7, color: '#085A4E', fontFamily: "RedHatText-SemiBold", borderStyle: 'dashed', borderWidth: 1, borderColor: '#085A4E', padding: 5, width: 100, textAlign: 'center' }}>{item?.code}</Text>
+                                    <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+
+                                        <Text style={{ color: '#085A4E', fontFamily: "RedHatText-SemiBold", borderStyle: 'dashed', borderWidth: 1, borderColor: '#085A4E', padding: 5, width: 100, textAlign: 'center' }}>{item?.code}</Text>
+                                        <Pressable onPress={()=>handleDelete(item._id)}>
+
+                                            <AntDesign name='delete' size={18} style={{ color: '#085A4E', marginRight: 20 }} />
+                                        </Pressable>
+
+                                    </View>
                                     <Text style={{ color: '#4F4F4F', fontSize: 13, fontFamily: "RedHatText-Regular", marginTop: 10 }}>Discount {item.amountOff}%</Text>
                                     <Text style={{ color: '#4F4F4F', fontSize: 13, fontFamily: "RedHatText-Regular", marginTop: 10 }}>created at: {new Date(item.createdAt).toDateString()}</Text>
                                 </View>
@@ -101,7 +120,7 @@ export default function TeacherCoupons(props) {
                 }}
                 keyExtractor={(item, index) => `${item._id}`}
                 ListEmptyComponent={
-                    <Text style={{fontFamily:'Montserrat-SemiBold',fontSize:18,color:'black',textAlign:'center'}}>No Coupons Found</Text>
+                    <Text style={{ fontFamily: 'Montserrat-SemiBold', fontSize: 18, color: 'black', textAlign: 'center' }}>No Coupons Found</Text>
                 }
 
             />
@@ -157,7 +176,11 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontFamily: 'RedHatText-SemiBold',
     },
+    flexRow: {
+        display: 'flex',
+        flexDirection: 'row'
+    }
 
 
-   
+
 })
