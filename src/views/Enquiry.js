@@ -366,6 +366,8 @@ export default function Enquiry(props) {
                         }
                         onRefresh={() => getYourEnquires()}
                         refreshing={isRefreshing}
+                        scrollEnabled={true}
+                        nestedScrollEnabled={true}
                         renderItem={({ item, index }) => {
                             return (
                                 <>
@@ -381,6 +383,13 @@ export default function Enquiry(props) {
                                                     item.enquiryStatus == "CLOSED" &&
                                                     <Text style={[styles.ListHeaderStatus, { borderColor: "#EB5757", color: "#EB5757", borderWidth: 1, borderRadius: 3 }]}>Closed</Text>
                                                 }
+                                                {item?.ClassType == "Immediately" &&
+                                                    <Text style={[styles.ListHeaderStatus, { borderColor: "#EB5757", color: "#EB5757", borderWidth: 1, borderRadius: 3, marginHorizontal: 2 }]}>Immediate</Text>
+                                                }
+                                                {item?.ClassType == "Within a week" &&
+                                                    <Text style={[styles.ListHeaderStatus, { borderColor: "#EB5757", color: "#EB5757", borderWidth: 1, borderRadius: 3, marginHorizontal: 2 }]}>Immediate</Text>
+                                                }
+
 
                                             </View>
                                             <Pressable onPress={() => { handleOptionsModal(item) }}>
@@ -407,16 +416,17 @@ export default function Enquiry(props) {
                                     </Pressable>
                                     {item.checked &&
 
-                                        <View style={styles.EnquiryContainer}>
+                                        <View style={[styles.EnquiryContainer,{maxHeight:hp(25)}]}>
                                             <FlatList
-                                                data={item.enquiryResponses}
+                                                data={[...item.enquiryResponses, ...item.enquiryResponses, ...item.enquiryResponses, ...item.enquiryResponses]}
                                                 keyExtractor={(item, index) => `${item._id}`}
+                                                scrollEnabled={true}
                                                 ListEmptyComponent={
                                                     <View style={styles.card}>
                                                         {item?.enquiryType != EnquiryTypes.GENERAL ?
-                                                            <>{item?.acceptedByTeacher?
+                                                            <>{item?.acceptedByTeacher ?
                                                                 <Text style={[styles.cardHeading, { marginTop: 5 }]}>Enquiry Accepted By Teacher</Text>
-                                                                
+
                                                                 :
                                                                 <Text style={[styles.cardHeading, { marginTop: 5 }]}>You do not have any responses yet !</Text>
 

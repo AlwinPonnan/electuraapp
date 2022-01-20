@@ -226,27 +226,33 @@ export default function CourseDetail(props) {
 
         setLoading(true)
         try {
+            if(pincode.split(['']).length==6){
 
-            let decoded = await getDecodedToken()
-            if (decoded) {
-                let obj = {
-
-                    userId: decoded.userId,
-                    courseId: courseObj?._id,
-                    couponCode: code,
-                    addressObj: {
-                        line1: address,
-                        line2,
-                        city,
-                        pincode,
-                        state: shippingState
+                let decoded = await getDecodedToken()
+                if (decoded) {
+                    let obj = {
+                        
+                        userId: decoded.userId,
+                        courseId: courseObj?._id,
+                        couponCode: code,
+                        addressObj: {
+                            line1: address,
+                            line2,
+                            city,
+                            pincode,
+                            state: shippingState
+                        }
+                    }
+                    let { data: res, status: statusCode } = await createSingleOrder(obj)
+                    if (res) {
+                        // alert(res.message);
+                        handleRazorPay(res.data, res.orderId)
                     }
                 }
-                let { data: res, status: statusCode } = await createSingleOrder(obj)
-                if (res) {
-                    // alert(res.message);
-                    handleRazorPay(res.data, res.orderId)
-                }
+            }
+            else{
+                setAlertText("Enter valid Pincode")
+                setErrorAlert(true)
             }
         }
         catch (err) {
@@ -338,12 +344,12 @@ export default function CourseDetail(props) {
                         <View style={[styles.flexRow]} >
                             <Text style={styles.pageHeading}>{courseObj?.name}</Text>
                             <View style={[styles.flexRow, { alignItems: "center" }]}>
-                                {/* { courseObj?.rating &&
+                                { courseObj?.rating &&
                                     <>
                                         <Text style={styles.ratingTxt}>{courseObj?.rating}</Text>
                                         <Icon name="star" size={10} color="rgba(8, 90, 78, 1)" />
                                     </>
-                                } */}
+                                }
                             </View>
                         </View>
                         {/* <Pressable onPress={() => handleAddCourseToWhishlist()}>

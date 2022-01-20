@@ -149,7 +149,7 @@ export default function EnquiryDetail(props) {
                     <Pressable style={styles.modalView}>
                         <Text style={styles.responseModalHeading}>Enquiry Response</Text>
                         <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Message</Text>
-                        <TextInput style={[styles.textInput]} value={responseMessage} onChangeText={(e) => setResponseMessage(e)} />
+                        <TextInput multiline={true} numberOfLines={10} style={[styles.textInput]} value={responseMessage} onChangeText={(e) => setResponseMessage(e)} />
                         <Pressable style={styles.submitBtn} onPress={() => handleSubmit()}>
                             <Text style={styles.submitBtnText}>Respond</Text>
                         </Pressable>
@@ -211,6 +211,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginVertical: 10,
         width: '100%',
+        height:120,
         fontFamily: 'OpenSans-Regular'
 
     },
@@ -228,7 +229,7 @@ const styles = StyleSheet.create({
     },
     modalView: {
         margin: 20,
-        width: wp(80),
+        width: wp(90),
         backgroundColor: "white",
         borderRadius: 20,
         padding: 35,

@@ -16,7 +16,7 @@ export default function GeneralEnquiries(props) {
             setIsRefreshing(true)
             const { data: res } = await getAllGeneralEnquiriesForTeacher();
             if (res.success) {
-                console.log(JSON.stringify(res.data,null,2),"asd")
+                console.log(JSON.stringify(res.data,null,2),"@@@@@@@@@@@@@@@@@@@@@")
                 setEnquiryArr(res.data.map(el => {
                     let obj = {
                         ...el,
@@ -79,7 +79,7 @@ export default function GeneralEnquiries(props) {
                                     <Pressable style={styles.enquiryListHeader} onPress={() => item.enquiryStatus != "CLOSED" && props.navigation.navigate('EnquiryDetail', { enquiryId: item._id })} >
                                         <View style={[styles.flexRowAlignCenter, { justifyContent: "space-between" }]}>
                                             <View style={styles.flexRow}>
-                                                <Text style={styles.ListHeaderName}>Enquiry {index + 1}</Text>
+                                                <Text style={styles.ListHeaderName}>{item?.userObj?.name}</Text>
                                                 {
                                                     item.enquiryStatus == "OPEN" &&
                                                     <Text style={[styles.ListHeaderStatus, { borderColor: "#33D18F", color: "#33D18F", borderWidth: 1, borderRadius: 3 }]}>Open</Text>
@@ -88,9 +88,15 @@ export default function GeneralEnquiries(props) {
                                                     item.enquiryStatus == "CLOSED" &&
                                                     <Text style={[styles.ListHeaderStatus, { borderColor: "#EB5757", color: "#EB5757", borderWidth: 1, borderRadius: 3 }]}>Closed</Text>
                                                 }
+                                                 {item?.ClassType=="Immediately" &&
+                                                    <Text style={[styles.ListHeaderStatus, { borderColor: "#EB5757", color: "#EB5757", borderWidth: 1, borderRadius: 3,marginHorizontal:2 }]}>Immediate</Text>
+                                                }
+                                                {item?.ClassType=="Within a week" &&
+                                                    <Text style={[styles.ListHeaderStatus, { borderColor: "#EB5757", color: "#EB5757", borderWidth: 1, borderRadius: 3,marginHorizontal:2 }]}>Immediate</Text>
+                                                }
 
                                             </View>
-                                            <Icon name="ellipsis-vertical-outline" size={20} color="#828282" />
+                                            {/* <Icon name="ellipsis-vertical-outline" size={20} color="#828282" /> */}
 
                                         </View>
                                         <View style={[styles.flexRowAlignCenter, { marginTop: 7, justifyContent: "space-between" }]}>

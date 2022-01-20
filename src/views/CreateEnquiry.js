@@ -161,7 +161,7 @@ export default function CreateEnquiry(props) {
     const handleEnquirySubmit = async () => {
         setIsLoading(true)
         try {
-            if (selectedClassId != "" && selectedSubjectId != "" && ClassType != "" && price != "" && gender != "" ) {
+            if (selectedClassId != "" && selectedSubjectId != "" && ClassType != ""  && gender != "" ) {
 
                 let obj = {
                     classId: selectedClassId,
@@ -259,7 +259,7 @@ export default function CreateEnquiry(props) {
                     <>
 
 
-                        <Text style={styles.textInputLabel}>Which topic you want to study?</Text>
+                        <Text style={styles.textInputLabel}>Which topic you want to study? (Optional)</Text>
                         <Picker
                             style={styles.textInput}
                             selectedValue={selectedTopicId}
@@ -289,7 +289,7 @@ export default function CreateEnquiry(props) {
                     </>
                 }
 
-                <Text style={styles.textInputLabel}>Any Specific Requirment (optional)</Text>
+                <Text style={styles.textInputLabel}>Any Specific Requirment (Optional)</Text>
                 <TextInput style={styles.textInput} value={specificRequirement} onChangeText={(e) => setSpecificRequirement(e)} />
 
                 <Text style={styles.textInputLabel}>When do you want your classes to start?</Text>
@@ -408,7 +408,7 @@ export default function CreateEnquiry(props) {
                 {/* <TextInput style={styles.textInput} onChangeText={(e) => setRegion(e)} /> */}
 
                 <Text style={styles.textInputLabel}>How much you want to pay per hour?</Text>
-                <TextInput placeholder={"Enter amount in INR"} style={styles.textInput} keyboardType="number-pad" value={price} onChangeText={(e) => setPrice(e)} />
+                <TextInput maxLength={5} placeholder={"Enter Amount In INR"} style={styles.textInput} keyboardType="number-pad" value={price} onChangeText={(e) => setPrice(e)} />
 
                 <Text style={styles.textInputLabel}>Gender preference for teacher</Text>
 

@@ -342,7 +342,7 @@ export default function OrderDetail(props) {
                             } */}
                             {orderObj?.statusObj?.status == "DISPATCHED" &&
                                 <Pressable onPress={() => handleDeliverByTeacher()} style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }}>
-                                    <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Deliver</Text>
+                                    <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Confirm Delivery</Text>
                                 </Pressable>
                             }
 
@@ -362,7 +362,7 @@ export default function OrderDetail(props) {
                             }
 
                             {
-                                (orderObj?.statusObj?.status == "DELIVERED" && orderObj.feebackSubmitted==false) &&
+                                (orderObj?.statusObj?.status == "DELIVERED" && orderObj.feebackSubmitted==false ) &&
                                 <Pressable style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }} onPress={() => setResponseModal(true)}>
                                     <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Review</Text>
                                 </Pressable>
@@ -388,6 +388,10 @@ export default function OrderDetail(props) {
                 <View style={[styles.flexRow, { alignItems: 'center', marginHorizontal: 20, marginVertical: 10 }]}>
                     <Icon name="mail-outline" size={12} color="black" />
                     <Text style={styles.addressText}>{orderObj?.userDetails?.email}</Text>
+                </View>
+                <View style={[styles.flexRow, { alignItems: 'center', marginHorizontal: 20, marginVertical: 10 }]}>
+                    <Icon name="pin-outline" size={12} color="black" />
+                    <Text style={styles.addressText}>{orderObj?.addressObj?.line1},{orderObj?.addressObj?.line2},{orderObj?.addressObj?.city},{orderObj?.addressObj?.state},{orderObj?.addressObj?.pincode}</Text>
                 </View>
             </View>
 
