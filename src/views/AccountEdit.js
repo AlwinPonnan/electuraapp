@@ -2,10 +2,11 @@ import React, { useState, useEffect, useContext } from 'react'
 import { View, Text, StyleSheet, Image, TouchableOpacity, Pressable, Appearance, Modal, TextInput, ScrollView, Keyboard, FlatList, KeyboardAvoidingView, ImageBackground } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from "react-native-vector-icons/Ionicons"
+import IconFontAwesome from "react-native-vector-icons/FontAwesome"
 import NavBar from '../components/Navbar';
 import { colorObj, dark_colors, light_colors } from '../globals/colors';
 import DocumentPicker from 'react-native-document-picker'
-import { getUser, updateProfile, updateProfileImage } from '../Services/User';
+import { getUser, handleIntroFileUpload, updateProfile, updateProfileImage } from '../Services/User';
 import { generateImageUrl } from '../globals/utils';
 import { Checkbox } from 'react-native-paper';
 import { profileContext, roleContext } from '../navigators/stacks/RootStack';
@@ -66,6 +67,11 @@ export default function AccountEdit(props) {
 
 
     const [selectedQulifications, setSelectedQulifications] = useState([]);
+
+
+    const [selectedFile, setSelectedFile] = useState({});
+
+
 
     const items = [
         // this is the parent or 'item'
@@ -462,7 +468,6 @@ export default function AccountEdit(props) {
         }
     }
 
-
     const pickImageDocument = async () => {
         try {
             const res = await DocumentPicker.pickSingle({
@@ -485,7 +490,6 @@ export default function AccountEdit(props) {
         }
     }
 
-
     function ValidateEmail(mail) {
         if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
             return (true)
@@ -503,14 +507,14 @@ export default function AccountEdit(props) {
             }
             else {
 
-                let tempArr=[]
-                if(selectedQulifications?.length>0){
+                let tempArr = []
+                if (selectedQulifications?.length > 0) {
 
-                    selectedQulifications.forEach(el=>{
-                        items.forEach(elx=>{
-                            let index=elx.children.findIndex(elz=>elz.id==el)
-                            if(index!=-1){
-                                tempArr.push({name:elx.children[index].name,id:el})
+                    selectedQulifications.forEach(el => {
+                        items.forEach(elx => {
+                            let index = elx.children.findIndex(elz => elz.id == el)
+                            if (index != -1) {
+                                tempArr.push({ name: elx.children[index].name, id: el })
                             }
                         })
                     })
@@ -543,9 +547,6 @@ export default function AccountEdit(props) {
         }
     }
 
-
-
-
     const handleProfileImageUpdate = async (obj) => {
         try {
             console.log(obj, "image Object")
@@ -564,19 +565,11 @@ export default function AccountEdit(props) {
         }
     }
 
-
-
-
-
-
-
-
-
     const getUserData = async () => {
         setIsLoading(true)
         try {
             let { data: res, status: statusCode } = await getUser();
-            console.log(statusCode)
+            console.log(JSON.stringify(res.data, null, 2))
             if (statusCode == 200 || statusCode == 304) {
                 console.log(JSON.stringify(res.data, null, 2))
                 setName(res.data.name)
@@ -598,7 +591,7 @@ export default function AccountEdit(props) {
                 //     let temp=items.find(elx=>elx.children.find)
                 // })
 
-                setSelectedQulifications(res?.data?.enquiryObj?.qualificationArr.map(el=>el.id))
+                setSelectedQulifications(res?.data?.enquiryObj?.qualificationArr.map(el => el.id))
                 // console.log(JSON.stringify(res.data, null, 2))
             }
         }
@@ -707,6 +700,72 @@ export default function AccountEdit(props) {
         console.log(selectedQulifications, "@@@@@@@@@@@@")
         console.log(value)
     }
+
+
+
+
+    const pickImageIntroFile = async (fileValue) => {
+        try {
+            const res = await DocumentPicker.pickSingle({
+                type: [DocumentPicker.types.images, DocumentPicker.types.video],
+            })
+            console.log(res, "file response")
+            setSelectedFile(res)
+
+            // handleProfileImageUpdate(res)
+
+            uploadIntroFile(res, fileValue)
+
+
+        } catch (err) {
+            if (DocumentPicker.isCancel(err)) {
+                // User cancelled the picker, exit any dialogs or menus and move on
+            } else {
+                throw err
+            }
+        }
+    }
+
+
+
+
+
+    const uploadIntroFile = async (file, fileValue) => {
+        try {
+            setIsLoading(true)
+            console.log(typeof (file), "File obj  ***********************************************************************")
+            console.log(file, "File obj  ***********************************************************************")
+            let formData = new FormData();
+            formData.append("file", file)
+            formData.append("mimeType", file.type)
+            formData.append("fileValue", fileValue)
+
+            let { data: res } = await handleIntroFileUpload(formData)
+            console.log(JSON.stringify(res, null, 2), "response File upload")
+            if (res.message) {
+                setIsLoading(false)
+                setSuccessAlert(true)
+                setAlertText(`${res.message}`)
+                getUserData()
+            }
+        }
+        catch (err) {
+            setIsLoading(false)
+            if (err.response.data.message) {
+                console.log(err.response.data.message)
+                alert(err.response.data.message)
+            }
+            else {
+                console.log(err)
+                alert(err)
+            }
+        }
+    }
+
+
+
+
+
 
     useEffect(() => {
         getUserData()
@@ -942,6 +1001,32 @@ export default function AccountEdit(props) {
                                 Instagram username
                             </Text>
                             <TextInput value={profileData?.enquiryObj?.instagramLink} onChangeText={(e) => handleProfileDataUpdate(e, "instagramLink")} style={styles.txtInput} placeholder="Instagram username" />
+                            <Text style={styles.label}>
+                                Introductory Videos / Photos
+                            </Text>
+                            <View style={[styles.flexRow, { flexWrap: "wrap", justifyContent: "space-between" }]}>
+
+                                <Pressable onPress={() => { pickImageIntroFile(1) }} style={{ padding: 20, width: wp(40), marginTop: 22, display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.1)", borderRadius: 5, }}>
+                                    <IconFontAwesome name="file-o" size={25} color={"gray"} />
+                                    <Text>{profileData?.enquiryObj?.introductoryFile1?.url ? profileData?.enquiryObj?.introductoryFile1?.url : "File 1"}</Text>
+                                </Pressable>
+
+                                <Pressable onPress={() => { pickImageIntroFile(2) }} style={{ padding: 20, width: wp(40), marginTop: 22, display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.1)", borderRadius: 5, }}>
+                                    <IconFontAwesome name="file-o" size={25} color={"gray"} />
+                                    <Text>{profileData?.enquiryObj?.introductoryFile2?.url ? profileData?.enquiryObj?.introductoryFile2?.url : "File 2"}</Text>
+                                </Pressable>
+
+                                <Pressable onPress={() => { pickImageIntroFile(3) }} style={{ padding: 20, width: wp(40), marginTop: 30, display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.1)", borderRadius: 5, }}>
+                                    <IconFontAwesome name="file-o" size={25} color={"gray"} />
+                                    <Text>{profileData?.enquiryObj?.introductoryFile3?.url ? profileData?.enquiryObj?.introductoryFile3?.url : "File 3"}</Text>
+                                </Pressable>
+
+                                <Pressable onPress={() => { pickImageIntroFile(4) }} style={{ padding: 20, width: wp(40), marginTop: 30, display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.1)", borderRadius: 5, }}>
+                                    <IconFontAwesome name="file-o" size={25} color={"gray"} />
+                                    <Text>{profileData?.enquiryObj?.introductoryFile4?.url ? profileData?.enquiryObj?.introductoryFile4?.url : "File 4"}</Text>
+                                </Pressable>
+
+                            </View>
                         </>
 
                     }

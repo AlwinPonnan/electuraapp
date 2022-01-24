@@ -5,6 +5,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import Icon from 'react-native-vector-icons/Ionicons';
 import { colorObj } from '../globals/colors';
 import { RadioButton } from 'react-native-paper';
+import Video from 'react-native-video';
 
 import Swipeable from 'react-native-swipeable';
 import { useIsFocused } from '@react-navigation/core';
@@ -149,7 +150,7 @@ export default function TeacherProfile(props) {
             setDecodedObj(decodedTokenObj)
             let userId = props.route.params.data;
             const { data: res } = await getById(userId)
-            console.log(JSON.stringify(res.data, null, 2), "teacher data")
+            console.log(JSON.stringify(res.data.enquiryObj, null, 2), "teacher data")
             if (res.success) {
                 let tempObj = res.data;
                 tempObj.enquiryObj.timeslots = tempObj?.enquiryObj?.timeslots?.filter(el => el.slotArr.length > 0)
@@ -253,20 +254,20 @@ export default function TeacherProfile(props) {
     }
 
     const handleDaySelect = (tempdayIndex) => {
-        console.log(tempdayIndex)
+        // console.log(tempdayIndex)
         let tempArr = [...teacherObj.enquiryObj.timeslots];
         let dayIndex = tempArr.findIndex((el, i) => i == tempdayIndex);
-        console.log(dayIndex)
+        // console.log(dayIndex)
         if (dayIndex != -1) {
             setSlotsArr([...tempArr[dayIndex].slotArr])
             setSelectedSlotDay(tempArr[dayIndex].day)
         }
     }
     const handleDaySelectOnint = (tempdayIndex, arr) => {
-        console.log(tempdayIndex)
+        // console.log(tempdayIndex)
         let tempArr = [...arr];
         let dayIndex = tempArr.findIndex((el, i) => i == tempdayIndex);
-        console.log(dayIndex)
+        // console.log(dayIndex)
         if (dayIndex != -1) {
             setSlotsArr([...tempArr[dayIndex].slotArr])
             setSelectedSlotDay(tempArr[dayIndex].day)
@@ -414,7 +415,7 @@ export default function TeacherProfile(props) {
                     return obj
                 }).filter(el => {
                     if (el?.enquiryObj?.slotObj?.timeSlotObj?.startTime) {
-                        console.log(new Date(el?.enquiryObj?.slotObj?.timeSlotObj?.startTime).toDateString())
+                        // console.log(new Date(el?.enquiryObj?.slotObj?.timeSlotObj?.startTime).toDateString())
                         if (new Date(el?.enquiryObj?.slotObj?.timeSlotObj?.startTime).getTime() <= new Date().getTime() && new Date(el?.enquiryObj?.slotObj?.timeSlotObj?.endTime).getTime() >= new Date().getTime()) {
                             return true
                         }
@@ -436,9 +437,9 @@ export default function TeacherProfile(props) {
     }
     const onDayPress = day => {
         // console.log(day)
-        console.log(selectedDate)
+        // console.log(selectedDate)
         let tempDate = day.dateString;
-        console.log(tempDate)
+        // console.log(tempDate)
         setSelectedDate(day.dateString)
         // setSelectedSlotDay(new Date(tempDate).getDay())
         handleDaySelect(new Date(tempDate).getDay())
@@ -485,6 +486,7 @@ export default function TeacherProfile(props) {
                 </View>
 
             </ImageBackground>
+
             <View style={[styles.flexRow, { width: wp(90), alignSelf: "center", justifyContent: 'space-between' }]}>
                 <Image source={{ uri: teacherObj?.profileImage ? generateImageUrl(teacherObj?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} style={{ width: 100, height: 100, position: "relative", top: -40, borderRadius: 50 }} resizeMode="cover" />
                 {
@@ -579,7 +581,6 @@ export default function TeacherProfile(props) {
                     </View>
                 </View>
             </View>
-
             {teacherObj?.enquiryObj?.description &&
 
                 <View style={[styles.flexColumn, { width: wp(90), alignSelf: "center" }]}>
@@ -591,7 +592,7 @@ export default function TeacherProfile(props) {
             {teacherObj?.enquiryObj?.qualificationArr.length > 0 &&
                 <View style={[styles.flexColumn, { width: wp(90), alignSelf: "center" }]}>
                     <Text style={[styles.headingAboveCard, { paddingLeft: 0 }]}>Qualification</Text>
-                    <Text style={styles.description}>{teacherObj?.enquiryObj?.qualificationArr.reduce((acc,el)=>acc+el.name+',','')}</Text>
+                    <Text style={styles.description}>{teacherObj?.enquiryObj?.qualificationArr.reduce((acc, el) => acc + el.name + ',', '')}</Text>
                 </View>
             }
 
@@ -626,6 +627,69 @@ export default function TeacherProfile(props) {
                 showsHorizontalScrollIndicator={false}
                 keyExtractor={(item, index) => `${index}`}
             />
+
+            <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10 }]}>
+                <Text style={styles.headingAboveCard}>Introductory Videos/Images</Text>
+                <Pressable onPress={() => props.navigation.navigate("MainDrawer", { screen: "MainBottomTab", params: { screen: "Courses", params: { screen: "AllCourses" } } })}>
+
+                    <Text style={[styles.viewAllText, { fontFamily: 'RedHatText-Regular' }]}></Text>
+                </Pressable>
+            </View>
+
+            <View style={[styles.flexRow, { flexWrap: "wrap", justifyContent: "space-between", paddingHorizontal: 10 }]}>
+                {
+                    teacherObj?.enquiryObj?.introductoryFile1.mimeType.includes("image") && teacherObj?.enquiryObj?.introductoryFile1.mimeType ?
+                        <Image source={{
+                            uri: generateImageUrl(teacherObj?.enquiryObj?.introductoryFile1?.url)
+                        }} style={{ width: wp(45), height: wp(45), marginTop: 22, display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.1)", borderRadius: 5, }} />
+
+                        :
+                        <Video repeat resizeMode={"cover"} paused={false} source={{ uri: generateImageUrl(teacherObj?.enquiryObj?.introductoryFile1?.url) }}   // Can be a URL or a local file.         // Store reference
+                            onBuffer={() => console.log("ads")}                // Callback when remote video is buffering
+                            onError={() => console.log("ads")}               // Callback when video cannot be loaded
+                            style={{ width: wp(45), height: wp(45), marginTop: 22, }} />
+                }
+                {
+                    teacherObj?.enquiryObj?.introductoryFile2.mimeType.includes("image") && teacherObj?.enquiryObj?.introductoryFile2.mimeType ?
+                        <Image source={{
+                            uri: generateImageUrl(teacherObj?.enquiryObj?.introductoryFile2?.url)
+                        }} style={{ width: wp(45), height: wp(45), marginTop: 22, display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.1)", borderRadius: 5, }} />
+
+                        :
+                        <Video repeat resizeMode={"cover"} paused={false} source={{ uri: generateImageUrl(teacherObj?.enquiryObj?.introductoryFile2?.url) }}   // Can be a URL or a local file.         // Store reference
+                            onBuffer={() => console.log("ads")}                // Callback when remote video is buffering
+                            onError={() => console.log("ads")}               // Callback when video cannot be loaded
+                            style={{ width: wp(45), height: wp(45), marginTop: 22, }} />
+                }
+                {
+                    teacherObj?.enquiryObj?.introductoryFile3.mimeType.includes("image") && teacherObj?.enquiryObj?.introductoryFile3.mimeType ?
+                        <Image source={{
+                            uri: generateImageUrl(teacherObj?.enquiryObj?.introductoryFile3?.url)
+                        }} style={{ width: wp(45), height: wp(45), marginTop: 22, display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.1)", borderRadius: 5, }} />
+
+                        :
+                        <Video repeat resizeMode={"cover"} paused={false} source={{ uri: generateImageUrl(teacherObj?.enquiryObj?.introductoryFile3?.url) }}   // Can be a URL or a local file.         // Store reference
+                            onBuffer={() => console.log("ads")}                // Callback when remote video is buffering
+                            onError={() => console.log("ads")}               // Callback when video cannot be loaded
+                            style={{ width: wp(45), height: wp(45), marginTop: 22, }} />
+                }
+                {
+                    teacherObj?.enquiryObj?.introductoryFile4.mimeType.includes("image") && teacherObj?.enquiryObj?.introductoryFile4.mimeType ?
+                        <Image source={{
+                            uri: generateImageUrl(teacherObj?.enquiryObj?.introductoryFile4?.url)
+                        }} style={{ width: wp(45), height: wp(45), marginTop: 22, display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.1)", borderRadius: 5, }} />
+
+                        :
+                        <Video repeat resizeMode={"cover"} paused={false} source={{ uri: generateImageUrl(teacherObj?.enquiryObj?.introductoryFile4?.url) }}   // Can be a URL or a local file.         // Store reference
+                            onBuffer={() => console.log("ads")}                // Callback when remote video is buffering
+                            onError={() => console.log("ads")}               // Callback when video cannot be loaded
+                            style={{ width: wp(45), height: wp(45), marginTop: 22, }} />
+                }
+
+            </View>
+
+            {/*  */}
+
 
             <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10 }]}>
                 <Text style={styles.headingAboveCard}>Courses ({coursesArr.length})</Text>

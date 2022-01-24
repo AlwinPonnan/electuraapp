@@ -115,8 +115,8 @@ export const CheckValidOtp = async (sessionId, otp) => {
     }
 }
 
-export const updateTeacherSlots=async(obj)=>{
-    return axiosApiInstance.patch(`${url}/updateTeacherSlots`,obj)
+export const updateTeacherSlots = async (obj) => {
+    return axiosApiInstance.patch(`${url}/updateTeacherSlots`, obj)
 }
 
 export const getAllTeachers = async () => {
@@ -196,11 +196,15 @@ export const toggleOnline = async () => {
     return await axiosApiInstance.patch(`${url}/toggleOnline`)
 }
 
-export const markNotificationAsRead=async(id)=>{
-    return await axiosApiInstance.patch(`${url}/markNotificationAsRead/${id}`) 
+export const handleIntroFileUpload = async (formData) => {
+    return await axiosApiInstance.patch(`${url}/updateIntroData`, formData)
+}
+
+export const markNotificationAsRead = async (id) => {
+    return await axiosApiInstance.patch(`${url}/markNotificationAsRead/${id}`)
 }
 
 
 export const techerSlotSelect = async (obj) => {
-    return await axiosApiInstance.post(`${url}/submitslotArr`,obj)
+    return await axiosApiInstance.post(`${url}/submitslotArr`, obj)
 }

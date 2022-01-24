@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { View, Text, StyleSheet, Image, TextInput, Pressable, ScrollView,Linking } from 'react-native'
+import { View, Text, StyleSheet, Image, TextInput, Pressable, ScrollView, Linking } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icons from "react-native-vector-icons/FontAwesome";
 import IconsFoundation from "react-native-vector-icons/Foundation";
@@ -18,7 +18,6 @@ export default function Contact(props) {
 
     const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
 
-
     const [successAlert, setSuccessAlert] = successAlertArr
     const [warningAlert, setWarningAlert] = warningAlertArr
     const [errorAlert, setErrorAlert] = errorAlertArr
@@ -28,7 +27,7 @@ export default function Contact(props) {
     const handleSubmit = async () => {
         try {
 
-            if(message!=""){
+            if (message != "") {
 
                 let obj = {
                     message
@@ -40,7 +39,7 @@ export default function Contact(props) {
                     setAlertText(res.message)
                 }
             }
-            else{
+            else {
                 setAlertText("Please Enter Message")
                 setErrorAlert(true)
             }
@@ -57,15 +56,15 @@ export default function Contact(props) {
     }
 
 
-    const handleShare=(url)=>{
+    const handleShare = (url) => {
         Linking.openURL(url)
     }
-    
-    const handleWhatsapp=()=>{
+
+    const handleWhatsapp = () => {
         Linking.openURL('whatsapp://send?text=hello&phone=919302275951')
     }
-    
-    const handleWebRedirect=()=>{
+
+    const handleWebRedirect = () => {
         Linking.openURL("https://www.electura.co/")
     }
 
@@ -83,22 +82,22 @@ export default function Contact(props) {
                             Please get in touch with team Electura and we’ll be happy to help you.
                         </Text>
                         <View style={[styles.flexRow, { marginTop: 20 }]}>
-                            <Pressable onPress={()=>handleShare(socialLink.instagram)} style={styles.circle}>
+                            <Pressable onPress={() => handleShare(socialLink.instagram)} style={styles.circle}>
                                 <Icons color="#E517DD" name="instagram" size={15} />
                             </Pressable>
-                            <Pressable style={styles.circle} onPress={()=>handleWhatsapp()} >
+                            <Pressable style={styles.circle} onPress={() => handleWhatsapp()} >
                                 <Icons color="#64D315" name="whatsapp" size={15} />
                             </Pressable>
-                            <Pressable style={styles.circle} onPress={()=>handleShare(socialLink.linkdin)}>
+                            <Pressable style={styles.circle} onPress={() => handleShare(socialLink.linkdin)}>
                                 <Icons color="#6747ED" name="linkedin" size={15} />
                             </Pressable>
-                            <Pressable style={styles.circle} onPress={()=>handleShare(socialLink.email)}>
+                            <Pressable style={styles.circle} onPress={() => handleShare(socialLink.email)}>
                                 <IconsFeather color="#FF900E" name="mail" size={15} />
                             </Pressable>
-                            <Pressable style={styles.circle} onPress={()=>handleShare(socialLink.facebook)}>
+                            <Pressable style={styles.circle} onPress={() => handleShare(socialLink.facebook)}>
                                 <Icons color="#0085FF" name="facebook" size={15} />
                             </Pressable>
-                            <Pressable style={styles.circle} onPress={()=>handleWebRedirect()}>
+                            <Pressable style={styles.circle} onPress={() => handleWebRedirect()}>
                                 <IconsFoundation color="#085A4E" name="web" size={15} />
                             </Pressable>
                         </View>
