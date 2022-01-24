@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, Text, View, FlatList, Image, Pressable, Modal, TextInput } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Image, Pressable, Modal, TextInput, Alert } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
@@ -138,13 +138,13 @@ export default function OrderDetail(props) {
 
             }
         } catch (error) {
-            if(error?.response?.data?.message){
+            if (error?.response?.data?.message) {
                 setAlertText(error?.response?.data?.message)
                 setErrorAlert(true)
 
-                
+
             }
-            else{
+            else {
                 setAlertText(error.message)
                 setErrorAlert(true)
 
@@ -155,9 +155,24 @@ export default function OrderDetail(props) {
         setIsLoading(false)
     }
 
+    const createTwoButtonAlert = (val) =>
+        Alert.alert(
+            "Alert",
+            "Do you really want to deliver this order ?",
+            [
+                {
+                    text: "No",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                { text: "Yes", onPress: () => val == "user" ? handleDeliverOrder : handleDeliverByTeacher() }
+            ]
+        );
+
     const handleDeliverOrder = async () => {
         setIsLoading(true)
         try {
+
             const { data: res } = await deliverOrder(orderObj?._id)
             if (res) {
                 getOrders()
@@ -167,13 +182,13 @@ export default function OrderDetail(props) {
             }
 
         } catch (error) {
-            if(error?.response?.data?.message){
+            if (error?.response?.data?.message) {
                 setAlertText(error?.response?.data?.message)
                 setErrorAlert(true)
 
-                
+
             }
-            else{
+            else {
                 setAlertText(error.message)
                 setErrorAlert(true)
 
@@ -195,12 +210,12 @@ export default function OrderDetail(props) {
             }
 
         } catch (error) {
-            if(error?.response?.data?.message){
+            if (error?.response?.data?.message) {
                 setAlertText(error?.response?.data?.message)
-                setErrorAlert(true) 
+                setErrorAlert(true)
             }
-            else{
-                
+            else {
+
                 setAlertText(error.message)
                 setErrorAlert(true)
             }
@@ -341,7 +356,7 @@ export default function OrderDetail(props) {
                                 </Pressable>
                             } */}
                             {orderObj?.statusObj?.status == "DISPATCHED" &&
-                                <Pressable onPress={() => handleDeliverByTeacher()} style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }}>
+                                <Pressable onPress={() => createTwoButtonAlert("teacher")} style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }}>
                                     <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Confirm Delivery</Text>
                                 </Pressable>
                             }
@@ -355,14 +370,14 @@ export default function OrderDetail(props) {
 
                         :
                         <>
-                            {(orderObj?.statusObj?.status == "DISPATCHED" || orderObj?.statusObj?.status == "DELIVERED MARKED BY TEACHER")  &&
-                                <Pressable style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }} onPress={() => handleDeliverOrder()}>
+                            {(orderObj?.statusObj?.status == "DISPATCHED" || orderObj?.statusObj?.status == "DELIVERED MARKED BY TEACHER") &&
+                                <Pressable style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }} onPress={() => createTwoButtonAlert("user")}>
                                     <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Mark Delivered</Text>
                                 </Pressable>
                             }
 
                             {
-                                (orderObj?.statusObj?.status == "DELIVERED" && orderObj.feebackSubmitted==false ) &&
+                                (orderObj?.statusObj?.status == "DELIVERED" && orderObj.feebackSubmitted == false) &&
                                 <Pressable style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }} onPress={() => setResponseModal(true)}>
                                     <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Review</Text>
                                 </Pressable>
@@ -392,6 +407,10 @@ export default function OrderDetail(props) {
                 <View style={[styles.flexRow, { alignItems: 'center', marginHorizontal: 20, marginVertical: 10 }]}>
                     <Icon name="pin-outline" size={12} color="black" />
                     <Text style={styles.addressText}>{orderObj?.addressObj?.line1},{orderObj?.addressObj?.line2},{orderObj?.addressObj?.city},{orderObj?.addressObj?.state},{orderObj?.addressObj?.pincode}</Text>
+                </View>
+                <View style={[styles.flexRow, { alignItems: 'center', marginHorizontal: 20, marginVertical: 10 }]}>
+                    <Icon name="cart-outline" size={12} color="black" />
+                    <Text style={styles.addressText}>{orderObj?.orderId}</Text>
                 </View>
             </View>
 

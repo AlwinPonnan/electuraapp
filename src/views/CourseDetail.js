@@ -226,7 +226,30 @@ export default function CourseDetail(props) {
 
         setLoading(true)
         try {
-            if(pincode.split(['']).length==6){
+            if(courseObj?.ClassType == "online"){
+                let decoded = await getDecodedToken()
+                if (decoded) {
+                    let obj = {
+                        
+                        userId: decoded.userId,
+                        courseId: courseObj?._id,
+                        couponCode: code,
+                        addressObj: {
+                            line1: address,
+                            line2,
+                            city,
+                            pincode,
+                            state: shippingState
+                        }
+                    }
+                    let { data: res, status: statusCode } = await createSingleOrder(obj)
+                    if (res) {
+                        // alert(res.message);
+                        handleRazorPay(res.data, res.orderId)
+                    }
+                }
+            }
+            else if(pincode.split(['']).length==6){
 
                 let decoded = await getDecodedToken()
                 if (decoded) {
@@ -250,6 +273,7 @@ export default function CourseDetail(props) {
                     }
                 }
             }
+            
             else{
                 setAlertText("Enter valid Pincode")
                 setErrorAlert(true)

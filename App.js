@@ -119,7 +119,7 @@ const App = () => {
         // bigText: `${remoteMessage.data.title}`, // (optional) default: "message" prop
         bigLargeIcon: "ic_launcher", // (optional) default: undefined
         // bigLargeIconUrl: "https://www.example.tld/bigicon.jpg", // (optional) default: undefined
-        color: "blue", // (optional) default: system default
+        // color: "blue", // (optional) default: system default
         vibrate: true, // (optional) default: true
         vibration: 2000, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
         tag: "some_tag", // (optional) add tag to message

@@ -402,7 +402,19 @@ export default function AccountEdit(props) {
                 }
             ],
         },
+        {
+            name: 'Other',
+            id: 62,
 
+            // these are the children or 'sub items'
+            children: [
+                {
+                    name: 'Order Diploma/Degree',
+                    id: 63,
+
+                },
+            ],
+        },
 
     ];
 

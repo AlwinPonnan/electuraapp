@@ -102,6 +102,7 @@ export default function AllTeacher(props) {
     const [nestedClassArr, setNestedClassArr] = useState([]);
     const [mainNestedClassArr, setMainNestedClassArr] = useState([]);
 
+    const [includeNoFeesTeachers, setIncludeNoFeesTeachers] = useState(false);
 
     const getTeachers = async () => {
         setIsLoading(true)
@@ -569,8 +570,16 @@ export default function AllTeacher(props) {
             tempArr = tempArr.filter(el => el?.enquiryObj?.subjectArr?.some(elx => filteredSubjectArr.some(ely => ely._id == elx.subjectId)))
         }
 
-        tempArr = tempArr.filter(el => el.enquiryObj?.feesObj?.minFees >= parseInt(multiSliderValue[0]) && el.enquiryObj?.feesObj?.maxFees <= parseInt(multiSliderValue[1]))
+        // tempArr = tempArr.filter(el => el.enquiryObj?.feesObj?.minFees >= parseInt(multiSliderValue[0]) && el.enquiryObj?.feesObj?.maxFees <= parseInt(multiSliderValue[1]))
 
+        if (includeNoFeesTeachers) {
+            let prevInstance = tempArr.filter(el => !el.enquiryObj?.feesObj?.minFees && !el.enquiryObj?.feesObj?.maxFees);
+            tempArr = [...tempArr.filter(el => el.enquiryObj?.feesObj?.minFees >= parseInt(multiSliderValue[0]) && el.enquiryObj?.feesObj?.maxFees <= parseInt(multiSliderValue[1])), ...prevInstance]
+        }
+        else {
+            tempArr = tempArr.filter(el => !(!el.enquiryObj?.feesObj?.minFees && !el.enquiryObj?.feesObj?.maxFees)).filter(el => el.enquiryObj?.feesObj?.minFees >= parseInt(multiSliderValue[0]) && el.enquiryObj?.feesObj?.maxFees <= parseInt(multiSliderValue[1]))
+
+        }
         if (sortBy == sortByText.priceLowToHigh) {
             tempArr = tempArr.sort((a, b) => a.enquiryObj?.feesObj?.maxFees - b.enquiryObj?.feesObj?.maxFees)
         }
@@ -1097,6 +1106,18 @@ export default function AllTeacher(props) {
                                             onValuesChangeStart={() => setIsScrollEnabled(false)}
                                             onValuesChangeFinish={() => setIsScrollEnabled(true)}
                                         />
+                                        <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 5, justifyContent: 'space-between', }]}>
+                                                <Checkbox
+                                                    color={colorObj.primarColor}
+                                                    status={includeNoFeesTeachers ? "checked" : "unchecked"}
+                                                    onPress={() => setIncludeNoFeesTeachers(!includeNoFeesTeachers)}
+                                                />
+                                                <Pressable onPress={() => setIncludeNoFeesTeachers(true)} style={{ paddingVertical: 5, width: '100%' }} >
+                                                    <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>Include Teacher With No Fees</Text>
+                                                </Pressable>
+
+                                            </View>
+
                                     </View>
                                 }
                                 {activeFilterContainer == "sortBy" &&

@@ -50,7 +50,7 @@ export default function IncomingOrders(props) {
             />
             <View style={{ flex: 1, marginLeft: 10 }}>
                 <Text style={[styles.listTitle]}>{item?.courseObj?.name}</Text>
-                {/* <Text style={[styles.address, { marginTop: 5, color: '#929292', }]}>{item.content}</Text> */}
+                <Text style={[styles.address, { marginTop: 5, color: '#929292', }]}>{new Date(item.createdAt).toDateString()}</Text>
                 {/* <Text style={[styles.address, { marginTop: 5, color: '#929292' }]}>abc</Text> */}
                 <Text style={[styles.address, { marginTop: 5, color: '#FFA949' }]}>SUMMARY</Text>
             </View>

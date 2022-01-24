@@ -18,6 +18,7 @@ import MultiSlider from '@ptomasroos/react-native-multi-slider'
 
 import { Checkbox } from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useIsFocused } from '@react-navigation/native';
 
 export default function SearchScreen(props) {
     const [categoryArr, setCategoryArr] = useState([]);
@@ -55,6 +56,8 @@ export default function SearchScreen(props) {
 
 
     const [includeNoFeesTeachers, setIncludeNoFeesTeachers] = useState(false);
+
+    const focused = useIsFocused()
 
     const onChangeSearch = query => {
         let tempQuery = query.toLowerCase()
@@ -314,8 +317,11 @@ export default function SearchScreen(props) {
     }
 
     useEffect(() => {
-        handleOnint()
-    }, [])
+        if (focused) {
+
+            handleOnint()
+        }
+    }, [focused])
 
 
 
@@ -380,7 +386,14 @@ export default function SearchScreen(props) {
             tempTeachersArr = tempTeachersArr.filter(el => el?.enquiryObj?.subjectArr?.some(elx => filteredSubjectArr.some(ely => ely._id == elx.subjectId)))
         }
 
-        tempTeachersArr = tempTeachersArr.filter(el => el.enquiryObj?.feesObj?.minFees >= parseInt(multiSliderValue[0]) && el.enquiryObj?.feesObj?.maxFees <= parseInt(multiSliderValue[1]))
+        if (includeNoFeesTeachers) {
+            let prevInstance = tempTeachersArr.filter(el => !el.enquiryObj?.feesObj?.minFees && !el.enquiryObj?.feesObj?.maxFees);
+            tempTeachersArr = [...tempTeachersArr.filter(el => el.enquiryObj?.feesObj?.minFees >= parseInt(multiSliderValue[0]) && el.enquiryObj?.feesObj?.maxFees <= parseInt(multiSliderValue[1])), ...prevInstance]
+        }
+        else {
+            tempTeachersArr = tempTeachersArr.filter(el => !(!el.enquiryObj?.feesObj?.minFees && !el.enquiryObj?.feesObj?.maxFees)).filter(el => el.enquiryObj?.feesObj?.minFees >= parseInt(multiSliderValue[0]) && el.enquiryObj?.feesObj?.maxFees <= parseInt(multiSliderValue[1]))
+
+        }
 
 
         if (sortBy == sortByText.priceLowToHigh) {
@@ -728,14 +741,14 @@ export default function SearchScreen(props) {
                                                 onValuesChangeStart={() => setIsScrollEnabled(false)}
                                                 onValuesChangeFinish={() => setIsScrollEnabled(true)}
                                             />
-                                            <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 10, justifyContent: 'space-between', }]}>
+                                            <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 5, justifyContent: 'space-between', }]}>
                                                 <Checkbox
                                                     color={colorObj.primarColor}
                                                     status={includeNoFeesTeachers ? "checked" : "unchecked"}
-                                                    onPress={() => setIncludeNoFeesTeachers(true)}
+                                                    onPress={() => setIncludeNoFeesTeachers(!includeNoFeesTeachers)}
                                                 />
                                                 <Pressable onPress={() => setIncludeNoFeesTeachers(true)} style={{ paddingVertical: 5, width: '100%' }} >
-                                                    <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>Include </Text>
+                                                    <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>Include Teacher With No Fees</Text>
                                                 </Pressable>
 
                                             </View>
