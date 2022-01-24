@@ -117,7 +117,7 @@ export default function EnquiryDetail(props) {
 
 
                 <Text style={styles.contentHeading}>Prefered Teaching Mode</Text>
-                <Text style={styles.contentText}>{enquiryObj?.teachingMode}</Text>
+                <Text style={styles.contentText}>{enquiryObj?.enquiryMode}</Text>
 
 
                 <Text style={styles.contentHeading}>Class Starts  </Text>

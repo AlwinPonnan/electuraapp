@@ -416,11 +416,11 @@ export default function Enquiry(props) {
                                     </Pressable>
                                     {item.checked &&
 
-                                        <View style={[styles.EnquiryContainer,{maxHeight:hp(25)}]}>
+                                        <ScrollView style={[styles.EnquiryContainer,{maxHeight:hp(35)}]}>
                                             <FlatList
                                                 data={[...item.enquiryResponses, ...item.enquiryResponses, ...item.enquiryResponses, ...item.enquiryResponses]}
-                                                keyExtractor={(item, index) => `${item._id}`}
-                                                scrollEnabled={true}
+                                                keyExtractor={(item, index) => `${index}`}
+                                                scrollEnabled={false}
                                                 ListEmptyComponent={
                                                     <View style={styles.card}>
                                                         {item?.enquiryType != EnquiryTypes.GENERAL ?
@@ -456,7 +456,7 @@ export default function Enquiry(props) {
                                                     )
                                                 }}
                                             />
-                                        </View>
+                                        </ScrollView>
                                     }
 
                                 </>

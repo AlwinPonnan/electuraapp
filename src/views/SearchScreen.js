@@ -12,7 +12,7 @@ import { getAllSubjects } from '../Services/Subjects';
 import { addTOWishList, BookmarkTeacher, getAllTeachers, getDecodedToken } from '../Services/User';
 import { generateImageUrl, sortByText } from '../globals/utils';
 import { getAllForUsersHomePage } from '../Services/Course';
-import { getAllClasses } from '../Services/Classses';
+import { getAllBySubject, getAllClasses } from '../Services/Classses';
 import { getAllTopics } from '../Services/Topic';
 import MultiSlider from '@ptomasroos/react-native-multi-slider'
 
@@ -48,7 +48,13 @@ export default function SearchScreen(props) {
     const [maxFees, setMaxFees] = useState(0);
     const [minFees, setMinFees] = useState(0);
 
+    const [nestedClassArr, setNestedClassArr] = useState([]);
+    const [mainNestedClassArr, setMainNestedClassArr] = useState([]);
 
+    const [isScrollEnabled, setIsScrollEnabled] = useState(true);
+
+
+    const [includeNoFeesTeachers, setIncludeNoFeesTeachers] = useState(false);
 
     const onChangeSearch = query => {
         let tempQuery = query.toLowerCase()
@@ -93,19 +99,11 @@ export default function SearchScreen(props) {
             const { data: res } = await addTOWishList(obj);
             if (res.success) {
                 handleOnint()
-                // setAlertText(res.message);
-                // setSuccessAlert(true)
+
             }
         } catch (error) {
             console.error(error)
-            // if (error.response.data.message) {
-            //     setErrorAlert(true)
-            //     setAlertText(error.response.data.message)
-            // }
-            // else {
-            //     setErrorAlert(true)
-            //     setAlertText(error.message)
-            // }
+
         }
     }
 
@@ -195,30 +193,71 @@ export default function SearchScreen(props) {
         }
     }
 
+    const getNestedClasses = async () => {
+        try {
+            const { data: res } = await getAllBySubject();
+            if (res.success) {
+                setNestedClassArr([...res.data.map(el => {
+                    let obj = {
+                        ...el,
+                        checked: false,
+                        classArr: el.classArr.map(elx => ({ ...elx, checked: false }))
+                    }
+                    return obj
+                })])
+                setMainNestedClassArr([...res.data.map(el => {
+                    let obj = {
+                        ...el,
+                        checked: false,
+                        classArr: el.classArr.map(elx => ({ ...elx, checked: false }))
+                    }
+                    return obj
+                })])
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+
     const handleTopicFilter = () => {
         let tempArr = [...mainTopicArr];
-        let tempClassesArr = [...classesArr.filter(elx => elx.checked)]
+        let tempClassesArr = [...nestedClassArr.filter(elx => elx.classArr.some(elz => elz.checked))]
         let tempSubjectArr = [...subjectArr.filter(elx => elx.checked)]
 
-        tempArr = tempArr.filter(ely => tempClassesArr.some(ele => ele._id == ely.classId) || tempSubjectArr.some(ele => ele._id == ely.subjectId));
-        console.log(tempArr)
+        tempArr = tempArr.filter(ely => tempSubjectArr.some(ele => ele._id == ely.subjectId));
+        tempArr = tempArr.filter(ely => tempClassesArr.some(elz => elz.classArr.some(el => el._id == ely.classId)) || tempSubjectArr.some(ele => ele._id == ely.subjectId));
+
+        // console.log(tempArr)
         setTopicArr([...tempArr])
     }
 
-    const handleSubjectSelection = (id) => {
-        setSubjectArr(prevState => {
-            let tempIndex = prevState.findIndex(el => el._id == id);
-            if (tempIndex != -1)
-                prevState[tempIndex].checked = !prevState[tempIndex].checked
-            return [...prevState]
+
+    const handleSubjectSelection = (index, id) => {
+        let tempArr = [...subjectArr];
+        tempArr = tempArr.map((el, i) => {
+            if (i == index) {
+
+                el.checked = !el.checked
+            }
+            else {
+                el.checked = false
+            }
+            return el
         })
+        setSubjectArr([...tempArr])
+        let tempClassesArr = [...mainNestedClassArr];
+        console.log(tempClassesArr)
+        tempClassesArr = tempClassesArr.filter(el => el._id == id);
+        setNestedClassArr([...tempClassesArr])
         handleTopicFilter()
     }
-    const handleClassSelection = (id) => {
-        setClassesArr(prevState => {
-            let tempIndex = prevState.findIndex(el => el._id == id);
+    const handleClassSelection = (subjectIndex, id) => {
+        console.log(subjectIndex, id)
+        setNestedClassArr(prevState => {
+            let tempIndex = prevState[subjectIndex].classArr.findIndex(el => el._id == id);
             if (tempIndex != -1)
-                prevState[tempIndex].checked = !prevState[tempIndex].checked
+                prevState[subjectIndex].classArr[tempIndex].checked = !prevState[subjectIndex].classArr[tempIndex].checked
             return [...prevState]
         })
         handleTopicFilter()
@@ -232,6 +271,7 @@ export default function SearchScreen(props) {
             return [...prevState]
         })
     }
+
 
     const getTopics = async () => {
         try {
@@ -269,6 +309,8 @@ export default function SearchScreen(props) {
         getTopics();
         getClasses()
         getFilterSubjects()
+        getNestedClasses()
+
     }
 
     useEffect(() => {
@@ -282,6 +324,7 @@ export default function SearchScreen(props) {
 
         let filteredClassesArr = [...classesArr.filter(el => el.checked)]
         let filteredSubjectArr = [...subjectArr.filter(el => el.checked)]
+        let filteredTopicArr = [...topicArr.filter(el => el.checked)]
 
 
         let tempArr = [...mainCourseArr];
@@ -289,15 +332,22 @@ export default function SearchScreen(props) {
         if (filteredClassesArr.length > 0) {
             console.log("class filter")
 
-            tempArr = tempArr.filter(el => el?.classesArr?.some(elx => filteredClassesArr.some(ely => ely._id == elx.classId)))
+            tempArr = tempArr.filter(el => el?.subjectArr?.some(elx => elx.classArr.some(elz => filteredClassesArr.some(elm => elm._id == elz.classId))))
+
 
         }
         if (filteredSubjectArr.length > 0) {
             console.log("subject filter")
-            tempArr = tempArr.filter(el => el?.classesArr?.some(elx => elx.subjectArr.some(elz => filteredSubjectArr.some(elm => elm._id == elz.subjectId))))
+            tempArr = tempArr.filter(el => el?.subjectArr?.some(elx => filteredSubjectArr.some(ely => ely._id == elx.subjectId)))
+
+        }
+        if (filteredTopicArr.length > 0) {
+            console.log("Topic filter")
+            tempArr = tempArr.filter(el => el?.subjectArr?.some(elx => elx.classArr.some(elz => elz?.topicArr?.length > 0 ? elz.topicArr.some(elm => filteredTopicArr.some(elq => elq._id == elm.topicId)) : false)))
         }
 
-        tempArr = tempArr.filter(el => el.price >= parseInt(multiSliderValue[0]) || el.price <= parseInt(multiSliderValue[1]))
+        tempArr = tempArr.filter(el => el.price >= parseInt(multiSliderValue[0]) && el.price <= parseInt(multiSliderValue[1]))
+
 
         if (sortBy == sortByText.priceLowToHigh) {
             tempArr = tempArr.sort((a, b) => a.price - b.price)
@@ -320,17 +370,18 @@ export default function SearchScreen(props) {
         let tempTeachersArr = [...mainTeachersArr];
         console.log(JSON.stringify(mainTeachersArr, null, 2))
         if (filteredClassesArr.length > 0) {
-            console.log("class filter")
+            // console.log("class filter")
 
-            tempTeachersArr = tempTeachersArr.filter(el => el?.enquiryObj?.classesArr?.some(elx => filteredClassesArr.some(ely => ely._id == elx.classId)))
+            tempTeachersArr = tempTeachersArr.filter(el => el?.enquiryObj?.subjectArr?.some(elx => elx.classArr.some(elz => filteredClassesArr.some(elm => elm._id == elz.classId))))
 
         }
         if (filteredSubjectArr.length > 0) {
-            console.log("subject filter")
-            tempTeachersArr = tempTeachersArr.filter(el => el?.enquiryObj?.classesArr?.some(elx => elx.subjectArr.some(elz => filteredSubjectArr.some(elm => elm._id == elz.subjectId))))
+            // console.log("subject filter")
+            tempTeachersArr = tempTeachersArr.filter(el => el?.enquiryObj?.subjectArr?.some(elx => filteredSubjectArr.some(ely => ely._id == elx.subjectId)))
         }
 
-        tempTeachersArr = tempTeachersArr.filter(el => el.enquiryObj?.feesObj?.minFees >= parseInt(multiSliderValue[0]) || el.enquiryObj?.feesObj?.maxFees <= parseInt(multiSliderValue[1]))
+        tempTeachersArr = tempTeachersArr.filter(el => el.enquiryObj?.feesObj?.minFees >= parseInt(multiSliderValue[0]) && el.enquiryObj?.feesObj?.maxFees <= parseInt(multiSliderValue[1]))
+
 
         if (sortBy == sortByText.priceLowToHigh) {
             tempTeachersArr = tempTeachersArr.sort((a, b) => a.enquiryObj?.feesObj?.maxFees - b.enquiryObj?.feesObj?.maxFees)
@@ -373,7 +424,7 @@ export default function SearchScreen(props) {
                 <View style={styles.textCardContainer}>
                     <View>
 
-                        <Pressable onPress={() => handleAddCourseToWhishlist(item._id)}style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                        <Pressable onPress={() => handleAddCourseToWhishlist(item._id)} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                             <Text style={[styles.textCardMainHeading, { fontFamily: 'RedHatText-Medium', fontSize: 12 }]}>{item?.name}</Text>
                             {item.isWishListed ?
 
@@ -447,8 +498,8 @@ export default function SearchScreen(props) {
                     placeholder="Search Categories"
                     onChangeText={(e) => onChangeSearch(e)}
                 />
-                <Pressable style={{width:wp(20),height:30,alignItems:'center'}} onPress={() => filterBottomSheetRef.current.open()}>
-                    <Image source={require('../../assets/images/Filter.png')} style={{marginTop:10}} />
+                <Pressable style={{ width: wp(20), height: 30, alignItems: 'center' }} onPress={() => filterBottomSheetRef.current.open()}>
+                    <Image source={require('../../assets/images/Filter.png')} style={{ marginTop: 10 }} />
                 </Pressable>
             </View>
 
@@ -558,7 +609,7 @@ export default function SearchScreen(props) {
                                     {activeFilterContainer == "subject" &&
 
                                         <FlatList
-                                            data={[...subjectArr]}
+                                            data={subjectArr}
                                             keyExtractor={(item, index) => `${index}`}
                                             scrollEnabled={true}
                                             contentContainerStyle={{ paddingBottom: 100, marginTop: 20 }}
@@ -572,9 +623,9 @@ export default function SearchScreen(props) {
                                                             <Checkbox
                                                                 color={colorObj.primarColor}
                                                                 status={item.checked ? "checked" : "unchecked"}
-                                                                onPress={() => handleSubjectSelection(item._id)}
+                                                                onPress={() => handleSubjectSelection(index, item._id)}
                                                             />
-                                                            <Pressable onPress={() => handleSubjectSelection(item._id)} style={{ paddingVertical: 5, width: '100%' }} >
+                                                            <Pressable onPress={() => handleSubjectSelection(index, item._id)} style={{ paddingVertical: 5, width: '100%' }} >
                                                                 <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>{item.name}</Text>
                                                             </Pressable>
 
@@ -589,26 +640,38 @@ export default function SearchScreen(props) {
                                     {activeFilterContainer == "class" &&
 
                                         <FlatList
-                                            data={classesArr}
+                                            data={nestedClassArr}
                                             keyExtractor={(item, index) => `${item._id}`}
                                             scrollEnabled={true}
                                             contentContainerStyle={{ paddingBottom: 100, marginTop: 20 }}
 
                                             renderItem={({ item, index }) => {
                                                 return (
-                                                    <View>
-                                                        <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 10, justifyContent: 'space-between', }]}>
-                                                            <Checkbox
-                                                                color={colorObj.primarColor}
-                                                                status={item.checked ? "checked" : "unchecked"}
-                                                                onPress={() => handleClassSelection(item._id)}
-                                                            />
-                                                            <Pressable onPress={() => handleClassSelection(item._id)} style={{ paddingVertical: 5, width: '100%' }} >
-                                                                <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>{item.name}</Text>
+                                                    <View style={{ paddingHorizontal: 20 }}>
+                                                        <Text style={[styles.checkBoxText, { textAlign: 'left', fontFamily: 'Montserrat-Medium' }]}>{item?.name}</Text>
+                                                        <FlatList
+                                                            scrollEnabled={false}
+                                                            data={item.classArr}
+                                                            keyExtractor={(item, index) => `${item._id}`}
+                                                            renderItem={({ item: itemX, index: indexX }) => {
+                                                                return (
+                                                                    <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 3, justifyContent: 'space-between', }]}>
 
-                                                            </Pressable>
+                                                                        <Checkbox
+                                                                            color={colorObj.primarColor}
+                                                                            status={itemX.checked ? "checked" : "unchecked"}
+                                                                            onPress={() => handleClassSelection(index, itemX._id)}
+                                                                        />
+                                                                        <Pressable onPress={() => handleClassSelection(index, itemX._id)} style={{ paddingVertical: 5, width: '100%' }} >
+                                                                            <Text style={[styles.checkBoxText, { textAlign: 'left', fontSize: 12 }]}>{itemX.name}</Text>
 
-                                                        </View>
+                                                                        </Pressable>
+                                                                    </View>
+
+                                                                )
+                                                            }}
+                                                        />
+
 
                                                     </View>
                                                 )
@@ -650,13 +713,13 @@ export default function SearchScreen(props) {
                                     {activeFilterContainer == "price" &&
                                         <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
                                             <Text style={[styles.bottomSheetHeading, { fontSize: 16 }]}>Selected Price Range</Text>
-                                            <Text style={[styles.bottomSheetHeading, { fontSize: 14,marginTop:20 }]}>₹ {multiSliderValue[0]} - ₹ {multiSliderValue[1]} </Text>
+                                            <Text style={[styles.bottomSheetHeading, { fontSize: 14, marginTop: 20 }]}>₹ {multiSliderValue[0]} - ₹ {multiSliderValue[1]} </Text>
                                             <MultiSlider
                                                 values={[multiSliderValue[0], multiSliderValue[1]]}
                                                 sliderLength={250}
                                                 onValuesChange={multiSliderValuesChange}
-                                                min={minFees}
-                                                max={maxFees}
+                                                min={10}
+                                                max={10000}
                                                 step={50}
                                                 // allowOverlap
                                                 // snapped
@@ -665,6 +728,17 @@ export default function SearchScreen(props) {
                                                 onValuesChangeStart={() => setIsScrollEnabled(false)}
                                                 onValuesChangeFinish={() => setIsScrollEnabled(true)}
                                             />
+                                            <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 10, justifyContent: 'space-between', }]}>
+                                                <Checkbox
+                                                    color={colorObj.primarColor}
+                                                    status={includeNoFeesTeachers ? "checked" : "unchecked"}
+                                                    onPress={() => setIncludeNoFeesTeachers(true)}
+                                                />
+                                                <Pressable onPress={() => setIncludeNoFeesTeachers(true)} style={{ paddingVertical: 5, width: '100%' }} >
+                                                    <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>Include </Text>
+                                                </Pressable>
+
+                                            </View>
 
                                         </View>
                                     }

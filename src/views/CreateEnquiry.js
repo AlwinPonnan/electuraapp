@@ -24,6 +24,8 @@ export default function CreateEnquiry(props) {
 
     const focused = useIsFocused()
     const [ClassType, setClassType] = useState("Immediately");
+    const [enquiryMode, setEnquiryMode] = useState("Offline");
+
     const [gender, setGender] = useState("No Preference");
     const [price, setPrice] = useState('');
     const [region, setRegion] = useState('');
@@ -70,9 +72,9 @@ export default function CreateEnquiry(props) {
     }
 
     const handleSubjectSelection = (item) => {
-        setSelectedSubjectId(item._id)
-        getClassBySubjectId(item._id)
-        setSubject(item.name)
+        setSelectedSubjectId(item)
+        getClassBySubjectId(item)
+        // setSubject(item.name)
         setSubjectStepper(1)
 
     }
@@ -161,16 +163,17 @@ export default function CreateEnquiry(props) {
     const handleEnquirySubmit = async () => {
         setIsLoading(true)
         try {
-            if (selectedClassId != "" && selectedSubjectId != "" && ClassType != ""  && gender != "" ) {
+            if (selectedSubjectId != "" && ClassType != "" && gender != "") {
 
                 let obj = {
                     classId: selectedClassId,
                     subjectId: selectedSubjectId,
                     topicId: selectedTopicId,
-                    region:selectedAreaId,
+                    region: selectedAreaId,
                     ClassType,
                     gender,
                     price,
+                    enquiryMode,
                     specificRequirement
                 }
                 let { data: res } = await NewEnquiry(obj);
@@ -208,7 +211,25 @@ export default function CreateEnquiry(props) {
             <View style={styles.innerContainer}>
 
                 <Text style={styles.textInputLabel}>What do you want to study</Text>
-                <TextInput style={styles.textInput} value={subject} onChangeText={(e) => handleSubjectFilter(e)} />
+                <Picker
+                    style={styles.textInput}
+                    selectedValue={selectedSubjectId}
+                    onValueChange={(itemValue, itemIndex) =>
+                        handleSubjectSelection(itemValue)
+                    }>
+                    <Picker label="Please Select Category" value="" />
+                    {
+
+                        subjectArr.map(el => {
+                            return (
+
+                                <Picker.Item key={el._id} label={el.name} value={el._id} />
+                            )
+
+                        })
+                    }
+                </Picker>
+                {/* <TextInput style={styles.textInput} value={subject} onChangeText={(e) => handleSubjectFilter(e)} />
                 {(subject != "" && subjectStepper == 0) &&
                     <View style={styles.ListBackground}>
                         <FlatList
@@ -227,7 +248,7 @@ export default function CreateEnquiry(props) {
                             }
                         />
                     </View>
-                }
+                } */}
                 {
                     classArr.length > 0 &&
                     <>
@@ -239,7 +260,7 @@ export default function CreateEnquiry(props) {
                             onValueChange={(itemValue, itemIndex) =>
                                 handleClassSelection(itemValue)
                             }>
-                            <Picker label="Please Select Class" value="" />
+                            <Picker label="Please Select Sub-category" value="" />
                             {
 
                                 classArr.map(el => {
@@ -429,6 +450,23 @@ export default function CreateEnquiry(props) {
                             <Text style={styles.radioText}>No Preference</Text>
                             <RadioButton color={colorObj.primarColor} value="No Preference" />
                         </Pressable>
+                    </View>
+                </RadioButton.Group>
+                <Text style={styles.textInputLabel}>Enquiry Mode</Text>
+
+                <RadioButton.Group onValueChange={newValue => setEnquiryMode(newValue)} value={enquiryMode}>
+                    <View style={[{ marginVertical: 10 }, styles.flexRow, { justifyContent: 'space-between' }]}>
+
+                        <Pressable onPress={() => setEnquiryMode("Online")} style={[styles.flexRow, { justifyContent: 'space-between' }]}>
+                            <Text style={styles.radioText}>Online</Text>
+                            <RadioButton color={colorObj.primarColor} value="Online" />
+                        </Pressable>
+                        <Pressable onPress={() => setEnquiryMode("Offline")} style={[styles.flexRow, { justifyContent: 'space-between' }]}>
+
+                            <Text style={styles.radioText}>Offline</Text>
+                            <RadioButton color={colorObj.primarColor} value="Offline" />
+                        </Pressable>
+
                     </View>
                 </RadioButton.Group>
                 <Pressable style={styles.submitBtn} onPress={() => handleEnquirySubmit()}>
