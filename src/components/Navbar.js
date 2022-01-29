@@ -25,7 +25,7 @@ export default function NavBar(props) {
     try {
       const { data: res } = await getCart();
       if (res.success) {
-        console.log(res.data)
+        // console.log(res.data)
         setCartObj(res.data)
       }
     } catch (error) {
@@ -47,7 +47,7 @@ export default function NavBar(props) {
     try {
       const { data: res } = await getAllNotifications();
       if (res.success) {
-        console.log(JSON.stringify(res.data,null,2))
+        // console.log(JSON.stringify(res.data,null,2))
         setNotificationArr([...res.data.filter(el=>!el.read)])
       }
     } catch (error) {

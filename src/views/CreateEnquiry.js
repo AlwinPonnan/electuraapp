@@ -452,7 +452,7 @@ export default function CreateEnquiry(props) {
                         </Pressable>
                     </View>
                 </RadioButton.Group>
-                <Text style={styles.textInputLabel}>Enquiry Mode</Text>
+                <Text style={styles.textInputLabel}>Learning Mode</Text>
 
                 <RadioButton.Group onValueChange={newValue => setEnquiryMode(newValue)} value={enquiryMode}>
                     <View style={[{ marginVertical: 10 }, styles.flexRow, { justifyContent: 'space-between' }]}>

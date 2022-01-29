@@ -40,6 +40,7 @@ import zoomMeeting from '../../views/zoomMeeting';
 import linking from '../../globals/Linking';
 import WishListedTeachers from '../../views/WishlistedTeachers';
 import WishlistTab from '../tabs/WishlistTab';
+import MeetingFeedback from '../../views/MeetingFeedback';
 const Stack = createNativeStackNavigator();
 
 export const AuthContext = createContext()
@@ -178,6 +179,7 @@ export default function RootStack() {
                                     <Stack.Screen name="CourseDetail" component={CourseDetail} options={{ headerShown: false }} />
                                     <Stack.Screen name="TestZoom" component={Testzoom} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} />
                                     <Stack.Screen name="zoomMeeting" component={zoomMeeting} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} />
+                                    <Stack.Screen name="MeetingFeedback" component={MeetingFeedback} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} />
 
 
                                 </>

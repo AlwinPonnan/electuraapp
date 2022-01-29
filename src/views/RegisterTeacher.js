@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useContext } from 'react'
-import { View, Text, StyleSheet, Image, TextInput, Pressable, KeyboardAvoidingView, ScrollView, Platform, TouchableOpacity, FlatList } from 'react-native'
+import { View, Text, StyleSheet, Image, TextInput, Pressable, KeyboardAvoidingView, ScrollView, Platform, TouchableOpacity, FlatList,Linking } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj } from '../globals/colors';
 import { imageObj } from '../globals/images';
@@ -104,7 +104,7 @@ export default function RegisterTeacher(props) {
                     userId: userToken.userId,
                     classesArr: [],
                     subjectArr: subjectFilteredArr,
-                
+
                 }
                 const { data: res } = await newEnquiry(obj);
                 if (res.success) {
@@ -166,7 +166,7 @@ export default function RegisterTeacher(props) {
                 console.log("***********************************************************************************************************************TeacherData")
                 console.log(JSON.stringify(res.data.onlineToggle, null, 2), "TeacherData")
                 console.log("***********************************************************************************************************************TeacherData")
-                if(res.data.role == "TEACHER"){
+                if (res.data.role == "TEACHER") {
                     setWarningAlert(true)
                     setAlertText("You are Already a Teacher")
                     // props.navigation.goBack()
@@ -185,7 +185,7 @@ export default function RegisterTeacher(props) {
     const getClasses = async () => {
         try {
             let { data: res, status: statusCode } = await getAllNestedCategories();
-            console.log(statusCode)
+            console.log(res)
             if (statusCode == 200 || statusCode == 304) {
 
                 let tempArr = res.data.map(el => {
@@ -241,7 +241,7 @@ export default function RegisterTeacher(props) {
             return [...prevState]
         })
     }
-  
+
 
 
     const pickImageValidId = async () => {
@@ -312,6 +312,9 @@ export default function RegisterTeacher(props) {
         }
     }
 
+    const LinkingPrivacy=()=>{
+        Linking.openURL("https://www.electura.co/privacy_policy")
+    }
 
 
     const handleTopicSet = (index, text) => {
@@ -431,11 +434,11 @@ export default function RegisterTeacher(props) {
                                                                 color={colorObj.primarColor}
                                                                 status={itemX.checked ? "checked" : "unchecked"}
                                                                 onPress={() => {
-                                                                    setSelectedClass(itemX._id,item._id);
+                                                                    setSelectedClass(itemX._id, item._id);
                                                                 }}
                                                             />
                                                             <TouchableOpacity style={{ width: wp(82), paddingVertical: 5, }} onPress={() => {
-                                                                setSelectedClass(itemX._id,item._id);
+                                                                setSelectedClass(itemX._id, item._id);
                                                             }}>
                                                                 <Text style={{ fontFamily: 'Montserrat-Regular' }}>{itemX.name}</Text>
                                                             </TouchableOpacity>
@@ -597,7 +600,9 @@ export default function RegisterTeacher(props) {
 
 
                         <View style={styles.btnContainer}>
-                            <Text style={styles.termsText}>By Continuing you accept the <Text style={{ color: colorObj.primarColor }}>terms and conditions</Text></Text>
+                            <Pressable onPress={()=>LinkingPrivacy()}>
+                                <Text style={styles.termsText}>By Continuing you accept the <Text style={{ color: colorObj.primarColor }}>terms and conditions</Text></Text>
+                            </Pressable>
                             <Pressable style={styles.btn} onPress={() => handleSubmit()}>
                                 <Text style={styles.btnText}>Become A Teacher</Text>
                             </Pressable>

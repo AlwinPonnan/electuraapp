@@ -236,10 +236,10 @@ export default function HomeScreen(props) {
         }
         else {
 
-            // let tempArr = [...mainTeachersArr];
+            let tempArr = [...mainTeachersArr];
             // console.log(JSON.stringify(tempArr, null, 2))
-            // tempArr = tempArr.filter(el => el?.enquiryObj?.classesArr?.some(ele => ele.subjectArr.some(elx => elx.subjectId == item._id)))
-            // setTeachersArr([...tempArr])
+            tempArr = tempArr.filter(el => el?.enquiryObj?.subjectArr?.some(ele => ele.subjectId == item._id))
+            setTeachersArr([...tempArr])
             getClassWiseBySubjectId(item._id)
             setSelectedSubjectId(item._id)
             setSelectedSubject(item)
@@ -267,7 +267,7 @@ export default function HomeScreen(props) {
                                 <Text style={{ height: 5, width: 5, marginLeft: 8, backgroundColor: colorObj.primarColor, borderRadius: 50 }}></Text>
                             }
                         </View>
-                        <Text style={styles.textCardMainSubHeading1}>{ `${item?.enquiryObj?.subjectArr?.reduce((acc, el) => acc + el.subjectName + ',', '')}`.slice(0,20)}...</Text>
+                        <Text style={styles.textCardMainSubHeading1}>{`${item?.enquiryObj?.subjectArr?.reduce((acc, el) => acc + el.subjectName + ',', '')}`.slice(0, 20)}...</Text>
                         <Text style={styles.textCardMainSubHeading2}>{item?.enquiryObj?.experience ? item?.enquiryObj?.experience : 1} Year Experience</Text>
                     </View>
                     <Pressable onPress={() => handleBookmarkTeacher(item?._id)} style={{ position: 'absolute', top: 5, right: 10 }} >
@@ -319,7 +319,7 @@ export default function HomeScreen(props) {
                         />
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                             <Text style={styles.headingAboveCard}>Top Instructors</Text>
-                            <Pressable onPress={() => props.navigation.navigate('AllTeacher', { filterId: "All", isSubjectId: false,isTopSelected:true })}><Text style={[styles.viewAllText, { paddingHorizontal: 40 }]}>View All</Text></Pressable>
+                            <Pressable onPress={() => props.navigation.navigate('AllTeacher', { filterId: "All", isSubjectId: false, isTopSelected: true })}><Text style={[styles.viewAllText, { paddingHorizontal: 40 }]}>View All</Text></Pressable>
                         </View>
                         <FlatList
                             style={{ height: 120 }}
@@ -345,7 +345,7 @@ export default function HomeScreen(props) {
                                     <View style={{ marginVertical: 10 }}>
                                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                                             <Text style={styles.headingAboveCard}>{item?.name} Instructors</Text>
-                                            <Pressable onPress={() => props.navigation.navigate('AllTeacher', { filterId: item._id, isSubjectId: selectedSubjectId != "All",isTopSelected:false })}>
+                                            <Pressable onPress={() => props.navigation.navigate('AllTeacher', { filterId: item._id, isSubjectId: selectedSubjectId != "All", isTopSelected: false })}>
                                                 <Text style={[styles.viewAllText, { paddingHorizontal: 40 }]}>View All</Text>
                                             </Pressable>
                                         </View>
@@ -372,7 +372,7 @@ export default function HomeScreen(props) {
                                                                     }
                                                                 </View>
 
-                                                                <Text style={styles.textCardMainSubHeading1}>{ `${itemX?.enquiryObj?.subjectArr?.reduce((acc, el) => acc + el.subjectName + ',', '')}`.slice(0,20)}...</Text>
+                                                                <Text style={styles.textCardMainSubHeading1}>{`${itemX?.enquiryObj?.subjectArr?.reduce((acc, el) => acc + el.subjectName + ',', '')}`.slice(0, 20)}...</Text>
                                                                 <Text style={styles.textCardMainSubHeading2}>{item?.enquiryObj?.experience ? item?.enquiryObj?.experience : 1}Year Experience</Text>
                                                             </View>
                                                             <Pressable onPress={() => handleBookmarkTeacher(itemX?._id)} style={{ position: 'absolute', top: 5, right: 10 }} >

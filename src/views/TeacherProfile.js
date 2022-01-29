@@ -103,18 +103,18 @@ export default function TeacherProfile(props) {
         }
     }
     const openYoutube = (name) => {
-        if (name != "") {
-
-            // Linking.canOpenURL('vnd.youtube://channel/' + name).then(supported => {
-            //     if (supported) {
-            //         return Linking.openURL('vnd.youtube://channel/' + name);
-            //     } else {
-            //         return Linking.openURL('https://www.youtube.com/channel/' + name);
-            //     }
-            // });
-            Linking.openURL(name)
+        if (name != "" && name) {
+            console.log(name)
+            Linking.canOpenURL(name).then(supported => {
+                if (supported) {
+                    return Linking.openURL(name);
+                } else {
+                    setErrorAlert(true)
+                    setAlertText("Unable to open")
+                }
+            });
         }
-        else if (name == "" && teacherObj?.role == "TEACHER" && teacherObj?._id == decodedObj?.userId) {
+        else if (!name && teacherObj?.role == "TEACHER" && teacherObj?._id == decodedObj?.userId) {
             props.navigation.navigate('AccountEdit')
         }
     }
@@ -636,54 +636,70 @@ export default function TeacherProfile(props) {
                 </Pressable>
             </View>
 
-            <View style={[styles.flexRow, { flexWrap: "wrap", justifyContent: "space-between", paddingHorizontal: 10 }]}>
+            <View style={[styles.flexRow, { flexWrap: "wrap", justifyContent: "space-between", paddingHorizontal: 10, width: wp(90), marginHorizontal: 10 }]}>
                 {
-                    teacherObj?.enquiryObj?.introductoryFile1.mimeType.includes("image") && teacherObj?.enquiryObj?.introductoryFile1.mimeType ?
+                    teacherObj?.enquiryObj?.introductoryFile1?.mimeType?.includes("image") && teacherObj?.enquiryObj?.introductoryFile1?.mimeType ?
                         <Image source={{
                             uri: generateImageUrl(teacherObj?.enquiryObj?.introductoryFile1?.url)
                         }} style={{ width: wp(45), height: wp(45), marginTop: 22, display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.1)", borderRadius: 5, }} />
 
                         :
-                        <Video repeat resizeMode={"cover"} paused={false} source={{ uri: generateImageUrl(teacherObj?.enquiryObj?.introductoryFile1?.url) }}   // Can be a URL or a local file.         // Store reference
-                            onBuffer={() => console.log("ads")}                // Callback when remote video is buffering
-                            onError={() => console.log("ads")}               // Callback when video cannot be loaded
-                            style={{ width: wp(45), height: wp(45), marginTop: 22, }} />
+                        <>
+                            {teacherObj?.enquiryObj?.introductoryFile1?.url &&
+                                <Video repeat resizeMode={"cover"} paused={false} source={{ uri: generateImageUrl(teacherObj?.enquiryObj?.introductoryFile1?.url) }}   // Can be a URL or a local file.         // Store reference
+                                    onBuffer={() => console.log("ads")}                // Callback when remote video is buffering
+                                    onError={() => console.log("ads")}               // Callback when video cannot be loaded
+                                    style={{ width: wp(45), height: wp(45), marginTop: 22, }} />
+                            }
+                        </>
                 }
                 {
-                    teacherObj?.enquiryObj?.introductoryFile2.mimeType.includes("image") && teacherObj?.enquiryObj?.introductoryFile2.mimeType ?
+                    teacherObj?.enquiryObj?.introductoryFile2?.mimeType?.includes("image") && teacherObj?.enquiryObj?.introductoryFile2?.mimeType ?
                         <Image source={{
                             uri: generateImageUrl(teacherObj?.enquiryObj?.introductoryFile2?.url)
                         }} style={{ width: wp(45), height: wp(45), marginTop: 22, display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.1)", borderRadius: 5, }} />
 
                         :
-                        <Video repeat resizeMode={"cover"} paused={false} source={{ uri: generateImageUrl(teacherObj?.enquiryObj?.introductoryFile2?.url) }}   // Can be a URL or a local file.         // Store reference
-                            onBuffer={() => console.log("ads")}                // Callback when remote video is buffering
-                            onError={() => console.log("ads")}               // Callback when video cannot be loaded
-                            style={{ width: wp(45), height: wp(45), marginTop: 22, }} />
+                        <>
+                            {teacherObj?.enquiryObj?.introductoryFile2?.url &&
+                                <Video repeat resizeMode={"cover"} paused={false} source={{ uri: generateImageUrl(teacherObj?.enquiryObj?.introductoryFile2?.url) }}   // Can be a URL or a local file.         // Store reference
+                                    onBuffer={() => console.log("ads")}                // Callback when remote video is buffering
+                                    onError={() => console.log("ads")}               // Callback when video cannot be loaded
+                                    style={{ width: wp(45), height: wp(45), marginTop: 22, }} />
+                            }
+                        </>
                 }
                 {
-                    teacherObj?.enquiryObj?.introductoryFile3.mimeType.includes("image") && teacherObj?.enquiryObj?.introductoryFile3.mimeType ?
+                    teacherObj?.enquiryObj?.introductoryFile3?.mimeType?.includes("image") && teacherObj?.enquiryObj?.introductoryFile3?.mimeType ?
                         <Image source={{
                             uri: generateImageUrl(teacherObj?.enquiryObj?.introductoryFile3?.url)
                         }} style={{ width: wp(45), height: wp(45), marginTop: 22, display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.1)", borderRadius: 5, }} />
 
                         :
-                        <Video repeat resizeMode={"cover"} paused={false} source={{ uri: generateImageUrl(teacherObj?.enquiryObj?.introductoryFile3?.url) }}   // Can be a URL or a local file.         // Store reference
-                            onBuffer={() => console.log("ads")}                // Callback when remote video is buffering
-                            onError={() => console.log("ads")}               // Callback when video cannot be loaded
-                            style={{ width: wp(45), height: wp(45), marginTop: 22, }} />
+                        <>
+                            {teacherObj?.enquiryObj?.introductoryFile3?.url &&
+                                <Video repeat resizeMode={"cover"} paused={false} source={{ uri: generateImageUrl(teacherObj?.enquiryObj?.introductoryFile3?.url) }}   // Can be a URL or a local file.         // Store reference
+                                    onBuffer={() => console.log("ads")}                // Callback when remote video is buffering
+                                    onError={() => console.log("ads")}               // Callback when video cannot be loaded
+                                    style={{ width: wp(45), height: wp(45), marginTop: 22, }} />
+                            }
+                        </>
                 }
                 {
-                    teacherObj?.enquiryObj?.introductoryFile4.mimeType.includes("image") && teacherObj?.enquiryObj?.introductoryFile4.mimeType ?
+                    teacherObj?.enquiryObj?.introductoryFile4?.mimeType?.includes("image") && teacherObj?.enquiryObj?.introductoryFile4?.mimeType ?
                         <Image source={{
                             uri: generateImageUrl(teacherObj?.enquiryObj?.introductoryFile4?.url)
                         }} style={{ width: wp(45), height: wp(45), marginTop: 22, display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.1)", borderRadius: 5, }} />
 
                         :
-                        <Video repeat resizeMode={"cover"} paused={false} source={{ uri: generateImageUrl(teacherObj?.enquiryObj?.introductoryFile4?.url) }}   // Can be a URL or a local file.         // Store reference
-                            onBuffer={() => console.log("ads")}                // Callback when remote video is buffering
-                            onError={() => console.log("ads")}               // Callback when video cannot be loaded
-                            style={{ width: wp(45), height: wp(45), marginTop: 22, }} />
+                        <>
+                            {teacherObj?.enquiryObj?.introductoryFile4?.url &&
+                                <Video repeat resizeMode={"cover"} paused={false} source={{ uri: generateImageUrl(teacherObj?.enquiryObj?.introductoryFile4?.url) }}   // Can be a URL or a local file.         // Store reference
+                                    onBuffer={() => console.log("ads")}                // Callback when remote video is buffering
+                                    onError={() => console.log("ads")}               // Callback when video cannot be loaded
+                                    style={{ width: wp(45), height: wp(45), marginTop: 22, }} />
+                            }
+                        </>
                 }
 
             </View>
