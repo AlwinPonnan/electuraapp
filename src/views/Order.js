@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, Text, View, FlatList, Image, Pressable, Modal } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -9,6 +9,7 @@ import { generateImageUrl } from '../globals/utils';
 import { widthPercentageToDP } from 'react-native-responsive-screen';
 
 import { loadingContext } from '../navigators/stacks/RootStack';
+import GeneralInnerHeader from '../components/GeneralInnerHeader';
 export default function Order(props) {
 
     const [ordersArr, setOrdersArr] = useState([]);
@@ -21,7 +22,7 @@ export default function Order(props) {
     const getOrders = async () => {
         setIsLoading(true)
         try {
-            
+
             setIsrefreshing(true)
             const { data: res } = await getMyOrders();
             if (res) {
@@ -63,41 +64,45 @@ export default function Order(props) {
     );
 
     return (
-        <View style={[styles.container]}>
-            <View style={{ flexDirection: 'row' }}>
-                <Pressable onPress={() => props.navigation.goBack()}>
+        <>
+            <GeneralInnerHeader heading="Orders" rootProps={props} />
 
-                    <AntDesign name='arrowleft' size={20} style={{ color: 'black' }} />
-                </Pressable>
-                <Text style={[styles.topText, { flex: 1, marginLeft: 20 }]}>Orders</Text>
-                <Pressable onPress={() => props.navigation.navigate('MainTopTab')}>
+            <View style={[styles.container]}>
+                {/* <View style={{ flexDirection: 'row' }}>
+                    <Pressable onPress={() => props.navigation.goBack()}>
 
-                    <AntDesign name='message1' size={20} style={{ color: 'black', marginRight: 20 }} />
-                </Pressable>
-                <Pressable onPress={() => props.navigation.navigate('Notification')}>
-                    <Feather name='bell' size={20} style={{ color: 'black' }} />
-                </Pressable>
+                        <AntDesign name='arrowleft' size={20} style={{ color: 'black' }} />
+                    </Pressable>
+                    <Text style={[styles.topText, { flex: 1, marginLeft: 20 }]}>Orders</Text>
+                    <Pressable onPress={() => props.navigation.navigate('MainTopTab')}>
+
+                        <AntDesign name='message1' size={20} style={{ color: 'black', marginRight: 20 }} />
+                    </Pressable>
+                    <Pressable onPress={() => props.navigation.navigate('Notification')}>
+                        <Feather name='bell' size={20} style={{ color: 'black' }} />
+                    </Pressable>
+                </View> */}
+
+                <FlatList
+                    data={ordersArr}
+                    refreshing={isrefreshing}
+                    onRefresh={() => getOrders()}
+                    renderItem={renderItem}
+                    keyExtractor={(item, index) => `${index}`}
+                    ListEmptyComponent={
+                        <View style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: "25%" }}>
+                            <Image source={require('../../assets/images/cart.png')} style={{ height: 200, width: 200, marginBottom: 30, }} resizeMethod='scale' resizeMode="cover" />
+                            <Text style={{ fontFamily: 'Montserrat-SemiBold', fontSize: 20 }}>No orders found</Text>
+                        </View>
+                    }
+
+                />
+
+                {/* <Pressable onPress={() => handleFilter()} style={{ justifyContent: 'flex-end', flex: 1, flexDirection: 'row' }}><AntDesign name='menu-unfold' size={30} style={{ color: '#fff', alignSelf: 'flex-end', backgroundColor: '#085A4E', padding: 15, borderRadius: 30 }} /></Pressable> */}
+
             </View>
 
-            <FlatList
-                data={ordersArr}
-                refreshing={isrefreshing}
-                onRefresh={()=> getOrders()}
-                renderItem={renderItem}
-                keyExtractor={(item, index) => `${index}`}
-                ListEmptyComponent={
-                    <View style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop:"25%" }}>
-                        <Image source={require('../../assets/images/cart.png')} style={{ height: 200, width: 200, marginBottom: 30, }} resizeMethod='scale' resizeMode="cover" />
-                        <Text style={{ fontFamily: 'Montserrat-SemiBold', fontSize: 20 }}>No orders found</Text>
-                    </View>
-                }
-
-            />
-
-            {/* <Pressable onPress={() => handleFilter()} style={{ justifyContent: 'flex-end', flex: 1, flexDirection: 'row' }}><AntDesign name='menu-unfold' size={30} style={{ color: '#fff', alignSelf: 'flex-end', backgroundColor: '#085A4E', padding: 15, borderRadius: 30 }} /></Pressable> */}
-
-        </View>
-
+        </>
     )
 }
 
@@ -105,7 +110,7 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: '#fff',
         flex: 1,
-        padding: 20
+        paddingHorizontal: 20
     },
 
     topText: {

@@ -72,6 +72,7 @@ export default function AccountEdit(props) {
     const [selectedFile, setSelectedFile] = useState({});
 
 
+    const [refreshImage, setRefreshImage] = useState(false);
 
     const items = [
         // this is the parent or 'item'
@@ -530,7 +531,7 @@ export default function AccountEdit(props) {
                 let { data: res, status: statusCode } = await updateProfile(obj)
                 if (statusCode == 200 || statusCode == 304) {
                     console.log(res.message)
-                    getUserData()
+                    getUserData(false)
                     setSuccessAlert(true)
                     setAlertText(`${res.message}`)
                     // alert(res.message)
@@ -556,7 +557,7 @@ export default function AccountEdit(props) {
             if (statusCode == 200 || statusCode == 304) {
                 console.log(res.message)
                 // alert(res.message)/
-                getUserData()
+                getUserData(false)
             }
             console.log(res)
         }
@@ -565,33 +566,40 @@ export default function AccountEdit(props) {
         }
     }
 
-    const getUserData = async () => {
+    const getUserData = async (val) => {
         setIsLoading(true)
         try {
             let { data: res, status: statusCode } = await getUser();
             console.log(JSON.stringify(res.data, null, 2))
             if (statusCode == 200 || statusCode == 304) {
                 console.log(JSON.stringify(res.data, null, 2))
-                setName(res.data.name)
-                setEmail(res.data.email)
-                setMobile(res.data.phone)
-                setProfilePhoto(res.data.profileImage)
-                setProfileData(res.data)
-                setSelectedAreaId(res?.data?.enquiryObj?.areaId ? res?.data?.enquiryObj?.areaId : "")
-                setSelectedCityId(res?.data?.enquiryObj?.cityId ? res?.data?.enquiryObj?.cityId : "")
+                if (!val) {
 
-                setSelectedStateId(res?.data?.enquiryObj?.stateId ? res?.data?.enquiryObj?.stateId : "")
+                    setName(res.data.name)
+                    setEmail(res.data.email)
+                    setMobile(res.data.phone)
+                    setProfilePhoto(res.data.profileImage)
+                    setProfileData(res.data)
+                    setSelectedAreaId(res?.data?.enquiryObj?.areaId ? res?.data?.enquiryObj?.areaId : "")
+                    setSelectedCityId(res?.data?.enquiryObj?.cityId ? res?.data?.enquiryObj?.cityId : "")
 
-                setDegree(res?.data?.enquiryObj?.educationObj?.degree)
-                setGenderIsMale(res?.data?.enquiryObj?.gender == "Male" ? true : false)
-                setRoleName(res.data.role)
+                    setSelectedStateId(res?.data?.enquiryObj?.stateId ? res?.data?.enquiryObj?.stateId : "")
 
-                // let tempArr=res?.data?.enquiryObj?.qualificationArr;
-                // tempArr=tempArr.map(el=>{
-                //     let temp=items.find(elx=>elx.children.find)
-                // })
+                    setDegree(res?.data?.enquiryObj?.educationObj?.degree)
+                    setGenderIsMale(res?.data?.enquiryObj?.gender == "Male" ? true : false)
+                    setRoleName(res.data.role)
 
-                setSelectedQulifications(res?.data?.enquiryObj?.qualificationArr.map(el => el.id))
+                    // let tempArr=res?.data?.enquiryObj?.qualificationArr;
+                    // tempArr=tempArr.map(el=>{
+                    //     let temp=items.find(elx=>elx.children.find)
+                    // })
+
+                    setSelectedQulifications(res?.data?.enquiryObj?.qualificationArr.map(el => el.id))
+                }
+                else{
+                    setProfileData(res.data)
+
+                }
                 // console.log(JSON.stringify(res.data, null, 2))
             }
         }
@@ -746,7 +754,7 @@ export default function AccountEdit(props) {
                 setIsLoading(false)
                 setSuccessAlert(true)
                 setAlertText(`${res.message}`)
-                getUserData()
+                getUserData(true)
             }
         }
         catch (err) {
@@ -768,7 +776,7 @@ export default function AccountEdit(props) {
 
 
     useEffect(() => {
-        getUserData()
+        getUserData(false)
         getStates()
     }, [focused])
 

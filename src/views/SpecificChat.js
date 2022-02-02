@@ -26,6 +26,10 @@ export default function SpecificChat(props) {
     const [tokenObj, setTokenObj] = useState({});
     const chatRoomId = props.route.params.chatRoomId
 
+    const [lazyLoading, setLazyLoading] = useState(true);
+    const [itemCountPerRequest, setItemCountPerRequest] = useState(5);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [maxPageCount, setMaxPageCount] = useState(0);
 
     const flatListRef = useRef()
 
@@ -56,10 +60,12 @@ export default function SpecificChat(props) {
 
     const getChatHistory = async () => {
         try {
-            const { data: res } = await getChatHistoryByRoomId(chatRoomId);
+            const { data: res } = await getChatHistoryByRoomId(chatRoomId,itemCountPerRequest, currentPage + 1);
             if (res.success) {
-                setChatArr(res.data.chatArr)
-                setChatRoomObj(res.data.chatRoomObj)
+                // setChatArr(res.data.chatArr)
+                setChatRoomObj({...res.data.chatRoomObj})
+                setCurrentPage(prevState => prevState + 1)
+                setChatArr(prevState => [...prevState, ...res.data.chatArr])
                 let decodedToken = await getDecodedToken()
                 console.log(JSON.stringify(res.data.chatRoomObj, null, 2))
                 setChatUserObj(res.data.chatRoomObj.userArr.filter(el => el.userId != decodedToken.userId)[0])
@@ -153,6 +159,10 @@ export default function SpecificChat(props) {
 
                                 keyExtractor={(item, index) => `${item._id}`}
                                 renderItem={renderChats}
+                                onEndReached={() => getChatHistory()}
+                                // removeClippedSubviews={true}
+                                initialNumToRender={6}
+                                onEndReachedThreshold={1}
                             />
                         </View>
                         <View >

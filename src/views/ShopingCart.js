@@ -19,6 +19,7 @@ import RazorpayCheckout from 'react-native-razorpay';
 import { colorObj } from '../globals/colors';
 import PaymentSuccess from './PaymentSuccess';
 import PaymentFailed from './PaymentFailed';
+import GeneralInnerHeader from '../components/GeneralInnerHeader';
 export default function ShoppingCart(props) {
     const navigation = useNavigation()
 
@@ -235,7 +236,7 @@ export default function ShoppingCart(props) {
 
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
-            <View style={{ flexDirection: 'row', padding: 10, backgroundColor: 'white', paddingTop: 20 }}>
+            {/* <View style={{ flexDirection: 'row', padding: 10, backgroundColor: 'white', paddingTop: 20 }}>
                 <Pressable onPress={() => props.navigation.goBack()}>
 
                     <AntDesign name='arrowleft' size={20} style={{ color: 'black' }} />
@@ -247,7 +248,8 @@ export default function ShoppingCart(props) {
                 <Pressable onPress={() => props.navigation.navigate("Notification")}>
                     <Feather name='bell' size={20} style={{ color: 'black' }} />
                 </Pressable>
-            </View>
+            </View> */}
+            <GeneralInnerHeader heading="Shopping Cart" rootProps={props}/>
             {cartObj?.courseArr?.length == 0
                 ?
                 <View style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', backgroundColor: 'white' }}>

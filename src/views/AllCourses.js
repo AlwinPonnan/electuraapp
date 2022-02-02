@@ -23,6 +23,7 @@ import MultiSlider from '@ptomasroos/react-native-multi-slider'
 import { Checkbox } from 'react-native-paper';
 import MatIcon from 'react-native-vector-icons/MaterialIcons'
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
+import GeneralInnerHeader from '../components/GeneralInnerHeader';
 export default function AllCourses(props) {
 
     const [loading, setLoading] = useContext(loadingContext);
@@ -104,7 +105,7 @@ export default function AllCourses(props) {
                 })]
                 setMaxFees(maxCount)
                 setMinFees(minCount)
-                console.log(JSON.stringify(temp, null, 2),"@@@@@@@@@@@@@@@@")
+                console.log(JSON.stringify(temp, null, 2), "@@@@@@@@@@@@@@@@")
                 setCourseArr(temp)
                 setMainCourseArr(temp)
                 setInnerFilteredCourseArr(temp)
@@ -135,7 +136,7 @@ export default function AllCourses(props) {
                 if (isSubjectSelected) {
                     console.log("inside,@@@@@@@@@@@@@", isSubjectSelected)
                     setOuterSelectedClassArr([`${previousSelectedSubjectId}`])
-                    setCourseArr([...arr.filter(el => el?.subjectArr.some(elz=> elz.classArr.some(elx => elx?.classId == previousSelectedSubjectId)))])
+                    setCourseArr([...arr.filter(el => el?.subjectArr.some(elz => elz.classArr.some(elx => elx?.classId == previousSelectedSubjectId)))])
                 }
                 setIsrefreshing(false)
             }
@@ -309,7 +310,7 @@ export default function AllCourses(props) {
         if (filteredSubjectArr.length > 0) {
             console.log("subject filter")
             tempArr = tempArr.filter(el => el?.subjectArr?.some(elx => filteredSubjectArr.some(ely => ely._id == elx.subjectId)))
-        
+
         }
         if (filteredTopicArr.length > 0) {
             console.log("Topic filter")
@@ -337,7 +338,7 @@ export default function AllCourses(props) {
     const handleSearch = (e) => {
         let tempArr = [...mainCourseArr]
         let query = e.toLowerCase()
-        tempArr = tempArr.filter(el => el.name.toLowerCase().includes(query) || el?.subjectArr?.some(ele => ele.classArr.some(elx => elx.className.toLowerCase().includes(query))) || el?.subjectArr.some(elz=>elz.subjectName.toLowerCase().includes(query)))
+        tempArr = tempArr.filter(el => el.name.toLowerCase().includes(query) || el?.subjectArr?.some(ele => ele.classArr.some(elx => elx.className.toLowerCase().includes(query))) || el?.subjectArr.some(elz => elz.subjectName.toLowerCase().includes(query)))
         setCourseArr([...tempArr])
     }
 
@@ -429,7 +430,7 @@ export default function AllCourses(props) {
         let tempCourseArr = [...mainCourseArr]
         if (outerSelectedClassArr.length > 0) {
 
-            tempCourseArr = tempCourseArr.filter(el => outerSelectedClassArr.some(elx => el.subjectArr.some(elz=>elz.classArr.some(ely => ely.classId == elx))))
+            tempCourseArr = tempCourseArr.filter(el => outerSelectedClassArr.some(elx => el.subjectArr.some(elz => elz.classArr.some(ely => ely.classId == elx))))
             setCourseArr([...tempCourseArr])
             setInnerFilteredCourseArr([...tempCourseArr])
             let tempTopicArr = [...mainTopicArr];
@@ -466,7 +467,7 @@ export default function AllCourses(props) {
 
     const renderTeacherItem = ({ item, index }) => {
         return (
-            <Pressable onPress={()=> props.navigation.navigate("CourseDetail", { data: item._id })} style={[styles.listView]}>
+            <Pressable onPress={() => props.navigation.navigate("CourseDetail", { data: item._id })} style={[styles.listView]}>
 
                 <Image
                     style={styles.listImage}
@@ -518,15 +519,15 @@ export default function AllCourses(props) {
     }
 
     return (
-        <View style={[styles.container]}>
-            <View style={{ flexDirection: 'row' }}>
+        <>
+            <GeneralInnerHeader rootProps={props} />
+
+            <View style={[styles.container]}>
+                {/* <View style={{ flexDirection: 'row' }}>
                 <Pressable style={[{ flex: 1 }]} onPress={() => props.navigation.goBack()}>
                     <AntDesign name='left' size={20} style={[styles.topIcons]} />
                 </Pressable>
-                {/* <Pressable onPress={() => props.navigation.navigate('')}>
-
-                    <AntDesign name='search1' size={20} style={[styles.topIcons, { marginRight: 25 }]} />
-                </Pressable> */}
+                
                 <Pressable onPress={() => props.navigation.navigate('MainTopTab')}>
 
                     <AntDesign name='message1' size={20} style={[styles.topIcons, { marginRight: 25 }]} />
@@ -535,24 +536,24 @@ export default function AllCourses(props) {
 
                     <Feather name='bell' size={20} style={[styles.topIcons]} />
                 </Pressable>
-            </View>
+            </View> */}
 
-            <View style={[styles.searchInputView]}>
-                <AntDesign name='search1' size={20} style={[styles.topIcons, { marginRight: 15 }]} />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Search Categories"
-                    onChangeText={(e) => handleSearch(e)}
-                />
-                <Pressable onPress={() => filterBottomSheetRef.current.open()}>
-                    <Image source={require('../../assets/images/Filter.png')} />
-                </Pressable>
-            </View>
+                <View style={[styles.searchInputView]}>
+                    <AntDesign name='search1' size={20} style={[styles.topIcons, { marginRight: 15 }]} />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Search Categories"
+                        onChangeText={(e) => handleSearch(e)}
+                    />
+                    <Pressable onPress={() => filterBottomSheetRef.current.open()}>
+                        <Image source={require('../../assets/images/Filter.png')} />
+                    </Pressable>
+                </View>
 
-            <FlatList
-                ListHeaderComponent={
-                    <>
-                        {/* <Text style={[styles.title]}>Recommended Courses</Text>
+                <FlatList
+                    ListHeaderComponent={
+                        <>
+                            {/* <Text style={[styles.title]}>Recommended Courses</Text>
                         <FlatList
                             horizontal
                             data={courseArr.filter(el => el?.flags?.bestsellerFlag)}
@@ -565,297 +566,299 @@ export default function AllCourses(props) {
                             }
                         /> */}
 
-                        {/* <Text style={[styles.title]}>New Courses</Text> */}
-                        <View style={[styles.flexRow, { marginTop: 10, alignItems: 'center', justifyContent: 'space-between' }]}>
+                            {/* <Text style={[styles.title]}>New Courses</Text> */}
+                            <View style={[styles.flexRow, { marginTop: 10, alignItems: 'center', justifyContent: 'space-between' }]}>
 
-                            <SectionedMultiSelect
-                                items={classesArr}
-                                IconRenderer={MatIcon}
-                                uniqueKey="_id"
-                                itemFontFamily={{ fontFamily: 'Montserrat-SemiBold' }}
-                                subItemFontFamily={{ fontFamily: "Montserrat-Regular" }}
-                                searchPlaceholderText={"Search Subcategories..."}
-                                searchTextFontFamily={{ fontFamily: "Montserrat-Medium" }}
-                                confirmFontFamily={{ fontFamily: "Montserrat-SemiBold" }}
-                                showChips={false}
-                                alwaysShowSelectText={true}
-                                onConfirm={() => handleOuterClassFilter()}
-                                selectText="Subcategory"
+                                <SectionedMultiSelect
+                                    items={classesArr}
+                                    IconRenderer={MatIcon}
+                                    uniqueKey="_id"
+                                    itemFontFamily={{ fontFamily: 'Montserrat-SemiBold' }}
+                                    subItemFontFamily={{ fontFamily: "Montserrat-Regular" }}
+                                    searchPlaceholderText={"Search Subcategories..."}
+                                    searchTextFontFamily={{ fontFamily: "Montserrat-Medium" }}
+                                    confirmFontFamily={{ fontFamily: "Montserrat-SemiBold" }}
+                                    showChips={false}
+                                    alwaysShowSelectText={true}
+                                    onConfirm={() => handleOuterClassFilter()}
+                                    selectText="Subcategory"
 
-                                onSelectedItemsChange={handleClassSelectionOuterFilter}
-                                selectedItems={outerSelectedClassArr}
-                                styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282", borderRadius: 50, borderWidth: 0.7, paddingVertical: 5, paddingHorizontal: 10, width: wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
+                                    onSelectedItemsChange={handleClassSelectionOuterFilter}
+                                    selectedItems={outerSelectedClassArr}
+                                    styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282", borderRadius: 50, borderWidth: 0.7, paddingVertical: 5, paddingHorizontal: 10, width: wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
 
-                            />
-                            <SectionedMultiSelect
-                                items={topicArr}
-                                IconRenderer={MatIcon}
-                                uniqueKey="_id"
-                                itemFontFamily={{ fontFamily: 'Montserrat-SemiBold' }}
-                                subItemFontFamily={{ fontFamily: "Montserrat-Regular" }}
-                                searchPlaceholderText={"Search Topics..."}
-                                searchTextFontFamily={{ fontFamily: "Montserrat-Medium" }}
-                                confirmFontFamily={{ fontFamily: "Montserrat-SemiBold" }}
-                                showChips={false}
-                                alwaysShowSelectText={true}
-                                selectText="Topics"
-                                onConfirm={() => handleOuterTopicFilter()}
-                                onSelectedItemsChange={handleTopicOuterFilter}
-                                selectedItems={outerTopicArr}
-                                styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282",  borderRadius: 50,borderWidth: 0.7, paddingVertical: 5, paddingHorizontal: 10, width: wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
+                                />
+                                <SectionedMultiSelect
+                                    items={topicArr}
+                                    IconRenderer={MatIcon}
+                                    uniqueKey="_id"
+                                    itemFontFamily={{ fontFamily: 'Montserrat-SemiBold' }}
+                                    subItemFontFamily={{ fontFamily: "Montserrat-Regular" }}
+                                    searchPlaceholderText={"Search Topics..."}
+                                    searchTextFontFamily={{ fontFamily: "Montserrat-Medium" }}
+                                    confirmFontFamily={{ fontFamily: "Montserrat-SemiBold" }}
+                                    showChips={false}
+                                    alwaysShowSelectText={true}
+                                    selectText="Topics"
+                                    onConfirm={() => handleOuterTopicFilter()}
+                                    onSelectedItemsChange={handleTopicOuterFilter}
+                                    selectedItems={outerTopicArr}
+                                    styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282", borderRadius: 50, borderWidth: 0.7, paddingVertical: 5, paddingHorizontal: 10, width: wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
 
-                            />
+                                />
+                            </View>
+                            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+
+                                <Pressable onPress={() => handleBtnFilter("All")} style={[styles.newContainer, selectedNewFilter != "All" && { backgroundColor: '#f0faf9' }]}>
+                                    <Text style={[styles.newcategoryName, selectedNewFilter != "All" && { color: '#828282' }]}>All</Text>
+                                </Pressable>
+
+                                <Pressable onPress={() => handleBtnFilter("Best Seller")} style={[styles.newContainer, selectedNewFilter != "Best Seller" && { backgroundColor: '#f0faf9' }]}>
+                                    <Text style={[styles.newcategoryName, selectedNewFilter != "Best Seller" && { color: '#828282' }]}>Bestseller</Text>
+                                </Pressable>
+                            </View>
+                        </>
+                    }
+                    refreshing={isrefreshing}
+                    onRefresh={() => handleOnint()}
+                    contentContainerStyle={{ paddingBottom: 50 }}
+                    data={courseArr}
+                    renderItem={renderTeacherItem}
+                    keyExtractor={(item, index) => `${index}`}
+                    ListEmptyComponent={
+                        <Text style={{ textAlign: 'center', fontFamily: 'Montserrat-SemiBold', fontSize: 16, width: wp(90), marginTop: 40 }}>No Courses Found</Text>
+                    }
+                />
+                <RBSheet
+                    ref={filterBottomSheetRef}
+                    closeOnDragDown={true}
+                    closeOnPressMask={false}
+                    dragFromTopOnly={true}
+
+                    animationType="slide"
+                    customStyles={{
+                        wrapper: {
+                            backgroundColor: "rgba(0,0,0,0.5)",
+                        },
+                        container: {
+                            height: hp(100)
+                        },
+                        draggableIcon: {
+                            backgroundColor: "#fff"
+                        }
+                    }}
+                >
+                    <>
+
+
+                        <View style={styles.bottomSheetInnerContainer}>
+                            <View style={[styles.flexRowAlignCenter, { justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: colorObj.greyColor, paddingBottom: 10 }]}>
+                                <Text style={[styles.filterSubHeading, { paddingHorizontal: 10 }]}>Filter</Text>
+                                <Text style={[styles.filterSubHeading, { color: colorObj.primarColor, fontSize: 14, paddingHorizontal: 10 }]}>Clear All</Text>
+                            </View>
+                            <View style={[styles.flexRowAlignCenter]}>
+
+                                <View style={[styles.flexColumn, { height: hp(90), width: wp(30), backgroundColor: '#fafafa' }]}>
+                                    <Pressable onPress={() => setActiveFilterContainer('subject')} style={[styles.customFilterHeadingBox, activeFilterContainer == "subject" && { backgroundColor: 'white' }]}>
+
+                                        <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Category</Text>
+                                    </Pressable>
+                                    <Pressable onPress={() => setActiveFilterContainer('class')} style={[styles.customFilterHeadingBox, activeFilterContainer == "class" && { backgroundColor: 'white' }]}>
+
+                                        <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Sub Category</Text>
+                                    </Pressable>
+                                    <Pressable onPress={() => setActiveFilterContainer('topic')} style={[styles.customFilterHeadingBox, activeFilterContainer == "topic" && { backgroundColor: 'white' }]}>
+
+                                        <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Topic</Text>
+                                    </Pressable>
+                                    <Pressable onPress={() => setActiveFilterContainer('price')} style={[styles.customFilterHeadingBox, activeFilterContainer == "price" && { backgroundColor: 'white' }]}>
+
+                                        <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Price Range</Text>
+                                    </Pressable>
+                                    <Pressable onPress={() => setActiveFilterContainer('sortBy')} style={[styles.customFilterHeadingBox, activeFilterContainer == "sortBy" && { backgroundColor: 'white' }]}>
+
+                                        <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Sort By</Text>
+                                    </Pressable>
+                                </View>
+                                <View style={[styles.flexColumn, { height: hp(90) }]}>
+                                    {activeFilterContainer == "subject" &&
+
+                                        <FlatList
+                                            data={subjectArr}
+                                            keyExtractor={(item, index) => `${index}`}
+                                            scrollEnabled={true}
+                                            contentContainerStyle={{ paddingBottom: 100, marginTop: 20 }}
+                                            ListEmptyComponent={
+                                                <Text>No data found</Text>
+                                            }
+                                            renderItem={({ item, index }) => {
+                                                return (
+                                                    <View>
+                                                        <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 10, justifyContent: 'space-between', }]}>
+                                                            <Checkbox
+                                                                color={colorObj.primarColor}
+                                                                status={item.checked ? "checked" : "unchecked"}
+                                                                onPress={() => handleSubjectSelection(index, item._id)}
+                                                            />
+                                                            <Pressable onPress={() => handleSubjectSelection(index, item._id)} style={{ paddingVertical: 5, width: '100%' }} >
+                                                                <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>{item.name}</Text>
+                                                            </Pressable>
+
+                                                        </View>
+
+                                                    </View>
+                                                )
+                                            }}
+
+                                        />
+                                    }
+                                    {activeFilterContainer == "class" &&
+
+                                        <FlatList
+                                            data={nestedClassArr}
+                                            keyExtractor={(item, index) => `${item._id}`}
+                                            scrollEnabled={true}
+                                            contentContainerStyle={{ paddingBottom: 100, marginTop: 20 }}
+
+                                            renderItem={({ item, index }) => {
+                                                return (
+                                                    <View style={{ paddingHorizontal: 20 }}>
+                                                        <Text style={[styles.checkBoxText, { textAlign: 'left', fontFamily: 'Montserrat-Medium' }]}>{item?.name}</Text>
+                                                        <FlatList
+                                                            scrollEnabled={false}
+                                                            data={item.classArr}
+                                                            keyExtractor={(item, index) => `${item._id}`}
+                                                            renderItem={({ item: itemX, index: indexX }) => {
+                                                                return (
+                                                                    <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 3, justifyContent: 'space-between', }]}>
+
+                                                                        <Checkbox
+                                                                            color={colorObj.primarColor}
+                                                                            status={itemX.checked ? "checked" : "unchecked"}
+                                                                            onPress={() => handleClassSelection(index, itemX._id)}
+                                                                        />
+                                                                        <Pressable onPress={() => handleClassSelection(index, itemX._id)} style={{ paddingVertical: 5, width: '100%' }} >
+                                                                            <Text style={[styles.checkBoxText, { textAlign: 'left', fontSize: 12 }]}>{itemX.name}</Text>
+
+                                                                        </Pressable>
+                                                                    </View>
+
+                                                                )
+                                                            }}
+                                                        />
+
+
+                                                    </View>
+                                                )
+                                            }}
+
+                                        />
+                                    }
+                                    {activeFilterContainer == "topic" &&
+
+                                        <FlatList
+                                            data={topicArr}
+                                            keyExtractor={(item, index) => `${item._id}`}
+                                            scrollEnabled={true}
+                                            contentContainerStyle={{ paddingBottom: 100, marginTop: 20 }}
+
+                                            renderItem={({ item, index }) => {
+                                                return (
+                                                    <View>
+                                                        <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 10, justifyContent: 'space-between', }]}>
+                                                            <Checkbox
+                                                                color={colorObj.primarColor}
+                                                                status={item.checked ? "checked" : "unchecked"}
+                                                                onPress={() => handleTopicSelection(item._id)}
+                                                            />
+                                                            <Pressable onPress={() => handleTopicSelection(item._id)} style={{ paddingVertical: 5, width: '100%' }} >
+                                                                <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>{item.name}</Text>
+
+                                                            </Pressable>
+
+                                                        </View>
+
+                                                    </View>
+                                                )
+                                            }}
+
+
+                                        />
+                                    }
+                                    {activeFilterContainer == "price" &&
+                                        <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
+                                            <Text style={[styles.bottomSheetHeading, { fontSize: 16 }]}>Selected Price Range</Text>
+                                            <Text style={[styles.bottomSheetHeading, { fontSize: 14, marginTop: 20 }]}>₹ {multiSliderValue[0]} - ₹ {multiSliderValue[1]} </Text>
+                                            <MultiSlider
+                                                values={[multiSliderValue[0], multiSliderValue[1]]}
+                                                sliderLength={250}
+                                                onValuesChange={multiSliderValuesChange}
+                                                min={minFees}
+                                                max={maxFees}
+                                                step={50}
+                                                // allowOverlap
+                                                // snapped
+                                                // enableLabel
+                                                //  customLabel={CustomLabel}
+                                                onValuesChangeStart={() => setIsScrollEnabled(false)}
+                                                onValuesChangeFinish={() => setIsScrollEnabled(true)}
+                                            />
+                                        </View>
+                                    }
+                                    {activeFilterContainer == "sortBy" &&
+                                        <View style={{ paddingHorizontal: 20, marginTop: 20, width: wp(50) }}>
+
+                                            <RadioButton.Group onValueChange={newValue => setSortBy(newValue)} value={sortBy}>
+                                                <View style={[{ marginVertical: 10 }, styles.flexColumn, { justifyContent: 'space-between' }]}>
+
+                                                    <Pressable onPress={() => setSortBy(sortByText.popularity)} style={[styles.flexRow, { alignItems: 'center' }]}>
+                                                        <RadioButton color={colorObj.primarColor} value={sortByText.popularity} />
+                                                        <Text style={styles.radioText}>Popularity</Text>
+                                                    </Pressable>
+                                                    <Pressable onPress={() => setSortBy(sortByText.priceLowToHigh)} style={[styles.flexRow, { alignItems: 'center' }]}>
+
+                                                        <RadioButton color={colorObj.primarColor} value={sortByText.priceLowToHigh} />
+                                                        <Text style={styles.radioText}>Price low to high</Text>
+                                                    </Pressable>
+                                                    <Pressable onPress={() => setSortBy(sortByText.priceHighToLow)} style={[styles.flexRow, { alignItems: 'center' }]}>
+                                                        <RadioButton color={colorObj.primarColor} value={sortByText.priceHighToLow} />
+                                                        <Text style={styles.radioText}>Price High to low</Text>
+                                                    </Pressable>
+                                                    <Pressable onPress={() => setSortBy(sortByText.customerRating)} style={[styles.flexRow, { alignItems: 'center' }]}>
+                                                        <RadioButton color={colorObj.primarColor} value={sortByText.customerRating} />
+                                                        <Text style={styles.radioText}>Customer Rating</Text>
+                                                    </Pressable>
+                                                </View>
+                                            </RadioButton.Group>
+                                        </View>
+                                    }
+
+                                </View>
+                            </View>
+
                         </View>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
 
-                            <Pressable onPress={() => handleBtnFilter("All")} style={[styles.newContainer, selectedNewFilter != "All" && { backgroundColor: '#f0faf9' }]}>
-                                <Text style={[styles.newcategoryName, selectedNewFilter != "All" && { color: '#828282' }]}>All</Text>
+                        <View style={[styles.flexRowAlignCenter, { justifyContent: 'space-evenly', width: wp(100), position: 'absolute', bottom: 0, backgroundColor: 'white' }]}>
+                            <Pressable style={styles.btn} onPress={() => filterBottomSheetRef.current.close()} >
+                                <Text style={styles.btnTxt}>Close</Text>
                             </Pressable>
-
-                            <Pressable onPress={() => handleBtnFilter("Best Seller")} style={[styles.newContainer, selectedNewFilter != "Best Seller" && { backgroundColor: '#f0faf9' }]}>
-                                <Text style={[styles.newcategoryName, selectedNewFilter != "Best Seller" && { color: '#828282' }]}>Bestseller</Text>
+                            <Pressable style={styles.btn} onPress={() => handleShowFilterResults()} >
+                                <Text style={styles.btnTxt}>Apply</Text>
                             </Pressable>
                         </View>
                     </>
-                }
-                refreshing={isrefreshing}
-                onRefresh={() => handleOnint()}
-                contentContainerStyle={{ paddingBottom: 50 }}
-                data={courseArr}
-                renderItem={renderTeacherItem}
-                keyExtractor={(item, index) => `${index}`}
-                ListEmptyComponent={
-                    <Text style={{ textAlign: 'center', fontFamily: 'Montserrat-SemiBold', fontSize: 16, width: wp(90), marginTop: 40 }}>No Courses Found</Text>
-                }
-            />
-            <RBSheet
-                ref={filterBottomSheetRef}
-                closeOnDragDown={true}
-                closeOnPressMask={false}
-                dragFromTopOnly={true}
 
-                animationType="slide"
-                customStyles={{
-                    wrapper: {
-                        backgroundColor: "rgba(0,0,0,0.5)",
-                    },
-                    container: {
-                        height: hp(100)
-                    },
-                    draggableIcon: {
-                        backgroundColor: "#fff"
-                    }
-                }}
-            >
-                <>
+                </RBSheet>
+            </View>
+        </>
 
-
-                    <View style={styles.bottomSheetInnerContainer}>
-                        <View style={[styles.flexRowAlignCenter, { justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: colorObj.greyColor, paddingBottom: 10 }]}>
-                            <Text style={[styles.filterSubHeading, { paddingHorizontal: 10 }]}>Filter</Text>
-                            <Text style={[styles.filterSubHeading, { color: colorObj.primarColor, fontSize: 14, paddingHorizontal: 10 }]}>Clear All</Text>
-                        </View>
-                        <View style={[styles.flexRowAlignCenter]}>
-
-                            <View style={[styles.flexColumn, { height: hp(90), width: wp(30), backgroundColor: '#fafafa' }]}>
-                                <Pressable onPress={() => setActiveFilterContainer('subject')} style={[styles.customFilterHeadingBox, activeFilterContainer == "subject" && { backgroundColor: 'white' }]}>
-
-                                    <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Category</Text>
-                                </Pressable>
-                                <Pressable onPress={() => setActiveFilterContainer('class')} style={[styles.customFilterHeadingBox, activeFilterContainer == "class" && { backgroundColor: 'white' }]}>
-
-                                    <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Sub Category</Text>
-                                </Pressable>
-                                <Pressable onPress={() => setActiveFilterContainer('topic')} style={[styles.customFilterHeadingBox, activeFilterContainer == "topic" && { backgroundColor: 'white' }]}>
-
-                                    <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Topic</Text>
-                                </Pressable>
-                                <Pressable onPress={() => setActiveFilterContainer('price')} style={[styles.customFilterHeadingBox, activeFilterContainer == "price" && { backgroundColor: 'white' }]}>
-
-                                    <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Price Range</Text>
-                                </Pressable>
-                                <Pressable onPress={() => setActiveFilterContainer('sortBy')} style={[styles.customFilterHeadingBox, activeFilterContainer == "sortBy" && { backgroundColor: 'white' }]}>
-
-                                    <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Sort By</Text>
-                                </Pressable>
-                            </View>
-                            <View style={[styles.flexColumn, { height: hp(90) }]}>
-                                {activeFilterContainer == "subject" &&
-
-                                    <FlatList
-                                        data={subjectArr}
-                                        keyExtractor={(item, index) => `${index}`}
-                                        scrollEnabled={true}
-                                        contentContainerStyle={{ paddingBottom: 100, marginTop: 20 }}
-                                        ListEmptyComponent={
-                                            <Text>No data found</Text>
-                                        }
-                                        renderItem={({ item, index }) => {
-                                            return (
-                                                <View>
-                                                    <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 10, justifyContent: 'space-between', }]}>
-                                                        <Checkbox
-                                                            color={colorObj.primarColor}
-                                                            status={item.checked ? "checked" : "unchecked"}
-                                                            onPress={() => handleSubjectSelection(index, item._id)}
-                                                        />
-                                                        <Pressable onPress={() => handleSubjectSelection(index, item._id)} style={{ paddingVertical: 5, width: '100%' }} >
-                                                            <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>{item.name}</Text>
-                                                        </Pressable>
-
-                                                    </View>
-
-                                                </View>
-                                            )
-                                        }}
-
-                                    />
-                                }
-                                {activeFilterContainer == "class" &&
-
-                                    <FlatList
-                                        data={nestedClassArr}
-                                        keyExtractor={(item, index) => `${item._id}`}
-                                        scrollEnabled={true}
-                                        contentContainerStyle={{ paddingBottom: 100, marginTop: 20 }}
-
-                                        renderItem={({ item, index }) => {
-                                            return (
-                                                <View style={{ paddingHorizontal: 20 }}>
-                                                    <Text style={[styles.checkBoxText, { textAlign: 'left', fontFamily: 'Montserrat-Medium' }]}>{item?.name}</Text>
-                                                    <FlatList
-                                                        scrollEnabled={false}
-                                                        data={item.classArr}
-                                                        keyExtractor={(item, index) => `${item._id}`}
-                                                        renderItem={({ item: itemX, index: indexX }) => {
-                                                            return (
-                                                                <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 3, justifyContent: 'space-between', }]}>
-
-                                                                    <Checkbox
-                                                                        color={colorObj.primarColor}
-                                                                        status={itemX.checked ? "checked" : "unchecked"}
-                                                                        onPress={() => handleClassSelection(index, itemX._id)}
-                                                                    />
-                                                                    <Pressable onPress={() => handleClassSelection(index, itemX._id)} style={{ paddingVertical: 5, width: '100%' }} >
-                                                                        <Text style={[styles.checkBoxText, { textAlign: 'left', fontSize: 12 }]}>{itemX.name}</Text>
-
-                                                                    </Pressable>
-                                                                </View>
-
-                                                            )
-                                                        }}
-                                                    />
-
-
-                                                </View>
-                                            )
-                                        }}
-
-                                    />
-                                }
-                                {activeFilterContainer == "topic" &&
-
-                                    <FlatList
-                                        data={topicArr}
-                                        keyExtractor={(item, index) => `${item._id}`}
-                                        scrollEnabled={true}
-                                        contentContainerStyle={{ paddingBottom: 100, marginTop: 20 }}
-
-                                        renderItem={({ item, index }) => {
-                                            return (
-                                                <View>
-                                                    <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 10, justifyContent: 'space-between', }]}>
-                                                        <Checkbox
-                                                            color={colorObj.primarColor}
-                                                            status={item.checked ? "checked" : "unchecked"}
-                                                            onPress={() => handleTopicSelection(item._id)}
-                                                        />
-                                                        <Pressable onPress={() => handleTopicSelection(item._id)} style={{ paddingVertical: 5, width: '100%' }} >
-                                                            <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>{item.name}</Text>
-
-                                                        </Pressable>
-
-                                                    </View>
-
-                                                </View>
-                                            )
-                                        }}
-
-
-                                    />
-                                }
-                                {activeFilterContainer == "price" &&
-                                    <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
-                                        <Text style={[styles.bottomSheetHeading, { fontSize: 16 }]}>Selected Price Range</Text>
-                                        <Text style={[styles.bottomSheetHeading, { fontSize: 14,marginTop:20 }]}>₹ {multiSliderValue[0]} - ₹ {multiSliderValue[1]} </Text>
-                                        <MultiSlider
-                                            values={[multiSliderValue[0], multiSliderValue[1]]}
-                                            sliderLength={250}
-                                            onValuesChange={multiSliderValuesChange}
-                                            min={minFees}
-                                            max={maxFees}
-                                            step={50}
-                                            // allowOverlap
-                                            // snapped
-                                            // enableLabel
-                                            //  customLabel={CustomLabel}
-                                            onValuesChangeStart={() => setIsScrollEnabled(false)}
-                                            onValuesChangeFinish={() => setIsScrollEnabled(true)}
-                                        />
-                                    </View>
-                                }
-                                {activeFilterContainer == "sortBy" &&
-                                    <View style={{ paddingHorizontal: 20, marginTop: 20, width: wp(50) }}>
-
-                                        <RadioButton.Group onValueChange={newValue => setSortBy(newValue)} value={sortBy}>
-                                            <View style={[{ marginVertical: 10 }, styles.flexColumn, { justifyContent: 'space-between' }]}>
-
-                                                <Pressable onPress={() => setSortBy(sortByText.popularity)} style={[styles.flexRow, { alignItems: 'center' }]}>
-                                                    <RadioButton color={colorObj.primarColor} value={sortByText.popularity} />
-                                                    <Text style={styles.radioText}>Popularity</Text>
-                                                </Pressable>
-                                                <Pressable onPress={() => setSortBy(sortByText.priceLowToHigh)} style={[styles.flexRow, { alignItems: 'center' }]}>
-
-                                                    <RadioButton color={colorObj.primarColor} value={sortByText.priceLowToHigh} />
-                                                    <Text style={styles.radioText}>Price low to high</Text>
-                                                </Pressable>
-                                                <Pressable onPress={() => setSortBy(sortByText.priceHighToLow)} style={[styles.flexRow, { alignItems: 'center' }]}>
-                                                    <RadioButton color={colorObj.primarColor} value={sortByText.priceHighToLow} />
-                                                    <Text style={styles.radioText}>Price High to low</Text>
-                                                </Pressable>
-                                                <Pressable onPress={() => setSortBy(sortByText.customerRating)} style={[styles.flexRow, { alignItems: 'center' }]}>
-                                                    <RadioButton color={colorObj.primarColor} value={sortByText.customerRating} />
-                                                    <Text style={styles.radioText}>Customer Rating</Text>
-                                                </Pressable>
-                                            </View>
-                                        </RadioButton.Group>
-                                    </View>
-                                }
-
-                            </View>
-                        </View>
-
-                    </View>
-
-                    <View style={[styles.flexRowAlignCenter, { justifyContent: 'space-evenly', width: wp(100), position: 'absolute', bottom: 0, backgroundColor: 'white' }]}>
-                        <Pressable style={styles.btn} onPress={() => filterBottomSheetRef.current.close()} >
-                            <Text style={styles.btnTxt}>Close</Text>
-                        </Pressable>
-                        <Pressable style={styles.btn} onPress={() => handleShowFilterResults()} >
-                            <Text style={styles.btnTxt}>Apply</Text>
-                        </Pressable>
-                    </View>
-                </>
-
-            </RBSheet>
-        </View>
     )
 }
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#fff',
         flex: 1,
-        padding: 20
+        paddingHorizontal: 20
     },
     topIcons: {
         color: 'black'

@@ -13,8 +13,8 @@ export const getAllChats=()=>{
 
 
 
-export const getChatHistoryByRoomId=(id)=>{
-    return axiosApiInstance.get(`${url}/getChatByChatRoomId/${id}`)
+export const getChatHistoryByRoomId=(id,itemsPerPage,currentPage)=>{
+    return axiosApiInstance.get(`${url}/getChatByChatRoomId/${id}?itemsPerPage=${itemsPerPage}&currentPage=${currentPage}`)
 }
 
 

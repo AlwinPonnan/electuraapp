@@ -75,28 +75,27 @@ export default function Learnings(props) {
 
                     }
                     return obj
+                }).filter(el => {
+                    if (el?.enquiryObj?.slotObj?.timeSlotObj?.startTime) {
+                        console.log(new Date(el?.enquiryObj?.slotObj?.timeSlotObj?.startTime).toDateString())
+                        if (new Date(el?.enquiryObj?.slotObj?.timeSlotObj?.startTime).getTime() <= new Date().getTime() && new Date(el?.enquiryObj?.slotObj?.timeSlotObj?.endTime).getTime() >= new Date().getTime()) {
+                            return true
+                        }
+                        else {
+                            return false
+                        }
+                    }
+                    else {
+                        let createdAt = new Date(el?.enquiryObj?.slotObj?.meetingDate)
+                        createdAt.setHours(createdAt.getHours() + 2)
+                        if (new Date().getTime() <= createdAt.getTime()) {
+                            return true
+                        }
+                        else {
+                            return false
+                        }
+                    }
                 })
-                // .filter(el => {
-                //     if (el?.enquiryObj?.slotObj?.timeSlotObj?.startTime) {
-                //         console.log(new Date(el?.enquiryObj?.slotObj?.timeSlotObj?.startTime).toDateString())
-                //         if (new Date(el?.enquiryObj?.slotObj?.timeSlotObj?.startTime).getTime() <= new Date().getTime() && new Date(el?.enquiryObj?.slotObj?.timeSlotObj?.endTime).getTime() >= new Date().getTime()) {
-                //             return true
-                //         }
-                //         else {
-                //             return false
-                //         }
-                //     }
-                //     else {
-                //         let createdAt = new Date(el?.enquiryObj?.slotObj?.meetingDate)
-                //         createdAt.setHours(createdAt.getHours() + 2)
-                //         if (new Date().getTime() <= createdAt.getTime()) {
-                //             return true
-                //         }
-                //         else {
-                //             return false
-                //         }
-                //     }
-                // })
                 console.log(JSON.stringify(temp, null, 2), "adad")
 
                 setLiveClassArr(temp)

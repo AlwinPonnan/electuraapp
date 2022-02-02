@@ -5,7 +5,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import Icon from 'react-native-vector-icons/Ionicons';
 import NavBar from '../components/Navbar';
 import { useIsFocused } from '@react-navigation/core';
-import { getAllNotifications, markNotificationAsRead } from '../Services/User';
+import { getAllNotifications, getAllNotificationsPageWise, markNotificationAsRead } from '../Services/User';
 import { FlatList } from 'react-native-gesture-handler';
 import { generateImageUrl } from '../globals/utils';
 
@@ -20,26 +20,64 @@ export default function Notification(props) {
 
 
     const [isLoading, setIsLoading] = useContext(loadingContext);
+    const [lazyLoading, setLazyLoading] = useState(true);
+    const [itemCountPerRequest, setItemCountPerRequest] = useState(5);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [maxPageCount, setMaxPageCount] = useState(0);
+
+    // const getNotifications = async () => {
+    //     setIsLoading(true)
+    //     setIsRefreshing(true)
+    //     try {
+    //         const { data: res } = await getAllNotifications()
+    //         if (res.success) {
+    //             console.log(JSON.stringify(res.data, null, 2))
+    //             setNotificationArr(res.data.reverse())
+    //             setIsRefreshing(false)
+
+    //         }
+    //     } catch (error) {
+    //         console.error(error)
+    //         setIsRefreshing(false)
+    //         setIsLoading(false)
+    //     }
+    //     setIsLoading(false)
+    //     setIsRefreshing(false)
+    // }
+
 
     const getNotifications = async () => {
-        setIsLoading(true)
+        // setIsLoading(true)
         setIsRefreshing(true)
         try {
-            const { data: res } = await getAllNotifications()
-            if (res.success) {
-                console.log(JSON.stringify(res.data, null, 2))
-                setNotificationArr(res.data.reverse())
-                setIsRefreshing(false)
+            // if (lazyLoading) {
 
-            }
+                const { data: res } = await getAllNotificationsPageWise(itemCountPerRequest, currentPage + 1)
+                if (res.success) {
+                    if (res.data.length == 0) {
+                        setLazyLoading(false)
+                    }
+                    console.log(JSON.stringify(res.data, null, 2))
+                    setCurrentPage(prevState => prevState + 1)
+                    setNotificationArr(prevState => [...prevState, ...res.data.reverse()])
+                    setMaxPageCount(res.totalPages)
+                    setIsRefreshing(false)
+
+                }
+            // }
+            // else {
+                // console.log("lazy loading stopped")
+            // }
         } catch (error) {
             console.error(error)
             setIsRefreshing(false)
             setIsLoading(false)
         }
-        setIsLoading(false)
+        // setIsLoading(false)
         setIsRefreshing(false)
     }
+
+
 
     const handleNotificationRedirect = async (item) => {
         setIsLoading(true)
@@ -57,8 +95,11 @@ export default function Notification(props) {
 
 
     useEffect(() => {
-        if (focused)
+        if (focused) {
             getNotifications()
+        }
+        
+        return ()=>setLazyLoading(true)
     }, [focused])
     return (
         <>
@@ -83,15 +124,19 @@ export default function Notification(props) {
                     data={notificationArr}
                     refreshing={isRefreshing}
                     onRefresh={() => getNotifications()}
-                    contentContainerStyle={{ paddingBottom: 80,marginTop:10 }}
-                    keyExtractor={(item, index) => `${item._id}`}
+                    contentContainerStyle={{ paddingBottom: 80, marginTop: 10 }}
+                    keyExtractor={(item, index) => `${index}`}
+                    onEndReached={() => getNotifications()}
+                    // removeClippedSubviews={true}
+                    initialNumToRender={6}
+                    onEndReachedThreshold={1}
                     renderItem={({ item, index }) => {
                         return (
 
                             <Pressable style={item.read ? styles.notiCard : styles.unreadnotiCard} onPress={() => handleNotificationRedirect(item)}>
                                 <View style={[styles.flexRow, { alignItems: 'center', marginHorizontal: 5 }]}>
                                     <View>
-                                        { (item?.userObj?.profileImage && item?.sentByObj?.profileImage) &&
+                                        {(item?.userObj?.profileImage && item?.sentByObj?.profileImage) &&
                                             <Image style={{ height: 50, width: 50, borderRadius: 50 }} source={{ uri: generateImageUrl(item?.sentByObj?.profileImage) }} />
                                         }
                                         {(item?.userObj?.profileImage && !item?.sentByObj?.profileImage) &&
@@ -191,7 +236,7 @@ const styles = StyleSheet.create({
     heading: {
         fontFamily: 'RedHatText-Medium',
         fontSize: 20,
-        paddingHorizontal:15,
+        paddingHorizontal: 15,
         // marginTop: 15,
         // paddingHorizontal:10,
         // textAlign: "center",
@@ -239,7 +284,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         // marginVertical: 10,
         padding: 15,
-        backgroundColor: '#F9F9F9'
+        backgroundColor: '#f2f2f2'
     },
 
 

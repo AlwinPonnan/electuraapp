@@ -159,7 +159,7 @@ export default function RootStack() {
                                     <Stack.Screen name="CreateCourse" component={CreateCourse} options={{ headerShown: false }} />
                                     <Stack.Screen name="Notification" component={Notification} options={{ headerShown: false, cardStyles: { backgroundColor: '#ffffff' } }} />
                                     <Stack.Screen name="MainTopTab" component={MainTopTab} options={{
-                                        headerShown: true, showLabel: false, title: "", label: "",
+                                        headerShown: false, showLabel: false, title: "", label: "",
                                         headerShadowVisible: false
                                     }} />
                                     <Stack.Screen name="SpecificChat" component={SpecificChat} options={{

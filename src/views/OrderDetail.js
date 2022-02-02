@@ -22,6 +22,7 @@ import { loadingContext } from '../navigators/stacks/RootStack';
 import DocumentPicker from 'react-native-document-picker'
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import { newCourseFeedback } from '../Services/CourseFeedback';
+import GeneralInnerHeader from '../components/GeneralInnerHeader';
 export default function OrderDetail(props) {
     const [isLoading, setIsLoading] = useContext(loadingContext);
     const [orderObj, setOrderObj] = useState({});
@@ -34,6 +35,9 @@ export default function OrderDetail(props) {
     const [decodedJwtToken, setDecodedJwtToken] = useState('');
 
 
+    const [orderDispatchModal, setOrderDispatchModal] = useState(false);
+    const [teacherDeliveryModal, setTeacherDeliveryModal] = useState(false);
+    const [userDeliveryModal, setUserDeliveryModal] = useState(false);
     const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
 
 
@@ -155,19 +159,19 @@ export default function OrderDetail(props) {
         setIsLoading(false)
     }
 
-    const createTwoButtonAlert = (val) =>
-        Alert.alert(
-            "Alert",
-            "Do you really want to deliver this order ?",
-            [
-                {
-                    text: "No",
-                    onPress: () => console.log("Cancel Pressed"),
-                    style: "cancel"
-                },
-                { text: "Yes", onPress: () => val == "user" ? handleDeliverOrder : handleDeliverByTeacher() }
-            ]
-        );
+    // const createTwoButtonAlert = (val) =>
+    //     Alert.alert(
+    //         "Alert",
+    //         "Do you really want to deliver this order ?",
+    //         [
+    //             {
+    //                 text: "No",
+    //                 onPress: () => console.log("Cancel Pressed"),
+    //                 style: "cancel"
+    //             },
+    //             { text: "Yes", onPress: () => val == "user" ? handleDeliverOrder : handleDeliverByTeacher() }
+    //         ]
+    //     );
 
     const handleDeliverOrder = async () => {
         setIsLoading(true)
@@ -264,10 +268,11 @@ export default function OrderDetail(props) {
     return (
         <View style={{ flex: 1, backgroundColor: colorObj.whiteColor }}>
 
+            <GeneralInnerHeader heading="Summary" rootProps={props} />
             <View style={[styles.container]}>
                 {/* <View style={{ flex: 1 }}> */}
                 {/* </View> */}
-                <View style={{ display: 'flex', flexDirection: 'row' }}>
+                {/* <View style={{ display: 'flex', flexDirection: 'row' }}>
                     <Pressable onPress={() => props.navigation.goBack()}>
 
                         <AntDesign name='arrowleft' size={20} style={{ color: 'black' }} />
@@ -281,7 +286,8 @@ export default function OrderDetail(props) {
 
                         <Feather name='bell' size={20} style={{ color: 'black' }} />
                     </Pressable>
-                </View>
+                </View> */}
+
 
                 {orderObj?.teacherId != decodedJwtToken.userId &&
 
@@ -346,7 +352,7 @@ export default function OrderDetail(props) {
                         // </View>
                         <View>
                             {orderObj?.statusObj?.status == "PLACED" &&
-                                <Pressable style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }} onPress={() => pickImg()}>
+                                <Pressable style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }} onPress={() => setOrderDispatchModal(true)}>
                                     <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Dispatch</Text>
                                 </Pressable>
                             }
@@ -356,7 +362,7 @@ export default function OrderDetail(props) {
                                 </Pressable>
                             } */}
                             {orderObj?.statusObj?.status == "DISPATCHED" &&
-                                <Pressable onPress={() => createTwoButtonAlert("teacher")} style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }}>
+                                <Pressable onPress={() => setTeacherDeliveryModal(true)} style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }}>
                                     <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Confirm Delivery</Text>
                                 </Pressable>
                             }
@@ -371,7 +377,7 @@ export default function OrderDetail(props) {
                         :
                         <>
                             {(orderObj?.statusObj?.status == "DISPATCHED" || orderObj?.statusObj?.status == "DELIVERED MARKED BY TEACHER") &&
-                                <Pressable style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }} onPress={() => createTwoButtonAlert("user")}>
+                                <Pressable style={{ backgroundColor: colorObj.primarColor, borderRadius: 5 }} onPress={() => setUserDeliveryModal(true)}>
                                     <Text style={{ color: colorObj.whiteColor, textAlign: 'center', fontFamily: 'RedHatText-Regular', paddingHorizontal: 20, paddingVertical: 5 }}>Mark Delivered</Text>
                                 </Pressable>
                             }
@@ -469,6 +475,95 @@ export default function OrderDetail(props) {
                         <Pressable style={styles.submitBtn} onPress={() => handleSubmitFeedBack()}>
                             <Text style={styles.submitBtnText}>Submit</Text>
                         </Pressable>
+
+                    </Pressable>
+                </Pressable>
+            </Modal>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={orderDispatchModal}
+                onRequestClose={() => {
+                    setOrderDispatchModal(false);
+                }}
+            >
+                <Pressable style={styles.centeredView} onPress={() => setOrderDispatchModal(false)}>
+                    <Pressable style={styles.modalView}>
+                        <Text style={{
+                            fontFamily: 'Montserrat-SemiBold',
+                            fontSize: 18,
+                            color: '#000',
+                            textAlign: 'left',
+                        }}>Do you really want to dispatch the order?</Text>
+                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+
+                            <Pressable style={styles.submitBtn} onPress={() => setOrderDispatchModal(false)}>
+                                <Text style={[styles.submitBtnText,{fontSize:12}]}>No</Text>
+                            </Pressable>
+                            <Pressable style={styles.submitBtn} onPress={() => {setOrderDispatchModal(false);pickImg()}}>
+                                <Text style={[styles.submitBtnText,{fontSize:12}]}>Yes</Text>
+                            </Pressable>
+                        </View>
+
+                    </Pressable>
+                </Pressable>
+            </Modal>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={teacherDeliveryModal}
+                onRequestClose={() => {
+                    setTeacherDeliveryModal(false);
+                }}
+            >
+                <Pressable style={styles.centeredView} onPress={() => setTeacherDeliveryModal(false)}>
+                    <Pressable style={styles.modalView}>
+                        <Text style={{
+                            fontFamily: 'Montserrat-SemiBold',
+                            fontSize: 18,
+                            color: '#000',
+                            textAlign: 'left',
+                        }}>Do you really want to mark this order as delivered ?</Text>
+                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+
+                            <Pressable style={styles.submitBtn} onPress={() => setTeacherDeliveryModal(false)}>
+                                <Text style={[styles.submitBtnText,{fontSize:12}]}>No</Text>
+                            </Pressable>
+                            <Pressable style={styles.submitBtn} onPress={() => {setTeacherDeliveryModal(false);handleDeliverByTeacher()}}>
+                                <Text style={[styles.submitBtnText,{fontSize:12}]}>Yes</Text>
+                            </Pressable>
+                        </View>
+
+                    </Pressable>
+                </Pressable>
+            </Modal>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={userDeliveryModal}
+                onRequestClose={() => {
+                    setUserDeliveryModal(false);
+                }}
+            >
+                <Pressable style={styles.centeredView} onPress={() => setUserDeliveryModal(false)}>
+                    <Pressable style={styles.modalView}>
+                        <Text style={{
+                            fontFamily: 'Montserrat-SemiBold',
+                            fontSize: 18,
+                            color: '#000',
+                            textAlign: 'left',
+                        }}>Do you really want to mark this order as delivered ?</Text>
+                        <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
+
+                            <Pressable style={styles.submitBtn} onPress={() => setUserDeliveryModal(false)}>
+                                <Text style={[styles.submitBtnText,{fontSize:12}]}>No</Text>
+                            </Pressable>
+                            <Pressable style={styles.submitBtn} onPress={() => {setUserDeliveryModal(false);handleDeliverOrder()}}>
+                                <Text style={[styles.submitBtnText,{fontSize:12}]}>Yes</Text>
+                            </Pressable>
+                        </View>
 
                     </Pressable>
                 </Pressable>

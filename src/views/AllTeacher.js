@@ -27,6 +27,7 @@ import { successAlertContext } from '../../App';
 
 import MatIcon from 'react-native-vector-icons/MaterialIcons'
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
+import GeneralInnerHeader from '../components/GeneralInnerHeader';
 
 export default function AllTeacher(props) {
 
@@ -738,8 +739,10 @@ export default function AllTeacher(props) {
     }
 
     return (
-        <View style={[styles.container]}>
-            <View style={{ flexDirection: 'row' }}>
+        <>
+            <GeneralInnerHeader rootProps={props} />
+            <View style={[styles.container]}>
+                {/* <View style={{ flexDirection: 'row' }}>
                 <Pressable style={[{ flex: 1 }]} onPress={() => props.navigation.goBack()}>
                     <AntDesign name='left' size={20} style={[styles.topIcons]} />
                 </Pressable>
@@ -751,24 +754,24 @@ export default function AllTeacher(props) {
 
                     <Feather name='bell' size={20} style={[styles.topIcons]} />
                 </Pressable>
-            </View>
+            </View> */}
 
-            <View style={[styles.searchInputView]}>
-                <AntDesign name='search1' color={"#828282"} size={14} style={[{ marginRight: 15 }]} />
-                <TextInput
-                    style={styles.input}
-                    onChangeText={(e) => handleSearch(e)}
-                    placeholder="Search Categories"
-                />
-                <Pressable onPress={() => filterBottomSheetRef.current.open()}>
-                    <Image source={require('../../assets/images/Filter.png')} />
-                    {/* <Feather name='align-right' size={20} style={[styles.topIcons, { marginRight: 10 }]} /> */}
-                </Pressable>
-            </View>
-            <FlatList
-                ListHeaderComponent={
-                    <>
-                        {/* <Text style={[styles.title]}>Top Instructors</Text>
+                <View style={[styles.searchInputView]}>
+                    <AntDesign name='search1' color={"#828282"} size={14} style={[{ marginRight: 15 }]} />
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={(e) => handleSearch(e)}
+                        placeholder="Search Categories"
+                    />
+                    <Pressable onPress={() => filterBottomSheetRef.current.open()}>
+                        <Image source={require('../../assets/images/Filter.png')} />
+                        {/* <Feather name='align-right' size={20} style={[styles.topIcons, { marginRight: 10 }]} /> */}
+                    </Pressable>
+                </View>
+                <FlatList
+                    ListHeaderComponent={
+                        <>
+                            {/* <Text style={[styles.title]}>Top Instructors</Text>
                         <View>
                             <FlatList
                                 style={{ height: 120 }}
@@ -782,448 +785,450 @@ export default function AllTeacher(props) {
                                 }
                             />
                         </View> */}
-                        <View style={[styles.flexRow, { marginTop: 15, alignItems: 'center', justifyContent: 'space-between' }]}>
+                            <View style={[styles.flexRow, { marginTop: 15, alignItems: 'center', justifyContent: 'space-between' }]}>
 
-                            <SectionedMultiSelect
-                                items={classesArr}
-                                IconRenderer={MatIcon}
-                                uniqueKey="_id"
-                                itemFontFamily={{ fontFamily: 'Montserrat-SemiBold' }}
-                                subItemFontFamily={{ fontFamily: "Montserrat-Regular" }}
-                                searchPlaceholderText={"Search Subcategories..."}
-                                searchTextFontFamily={{ fontFamily: "Montserrat-Medium" }}
-                                confirmFontFamily={{ fontFamily: "Montserrat-SemiBold" }}
-                                showChips={false}
-                                alwaysShowSelectText={true}
-                                onConfirm={() => handleOuterClassFilter()}
-                                selectText="Subcategory"
+                                <SectionedMultiSelect
+                                    items={classesArr}
+                                    IconRenderer={MatIcon}
+                                    uniqueKey="_id"
+                                    itemFontFamily={{ fontFamily: 'Montserrat-SemiBold' }}
+                                    subItemFontFamily={{ fontFamily: "Montserrat-Regular" }}
+                                    searchPlaceholderText={"Search Subcategories..."}
+                                    searchTextFontFamily={{ fontFamily: "Montserrat-Medium" }}
+                                    confirmFontFamily={{ fontFamily: "Montserrat-SemiBold" }}
+                                    showChips={false}
+                                    alwaysShowSelectText={true}
+                                    onConfirm={() => handleOuterClassFilter()}
+                                    selectText="Subcategory"
 
-                                onSelectedItemsChange={handleClassSelectionOuterFilter}
-                                selectedItems={outerSelectedClassArr}
-                                styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282", borderRadius: 50, borderWidth: 0.7, paddingVertical: 5, paddingHorizontal: 10, width: wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
-
-
-                            />
-                            <SectionedMultiSelect
-                                items={topicArr}
-                                IconRenderer={MatIcon}
-                                uniqueKey="_id"
-                                itemFontFamily={{ fontFamily: 'Montserrat-SemiBold' }}
-                                subItemFontFamily={{ fontFamily: "Montserrat-Regular" }}
-                                searchPlaceholderText={"Search Topics..."}
-                                searchTextFontFamily={{ fontFamily: "Montserrat-Medium" }}
-                                confirmFontFamily={{ fontFamily: "Montserrat-SemiBold" }}
-                                showChips={false}
-                                alwaysShowSelectText={true}
-                                selectText="Topics"
-                                onSelectedItemsChange={handleTopicOuterFilter}
-                                selectedItems={outerTopicArr}
-                                styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282", borderRadius: 50, borderWidth: 0.7, paddingVertical: 5, paddingHorizontal: 10, width: wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
-
-                            />
-                        </View>
-
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-
-                            <Pressable onPress={() => handleBtnFilter("All", [])} style={[styles.newContainer, selectedNewFilter != "All" && { backgroundColor: '#f0faf9' }]}>
-                                <Text style={[styles.newcategoryName, selectedNewFilter != "All" && { color: '#828282' }]}>All</Text>
-                            </Pressable>
-                            <Pressable onPress={() => handleBtnFilter("Online", [])} style={[styles.newContainer, selectedNewFilter != "Online" && { backgroundColor: '#f0faf9' }]}>
-                                <Text style={[styles.newcategoryName, selectedNewFilter != "Online" && { color: '#828282' }]}>Online</Text>
-                            </Pressable>
-                            <Pressable onPress={() => handleBtnFilter("Top Tutors", [])} style={[styles.newContainer, selectedNewFilter != "Top Tutors" && { backgroundColor: '#f0faf9' }]}>
-                                <Text style={[styles.newcategoryName, selectedNewFilter != "Top Tutors" && { color: '#828282' }]}>Top Tutors</Text>
-                            </Pressable>
-                        </View>
-                    </>
-                }
-                contentContainerStyle={{ paddingBottom: 50 }}
-                data={TeachersArr}
-                renderItem={renderTeacherItem}
-                keyExtractor={(item, index) => `${index}`}
-                ListEmptyComponent={
-                    <Text style={{ textAlign: 'center', fontFamily: 'Montserrat-SemiBold', fontSize: 16, width: wp(90), marginTop: 40 }}>No Teachers Found</Text>
-                }
-            />
-
-            <FlatList
-
-            />
-            {/* bottom  sheet */}
-            <RBSheet
-                ref={refRBSheet}
-                closeOnDragDown={false}
-                closeOnPressMask={false}
-                dragFromTopOnly={false}
-
-                animationType="slide"
-                customStyles={{
-                    wrapper: {
-                        backgroundColor: "rgba(0,0,0,0.5)",
-                    },
-                    container: {
-                        height: hp(100)
-                    },
-                    draggableIcon: {
-                        backgroundColor: "#fff"
-                    }
-                }}
-            >
-                <ScrollView scrollEnabled={true} contentContainerStyle={[styles.bottomSheetInnerContainer, { paddingHorizontal: 10, paddingBottom: 100 }]}>
-
-                    <Text style={[styles.bottomSheetHeading, { fontFamily: 'Montserrat-SemiBold', textAlign: 'center' }]}>Enquiry Options</Text>
-                    <View style={[styles.flexRow, { alignItems: 'center', marginVertical: 10 }]}>
-
-                        <Image source={{ uri: selectedTeacherObj?.profileImage ? generateImageUrl(selectedTeacherObj?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} style={{ width: 50, height: 50, borderRadius: 50 }} resizeMode="cover" />
-                        <View>
-
-                            <Text style={[styles.textCardMainHeading, { paddingHorizontal: 20 }]}>{selectedTeacherObj?.name} (Teacher)</Text>
-                        </View>
-                    </View>
-                    <Pressable onPress={() => setChecked(EnquiryTypes.ONETOONE)} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
-                        <Text style={styles.bottomSheetOptionText}>Specific Enquriy</Text>
-                        <RadioButton
-                            value={EnquiryTypes.ONETOONE}
-                            color={colorObj.primarColor}
-                            status={checked == EnquiryTypes.ONETOONE ? 'checked' : 'unchecked'}
-                            onPress={() => setChecked(EnquiryTypes.ONETOONE)}
-                        />
-
-                    </Pressable>
-
-                    <Pressable disabled={selectedTeacherObj?.enquiryObj?.timeslots?.length == 0 || !selectedTeacherObj?.enquiryObj?.timeslots} onPress={() => { setChecked(EnquiryTypes.SLOT); initDayPress() }} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
-                        <Text style={styles.bottomSheetOptionText}>Slot Booking</Text>
-                        <RadioButton
-                            value={EnquiryTypes.SLOT}
-                            disabled={selectedTeacherObj?.enquiryObj?.timeslots?.length == 0 || !selectedTeacherObj?.enquiryObj?.timeslots}
-                            color={colorObj.primarColor}
-                            status={checked === EnquiryTypes.SLOT ? 'checked' : 'unchecked'}
-                            onPress={() => { setChecked(EnquiryTypes.SLOT); initDayPress() }}
-                        />
-                    </Pressable>
-
-                    <Pressable onPress={() => setChecked('connect')} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
-                        <Text style={styles.bottomSheetOptionText}>Connect Now</Text>
-                        <RadioButton
-                            value="connect"
-                            color={colorObj.primarColor}
-                            status={checked === 'connect' ? 'checked' : 'unchecked'}
-                            onPress={() => setChecked('connect')}
-                        />
-                    </Pressable>
-
-                    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
-                        <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Message</Text>
-
-                        <TextInput style={[styles.textInput, { width: wp(90), textAlignVertical: 'top' }]} multiline numberOfLines={4} value={additionalMessage} onChangeText={(e) => setAdditionalMessage(e)} />
-
-                    </KeyboardAvoidingView>
-
-                    {
-                        checked == EnquiryTypes.SLOT &&
-                        <>
-                            <Calendar
-                                enableSwipeMonths
-                                current={selectedDate}
-                                style={[styles.calendar, { width: wp(90), marginVertical: 10 }]}
-                                onDayPress={onDayPress}
-                                minDate={`${formatDate(new Date())}`}
-                                // state={selectedDate}
-                                markedDates={{
-                                    [selectedDate]: {
-                                        selected: true,
-                                        disableTouchEvent: true,
-                                        selectedColor: colorObj.primarColor,
-                                        selectedTextColor: 'white'
-                                    }
-                                }}
-                            />
+                                    onSelectedItemsChange={handleClassSelectionOuterFilter}
+                                    selectedItems={outerSelectedClassArr}
+                                    styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282", borderRadius: 50, borderWidth: 0.7, paddingVertical: 5, paddingHorizontal: 10, width: wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
 
 
-                            {slotsArr.length > 0 &&
-                                <Picker
-                                    selectedValue={selectedTimeSlot}
-                                    style={[styles.textInput, { width: wp(90), fontFamily: 'Montserrat-SemiBold' }]}
+                                />
+                                <SectionedMultiSelect
+                                    items={topicArr}
+                                    IconRenderer={MatIcon}
+                                    uniqueKey="_id"
+                                    itemFontFamily={{ fontFamily: 'Montserrat-SemiBold' }}
+                                    subItemFontFamily={{ fontFamily: "Montserrat-Regular" }}
+                                    searchPlaceholderText={"Search Topics..."}
+                                    searchTextFontFamily={{ fontFamily: "Montserrat-Medium" }}
+                                    confirmFontFamily={{ fontFamily: "Montserrat-SemiBold" }}
+                                    showChips={false}
+                                    alwaysShowSelectText={true}
+                                    selectText="Topics"
+                                    onSelectedItemsChange={handleTopicOuterFilter}
+                                    selectedItems={outerTopicArr}
+                                    styles={{ selectToggleText: { fontFamily: 'Montserrat-Regular', fontSize: 14 }, selectToggle: { borderColor: "#828282", borderRadius: 50, borderWidth: 0.7, paddingVertical: 5, paddingHorizontal: 10, width: wp(40) }, button: [styles.btn, { flex: 1, marginHorizontal: wp(28), backgroundColor: colorObj.primarColor }], confirmText: [styles.btnTxt, { color: 'white' }], itemText: { fontFamily: 'Montserrat-Regular' }, chipContainer: { backgroundColor: '#E0E0E0', borderRadius: 5, borderWidth: 0 }, chipText: { fontFamily: 'Montserrat-Regular' } }}
 
-                                    onValueChange={(itemValue, itemIndex) => {
-                                        if (itemValue == "N/A") {
-                                            setSelectedTimeSlot('N/A')
-                                            // setSelectedTimeSlotObj('')
-                                        }
-                                        else {
-                                            setSelectedTimeSlot(itemValue)
-                                            // console.log(slotsArr[itemIndex])
-                                            // setSelectedTimeSlotObj({...slotsArr[itemIndex]})
-                                        }
-                                        // handleDaySelect(itemValue)
-                                    }
-                                    }>
-                                    <Picker.Item style={{ fontFamily: 'Montserrat-Regular' }} label="Please Select Time slot" value="N/A" />
+                                />
+                            </View>
 
-                                    {slotsArr.map(el => {
-                                        return (
-                                            <Picker.Item style={{ fontFamily: 'Montserrat-Regular' }} key={el._id} label={el.time} value={el.time} />
-                                        )
-                                    })}
-                                </Picker>
-                            }
-                        </>
+                            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
 
-                    }
-
-                    <View style={[styles.flexRow, { justifyContent: 'space-evenly', width: wp(100), backgroundColor: 'white' }]}>
-                        <Pressable style={styles.RBSheetbtn} onPress={() => refRBSheet.current.close()} >
-                            <Text style={styles.RBSheetbtnTxt}>Close</Text>
-                        </Pressable>
-                        <Pressable style={styles.RBSheetbtn} onPress={() => handleEnquireNow()} >
-                            <Text style={styles.RBSheetbtnTxt}>Enquire</Text>
-                        </Pressable>
-                    </View>
-                </ScrollView>
-            </RBSheet>
-            <RBSheet
-                ref={filterBottomSheetRef}
-                closeOnDragDown={true}
-                closeOnPressMask={false}
-                dragFromTopOnly={true}
-
-                animationType="slide"
-                customStyles={{
-                    wrapper: {
-                        backgroundColor: "rgba(0,0,0,0.5)",
-                    },
-                    container: {
-                        height: hp(100)
-                    },
-                    draggableIcon: {
-                        backgroundColor: "#fff"
-                    }
-                }}
-            >
-                <>
-
-
-                    <View style={[styles.bottomSheetInnerContainer]}>
-                        <View style={[styles.flexRowAlignCenter, { justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: colorObj.greyColor, paddingBottom: 10 }]}>
-                            <Text style={[styles.filterSubHeading, { paddingHorizontal: 10 }]}>Filter</Text>
-                            <Text style={[styles.filterSubHeading, { color: colorObj.primarColor, fontSize: 14, paddingHorizontal: 10 }]}>Clear All</Text>
-                        </View>
-                        <View style={[[styles.flexRowAlignCenter]]}>
-
-                            <View style={[styles.flexColumn, { height: hp(80), width: wp(30), backgroundColor: '#f5f5f5' }]}>
-                                <Pressable onPress={() => setActiveFilterContainer('subject')} style={[styles.customFilterHeadingBox, activeFilterContainer == "subject" && { backgroundColor: 'white' }]}>
-
-                                    <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Category</Text>
+                                <Pressable onPress={() => handleBtnFilter("All", [])} style={[styles.newContainer, selectedNewFilter != "All" && { backgroundColor: '#f0faf9' }]}>
+                                    <Text style={[styles.newcategoryName, selectedNewFilter != "All" && { color: '#828282' }]}>All</Text>
                                 </Pressable>
-                                <Pressable onPress={() => setActiveFilterContainer('class')} style={[styles.customFilterHeadingBox, activeFilterContainer == "class" && { backgroundColor: 'white' }]}>
-
-                                    <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Sub-Category</Text>
+                                <Pressable onPress={() => handleBtnFilter("Online", [])} style={[styles.newContainer, selectedNewFilter != "Online" && { backgroundColor: '#f0faf9' }]}>
+                                    <Text style={[styles.newcategoryName, selectedNewFilter != "Online" && { color: '#828282' }]}>Online</Text>
                                 </Pressable>
-                                <Pressable onPress={() => setActiveFilterContainer('topic')} style={[styles.customFilterHeadingBox, activeFilterContainer == "topic" && { backgroundColor: 'white' }]}>
-
-                                    <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Topic</Text>
-                                </Pressable>
-                                <Pressable onPress={() => setActiveFilterContainer('price')} style={[styles.customFilterHeadingBox, activeFilterContainer == "price" && { backgroundColor: 'white' }]}>
-
-                                    <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Price Range</Text>
-                                </Pressable>
-                                <Pressable onPress={() => setActiveFilterContainer('sortBy')} style={[styles.customFilterHeadingBox, activeFilterContainer == "sortBy" && { backgroundColor: 'white' }]}>
-
-                                    <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Sort By</Text>
+                                <Pressable onPress={() => handleBtnFilter("Top Tutors", [])} style={[styles.newContainer, selectedNewFilter != "Top Tutors" && { backgroundColor: '#f0faf9' }]}>
+                                    <Text style={[styles.newcategoryName, selectedNewFilter != "Top Tutors" && { color: '#828282' }]}>Top Tutors</Text>
                                 </Pressable>
                             </View>
-                            <View style={[styles.flexColumn, { height: hp(80) }]}>
-                                {activeFilterContainer == "subject" &&
+                        </>
+                    }
+                    contentContainerStyle={{ paddingBottom: 50 }}
+                    data={TeachersArr}
+                    renderItem={renderTeacherItem}
+                    keyExtractor={(item, index) => `${index}`}
+                    ListEmptyComponent={
+                        <Text style={{ textAlign: 'center', fontFamily: 'Montserrat-SemiBold', fontSize: 16, width: wp(90), marginTop: 40 }}>No Teachers Found</Text>
+                    }
+                />
 
-                                    <FlatList
-                                        data={subjectArr}
-                                        keyExtractor={(item, index) => `${index}`}
-                                        scrollEnabled={true}
-                                        contentContainerStyle={{ paddingBottom: 100, marginTop: 20 }}
-                                        ListEmptyComponent={
-                                            <Text>No data found</Text>
+                <FlatList
+
+                />
+                {/* bottom  sheet */}
+                <RBSheet
+                    ref={refRBSheet}
+                    closeOnDragDown={false}
+                    closeOnPressMask={false}
+                    dragFromTopOnly={false}
+
+                    animationType="slide"
+                    customStyles={{
+                        wrapper: {
+                            backgroundColor: "rgba(0,0,0,0.5)",
+                        },
+                        container: {
+                            height: hp(100)
+                        },
+                        draggableIcon: {
+                            backgroundColor: "#fff"
+                        }
+                    }}
+                >
+                    <ScrollView scrollEnabled={true} contentContainerStyle={[styles.bottomSheetInnerContainer, { paddingHorizontal: 10, paddingBottom: 100 }]}>
+
+                        <Text style={[styles.bottomSheetHeading, { fontFamily: 'Montserrat-SemiBold', textAlign: 'center' }]}>Enquiry Options</Text>
+                        <View style={[styles.flexRow, { alignItems: 'center', marginVertical: 10 }]}>
+
+                            <Image source={{ uri: selectedTeacherObj?.profileImage ? generateImageUrl(selectedTeacherObj?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} style={{ width: 50, height: 50, borderRadius: 50 }} resizeMode="cover" />
+                            <View>
+
+                                <Text style={[styles.textCardMainHeading, { paddingHorizontal: 20 }]}>{selectedTeacherObj?.name} (Teacher)</Text>
+                            </View>
+                        </View>
+                        <Pressable onPress={() => setChecked(EnquiryTypes.ONETOONE)} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
+                            <Text style={styles.bottomSheetOptionText}>Specific Enquriy</Text>
+                            <RadioButton
+                                value={EnquiryTypes.ONETOONE}
+                                color={colorObj.primarColor}
+                                status={checked == EnquiryTypes.ONETOONE ? 'checked' : 'unchecked'}
+                                onPress={() => setChecked(EnquiryTypes.ONETOONE)}
+                            />
+
+                        </Pressable>
+
+                        <Pressable disabled={selectedTeacherObj?.enquiryObj?.timeslots?.length == 0 || !selectedTeacherObj?.enquiryObj?.timeslots} onPress={() => { setChecked(EnquiryTypes.SLOT); initDayPress() }} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
+                            <Text style={styles.bottomSheetOptionText}>Slot Booking</Text>
+                            <RadioButton
+                                value={EnquiryTypes.SLOT}
+                                disabled={selectedTeacherObj?.enquiryObj?.timeslots?.length == 0 || !selectedTeacherObj?.enquiryObj?.timeslots}
+                                color={colorObj.primarColor}
+                                status={checked === EnquiryTypes.SLOT ? 'checked' : 'unchecked'}
+                                onPress={() => { setChecked(EnquiryTypes.SLOT); initDayPress() }}
+                            />
+                        </Pressable>
+
+                        <Pressable onPress={() => setChecked('connect')} style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(90) }]}>
+                            <Text style={styles.bottomSheetOptionText}>Connect Now</Text>
+                            <RadioButton
+                                value="connect"
+                                color={colorObj.primarColor}
+                                status={checked === 'connect' ? 'checked' : 'unchecked'}
+                                onPress={() => setChecked('connect')}
+                            />
+                        </Pressable>
+
+                        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
+                            <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Message</Text>
+
+                            <TextInput style={[styles.textInput, { width: wp(90), textAlignVertical: 'top' }]} multiline numberOfLines={4} value={additionalMessage} onChangeText={(e) => setAdditionalMessage(e)} />
+
+                        </KeyboardAvoidingView>
+
+                        {
+                            checked == EnquiryTypes.SLOT &&
+                            <>
+                                <Calendar
+                                    enableSwipeMonths
+                                    current={selectedDate}
+                                    style={[styles.calendar, { width: wp(90), marginVertical: 10 }]}
+                                    onDayPress={onDayPress}
+                                    minDate={`${formatDate(new Date())}`}
+                                    // state={selectedDate}
+                                    markedDates={{
+                                        [selectedDate]: {
+                                            selected: true,
+                                            disableTouchEvent: true,
+                                            selectedColor: colorObj.primarColor,
+                                            selectedTextColor: 'white'
                                         }
-                                        renderItem={({ item, index }) => {
+                                    }}
+                                />
+
+
+                                {slotsArr.length > 0 &&
+                                    <Picker
+                                        selectedValue={selectedTimeSlot}
+                                        style={[styles.textInput, { width: wp(90), fontFamily: 'Montserrat-SemiBold' }]}
+
+                                        onValueChange={(itemValue, itemIndex) => {
+                                            if (itemValue == "N/A") {
+                                                setSelectedTimeSlot('N/A')
+                                                // setSelectedTimeSlotObj('')
+                                            }
+                                            else {
+                                                setSelectedTimeSlot(itemValue)
+                                                // console.log(slotsArr[itemIndex])
+                                                // setSelectedTimeSlotObj({...slotsArr[itemIndex]})
+                                            }
+                                            // handleDaySelect(itemValue)
+                                        }
+                                        }>
+                                        <Picker.Item style={{ fontFamily: 'Montserrat-Regular' }} label="Please Select Time slot" value="N/A" />
+
+                                        {slotsArr.map(el => {
                                             return (
-                                                <View>
-                                                    <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 10, justifyContent: 'space-between', }]}>
-                                                        {/* <Checkbox
+                                                <Picker.Item style={{ fontFamily: 'Montserrat-Regular' }} key={el._id} label={el.time} value={el.time} />
+                                            )
+                                        })}
+                                    </Picker>
+                                }
+                            </>
+
+                        }
+
+                        <View style={[styles.flexRow, { justifyContent: 'space-evenly', width: wp(100), backgroundColor: 'white' }]}>
+                            <Pressable style={styles.RBSheetbtn} onPress={() => refRBSheet.current.close()} >
+                                <Text style={styles.RBSheetbtnTxt}>Close</Text>
+                            </Pressable>
+                            <Pressable style={styles.RBSheetbtn} onPress={() => handleEnquireNow()} >
+                                <Text style={styles.RBSheetbtnTxt}>Enquire</Text>
+                            </Pressable>
+                        </View>
+                    </ScrollView>
+                </RBSheet>
+                <RBSheet
+                    ref={filterBottomSheetRef}
+                    closeOnDragDown={true}
+                    closeOnPressMask={false}
+                    dragFromTopOnly={true}
+
+                    animationType="slide"
+                    customStyles={{
+                        wrapper: {
+                            backgroundColor: "rgba(0,0,0,0.5)",
+                        },
+                        container: {
+                            height: hp(100)
+                        },
+                        draggableIcon: {
+                            backgroundColor: "#fff"
+                        }
+                    }}
+                >
+                    <>
+
+
+                        <View style={[styles.bottomSheetInnerContainer]}>
+                            <View style={[styles.flexRowAlignCenter, { justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: colorObj.greyColor, paddingBottom: 10 }]}>
+                                <Text style={[styles.filterSubHeading, { paddingHorizontal: 10 }]}>Filter</Text>
+                                <Text style={[styles.filterSubHeading, { color: colorObj.primarColor, fontSize: 14, paddingHorizontal: 10 }]}>Clear All</Text>
+                            </View>
+                            <View style={[[styles.flexRowAlignCenter]]}>
+
+                                <View style={[styles.flexColumn, { height: hp(80), width: wp(30), backgroundColor: '#f5f5f5' }]}>
+                                    <Pressable onPress={() => setActiveFilterContainer('subject')} style={[styles.customFilterHeadingBox, activeFilterContainer == "subject" && { backgroundColor: 'white' }]}>
+
+                                        <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Category</Text>
+                                    </Pressable>
+                                    <Pressable onPress={() => setActiveFilterContainer('class')} style={[styles.customFilterHeadingBox, activeFilterContainer == "class" && { backgroundColor: 'white' }]}>
+
+                                        <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Sub-Category</Text>
+                                    </Pressable>
+                                    <Pressable onPress={() => setActiveFilterContainer('topic')} style={[styles.customFilterHeadingBox, activeFilterContainer == "topic" && { backgroundColor: 'white' }]}>
+
+                                        <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Topic</Text>
+                                    </Pressable>
+                                    <Pressable onPress={() => setActiveFilterContainer('price')} style={[styles.customFilterHeadingBox, activeFilterContainer == "price" && { backgroundColor: 'white' }]}>
+
+                                        <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Price Range</Text>
+                                    </Pressable>
+                                    <Pressable onPress={() => setActiveFilterContainer('sortBy')} style={[styles.customFilterHeadingBox, activeFilterContainer == "sortBy" && { backgroundColor: 'white' }]}>
+
+                                        <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Sort By</Text>
+                                    </Pressable>
+                                </View>
+                                <View style={[styles.flexColumn, { height: hp(80) }]}>
+                                    {activeFilterContainer == "subject" &&
+
+                                        <FlatList
+                                            data={subjectArr}
+                                            keyExtractor={(item, index) => `${index}`}
+                                            scrollEnabled={true}
+                                            contentContainerStyle={{ paddingBottom: 100, marginTop: 20 }}
+                                            ListEmptyComponent={
+                                                <Text>No data found</Text>
+                                            }
+                                            renderItem={({ item, index }) => {
+                                                return (
+                                                    <View>
+                                                        <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 10, justifyContent: 'space-between', }]}>
+                                                            {/* <Checkbox
                                                         /> */}
-                                                        <RadioButton
-                                                            // value="first"
-                                                            color={colorObj.primarColor}
-                                                            status={item.checked ? "checked" : "unchecked"}
-                                                            onPress={() => handleSubjectSelection(index, item._id)}
-                                                        />
-                                                        <Pressable onPress={() => handleSubjectSelection(index, item._id)} style={{ paddingVertical: 5, width: '100%' }} >
-                                                            <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>{item.name}</Text>
-                                                        </Pressable>
+                                                            <RadioButton
+                                                                // value="first"
+                                                                color={colorObj.primarColor}
+                                                                status={item.checked ? "checked" : "unchecked"}
+                                                                onPress={() => handleSubjectSelection(index, item._id)}
+                                                            />
+                                                            <Pressable onPress={() => handleSubjectSelection(index, item._id)} style={{ paddingVertical: 5, width: '100%' }} >
+                                                                <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>{item.name}</Text>
+                                                            </Pressable>
+
+                                                        </View>
 
                                                     </View>
+                                                )
+                                            }}
 
-                                                </View>
-                                            )
-                                        }}
-
-                                    />
-                                }
-                                {activeFilterContainer == "class" &&
-
-                                    <FlatList
-                                        data={nestedClassArr}
-                                        keyExtractor={(item, index) => `${item._id}`}
-                                        scrollEnabled={true}
-                                        contentContainerStyle={{ paddingBottom: 100, marginTop: 20 }}
-
-                                        renderItem={({ item, index }) => {
-                                            return (
-                                                <View style={{ paddingHorizontal: 20 }}>
-                                                    <Text style={[styles.checkBoxText, { textAlign: 'left', fontFamily: 'Montserrat-Medium' }]}>{item?.name}</Text>
-                                                    <FlatList
-                                                        scrollEnabled={false}
-                                                        data={item.classArr}
-                                                        keyExtractor={(item, index) => `${item._id}`}
-                                                        renderItem={({ item: itemX, index: indexX }) => {
-                                                            return (
-                                                                <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 3, justifyContent: 'space-between', }]}>
-
-                                                                    <Checkbox
-                                                                        color={colorObj.primarColor}
-                                                                        status={itemX.checked ? "checked" : "unchecked"}
-                                                                        onPress={() => handleClassSelection(index, itemX._id)}
-                                                                    />
-                                                                    <Pressable onPress={() => handleClassSelection(index, itemX._id)} style={{ paddingVertical: 5, width: '100%' }} >
-                                                                        <Text style={[styles.checkBoxText, { textAlign: 'left', fontSize: 12 }]}>{itemX.name}</Text>
-
-                                                                    </Pressable>
-                                                                </View>
-
-                                                            )
-                                                        }}
-                                                    />
-
-
-                                                </View>
-                                            )
-                                        }}
-
-                                    />
-                                }
-                                {activeFilterContainer == "topic" &&
-
-                                    <FlatList
-                                        data={topicArr}
-                                        keyExtractor={(item, index) => `${item._id}`}
-                                        scrollEnabled={true}
-                                        contentContainerStyle={{ paddingBottom: 100, marginTop: 20 }}
-
-                                        renderItem={({ item, index }) => {
-                                            return (
-                                                <View>
-                                                    <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 10, justifyContent: 'space-between', }]}>
-                                                        <Checkbox
-                                                            color={colorObj.primarColor}
-                                                            status={item.checked ? "checked" : "unchecked"}
-                                                            onPress={() => handleTopicSelection(item._id)}
-                                                        />
-                                                        <Pressable onPress={() => handleTopicSelection(item._id)} style={{ paddingVertical: 5, width: '100%' }} >
-                                                            <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>{item.name}</Text>
-
-                                                        </Pressable>
-
-                                                    </View>
-
-                                                </View>
-                                            )
-                                        }}
-
-
-                                    />
-                                }
-                                {activeFilterContainer == "price" &&
-                                    <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
-                                        <Text style={[styles.bottomSheetHeading, { fontSize: 16 }]}>Selected Price Range</Text>
-                                        <Text style={[styles.bottomSheetHeading, { fontSize: 14 }]}>₹ {multiSliderValue[0]} - ₹ {multiSliderValue[1]} </Text>
-                                        <MultiSlider
-                                            values={[multiSliderValue[0], multiSliderValue[1]]}
-                                            sliderLength={250}
-                                            onValuesChange={multiSliderValuesChange}
-                                            min={minTeacherFees}
-                                            max={maxTeacherFees}
-                                            step={50}
-                                            // allowOverlap
-                                            // snapped
-                                            // enableLabel
-                                            //  customLabel={CustomLabel}
-                                            onValuesChangeStart={() => setIsScrollEnabled(false)}
-                                            onValuesChangeFinish={() => setIsScrollEnabled(true)}
                                         />
-                                        <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 5, justifyContent: 'space-between', }]}>
-                                            <Checkbox
-                                                color={colorObj.primarColor}
-                                                status={includeNoFeesTeachers ? "checked" : "unchecked"}
-                                                onPress={() => setIncludeNoFeesTeachers(!includeNoFeesTeachers)}
+                                    }
+                                    {activeFilterContainer == "class" &&
+
+                                        <FlatList
+                                            data={nestedClassArr}
+                                            keyExtractor={(item, index) => `${item._id}`}
+                                            scrollEnabled={true}
+                                            contentContainerStyle={{ paddingBottom: 100, marginTop: 20 }}
+
+                                            renderItem={({ item, index }) => {
+                                                return (
+                                                    <View style={{ paddingHorizontal: 20 }}>
+                                                        <Text style={[styles.checkBoxText, { textAlign: 'left', fontFamily: 'Montserrat-Medium' }]}>{item?.name}</Text>
+                                                        <FlatList
+                                                            scrollEnabled={false}
+                                                            data={item.classArr}
+                                                            keyExtractor={(item, index) => `${item._id}`}
+                                                            renderItem={({ item: itemX, index: indexX }) => {
+                                                                return (
+                                                                    <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 3, justifyContent: 'space-between', }]}>
+
+                                                                        <Checkbox
+                                                                            color={colorObj.primarColor}
+                                                                            status={itemX.checked ? "checked" : "unchecked"}
+                                                                            onPress={() => handleClassSelection(index, itemX._id)}
+                                                                        />
+                                                                        <Pressable onPress={() => handleClassSelection(index, itemX._id)} style={{ paddingVertical: 5, width: '100%' }} >
+                                                                            <Text style={[styles.checkBoxText, { textAlign: 'left', fontSize: 12 }]}>{itemX.name}</Text>
+
+                                                                        </Pressable>
+                                                                    </View>
+
+                                                                )
+                                                            }}
+                                                        />
+
+
+                                                    </View>
+                                                )
+                                            }}
+
+                                        />
+                                    }
+                                    {activeFilterContainer == "topic" &&
+
+                                        <FlatList
+                                            data={topicArr}
+                                            keyExtractor={(item, index) => `${item._id}`}
+                                            scrollEnabled={true}
+                                            contentContainerStyle={{ paddingBottom: 100, marginTop: 20 }}
+
+                                            renderItem={({ item, index }) => {
+                                                return (
+                                                    <View>
+                                                        <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 10, justifyContent: 'space-between', }]}>
+                                                            <Checkbox
+                                                                color={colorObj.primarColor}
+                                                                status={item.checked ? "checked" : "unchecked"}
+                                                                onPress={() => handleTopicSelection(item._id)}
+                                                            />
+                                                            <Pressable onPress={() => handleTopicSelection(item._id)} style={{ paddingVertical: 5, width: '100%' }} >
+                                                                <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>{item.name}</Text>
+
+                                                            </Pressable>
+
+                                                        </View>
+
+                                                    </View>
+                                                )
+                                            }}
+
+
+                                        />
+                                    }
+                                    {activeFilterContainer == "price" &&
+                                        <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
+                                            <Text style={[styles.bottomSheetHeading, { fontSize: 16 }]}>Selected Price Range</Text>
+                                            <Text style={[styles.bottomSheetHeading, { fontSize: 14 }]}>₹ {multiSliderValue[0]} - ₹ {multiSliderValue[1]} </Text>
+                                            <MultiSlider
+                                                values={[multiSliderValue[0], multiSliderValue[1]]}
+                                                sliderLength={250}
+                                                onValuesChange={multiSliderValuesChange}
+                                                min={minTeacherFees}
+                                                max={maxTeacherFees}
+                                                step={50}
+                                                // allowOverlap
+                                                // snapped
+                                                // enableLabel
+                                                //  customLabel={CustomLabel}
+                                                onValuesChangeStart={() => setIsScrollEnabled(false)}
+                                                onValuesChangeFinish={() => setIsScrollEnabled(true)}
                                             />
-                                            <Pressable onPress={() => setIncludeNoFeesTeachers(true)} style={{ paddingVertical: 5, width: '100%' }} >
-                                                <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>Include Teacher With No Fees</Text>
-                                            </Pressable>
+                                            <View style={[styles.flexRowAlignCenter, { paddingHorizontal: 5, justifyContent: 'space-between', }]}>
+                                                <Checkbox
+                                                    color={colorObj.primarColor}
+                                                    status={includeNoFeesTeachers ? "checked" : "unchecked"}
+                                                    onPress={() => setIncludeNoFeesTeachers(!includeNoFeesTeachers)}
+                                                />
+                                                <Pressable onPress={() => setIncludeNoFeesTeachers(true)} style={{ paddingVertical: 5, width: '100%' }} >
+                                                    <Text style={[styles.checkBoxText, { textAlign: 'left' }]}>Include Teacher With No Fees</Text>
+                                                </Pressable>
+
+                                            </View>
 
                                         </View>
+                                    }
+                                    {activeFilterContainer == "sortBy" &&
+                                        <View style={{ paddingHorizontal: 20, marginTop: 20, width: wp(50) }}>
 
-                                    </View>
-                                }
-                                {activeFilterContainer == "sortBy" &&
-                                    <View style={{ paddingHorizontal: 20, marginTop: 20, width: wp(50) }}>
+                                            <RadioButton.Group onValueChange={newValue => setSortBy(newValue)} value={sortBy}>
+                                                <View style={[{ marginVertical: 10 }, styles.flexColumn, { justifyContent: 'space-between' }]}>
 
-                                        <RadioButton.Group onValueChange={newValue => setSortBy(newValue)} value={sortBy}>
-                                            <View style={[{ marginVertical: 10 }, styles.flexColumn, { justifyContent: 'space-between' }]}>
+                                                    <Pressable onPress={() => setSortBy(sortByText.popularity)} style={[styles.flexRow, { alignItems: 'center' }]}>
+                                                        <RadioButton color={colorObj.primarColor} value={sortByText.popularity} />
+                                                        <Text style={styles.radioText}>Popularity</Text>
+                                                    </Pressable>
+                                                    <Pressable onPress={() => setSortBy(sortByText.priceLowToHigh)} style={[styles.flexRow, { alignItems: 'center' }]}>
 
-                                                <Pressable onPress={() => setSortBy(sortByText.popularity)} style={[styles.flexRow, { alignItems: 'center' }]}>
-                                                    <RadioButton color={colorObj.primarColor} value={sortByText.popularity} />
-                                                    <Text style={styles.radioText}>Popularity</Text>
-                                                </Pressable>
-                                                <Pressable onPress={() => setSortBy(sortByText.priceLowToHigh)} style={[styles.flexRow, { alignItems: 'center' }]}>
+                                                        <RadioButton color={colorObj.primarColor} value={sortByText.priceLowToHigh} />
+                                                        <Text style={styles.radioText}>Price low to high</Text>
+                                                    </Pressable>
+                                                    <Pressable onPress={() => setSortBy(sortByText.priceHighToLow)} style={[styles.flexRow, { alignItems: 'center' }]}>
+                                                        <RadioButton color={colorObj.primarColor} value={sortByText.priceHighToLow} />
+                                                        <Text style={styles.radioText}>Price High to low</Text>
+                                                    </Pressable>
+                                                    <Pressable onPress={() => setSortBy(sortByText.customerRating)} style={[styles.flexRow, { alignItems: 'center' }]}>
+                                                        <RadioButton color={colorObj.primarColor} value={sortByText.customerRating} />
+                                                        <Text style={styles.radioText}>Customer Rating</Text>
+                                                    </Pressable>
+                                                </View>
+                                            </RadioButton.Group>
+                                        </View>
+                                    }
 
-                                                    <RadioButton color={colorObj.primarColor} value={sortByText.priceLowToHigh} />
-                                                    <Text style={styles.radioText}>Price low to high</Text>
-                                                </Pressable>
-                                                <Pressable onPress={() => setSortBy(sortByText.priceHighToLow)} style={[styles.flexRow, { alignItems: 'center' }]}>
-                                                    <RadioButton color={colorObj.primarColor} value={sortByText.priceHighToLow} />
-                                                    <Text style={styles.radioText}>Price High to low</Text>
-                                                </Pressable>
-                                                <Pressable onPress={() => setSortBy(sortByText.customerRating)} style={[styles.flexRow, { alignItems: 'center' }]}>
-                                                    <RadioButton color={colorObj.primarColor} value={sortByText.customerRating} />
-                                                    <Text style={styles.radioText}>Customer Rating</Text>
-                                                </Pressable>
-                                            </View>
-                                        </RadioButton.Group>
-                                    </View>
-                                }
-
+                                </View>
                             </View>
+                            <View style={[styles.flexRowAlignCenter, { justifyContent: 'space-evenly', width: wp(100), marginTop: 10, backgroundColor: 'white' }]}>
+                                <Pressable style={styles.btn} onPress={() => filterBottomSheetRef.current.close()} >
+                                    <Text style={styles.btnTxt}>Close</Text>
+                                </Pressable>
+                                <Pressable style={styles.btn} onPress={() => handleShowFilterResults()}>
+                                    <Text style={styles.btnTxt}>Apply</Text>
+                                </Pressable>
+                            </View>
+
                         </View>
-                        <View style={[styles.flexRowAlignCenter, { justifyContent: 'space-evenly', width: wp(100), marginTop: 10, backgroundColor: 'white' }]}>
-                            <Pressable style={styles.btn} onPress={() => filterBottomSheetRef.current.close()} >
-                                <Text style={styles.btnTxt}>Close</Text>
-                            </Pressable>
-                            <Pressable style={styles.btn} onPress={() => handleShowFilterResults()}>
-                                <Text style={styles.btnTxt}>Apply</Text>
-                            </Pressable>
-                        </View>
 
-                    </View>
+                    </>
 
-                </>
+                </RBSheet>
+            </View>
+        </>
 
-            </RBSheet>
-        </View>
     )
 }
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#fff',
         flex: 1,
-        padding: 20
+        paddingHorizontal: 20
     },
     topIcons: {
         color: 'black'

@@ -20,6 +20,7 @@ export const successAlertContext = createContext()
 export const axiosApiInstance = axios.create();
 
 export const chatRefreshContext = createContext()
+export const globalUpdateContext = createContext()
 
 const App = () => {
 
@@ -36,6 +37,7 @@ const App = () => {
 
   const [chatRefresh, setChatRefresh] = useState(false);
 
+  const [globalUpdate, setGlobalUpdate] = useState(false);
 
   useEffect(() => {
     setIsDarkMode(currentColorScheme == 'dark')
@@ -181,45 +183,48 @@ const App = () => {
 
   return (
     <loadingContext.Provider value={[loading, setLoading]}>
-      <chatRefreshContext.Provider value={[chatRefresh, setChatRefresh]}>
+      <globalUpdateContext.Provider value={[globalUpdate, setGlobalUpdate]} >
 
-        <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
-          <PaperProvider theme={theme}>
-            <successAlertContext.Provider value={{ successAlertArr: [successAlert, setSuccessAlert], warningAlertArr: [warningAlert, setWarningAlert], errorAlertArr: [errorAlert, setErrorAlert], alertTextArr: [alertText, setAlertText] }}>
+        <chatRefreshContext.Provider value={[chatRefresh, setChatRefresh]}>
+
+          <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
+            <PaperProvider theme={theme}>
+              <successAlertContext.Provider value={{ successAlertArr: [successAlert, setSuccessAlert], warningAlertArr: [warningAlert, setWarningAlert], errorAlertArr: [errorAlert, setErrorAlert], alertTextArr: [alertText, setAlertText] }}>
 
 
-              <RootStack />
+                <RootStack />
 
-              {/* Success Modal */}
+                {/* Success Modal */}
 
-              <Portal>
-                <Modal visible={successAlert} onDismiss={() => { setSuccessAlert(false); setAlertText('Success') }} contentContainerStyle={styles.containerStyle}>
-                  <LottieView source={require('./assets/images/success.json')} autoSize resizeMode="cover" autoPlay loop={false} style={styles.lottieStyle} />
-                  <Text style={styles.alertText}>{alertText}</Text>
-                </Modal>
-              </Portal>
+                <Portal>
+                  <Modal visible={successAlert} onDismiss={() => { setSuccessAlert(false); setAlertText('Success') }} contentContainerStyle={styles.containerStyle}>
+                    <LottieView source={require('./assets/images/success.json')} autoSize resizeMode="cover" autoPlay loop={false} style={styles.lottieStyle} />
+                    <Text style={styles.alertText}>{alertText}</Text>
+                  </Modal>
+                </Portal>
 
-              {/* Warning Modal */}
+                {/* Warning Modal */}
 
-              <Portal>
-                <Modal visible={warningAlert} onDismiss={() => { setWarningAlert(false); setAlertText('Warning') }} contentContainerStyle={styles.containerStyle}>
-                  <LottieView source={require('./assets/images/warning.json')} autoSize resizeMode="cover" autoPlay loop={false} style={styles.lottieStyle} />
-                  <Text style={styles.alertText}>{alertText}</Text>
-                </Modal>
-              </Portal>
+                <Portal>
+                  <Modal visible={warningAlert} onDismiss={() => { setWarningAlert(false); setAlertText('Warning') }} contentContainerStyle={styles.containerStyle}>
+                    <LottieView source={require('./assets/images/warning.json')} autoSize resizeMode="cover" autoPlay loop={false} style={styles.lottieStyle} />
+                    <Text style={styles.alertText}>{alertText}</Text>
+                  </Modal>
+                </Portal>
 
-              {/* Error Modal */}
-              <Portal>
-                <Modal visible={errorAlert} onDismiss={() => { setErrorAlert(false); setAlertText('Error') }} contentContainerStyle={styles.containerStyle}>
-                  <LottieView source={require('./assets/images/error.json')} autoSize resizeMode="cover" autoPlay loop={false} style={styles.lottieStyle} />
-                  <Text style={styles.alertText}>{alertText}</Text>
-                </Modal>
-              </Portal>
+                {/* Error Modal */}
+                <Portal>
+                  <Modal visible={errorAlert} onDismiss={() => { setErrorAlert(false); setAlertText('Error') }} contentContainerStyle={styles.containerStyle}>
+                    <LottieView source={require('./assets/images/error.json')} autoSize resizeMode="cover" autoPlay loop={false} style={styles.lottieStyle} />
+                    <Text style={styles.alertText}>{alertText}</Text>
+                  </Modal>
+                </Portal>
 
-            </successAlertContext.Provider>
-          </PaperProvider>
-        </SafeAreaView>
-      </chatRefreshContext.Provider>
+              </successAlertContext.Provider>
+            </PaperProvider>
+          </SafeAreaView>
+        </chatRefreshContext.Provider>
+      </globalUpdateContext.Provider>
 
     </loadingContext.Provider>
 

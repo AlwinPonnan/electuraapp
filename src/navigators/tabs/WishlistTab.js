@@ -7,6 +7,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import WishList from '../../views/WishList';
 import WishListedTeachers from '../../views/WishlistedTeachers';
 import { widthPercentageToDP } from 'react-native-responsive-screen';
+import GeneralInnerHeader from '../../components/GeneralInnerHeader';
 
 export default function WishlistTab(props) {
 
@@ -15,16 +16,10 @@ export default function WishlistTab(props) {
     return (
         <View style={[styles.container]}>
 
-            <View style={{ flexDirection: 'row', padding: 20 }}>
-                <Pressable onPress={() => props.navigation.goBack()}>
+            <GeneralInnerHeader heading="Whislist" rootProps={props} />
 
-                    <AntDesign name='arrowleft' size={20} style={{ color: 'black' }} />
-                </Pressable>
-                <Text style={[styles.topText, { flex: 1, marginLeft: 20 }]}>Wishlist</Text>
-                <AntDesign name='message1' size={20} style={{ color: 'black', marginRight: 20 }} />
-                <Feather name='bell' size={20} style={{ color: 'black' }} />
-            </View>
             <Tab.Navigator
+
                 screenOptions={{
                     activeTintColor: "#085A4E",
                     inactiveTintColor: "#000",

@@ -4,12 +4,13 @@ import { View, Text, StyleSheet, Image, FlatList, Pressable } from 'react-native
 import { Searchbar } from 'react-native-paper';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { successAlertContext } from '../../App';
+import { successAlertContext,globalUpdateContext } from '../../App';
 import { colorObj } from '../globals/colors';
 import EnquiryTypes from '../globals/EnquiryTypes';
 import { generateImageUrl } from '../globals/utils';
 import { loadingContext } from '../navigators/stacks/RootStack';
 import { checkNcreateChatRoom, getAllEnquiryRequests } from '../Services/Enquiry';
+
 
 export default function Requestscreen(props) {
 
@@ -26,7 +27,7 @@ export default function Requestscreen(props) {
 
     const { successAlertArr, alertTextArr, warningAlertArr, errorAlertArr } = useContext(successAlertContext)
 
-
+    const [globalUpdate, setGlobalUpdate] = useContext(globalUpdateContext);
     const [successAlert, setSuccessAlert] = successAlertArr
     const [warningAlert, setWarningAlert] = warningAlertArr
     const [errorAlert, setErrorAlert] = errorAlertArr
@@ -63,6 +64,7 @@ export default function Requestscreen(props) {
             if (res.success) {
                 setAlertText("Request Successfully Accepted")
                 setSuccessAlert(true)
+                setGlobalUpdate(!globalUpdate)
                 props.navigation.navigate("Chat")
             }
         } catch (error) {
@@ -78,7 +80,7 @@ export default function Requestscreen(props) {
 
     useEffect(() => {
         handleOnint()
-    }, [focused])
+    }, [focused,globalUpdateContext])
 
 
     return (

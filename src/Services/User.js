@@ -188,6 +188,12 @@ export const getAllNotifications = async () => {
     return await axiosApiInstance.get(`${url}/getNotifications/${tokenD?.userId}`)
 }
 
+export const getAllNotificationsPageWise = async (itemsPerPage,currentPage) => {
+    let tokenD = await getDecodedToken()
+    return await axiosApiInstance.get(`${url}/getNotificationsPageWise/${tokenD?.userId}?itemsPerPage=${itemsPerPage}&currentPage=${currentPage}`)
+}
+
+
 
 
 
