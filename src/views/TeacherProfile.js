@@ -9,7 +9,7 @@ import Video from 'react-native-video';
 
 import Swipeable from 'react-native-swipeable';
 import { useIsFocused } from '@react-navigation/core';
-import { getById, getDecodedToken, updateProfileVisit } from '../Services/User';
+import { BookmarkTeacher, getById, getDecodedToken, updateProfileVisit } from '../Services/User';
 import { dayArr, formatDate, generateImageUrl } from '../globals/utils';
 import { getByCoursesUserId } from '../Services/Course';
 
@@ -88,13 +88,14 @@ export default function TeacherProfile(props) {
 
 
     const openFaceBook = (name) => {
+        console.log("checking facebook")
         if (name != "") {
 
-            Linking.canOpenURL(`fb://profile/${name}`).then(supported => {
+            Linking.canOpenURL(`${name}`).then(supported => {
                 if (supported) {
-                    return Linking.openURL(`fb://profile/${name}`);
+                    return Linking.openURL(`${name}`);
                 } else {
-                    return Linking.openURL(`fb://profile/${name}`);
+                    return Linking.openURL(`${name}`);
                 }
             })
         }
@@ -457,6 +458,21 @@ export default function TeacherProfile(props) {
     }
 
 
+    const handleBookmarkTeacher = async () => {
+        try {
+            const { data: res } = await BookmarkTeacher(teacherObj?._id);
+            if (res) {
+                setSuccessAlert(true)
+                setAlertText(`${res.message}`)
+                handleOnint()
+            }
+
+        } catch (error) {
+            console.error(error)
+            setIsrefreshing(false)
+        }
+    }
+
     useEffect(() => {
         if (focused) {
 
@@ -492,6 +508,16 @@ export default function TeacherProfile(props) {
                 {
                     (teacherObj?.role == "TEACHER" && teacherObj?._id == decodedObj?.userId) ?
                         <View style={{ display: "flex", justifyContent: "flex-end", flexDirection: "row" }}>
+                            <Pressable style={[styles.btn2,{marginRight:10}]} onPress={() => handleBookmarkTeacher()}>
+                                {
+                                    teacherObj?.enquiryObj?.bookmarked ?
+                                    <Icon name="bookmark" size={25} color={colorObj.primarColor} />
+                                    
+                                    :
+
+                                <Icon name="bookmark-outline" size={25} color={colorObj.primarColor} />
+                                }
+                            </Pressable>
                             <Pressable style={styles.btn2} onPress={() => props.navigation.navigate('TeacherSlots')}>
                                 <Icon name="calendar-outline" size={25} color={colorObj.primarColor} />
                             </Pressable>
@@ -558,7 +584,7 @@ export default function TeacherProfile(props) {
                     <>
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                             <Text style={styles.dashboardHeading}>My Dashboard <Text style={{ fontSize: 10, color: '#828282' }}> (private to you)</Text> </Text>
-                            <Text style={styles.dashboardHeading}><Text style={{ fontSize: 10, color: '#828282' }}>{profileProgress * 100}% Completed</Text> </Text>
+                            <Text style={styles.dashboardHeading}><Text style={{ fontSize: 10, color: '#828282' }}>{profileProgress>100 ? 100 : profileProgress*100}% Completed</Text> </Text>
 
                         </View>
                         <View style={[styles.flexColumn, { width: wp(100), alignItems: 'center', alignSelf: "center", marginTop: 20 }]}>

@@ -57,7 +57,7 @@ export default function MainTopTab(props) {
         getChats()
         getRequests()
 
-    }, [globalUpdateContext])
+    }, [globalUpdate])
 
     return (
         <View style={[styles.container]}>
