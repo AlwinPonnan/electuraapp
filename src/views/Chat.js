@@ -32,7 +32,7 @@ export default function Chat(props) {
             const { data: res } = await getAllChats();
             if (res.success) {
                 setIsrefreshing(false)
-                console.log(JSON.stringify(res.data, null, 2))
+                console.log(JSON.stringify(res.data, null, 2),"@@@@@@@@@@@@@@")
                 setChatArr(res.data.map(el => {
                     let obj = {
                         ...el,

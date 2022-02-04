@@ -1006,7 +1006,7 @@ export default function AllTeacher(props) {
                     <>
 
 
-                        <View style={[styles.bottomSheetInnerContainer]}>
+                    <ScrollView scrollEnabled={true} contentContainerStyle={[styles.bottomSheetInnerContainer, { paddingHorizontal: 10, paddingBottom: 100 }]}>
                             <View style={[styles.flexRowAlignCenter, { justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: colorObj.greyColor, paddingBottom: 10 }]}>
                                 <Text style={[styles.filterSubHeading, { paddingHorizontal: 10 }]}>Filter</Text>
                                 <Text style={[styles.filterSubHeading, { color: colorObj.primarColor, fontSize: 14, paddingHorizontal: 10 }]}>Clear All</Text>
@@ -1214,7 +1214,7 @@ export default function AllTeacher(props) {
                                 </Pressable>
                             </View>
 
-                        </View>
+                        </ScrollView>
 
                     </>
 

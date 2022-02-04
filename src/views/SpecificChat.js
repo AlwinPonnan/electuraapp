@@ -60,7 +60,7 @@ export default function SpecificChat(props) {
 
     const getChatHistory = async () => {
         try {
-            const { data: res } = await getChatHistoryByRoomId(chatRoomId,itemCountPerRequest, currentPage + 1);
+            const { data: res } = await getChatHistoryByRoomId(chatRoomId,itemCountPerRequest, currentPage );
             if (res.success) {
                 // setChatArr(res.data.chatArr)
                 setChatRoomObj({...res.data.chatRoomObj})
@@ -77,6 +77,22 @@ export default function SpecificChat(props) {
         }
     }
 
+    // const getChatHistory = async () => {
+    //     try {
+    //         const { data: res } = await getChatHistoryByRoomId(chatRoomId);
+    //         if (res.success) {
+    //             setChatArr(res.data.chatArr)
+    //             setChatRoomObj(res.data.chatRoomObj)
+    //             let decodedToken = await getDecodedToken()
+    //             console.log(JSON.stringify(res.data.chatRoomObj, null, 2))
+    //             setChatUserObj(res.data.chatRoomObj.userArr.filter(el => el.userId != decodedToken.userId)[0])
+
+
+    //         }
+    //     } catch (error) {
+    //         console.error(error)
+    //     }
+    // }
     const handleChatSend = () => {
         if (messageStr.length > 0) {
             sendMessage(chatRoomId, messageStr)
@@ -161,7 +177,7 @@ export default function SpecificChat(props) {
                                 renderItem={renderChats}
                                 onEndReached={() => getChatHistory()}
                                 // removeClippedSubviews={true}
-                                initialNumToRender={6}
+                                // initialNumToRender={6}
                                 onEndReachedThreshold={1}
                             />
                         </View>

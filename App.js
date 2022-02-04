@@ -66,7 +66,17 @@ const App = () => {
       setLoading(true)
       setTimeout(() => {
         setLoading(false);
-        Linking.openURL(notification?.data?.remoteMessage?.data?.redirectTo)
+        // Linking.canOpenURL(notification?.data?.remoteMessage?.data?.redirectTo)
+        // Linking.openURL(notification?.data?.remoteMessage?.data?.redirectTo)
+        console.log(notification?.data?.remoteMessage?.data?.redirectTo,"$$$$$$$$$$$$$$$$")
+        if(notification?.data?.remoteMessage?.data?.redirectTo){
+
+          Linking.canOpenURL(notification?.data?.remoteMessage?.data?.redirectTo).then(supported => {
+            if (supported) {
+              return Linking.openURL(notification?.data?.remoteMessage?.data?.redirectTo);
+            }
+          })
+        }
       }, 2000)
 
 
@@ -166,18 +176,18 @@ const App = () => {
 
   useEffect(() => {
     if (successAlert)
-      setTimeout(() => setSuccessAlert(false), 1500)
+      setTimeout(() => setSuccessAlert(false), 2000)
   }, [successAlert])
 
 
   useEffect(() => {
     if (warningAlert)
-      setTimeout(() => setWarningAlert(false), 1500)
+      setTimeout(() => setWarningAlert(false), 2000)
   }, [warningAlert])
 
   useEffect(() => {
     if (errorAlert)
-      setTimeout(() => setErrorAlert(false), 1500)
+      setTimeout(() => setErrorAlert(false), 2000)
   }, [errorAlert])
 
 

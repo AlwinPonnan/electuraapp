@@ -67,6 +67,12 @@ export default function AccountEdit(props) {
 
 
     const [selectedQulifications, setSelectedQulifications] = useState([]);
+    const [selectedFileName1, setSelectedFileName1] = useState('');
+    const [selectedFileName2, setSelectedFileName2] = useState('');
+
+    const [selectedFileName3, setSelectedFileName3] = useState('');
+
+    const [selectedFileName4, setSelectedFileName4] = useState('');
 
 
     const [selectedFile, setSelectedFile] = useState({});
@@ -596,8 +602,8 @@ export default function AccountEdit(props) {
 
                     setSelectedQulifications(res?.data?.enquiryObj?.qualificationArr.map(el => el.id))
                 }
-                else{
-                    setProfileData(res.data)
+                else {
+                    setProfileData(prevState => ({ ...prevState, enquiryObj: { ...res.data.enquiryObj, introductoryFile1: res.data.enquiryObj.introductoryFile1, introductoryFile2: res.data.enquiryObj.introductoryFile2, introductoryFile3: res.data.enquiryObj.introductoryFile3, introductoryFile4: res.data.enquiryObj.introductoryFile4 } }))
 
                 }
                 // console.log(JSON.stringify(res.data, null, 2))
@@ -753,8 +759,9 @@ export default function AccountEdit(props) {
             if (res.message) {
                 setIsLoading(false)
                 setSuccessAlert(true)
+                setSelectedFileName(res.fileName)
                 setAlertText(`${res.message}`)
-                getUserData(true)
+                // getUserData(true)
             }
         }
         catch (err) {
@@ -1016,7 +1023,13 @@ export default function AccountEdit(props) {
 
                                 <Pressable onPress={() => { pickImageIntroFile(1) }} style={{ padding: 20, width: wp(40), marginTop: 22, display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.1)", borderRadius: 5, }}>
                                     <IconFontAwesome name="file-o" size={25} color={"gray"} />
-                                    <Text>{profileData?.enquiryObj?.introductoryFile1?.url ? profileData?.enquiryObj?.introductoryFile1?.url : "File 1"}</Text>
+                                    {
+                                        selectedFileName1 != "" ?
+                                            <Text>{selectedFileName}</Text>
+
+                                            :
+                                            <Text>{profileData?.enquiryObj?.introductoryFile1?.url ? profileData?.enquiryObj?.introductoryFile1?.url : "File 1"}</Text>
+                                    }
                                 </Pressable>
 
                                 <Pressable onPress={() => { pickImageIntroFile(2) }} style={{ padding: 20, width: wp(40), marginTop: 22, display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.1)", borderRadius: 5, }}>

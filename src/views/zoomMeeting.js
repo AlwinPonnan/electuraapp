@@ -70,9 +70,9 @@ export default function zoomMeeting(props) {
 
         (async () => {
             try {
-                setTimeout(() => { setMeetingText("Meeting Ended"); setIsLoading(false); setMeetingEndedToggle(true) }, 5000)
+                setTimeout(() => { setMeetingText("Meeting Ended"); setIsLoading(false); setMeetingEndedToggle(true) }, 10000)
                 console.log(propsObj)
-                setIsLoading(false)
+                setIsLoading(true)
                 if (isUser) {
                     const initializeResult = await ZoomUs.initialize({
                         clientKey: propsObj?.enquiryObj?.slotObj?.sdkObj?.sdkKey, clientSecret: propsObj?.enquiryObj?.slotObj?.sdkObj?.sdkSecret

@@ -152,6 +152,8 @@ export default function Notification(props) {
 
                                     <View style={styles.notificationInnerContainer}>
                                         <Text style={styles.cardHeading}>{item?.title}</Text>
+                                        {/* <Text style={styles.cardHeading}>{item?.redirectTo}</Text> */}
+
                                         <View>
 
                                             <Text style={styles.cardData}>{item?.content}</Text>
