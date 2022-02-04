@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from 'react'
-import { View, Text, StyleSheet, TextInput, FlatList, Pressable, Image } from 'react-native';
+import { View, Text, StyleSheet, TextInput, FlatList, Pressable, Image,ScrollView } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -651,14 +651,14 @@ export default function AllCourses(props) {
                     <>
 
 
-                        <View style={styles.bottomSheetInnerContainer}>
+                        <ScrollView scrollEnabled={true} contentContainerStyle={[styles.bottomSheetInnerContainer, { paddingHorizontal: 10, paddingBottom: 100 }]}>
                             <View style={[styles.flexRowAlignCenter, { justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: colorObj.greyColor, paddingBottom: 10 }]}>
                                 <Text style={[styles.filterSubHeading, { paddingHorizontal: 10 }]}>Filter</Text>
                                 <Text style={[styles.filterSubHeading, { color: colorObj.primarColor, fontSize: 14, paddingHorizontal: 10 }]}>Clear All</Text>
                             </View>
                             <View style={[styles.flexRowAlignCenter]}>
 
-                                <View style={[styles.flexColumn, { height: hp(90), width: wp(30), backgroundColor: '#fafafa' }]}>
+                                <View style={[styles.flexColumn, { height: hp(80), width: wp(30), backgroundColor: '#f5f5f5' }]}>
                                     <Pressable onPress={() => setActiveFilterContainer('subject')} style={[styles.customFilterHeadingBox, activeFilterContainer == "subject" && { backgroundColor: 'white' }]}>
 
                                         <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Category</Text>
@@ -680,7 +680,7 @@ export default function AllCourses(props) {
                                         <Text style={[styles.bottomSheetHeading, { fontSize: 14, paddingHorizontal: 10 }]}>Sort By</Text>
                                     </Pressable>
                                 </View>
-                                <View style={[styles.flexColumn, { height: hp(90) }]}>
+                                <View style={[styles.flexColumn, { height: hp(80)  }]}>
                                     {activeFilterContainer == "subject" &&
 
                                         <FlatList
@@ -836,16 +836,16 @@ export default function AllCourses(props) {
                                 </View>
                             </View>
 
-                        </View>
+                            <View style={[styles.flexRowAlignCenter, { justifyContent: 'space-evenly', width: wp(100), marginTop: 10, backgroundColor: 'white' }]}>
+                                <Pressable style={styles.btn} onPress={() => filterBottomSheetRef.current.close()} >
+                                    <Text style={styles.btnTxt}>Close</Text>
+                                </Pressable>
+                                <Pressable style={styles.btn} onPress={() => handleShowFilterResults()} >
+                                    <Text style={styles.btnTxt}>Apply</Text>
+                                </Pressable>
+                            </View>
+                        </ScrollView>
 
-                        <View style={[styles.flexRowAlignCenter, { justifyContent: 'space-evenly', width: wp(100), position: 'absolute', bottom: 0, backgroundColor: 'white' }]}>
-                            <Pressable style={styles.btn} onPress={() => filterBottomSheetRef.current.close()} >
-                                <Text style={styles.btnTxt}>Close</Text>
-                            </Pressable>
-                            <Pressable style={styles.btn} onPress={() => handleShowFilterResults()} >
-                                <Text style={styles.btnTxt}>Apply</Text>
-                            </Pressable>
-                        </View>
                     </>
 
                 </RBSheet>

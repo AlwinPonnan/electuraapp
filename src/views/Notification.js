@@ -25,57 +25,57 @@ export default function Notification(props) {
     const [currentPage, setCurrentPage] = useState(0);
     const [maxPageCount, setMaxPageCount] = useState(0);
 
-    // const getNotifications = async () => {
-    //     setIsLoading(true)
-    //     setIsRefreshing(true)
-    //     try {
-    //         const { data: res } = await getAllNotifications()
-    //         if (res.success) {
-    //             console.log(JSON.stringify(res.data, null, 2))
-    //             setNotificationArr(res.data.reverse())
-    //             setIsRefreshing(false)
-
-    //         }
-    //     } catch (error) {
-    //         console.error(error)
-    //         setIsRefreshing(false)
-    //         setIsLoading(false)
-    //     }
-    //     setIsLoading(false)
-    //     setIsRefreshing(false)
-    // }
-
-
     const getNotifications = async () => {
-        // setIsLoading(true)
+        setIsLoading(true)
         setIsRefreshing(true)
         try {
-            // if (lazyLoading) {
+            const { data: res } = await getAllNotifications()
+            if (res.success) {
+                console.log(JSON.stringify(res.data, null, 2))
+                setNotificationArr(res.data.reverse())
+                setIsRefreshing(false)
 
-                const { data: res } = await getAllNotificationsPageWise(itemCountPerRequest, currentPage + 1)
-                if (res.success) {
-                    if (res.data.length == 0) {
-                        setLazyLoading(false)
-                    }
-                    console.log(JSON.stringify(res.data, null, 2))
-                    setCurrentPage(prevState => prevState + 1)
-                    setNotificationArr(prevState => [...prevState, ...res.data.reverse()])
-                    setMaxPageCount(res.totalPages)
-                    setIsRefreshing(false)
-
-                }
-            // }
-            // else {
-                // console.log("lazy loading stopped")
-            // }
+            }
         } catch (error) {
             console.error(error)
             setIsRefreshing(false)
             setIsLoading(false)
         }
-        // setIsLoading(false)
+        setIsLoading(false)
         setIsRefreshing(false)
     }
+
+
+    // const getNotifications = async () => {
+    //     // setIsLoading(true)
+    //     setIsRefreshing(true)
+    //     try {
+    //         // if (lazyLoading) {
+
+    //             const { data: res } = await getAllNotificationsPageWise(itemCountPerRequest, currentPage + 1)
+    //             if (res.success) {
+    //                 if (res.data.length == 0) {
+    //                     setLazyLoading(false)
+    //                 }
+    //                 console.log(JSON.stringify(res.data, null, 2))
+    //                 setCurrentPage(prevState => prevState + 1)
+    //                 setNotificationArr(prevState => [...prevState, ...res.data.reverse()])
+    //                 setMaxPageCount(res.totalPages)
+    //                 setIsRefreshing(false)
+
+    //             }
+    //         // }
+    //         // else {
+    //             // console.log("lazy loading stopped")
+    //         // }
+    //     } catch (error) {
+    //         console.error(error)
+    //         setIsRefreshing(false)
+    //         setIsLoading(false)
+    //     }
+    //     // setIsLoading(false)
+    //     setIsRefreshing(false)
+    // }
 
 
 
@@ -126,10 +126,10 @@ export default function Notification(props) {
                     onRefresh={() => getNotifications()}
                     contentContainerStyle={{ paddingBottom: 80, marginTop: 10 }}
                     keyExtractor={(item, index) => `${index}`}
-                    onEndReached={() => getNotifications()}
-                    // removeClippedSubviews={true}
-                    initialNumToRender={6}
-                    onEndReachedThreshold={1}
+                    // onEndReached={() => getNotifications()}
+                    // // removeClippedSubviews={true}
+                    // initialNumToRender={6}
+                    // onEndReachedThreshold={1}
                     renderItem={({ item, index }) => {
                         return (
 

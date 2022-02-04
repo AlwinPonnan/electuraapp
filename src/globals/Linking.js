@@ -14,7 +14,8 @@ const config = {
                 MainBottomTab:{
                     screens:{
                         Enquiry:'Enquiry',
-                        Learnings:'Learnings'
+                        Learnings:'Learnings',
+                        Home:'Home'
                     }
                 }
             }
