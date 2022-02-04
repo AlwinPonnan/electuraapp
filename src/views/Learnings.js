@@ -115,11 +115,12 @@ export default function Learnings(props) {
             const { data: res } = await checkAndStartMeeting(id);
             if (res.success) {
                 if (res?.data?.isZoomEnabled) {
-                    props.navigation.navigate('zoomMeeting', { data: res.data, isUser: false,enquiryId:id })
+                    props.navigation.navigate('zoomMeeting', { data: res.data, isUser: false, enquiryId: id })
                 }
                 else {
                     setIsLoading(true)
                     // handle jitsi here   
+                    console.log(JSON.stringify(res.enquiryObj, null, 2))
                     props.navigation.navigate('TestZoom', { data: res.enquiryObj })
 
                 }
@@ -130,6 +131,7 @@ export default function Learnings(props) {
         }
     }
     const handleMeetingJoin = async (obj) => {
+        console.log(JSON.stringify(obj.enquiryObj, null, 2))
         setIsLoading(true)
         try {
 
@@ -155,7 +157,7 @@ export default function Learnings(props) {
                     else {
                         setIsLoading(true)
                         // handle jitsi here   
-                        props.navigation.navigate('TestZoom', { data: obj })
+                        props.navigation.navigate('TestZoom', { data: obj.enquiryObj })
                     }
                 }
                 else {
@@ -182,14 +184,14 @@ export default function Learnings(props) {
             <Pressable style={styles.cardContainer}  >
                 {
                     (item?.teacherObj?.profileImage || item?.teacherObj?.profileImage == "asd") ?
-                    
-                    <Image style={styles.courseImg} source={require('../../assets/images/learningAlt.png')} />
-                    
-                    :
-                    <Image style={styles.courseImg} source={{ uri: generateImageUrl(item?.teacherObj?.profileImage) }} />
+
+                        <Image style={styles.courseImg} source={require('../../assets/images/learningAlt.png')} />
+
+                        :
+                        <Image style={styles.courseImg} source={{ uri: generateImageUrl(item?.teacherObj?.profileImage) }} />
 
                 }
-                
+
                 <View style={styles.textCardContainer}>
                     <View>
                         {decodedObj?.userId == item?.teacherId ?
