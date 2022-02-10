@@ -14,9 +14,7 @@ import { successAlertContext } from '../../App';
 import { loadingContext } from '../navigators/stacks/RootStack';
 
 export default function Courses(props) {
-    const [courseArr, setCourseArr] = useState([
-
-    ])
+    const [courseArr, setCourseArr] = useState([])
     const focused = useIsFocused()
     const [subjectArr, setSubjectArr] = useState([]);
     const [selectedSubjectId, setSelectedSubjectId] = useState('All');

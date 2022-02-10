@@ -508,14 +508,14 @@ export default function TeacherProfile(props) {
                 {
                     (teacherObj?.role == "TEACHER" && teacherObj?._id == decodedObj?.userId) ?
                         <View style={{ display: "flex", justifyContent: "flex-end", flexDirection: "row" }}>
-                            <Pressable style={[styles.btn2,{marginRight:10}]} onPress={() => handleBookmarkTeacher()}>
+                            <Pressable style={[styles.btn2, { marginRight: 10 }]} onPress={() => handleBookmarkTeacher()}>
                                 {
                                     teacherObj?.enquiryObj?.bookmarked ?
-                                    <Icon name="bookmark" size={25} color={colorObj.primarColor} />
-                                    
-                                    :
+                                        <Icon name="bookmark" size={25} color={colorObj.primarColor} />
 
-                                <Icon name="bookmark-outline" size={25} color={colorObj.primarColor} />
+                                        :
+
+                                        <Icon name="bookmark-outline" size={25} color={colorObj.primarColor} />
                                 }
                             </Pressable>
                             <Pressable style={styles.btn2} onPress={() => props.navigation.navigate('TeacherSlots')}>
@@ -526,10 +526,21 @@ export default function TeacherProfile(props) {
                             </Pressable>
                         </View>
                         :
+                        <View style={{ display: "flex", justifyContent: "flex-end", flexDirection: "row" }}>
+                            <Pressable style={[styles.btn2, { marginRight: 10 }]} onPress={() => handleBookmarkTeacher()}>
+                                {
+                                    teacherObj?.enquiryObj?.bookmarked ?
+                                        <Icon name="bookmark" size={25} color={colorObj.primarColor} />
 
-                        <Pressable style={styles.btn} onPress={() => handleEnquireClick()}>
-                            <Text style={styles.btnTxt}>Enquire</Text>
-                        </Pressable>
+                                        :
+
+                                        <Icon name="bookmark-outline" size={25} color={colorObj.primarColor} />
+                                }
+                            </Pressable>
+                            <Pressable style={styles.btn} onPress={() => handleEnquireClick()}>
+                                <Text style={styles.btnTxt}>Enquire</Text>
+                            </Pressable>
+                        </View>
                 }
             </View>
             <View style={[styles.flexRow, { marginLeft: 35, marginTop: -25, alignItems: 'center' }]}>
@@ -584,7 +595,7 @@ export default function TeacherProfile(props) {
                     <>
                         <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between' }]}>
                             <Text style={styles.dashboardHeading}>My Dashboard <Text style={{ fontSize: 10, color: '#828282' }}> (private to you)</Text> </Text>
-                            <Text style={styles.dashboardHeading}><Text style={{ fontSize: 10, color: '#828282' }}>{profileProgress>100 ? 100 : profileProgress*100}% Completed</Text> </Text>
+                            <Text style={styles.dashboardHeading}><Text style={{ fontSize: 10, color: '#828282' }}>{profileProgress > 100 ? 100 : profileProgress * 100}% Completed</Text> </Text>
 
                         </View>
                         <View style={[styles.flexColumn, { width: wp(100), alignItems: 'center', alignSelf: "center", marginTop: 20 }]}>

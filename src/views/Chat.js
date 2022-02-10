@@ -36,7 +36,7 @@ export default function Chat(props) {
                 setChatArr(res.data.map(el => {
                     let obj = {
                         ...el,
-                        name:el?.userObj?.name ? el.userObj.name  : `${el.role}-`+`${el.userObj._id}`.slice(0,5),
+                        name:el?.userObj?.name ? el.userObj?.name  : `${el?.role}-`+`${el?.userObj?._id}`.slice(0,5),
                         image: el?.userObj?.profileImage ? generateImageUrl(el?.userObj?.profileImage) : "https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper.png"
                     }
                     return obj
@@ -44,7 +44,7 @@ export default function Chat(props) {
                 setMainChatArr(res.data.map(el => {
                     let obj = {
                         ...el,
-                        name:el?.userObj?.name ? el.userObj.name  : `${el.role}-`+`${el.userObj._id}`.slice(0,5),
+                        name:el?.userObj?.name ? el.userObj.name  : `${el?.role}-`+`${el?.userObj?._id}`.slice(0,5),
                         image: el?.userObj?.profileImage ? generateImageUrl(el?.userObj?.profileImage) : "https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper.png"
                        
                     }

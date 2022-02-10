@@ -61,6 +61,8 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
         number: 10, // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
         // repeatType: "day", // (optional) Repeating interval. Check 'Repeating Notifications' section for more info.
         // repeatType: "day", // (optional) Repeating interval. Check 'Repeating Notifications' section for more info.
+        data: { remoteMessage }
+
     });
 });
 AppRegistry.registerComponent(appName, () => App);

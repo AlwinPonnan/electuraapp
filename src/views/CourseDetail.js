@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, FlatList, Image, Pressable, SectionList, Scroll
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { colorObj, light_colors } from '../globals/colors';
 import NavBar from '../components/Navbar';
-import { getById } from '../Services/Course';
+import { getById, toggleCourse } from '../Services/Course';
 import { useIsFocused } from '@react-navigation/core';
 import OrderSummary from './OrderSummary';
 import { useNavigation } from '@react-navigation/core';
@@ -72,6 +72,7 @@ export default function CourseDetail(props) {
 
     const [discountApplied, setDiscountApplied] = useState(false);
 
+    const [decodedObj, setDecodedObj] = useState({});
 
 
     const togglePlaying = useCallback(() => {
@@ -81,6 +82,8 @@ export default function CourseDetail(props) {
     const getCourseById = async () => {
         setLoading(true)
         try {
+            let decodedTokenObj = await getDecodedToken();
+            setDecodedObj(decodedTokenObj)
             const { data: res } = await getById(props.route.params.data)
             console.log(res.data.youtubeLink.split('/')[3])
             setYoutubeVideoId(res.data.youtubeLink.split('/')[3])
@@ -226,11 +229,11 @@ export default function CourseDetail(props) {
 
         setLoading(true)
         try {
-            if(courseObj?.ClassType == "online"){
+            if (courseObj?.ClassType == "online") {
                 let decoded = await getDecodedToken()
                 if (decoded) {
                     let obj = {
-                        
+
                         userId: decoded.userId,
                         courseId: courseObj?._id,
                         couponCode: code,
@@ -249,12 +252,12 @@ export default function CourseDetail(props) {
                     }
                 }
             }
-            else if(pincode.split(['']).length==6){
+            else if (pincode.split(['']).length == 6) {
 
                 let decoded = await getDecodedToken()
                 if (decoded) {
                     let obj = {
-                        
+
                         userId: decoded.userId,
                         courseId: courseObj?._id,
                         couponCode: code,
@@ -273,8 +276,8 @@ export default function CourseDetail(props) {
                     }
                 }
             }
-            
-            else{
+
+            else {
                 setAlertText("Enter valid Pincode")
                 setErrorAlert(true)
             }
@@ -339,6 +342,18 @@ export default function CourseDetail(props) {
 
 
 
+    const handleCourseDisable = async () => {
+        try {
+            const { data: res } = await toggleCourse(courseObj?._id, { active: false });
+            if (res.success) {
+                setAlertText(res.message)
+                setSuccessAlert(true)
+                props.navigation.goBack()
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
 
     const handleOnint = async () => {
         let tokenObj = await getDecodedToken()
@@ -368,7 +383,7 @@ export default function CourseDetail(props) {
                         <View style={[styles.flexRow]} >
                             <Text style={styles.pageHeading}>{courseObj?.name}</Text>
                             <View style={[styles.flexRow, { alignItems: "center" }]}>
-                                { courseObj?.rating &&
+                                {courseObj?.rating &&
                                     <>
                                         <Text style={styles.ratingTxt}>{courseObj?.rating}</Text>
                                         <Icon name="star" size={10} color="rgba(8, 90, 78, 1)" />
@@ -376,9 +391,12 @@ export default function CourseDetail(props) {
                                 }
                             </View>
                         </View>
-                        {/* <Pressable onPress={() => handleAddCourseToWhishlist()}>
-                            <Icon name="heart-outline" size={20} color="rgba(8, 90, 78, 1)" />
-                        </Pressable> */}
+                        {
+                            decodedObj?.userId == courseObj?.userId &&
+                            <Pressable onPress={() => handleCourseDisable()}>
+                                <Icon name="trash-outline" size={20} color="rgba(8, 90, 78, 1)" />
+                            </Pressable>
+                        }
                     </View>
                     <Pressable onPress={() => props.navigation.navigate("TeacherProfile", { data: userId })} style={[styles.flexRow, { alignItems: "center", marginTop: 5, marginBottom: 5 }]}>
                         {courseObj?.profileImage != "" ?
@@ -489,7 +507,7 @@ export default function CourseDetail(props) {
                                     <Text style={[styles.textInputLabel, { marginTop: 10 }]}>Enter Coupon Code (if any)</Text>
                                     <View style={styles.searchContainer}>
                                         <View style={styles.flexRowAlignCenter}>
-                                            <TextInput style={styles.searchInput} placeholder="Enter Code" onChangeText={(e) => {setCode(e);setDiscountApplied(false)}} placeholderTextColor="#828282" />
+                                            <TextInput style={styles.searchInput} placeholder="Enter Code" onChangeText={(e) => { setCode(e); setDiscountApplied(false) }} placeholderTextColor="#828282" />
                                         </View>
                                         <Pressable disabled={discountApplied} onPress={() => getCouponCode()} style={[styles.flexRow, { alignItems: 'center' }]}>
 

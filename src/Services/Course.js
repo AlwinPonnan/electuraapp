@@ -40,5 +40,9 @@ export const uploadCourseImage = async (id, obj) => {
     return axiosApiInstance.patch(`${url}/uploadCourseImage/${id}`, obj)
 }
 
+export const toggleCourse = async (id,obj) => {
+    return axiosApiInstance.patch(`${url}/toggleCourse/${id}`, obj)
+}
+
 
 

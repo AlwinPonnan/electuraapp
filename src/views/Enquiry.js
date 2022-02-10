@@ -139,10 +139,14 @@ export default function Enquiry(props) {
     }
 
     const handleEnquirySelection = (id) => {
+        console.log(id)
         setEnquiryArr(prevState => {
             let index = prevState.findIndex(el => el._id == id);
-            if (index != -1)
-                prevState[index].checked = !prevState[index].checked
+            if (index != -1) {
+
+                prevState[index].checked = !prevState[index].checked;
+                console.log(JSON.stringify(prevState,null,2))
+            }
             return [...prevState]
         })
     }
@@ -409,16 +413,16 @@ export default function Enquiry(props) {
                                                         {item?.teacherObj?.name} | {item?.enquiryType}
                                                     </Text>
                                             }
-                                            <TouchableOpacity onPress={() => handleEnquirySelection(item._id)}>
+                                            <TouchableOpacity onPress={() => handleEnquirySelection(item?._id)}>
                                                 <Icon name="chevron-down-outline" size={20} color="#828282" />
                                             </TouchableOpacity>
                                         </View>
                                     </Pressable>
                                     {item.checked &&
 
-                                        <ScrollView style={[styles.EnquiryContainer,{maxHeight:hp(35)}]}>
+                                        <ScrollView style={[styles.EnquiryContainer, { maxHeight: hp(35) }]}>
                                             <FlatList
-                                                data={[...item.enquiryResponses, ...item.enquiryResponses, ...item.enquiryResponses, ...item.enquiryResponses]}
+                                                data={item?.enquiryResponses}
                                                 keyExtractor={(item, index) => `${index}`}
                                                 scrollEnabled={false}
                                                 ListEmptyComponent={

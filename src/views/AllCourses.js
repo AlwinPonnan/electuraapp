@@ -111,6 +111,7 @@ export default function AllCourses(props) {
                 setInnerFilteredCourseArr(temp)
                 setIsrefreshing(false)
                 getSubjects(temp)
+                // handleBtnFilter()
 
             }
         } catch (error) {

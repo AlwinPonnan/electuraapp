@@ -15,7 +15,12 @@ const config = {
                     screens:{
                         Enquiry:'Enquiry',
                         Learnings:'Learnings',
-                        Home:'Home'
+                        Home:{
+                            screens:{
+                                Homescreen:'Homescreen',
+                                TeacherProfile:'TeacherProfile'
+                            }
+                        }
                     }
                 }
             }

@@ -39,8 +39,8 @@ export default function AllTeacher(props) {
     const previousSelectedSubjectId = props?.route?.params?.filterId;
     const isSubjectSelected = props?.route?.params?.isSubjectId
 
-    const isTopSelected = props?.route?.params?.isTopSelected
-
+    // const isTopSelected = props?.route?.params?.isTopSelected
+    const [isTopSelected, setIsTopSelected] = useState(props?.route?.params?.isTopSelected);
     const filterBottomSheetRef = useRef()
     const [checked, setChecked] = useState(EnquiryTypes.ONETOONE);
 
@@ -127,12 +127,12 @@ export default function AllTeacher(props) {
                 // console.log(minCount, maxCount)
                 setTeachersArr(res.data)
                 setMainTeachersArr(res.data)
-                console.log(JSON.stringify(res?.data[0], null, 2))
+                // console.log(JSON.stringify(res?.data[0], null, 2))
                 getSubjects(res.data)
                 setInnerFilteredTeacherArr(res.data)
-                if (isTopSelected) {
-                    handleBtnFilter("Top Tutors", res.data)
-                }
+                // if (isTopSelected) {
+                handleBtnFilter("Top Tutors", res.data, false)
+                // }
             }
 
         } catch (error) {
@@ -164,7 +164,7 @@ export default function AllTeacher(props) {
                     return obj
                 })])
                 if (isSubjectSelected) {
-                    console.log("inside,@@@@@@@@@@@@@", isSubjectSelected)
+                    // console.log("inside,@@@@@@@@@@@@@", isSubjectSelected)
                     setOuterSelectedClassArr([`${previousSelectedSubjectId}`])
                     setTeachersArr([...arr.filter(el => el?.enquiryObj?.subjectArr.some(elz => elz.classArr.some(elx => elx?.classId == previousSelectedSubjectId)))])
 
@@ -180,7 +180,7 @@ export default function AllTeacher(props) {
         try {
             const { data: res } = await getAllClasses();
             if (res.success) {
-                console.log(JSON.stringify(res.data, null, 2))
+                // console.log(JSON.stringify(res.data, null, 2))
                 let tempArr = res.data;
 
                 tempArr = tempArr.sort((a, b) => {
@@ -448,7 +448,7 @@ export default function AllTeacher(props) {
             return el
         })
         setSubjectArr([...tempArr])
-        console.log(JSON.stringify([...tempArr], null, 2))
+        // console.log(JSON.stringify([...tempArr], null, 2))
         let tempClassesArr = [...mainNestedClassArr];
         // console.log(tempClassesArr)
         tempClassesArr = tempClassesArr.filter(el => el._id == id);
@@ -456,7 +456,7 @@ export default function AllTeacher(props) {
         handleTopicFilter()
     }
     const handleClassSelection = (subjectIndex, id) => {
-        console.log(subjectIndex, id)
+        // console.log(subjectIndex, id)
         setNestedClassArr(prevState => {
             let tempIndex = prevState[subjectIndex].classArr.findIndex(el => el._id == id);
             if (tempIndex != -1)
@@ -696,7 +696,7 @@ export default function AllTeacher(props) {
     }
 
     const handleOuterClassFilter = () => {
-        console.log(outerSelectedClassArr)
+        // console.log(outerSelectedClassArr)
         let tempTeacherArr = [...MainTeachersArr]
         if (outerSelectedClassArr.length > 0) {
 
@@ -719,10 +719,36 @@ export default function AllTeacher(props) {
     }
 
 
-    const handleBtnFilter = (value, arr) => {
-
+    const handleBtnFilter = (value, arr, filterInthisPage) => {
+        // console.log()
         let tempTeacherArr = arr.length > 0 ? arr : [...innerFilteredTeacherArr]
+        if (previousSelectedSubjectId != "All") {
+
+            if (isSubjectSelected) {
+                // tempTeacherArr=tempTeacherArr.filter(el=>el.enquiryObj.subjectArr.some(elz=>elz.subjectId==previousSelectedSubjectId))
+                console.log("HANDLING class FILTER", previousSelectedSubjectId)
+                tempTeacherArr = tempTeacherArr.filter(el => el.enquiryObj.subjectArr.some(elz => elz.classArr.some(ely => ely.classId == previousSelectedSubjectId)))
+            }
+            else {
+                console.log("HANDLING SUBJECT FILTER", previousSelectedSubjectId)
+                console.log(JSON.stringify(tempTeacherArr, null, 2))
+                tempTeacherArr = tempTeacherArr.filter(el => el.enquiryObj.subjectArr.some(elz => elz.subjectId == previousSelectedSubjectId))
+
+            }
+        }
+        if (filterInthisPage) {
+            setSelectedNewFilter(value)
+            setIsTopSelected(false)
+        }
+        else {
+
+            if (isTopSelected)
+                setSelectedNewFilter("Top Tutors")
+        }
+
+
         if (value == "All") {
+
             setTeachersArr([...tempTeacherArr])
 
         }
@@ -735,7 +761,7 @@ export default function AllTeacher(props) {
             setTeachersArr([...tempTeacherArr])
 
         }
-        setSelectedNewFilter(value)
+
     }
 
     return (
@@ -828,13 +854,13 @@ export default function AllTeacher(props) {
 
                             <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
 
-                                <Pressable onPress={() => handleBtnFilter("All", [])} style={[styles.newContainer, selectedNewFilter != "All" && { backgroundColor: '#f0faf9' }]}>
+                                <Pressable onPress={() => handleBtnFilter("All", [], true)} style={[styles.newContainer, selectedNewFilter != "All" && { backgroundColor: '#f0faf9' }]}>
                                     <Text style={[styles.newcategoryName, selectedNewFilter != "All" && { color: '#828282' }]}>All</Text>
                                 </Pressable>
-                                <Pressable onPress={() => handleBtnFilter("Online", [])} style={[styles.newContainer, selectedNewFilter != "Online" && { backgroundColor: '#f0faf9' }]}>
+                                <Pressable onPress={() => handleBtnFilter("Online", [], true)} style={[styles.newContainer, selectedNewFilter != "Online" && { backgroundColor: '#f0faf9' }]}>
                                     <Text style={[styles.newcategoryName, selectedNewFilter != "Online" && { color: '#828282' }]}>Online</Text>
                                 </Pressable>
-                                <Pressable onPress={() => handleBtnFilter("Top Tutors", [])} style={[styles.newContainer, selectedNewFilter != "Top Tutors" && { backgroundColor: '#f0faf9' }]}>
+                                <Pressable onPress={() => handleBtnFilter("Top Tutors", [], true)} style={[styles.newContainer, selectedNewFilter != "Top Tutors" && { backgroundColor: '#f0faf9' }]}>
                                     <Text style={[styles.newcategoryName, selectedNewFilter != "Top Tutors" && { color: '#828282' }]}>Top Tutors</Text>
                                 </Pressable>
                             </View>
@@ -1006,7 +1032,7 @@ export default function AllTeacher(props) {
                     <>
 
 
-                    <ScrollView scrollEnabled={true} contentContainerStyle={[styles.bottomSheetInnerContainer, { paddingHorizontal: 10, paddingBottom: 100 }]}>
+                        <ScrollView scrollEnabled={true} contentContainerStyle={[styles.bottomSheetInnerContainer, { paddingHorizontal: 10, paddingBottom: 100 }]}>
                             <View style={[styles.flexRowAlignCenter, { justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: colorObj.greyColor, paddingBottom: 10 }]}>
                                 <Text style={[styles.filterSubHeading, { paddingHorizontal: 10 }]}>Filter</Text>
                                 <Text style={[styles.filterSubHeading, { color: colorObj.primarColor, fontSize: 14, paddingHorizontal: 10 }]}>Clear All</Text>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect,useContext } from 'react'
 import { Image, Pressable, StyleSheet, View } from 'react-native';
 
 import { Appbar } from 'react-native-paper';
@@ -10,6 +10,7 @@ import { Badge } from 'react-native-paper';
 import { getAllNotifications, getCart } from '../Services/User';
 import { getAllEnquiryRequests } from '../Services/Enquiry';
 
+import { globalUpdateContext } from '../../App';
 export default function NavBar(props) {
 
 
@@ -21,6 +22,8 @@ export default function NavBar(props) {
   const [requestArr, setRequestArr] = useState([]);
   const [notificationArr, setNotificationArr] = useState([]);
   const focused = useIsFocused()
+
+  const [globalUpdate, setGlobalUpdate] = useContext(globalUpdateContext);
   const getUserCart = async () => {
     try {
       const { data: res } = await getCart();
@@ -60,7 +63,7 @@ export default function NavBar(props) {
     getUserCart()
     getRequests()
     getNotification()
-  }, [focused])
+  }, [focused,globalUpdate])
 
   return (
     <View style={styles.headerContainer}>

@@ -68,12 +68,13 @@ const App = () => {
         setLoading(false);
         // Linking.canOpenURL(notification?.data?.remoteMessage?.data?.redirectTo)
         // Linking.openURL(notification?.data?.remoteMessage?.data?.redirectTo)
-        console.log(notification?.data?.remoteMessage?.data?.redirectTo,"$$$$$$$$$$$$$$$$")
-        if(notification?.data?.remoteMessage?.data?.redirectTo){
+        console.log(notification?.data, "$$$$$$$$$$$$$$$$")
+        console.log(notification?.data?.remoteMessage?.data?.redirectTo, "$$$$$$$$$$$$$$$$")
+        if (notification?.data?.remoteMessage?.data?.redirectTo) {
 
           Linking.canOpenURL(notification?.data?.remoteMessage?.data?.redirectTo).then(supported => {
             if (supported) {
-              return Linking.openURL(notification?.data?.remoteMessage?.data?.redirectTo);
+              return Linking.openURL(`${notification?.data?.remoteMessage?.data?.redirectTo}`);
             }
           })
         }
@@ -118,6 +119,8 @@ const App = () => {
       if (remoteMessage?.data?.remoteMessage?.data?.redirectTo == "demo://app/Chat") {
         setChatRefresh(!chatRefresh)
       }
+      if (remoteMessage)
+        setGlobalUpdate(!globalUpdate)
       // console.log(remoteMessage)
       PushNotification.localNotification({
         /* Android Only Properties */
