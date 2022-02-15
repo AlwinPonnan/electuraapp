@@ -176,7 +176,7 @@ export default function RootStack() {
                                     <Stack.Screen name="wishlist" component={WishlistTab} options={{ headerShown: false }} />
                                     <Stack.Screen name="wishlistedTeacher" component={WishListedTeachers} options={{ headerShown: false }} />
 
-                                    <Stack.Screen name="CourseDetail" component={CourseDetail} options={{ headerShown: false }} />
+                                    {/* <Stack.Screen name="CourseDetail" component={CourseDetail} options={{ headerShown: false }} /> */}
                                     <Stack.Screen name="TestZoom" component={Testzoom} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} />
                                     <Stack.Screen name="zoomMeeting" component={zoomMeeting} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} />
                                     <Stack.Screen name="MeetingFeedback" component={MeetingFeedback} options={{ headerShown: false, showLabel: false, cardStyles: { backgroundColor: '#ffffff' } }} />

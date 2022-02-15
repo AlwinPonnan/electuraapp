@@ -10,12 +10,15 @@ import { Badge } from 'react-native-paper';
 import { getAllNotifications, getCart } from '../Services/User';
 import { getAllEnquiryRequests } from '../Services/Enquiry';
 
+import { useNavigation } from '@react-navigation/native';
 import { globalUpdateContext } from '../../App';
 export default function NavBar(props) {
-
+  const navigation=useNavigation();
 
   const toggle = () => {
-    props.rootProps.navigation.dispatch(DrawerActions.toggleDrawer())
+    // alert("TOGGLE")
+    console.log(navigation)
+    navigation.dispatch(DrawerActions.toggleDrawer())
   }
 
   const [cartObj, setCartObj] = useState({});
