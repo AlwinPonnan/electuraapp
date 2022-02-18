@@ -78,6 +78,11 @@ export default function TeacherProfile(props) {
     const [profileProgress, setProfileProgress] = useState(0);
 
     const [liveClassArr, setLiveClassArr] = useState([]);
+
+
+
+    const [photoModal, setPhotoModal] = useState(false);
+
     const leftContent = () => {
         return (
             <Pressable style={styles.btn} >
@@ -504,7 +509,10 @@ export default function TeacherProfile(props) {
             </ImageBackground>
 
             <View style={[styles.flexRow, { width: wp(90), alignSelf: "center", justifyContent: 'space-between' }]}>
-                <Image source={{ uri: teacherObj?.profileImage ? generateImageUrl(teacherObj?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} style={{ width: 100, height: 100, position: "relative", top: -40, borderRadius: 50 }} resizeMode="cover" />
+                <Pressable onPress={()=>setPhotoModal(true)}>
+
+                    <Image source={{ uri: teacherObj?.profileImage ? generateImageUrl(teacherObj?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} style={{ width: 100, height: 100, position: "relative", top: -40, borderRadius: 50 }} resizeMode="cover" />
+                </Pressable>
                 {
                     (teacherObj?.role == "TEACHER" && teacherObj?._id == decodedObj?.userId) ?
                         <View style={{ display: "flex", justifyContent: "flex-end", flexDirection: "row" }}>
@@ -561,11 +569,11 @@ export default function TeacherProfile(props) {
                 <View style={[styles.flexRow]}>
                     <Icon name="location-outline" size={16} color={"#828282"} />
 
-                    <Text style={styles.smallTxt}>{teacherObj?.enquiryObj?.address ? teacherObj?.enquiryObj?.address : "Delhi"}</Text>
+                    <Text style={styles.smallTxt}>{teacherObj?.enquiryObj?.address ? teacherObj?.enquiryObj?.address : ""}</Text>
                 </View>
                 <View style={[styles.flexRow]}>
                     <Image source={require("../../assets/images/time.png")} />
-                    <Text style={styles.smallTxt}>{teacherObj?.enquiryObj?.experience ? teacherObj?.enquiryObj?.experience : "1"} year experience</Text>
+                    <Text style={styles.smallTxt}>{teacherObj?.enquiryObj?.experience ? teacherObj?.enquiryObj?.experience : ""} year experience</Text>
                 </View>
                 {/* <View style={[styles.flexRow, { width: "33%", paddingLeft: 5 }]}>
                     <Image source={require("../../assets/images/medal.png")} />
@@ -989,6 +997,23 @@ export default function TeacherProfile(props) {
                     </Pressable>
                 </Pressable>
             </Modal>
+
+            {/* //// Modal */}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={photoModal}
+                onRequestClose={() => {
+                    setPhotoModal(false);
+                }}
+            >
+                <Pressable style={styles.centeredView} onPress={() => setPhotoModal(false)}>
+                    <Pressable style={styles.modalView}>
+                        <Image source={{ uri: teacherObj?.profileImage ? generateImageUrl(teacherObj?.profileImage) : "https://images.unsplash.com/photo-1544526226-d4568090ffb8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80" }} style={{ width: wp(72), height:200 }} resizeMode="cover" />
+                    </Pressable>
+                </Pressable>
+            </Modal>
+
 
         </ScrollView>
     )

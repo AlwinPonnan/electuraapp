@@ -4,12 +4,12 @@ import { View, Text, StyleSheet, Image, FlatList, Pressable } from 'react-native
 import { Searchbar } from 'react-native-paper';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { successAlertContext,globalUpdateContext } from '../../App';
+import { successAlertContext, globalUpdateContext } from '../../App';
 import { colorObj } from '../globals/colors';
 import EnquiryTypes from '../globals/EnquiryTypes';
 import { generateImageUrl } from '../globals/utils';
 import { loadingContext } from '../navigators/stacks/RootStack';
-import { checkNcreateChatRoom, getAllEnquiryRequests } from '../Services/Enquiry';
+import { checkNcreateChatRoom, getAllEnquiryRequests, rejectEnquiry } from '../Services/Enquiry';
 
 
 export default function Requestscreen(props) {
@@ -41,10 +41,10 @@ export default function Requestscreen(props) {
             const { data: res } = await getAllEnquiryRequests();
             if (res.success) {
                 setIsrefreshing(false)
-                setRequestArr([...res.data.map(el=>{
-                    let obj={
+                setRequestArr([...res.data.map(el => {
+                    let obj = {
                         ...el,
-                        name:el?.userObj?.name ? el.userObj.name  : `${el.userObj.role}-`+`${el.userObj._id}`.slice(0,5),
+                        name: el?.userObj?.name ? el.userObj.name : `${el.userObj.role}-` + `${el.userObj._id}`.slice(0, 5),
                         image: el?.userObj?.profileImage ? generateImageUrl(el?.userObj?.profileImage) : "https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper.png"
                     }
                     return obj
@@ -73,6 +73,24 @@ export default function Requestscreen(props) {
         setLoading(false)
     }
 
+    const handleReject = async (enquiryId) => {
+        setLoading(true)
+        // alert("Clicked")
+        try {
+            const { data: res } = await rejectEnquiry(enquiryId);
+            if (res.success) {
+                setAlertText(res.message)
+                setSuccessAlert(true)
+                setGlobalUpdate(!globalUpdate)
+                handleOnint()
+                // props.navigation.navigate("Chat")
+            }
+        } catch (error) {
+            console.error(error)
+        }
+        setLoading(false)
+    }
+
 
     const handleOnint = () => {
         getRequests()
@@ -80,7 +98,7 @@ export default function Requestscreen(props) {
 
     useEffect(() => {
         handleOnint()
-    }, [focused,globalUpdateContext])
+    }, [focused, globalUpdateContext])
 
 
     return (
@@ -105,7 +123,7 @@ export default function Requestscreen(props) {
                 ListEmptyComponent={
                     <View style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                         <Image source={require('../../assets/images/Icon.png')} resizeMode="center" />
-                        <Text style={{ fontFamily: 'Montserrat-SemiBold', fontSize: 20,textAlign:'center' }}>No Request found</Text>
+                        <Text style={{ fontFamily: 'Montserrat-SemiBold', fontSize: 20, textAlign: 'center' }}>No Request found</Text>
                     </View>
                 }
                 renderItem={({ item, index }) => {
@@ -114,19 +132,24 @@ export default function Requestscreen(props) {
                             <View style={styles.flexRow}>
                                 <Image source={{ uri: item.image }} style={styles.cardImage} />
                                 <View style={[styles.flexColumn, { justifyContent: "center" }]}>
-                                    <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(70) }]}>
+                                    <View style={[styles.flexRow, { alignItems: 'center', justifyContent: 'space-between', width: wp(75) }]}>
                                         <Text style={styles.cardHeading}>{item?.name}</Text>
-                                        <Pressable style={{paddingHorizontal:20,paddingVertical:5}} onPress={() => handleAccept(item?.userObj?._id, item?._id)}>
-                                            <Text style={styles.acceptStyles}>Accept</Text>
-                                        </Pressable>
+                                        <View style={[styles.flexRow,{alignItems:'center',justifyContent:'space-evenly'}]}>
+                                            <Pressable style={{ paddingHorizontal: 20, paddingVertical: 5 }} onPress={() => handleAccept(item?.userObj?._id, item?._id)}>
+                                                <Text style={styles.acceptStyles}>Accept</Text>
+                                            </Pressable>
+                                            <Pressable style={{ paddingHorizontal: 20, paddingVertical: 5 }} onPress={() => handleReject(item?._id)}>
+                                                <Text style={styles.acceptStyles}>Reject</Text>
+                                            </Pressable>
+                                        </View>
                                     </View>
                                     <Text style={{ color: 'black', fontFamily: 'Montserrat-Regular', fontSize: 12 }}>{item?.additionalMessage}</Text>
                                     {
                                         item?.enquiryType == EnquiryTypes.SLOT ?
 
-                                        <Text style={{ color: 'black', fontFamily: 'Montserrat-Regular', fontSize: 12 }}>{item?.slotObj?.day} {item?.slotObj?.timeSlotObj?.time}</Text>
-                                        :
-                                        <Text style={{ color: 'black', fontFamily: 'Montserrat-Regular', fontSize: 12 }}>{item?.enquiryType}</Text>
+                                            <Text style={{ color: 'black', fontFamily: 'Montserrat-Regular', fontSize: 12 }}>{item?.slotObj?.day} {item?.slotObj?.timeSlotObj?.time}</Text>
+                                            :
+                                            <Text style={{ color: 'black', fontFamily: 'Montserrat-Regular', fontSize: 12 }}>{item?.enquiryType}</Text>
 
                                     }
 
@@ -150,7 +173,7 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: "white",
         paddingHorizontal: hp(2),
-        flex:1
+        flex: 1
     },
     searchBar: {
         width: '100%',
